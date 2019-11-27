@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="@color/colorPrimary"
+    android:layout_height="match_parent"
+    tools:context=".EditorActivity">
+
+
+<!--
+ <com.google.android.gms.ads.AdView
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        app:adSize="BANNER"
+        app:adUnitId="ca-app-pub-3538783908730049/9447798776"
+        app:layout_constraintBottom_toTopOf="@+id/swipeRefreshLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"></com.google.android.gms.ads.AdView>
+-->
+    <ImageView
+        android:id="@+id/userSelectedImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="80dp"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="@+id/swipeRefreshLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.35">
+
+    </ImageView>
+
+    <HorizontalScrollView
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:background="#2c2f33"
+        android:scrollbars="none"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <ImageView
+                android:id="@+id/addText"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="12dp"
+                android:src="@drawable/addtext"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/addImage"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.133" />
+
+
+
+            <ImageView
+                android:id="@+id/addImage"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="12dp"
+                android:src="@drawable/addimage"
+                app:layout_constraintBottom_toBottomOf="@+id/addText"
+                app:layout_constraintEnd_toStartOf="@+id/addSticker"
+                app:layout_constraintStart_toEndOf="@+id/addText"
+                app:layout_constraintTop_toTopOf="@+id/addText"
+                app:layout_constraintVertical_bias="0.533" />
+
+
+            <ImageView
+                android:id="@+id/addSticker"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="12dp"
+                android:src="@drawable/addsticker"
+                app:layout_constraintBottom_toBottomOf="@+id/addImage"
+                app:layout_constraintEnd_toStartOf="@+id/addEffect"
+                app:layout_constraintStart_toEndOf="@+id/addImage"
+                app:layout_constraintTop_toTopOf="@+id/addImage"
+                app:layout_constraintVertical_bias="0.466" />
+
+            <ImageView
+                android:id="@+id/addEffect"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="12dp"
+                android:src="@drawable/addeffect"
+                app:layout_constraintBottom_toBottomOf="@+id/addSticker"
+                app:layout_constraintEnd_toStartOf="@+id/addCrop"
+                app:layout_constraintStart_toEndOf="@+id/addSticker"
+                app:layout_constraintTop_toTopOf="@+id/addSticker"
+                app:layout_constraintVertical_bias="0.466" />
+
+            <ImageView
+                android:id="@+id/addCrop"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="12dp"
+                android:src="@drawable/addcrop"
+                app:layout_constraintBottom_toBottomOf="@+id/addEffect"
+                app:layout_constraintEnd_toStartOf="@+id/addBlur"
+                app:layout_constraintStart_toEndOf="@+id/addEffect"
+                app:layout_constraintTop_toTopOf="@+id/addEffect"
+                app:layout_constraintVertical_bias="0.466" />
+
+            <ImageView
+                android:id="@+id/addBlur"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="32dp"
+                android:src="@drawable/addblur"
+                app:layout_constraintBottom_toBottomOf="@id/addCrop"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/addCrop"
+                app:layout_constraintTop_toTopOf="@id/addCrop"
+                app:layout_constraintVertical_bias="0.466" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </HorizontalScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
