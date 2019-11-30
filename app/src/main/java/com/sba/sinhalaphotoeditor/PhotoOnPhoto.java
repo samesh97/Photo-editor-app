@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -29,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 
+import com.glidebitmappool.GlideBitmapPool;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
 
 import java.io.File;
@@ -93,6 +95,8 @@ public class PhotoOnPhoto extends AppCompatActivity implements RotationGestureDe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#018577")));
 
         //setup the scale detection and rotation detection for the textview
         scaleGestureDetector = new ScaleGestureDetector(PhotoOnPhoto.this,new simpleOnScaleGestureListener());
@@ -392,7 +396,7 @@ public class PhotoOnPhoto extends AppCompatActivity implements RotationGestureDe
                 helper.AddImage(helper.getBytes((MainActivity.images.get(MainActivity.imagePosition))),currentDateandTime);
                 MainActivity.deleteUndoRedoImages();
 
-               // GlideBitmapPool.clearMemory();
+                GlideBitmapPool.clearMemory();
             }
             });
         }

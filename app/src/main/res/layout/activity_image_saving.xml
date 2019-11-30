@@ -6,16 +6,23 @@
     android:layout_height="match_parent"
     tools:context=".ImageSavingActivity">
 
+    <ImageView
+        android:id="@+id/topGreenPannel"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:background="#018577"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
     <ImageView
         android:id="@+id/userSavingImage"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="250dp"
         android:layout_marginStart="32dp"
-        android:layout_marginLeft="32dp"
-        android:layout_marginTop="72dp"
+        android:layout_marginTop="50dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginRight="32dp"
         android:adjustViewBounds="true"
         android:scaleType="fitCenter"
         app:layout_constraintEnd_toEndOf="parent"
@@ -23,27 +30,109 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
     <ImageView
-        android:id="@+id/saveFinalImage"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="18dp"
-        android:layout_marginLeft="18dp"
-        android:src="@drawable/download"
-        app:layout_constraintBottom_toBottomOf="@+id/shareFinalImage"
-        app:layout_constraintStart_toEndOf="@+id/shareFinalImage"
-        app:layout_constraintTop_toTopOf="@+id/shareFinalImage" />
+        android:id="@+id/shareImageView"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/custom_drop_shadow_drawable"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/userSavingImage" />
 
     <ImageView
         android:id="@+id/shareFinalImage"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="70dp"
-        android:layout_marginRight="70dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="32dp"
         android:src="@drawable/share"
-        app:layout_constraintEnd_toEndOf="@+id/userSavingImage"
-        app:layout_constraintStart_toStartOf="@+id/userSavingImage"
-        app:layout_constraintTop_toBottomOf="@+id/userSavingImage" />
+        app:layout_constraintBottom_toBottomOf="@+id/shareImageView"
+        app:layout_constraintStart_toStartOf="@+id/shareImageView"
+        app:layout_constraintTop_toTopOf="@+id/shareImageView" />
+
+
+    <TextView
+        android:id="@+id/fromGalery"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="ශෙයා කරන්න"
+        android:fontFamily="@font/kaputaunicode"
+        android:textColor="#018577"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:typeface="sans"
+        app:layout_constraintBottom_toBottomOf="@+id/shareFinalImage"
+        app:layout_constraintStart_toStartOf="@+id/downloadImageText"
+        app:layout_constraintTop_toTopOf="@+id/shareFinalImage" />
+
+    <ImageView
+        android:id="@+id/downloadImageView"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/custom_drop_shadow_drawable"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/shareImageView" />
+
+    <ImageView
+        android:id="@+id/saveFinalImage"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="32dp"
+        android:src="@drawable/download"
+        app:layout_constraintBottom_toBottomOf="@+id/downloadImageView"
+        app:layout_constraintStart_toStartOf="@+id/downloadImageView"
+        app:layout_constraintTop_toBottomOf="@+id/shareImageView"
+        app:layout_constraintVertical_bias="0.566" />
+
+
+    <TextView
+        android:id="@+id/downloadImageText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:fontFamily="@font/kaputaunicode"
+        android:gravity="center"
+        android:text="ඩව්න්ලෝඩ් කරගන්න"
+        android:textColor="#018577"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:typeface="sans"
+        app:layout_constraintBottom_toBottomOf="@+id/saveFinalImage"
+        app:layout_constraintStart_toEndOf="@+id/saveFinalImage"
+        app:layout_constraintTop_toTopOf="@+id/saveFinalImage" />
+
+
+    <!--
+<ImageView
+    android:id="@+id/saveFinalImage"
+    android:layout_width="50dp"
+    android:layout_height="50dp"
+    android:layout_marginStart="18dp"
+    android:layout_marginLeft="18dp"
+    android:src="@drawable/download"
+    app:layout_constraintBottom_toBottomOf="@+id/shareFinalImage"
+    app:layout_constraintStart_toEndOf="@+id/shareFinalImage"
+    app:layout_constraintTop_toTopOf="@+id/shareFinalImage" />
+
+<ImageView
+    android:id="@+id/shareFinalImage"
+    android:layout_width="50dp"
+    android:layout_height="50dp"
+    android:layout_marginTop="32dp"
+    android:layout_marginEnd="70dp"
+    android:layout_marginRight="70dp"
+    android:src="@drawable/share"
+    app:layout_constraintEnd_toEndOf="@+id/userSavingImage"
+    app:layout_constraintStart_toStartOf="@+id/userSavingImage"
+    app:layout_constraintTop_toBottomOf="@+id/userSavingImage" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -27,7 +28,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 
-
+import com.glidebitmappool.GlideBitmapPool;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
 import com.zomato.photofilters.FilterPack;
 import com.zomato.photofilters.imageprocessors.Filter;
@@ -104,7 +105,7 @@ public class AddEffects extends AppCompatActivity {
             pdLoading.dismiss();
         }
 
-        //GlideBitmapPool.clearMemory();
+        GlideBitmapPool.clearMemory();
     }
 
     @Override
@@ -160,14 +161,15 @@ public class AddEffects extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_effects);
 
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#018577")));
 
-        //GlideBitmapPool.clearMemory();
+
+        GlideBitmapPool.clearMemory();
 
 
         Runtime rt = Runtime.getRuntime();
         int maxMemory = (int)rt.freeMemory();
-      //  GlideBitmapPool.initialize(maxMemory); // 10mb max memory size
-        Toast.makeText(this, "" + maxMemory, Toast.LENGTH_LONG).show();
+        GlideBitmapPool.initialize(maxMemory); // 10mb max memory size
 
         render = new Render(AddEffects.this);
 
@@ -176,8 +178,8 @@ public class AddEffects extends AppCompatActivity {
 
         caller = new AsyncCaller();
 
-/*
-        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+
+       /* MobileAds.initialize(this, new OnInitializationCompleteListener() {
             @Override
             public void onInitializationComplete(InitializationStatus initializationStatus) {
             }
@@ -784,7 +786,7 @@ public class AddEffects extends AppCompatActivity {
 
                 try
                 {
-                    x = getResizedBitmap(currentEditingBitmap,1500);
+                    x = getResizedBitmap(currentEditingBitmap,1000);
 
                     if(type.equals("0"))
                     {
@@ -856,26 +858,6 @@ public class AddEffects extends AppCompatActivity {
                     Log.d("Error",e.getMessage());
                 }
 
-
-
-
-                    /*
-                    try
-                    {
-                        for(int i = 0; i < images.size(); i++)
-                        {
-
-                            x = getResizedBitmap(currentEditingBitmap,2000);
-                            allFilterBitmaps.set(i,filters.get(i).processFilter(x));
-
-                        }
-                    }
-                    catch (OutOfMemoryError e)
-                    {
-
-                    }*/
-
-                //LOMO = ImageFilter.applyFilter(currentEditingBitmap, ImageFilter.Filter.LOMO);
 
 
             }
@@ -1082,7 +1064,7 @@ public class AddEffects extends AppCompatActivity {
 
 
         currentEditingBitmap = MainActivity.images.get(MainActivity.imagePosition);
-        Bitmap x = getResizedBitmap(currentEditingBitmap,1500);
+        Bitmap x = getResizedBitmap(currentEditingBitmap,1200);
 
         if(type.equals("0"))
         {

@@ -10,9 +10,8 @@
     <ImageView
         android:id="@+id/userSelectedImage"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="70dp"
-        android:layout_marginTop="70dp"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="90dp"
         android:adjustViewBounds="true"
         android:scaleType="fitCenter"
         app:layout_constraintBottom_toTopOf="@+id/swipeRefreshLayout"
@@ -32,8 +31,8 @@
         app:adUnitId="ca-app-pub-3538783908730049/1216781500"
         app:layout_constraintBottom_toTopOf="@+id/swipeRefreshLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"></com.google.android.gms.ads.AdView>
--->
+        app:layout_constraintStart_toStartOf="parent"/>-->
+
 
 
 
@@ -41,7 +40,7 @@
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="90dp"
-        android:background="#2c2f33"
+        android:background="#018577"
         android:scrollbars="none"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"

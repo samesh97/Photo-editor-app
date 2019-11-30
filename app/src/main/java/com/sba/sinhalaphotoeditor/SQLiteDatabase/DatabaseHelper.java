@@ -121,10 +121,15 @@ public class DatabaseHelper extends SQLiteOpenHelper
         {
             int numberOfItemsNeedToDeleted = getNumberOfRows() - 10;
             Cursor cursor = GetAllImagesASC();
-            for(int i = 0; i < numberOfItemsNeedToDeleted; i++)
+
+            while (cursor.moveToNext())
             {
+                numberOfItemsNeedToDeleted--;
+                if(numberOfItemsNeedToDeleted == -1)
+                {
+                    break;
+                }
                 deleteImage(cursor.getInt(0));
-                cursor.moveToNext();
             }
 
         }

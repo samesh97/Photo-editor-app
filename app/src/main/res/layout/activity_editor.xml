@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@color/colorPrimary"
+    android:background="@android:color/black"
     android:layout_height="match_parent"
     tools:context=".EditorActivity">
 
-
 <!--
+
  <com.google.android.gms.ads.AdView
         android:id="@+id/adView"
         android:layout_width="wrap_content"
@@ -19,8 +19,8 @@
         app:adUnitId="ca-app-pub-3538783908730049/9447798776"
         app:layout_constraintBottom_toTopOf="@+id/swipeRefreshLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"></com.google.android.gms.ads.AdView>
--->
+        app:layout_constraintStart_toStartOf="parent"/>-->
+
     <ImageView
         android:id="@+id/userSelectedImage"
         android:layout_width="match_parent"
@@ -41,7 +41,7 @@
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:background="#2c2f33"
+        android:background="#018577"
         android:scrollbars="none"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -58,7 +58,7 @@
                 android:id="@+id/addText"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:layout_marginStart="32dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="12dp"
                 android:layout_marginEnd="12dp"
                 android:src="@drawable/addtext"
@@ -128,7 +128,7 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_marginStart="12dp"
-                android:layout_marginEnd="32dp"
+                android:layout_marginEnd="16dp"
                 android:src="@drawable/addblur"
                 app:layout_constraintBottom_toBottomOf="@id/addCrop"
                 app:layout_constraintEnd_toEndOf="parent"

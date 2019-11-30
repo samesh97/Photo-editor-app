@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -28,10 +29,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.glidebitmappool.GlideBitmapPool;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class UsePreviouslyEditedImageActivity extends AppCompatActivity {
 
@@ -80,7 +84,7 @@ public class UsePreviouslyEditedImageActivity extends AppCompatActivity {
         {
             pdLoading.dismiss();
         }
-        //GlideBitmapPool.clearMemory();
+        GlideBitmapPool.clearMemory();
     }
 
     @Override
@@ -88,9 +92,12 @@ public class UsePreviouslyEditedImageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_use_previously_edited_image);
 
+
+        helper.deleteUnnessaryImages();
+
         pdLoading = new ProgressDialog(UsePreviouslyEditedImageActivity.this);
 
-        //GlideBitmapPool.clearMemory();
+        GlideBitmapPool.clearMemory();
 
         //overridePendingTransition(R.anim.slidein, R.anim.slideout);
 
@@ -283,6 +290,20 @@ public class UsePreviouslyEditedImageActivity extends AppCompatActivity {
                     MainActivity.filePaths.clear();
                     MainActivity.imagePosition = 0;
 
+                    WindowManager wm = (WindowManager) getApplication().getSystemService(Context.WINDOW_SERVICE);
+                    Display display = wm.getDefaultDisplay();
+                    DisplayMetrics metrics = new DisplayMetrics();
+                    display.getMetrics(metrics);
+
+
+
+                    //selectedImage = getResizedBitmap(selectedImage,1500);
+
+                    //selectedImage = decodeSampledBitmapFromResource(getRealPathFromDocumentUri(UsePreviouslyEditedImageActivity.this,getImageUri(UsePreviouslyEditedImageActivity.this,selectedImage)),metrics.widthPixels,metrics.heightPixels);
+                    MainActivity.filePaths.add(getImageUri(UsePreviouslyEditedImageActivity.this,selectedImage));
+
+
+
 
                     MainActivity.images.add(selectedImage);
                     MainActivity.filePaths.add(getImageUri(getApplicationContext(),selectedImage));
@@ -308,9 +329,9 @@ public class UsePreviouslyEditedImageActivity extends AppCompatActivity {
             ImageList.setEnabled(true);
             pdLoading.dismiss();
 
-            images.clear();
-            dates.clear();
-            ids.clear();
+            //images.clear();
+            //dates.clear();
+            //ids.clear();
         }
 
     }
@@ -329,6 +350,61 @@ public class UsePreviouslyEditedImageActivity extends AppCompatActivity {
             width = (int) (height * bitmapRatio);
         }
         return Bitmap.createScaledBitmap(image, width, height, true);
+    }
+    static Bitmap decodeSampledBitmapFromResource(String path,int reqWidth,
+                                                  int reqHeight) {
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(path, options);
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeFile(path,options);
+    }
+    //Given the bitmap size and View size calculate a subsampling size (powers of 2)
+    static int calculateInSampleSize( BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        int inSampleSize = 1;   //Default subsampling size
+        // See if image raw height and width is bigger than that of required view
+        if (options.outHeight > reqHeight || options.outWidth > reqWidth) {
+            //bigger
+            final int halfHeight = options.outHeight / 2;
+            final int halfWidth = options.outWidth / 2;
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) > reqHeight
+                    && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+        return inSampleSize;
+    }
+    public static String getRealPathFromDocumentUri(Context context, Uri uri){
+        String filePath = "";
+
+        Pattern p = Pattern.compile("(\\d+)$");
+        Matcher m = p.matcher(uri.toString());
+        if (!m.find()) {
+            //Log.e(ImageConverter.class.getSimpleName(), "ID for requested image not found: " + uri.toString());
+            return filePath;
+        }
+        String imgId = m.group();
+
+        String[] column = { MediaStore.Images.Media.DATA };
+        String sel = MediaStore.Images.Media._ID + "=?";
+
+        Cursor cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                column, sel, new String[]{ imgId }, null);
+
+        int columnIndex = cursor.getColumnIndex(column[0]);
+
+        if (cursor.moveToFirst()) {
+            filePath = cursor.getString(columnIndex);
+        }
+        cursor.close();
+
+        return filePath;
     }
 }
 

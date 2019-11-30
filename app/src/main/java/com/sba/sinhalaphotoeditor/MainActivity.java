@@ -13,17 +13,21 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.media.ExifInterface;
 import android.media.Image;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Handler;
 import android.provider.MediaStore;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -42,6 +46,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.glidebitmappool.GlideBitmapFactory;
+import com.glidebitmappool.GlideBitmapPool;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -84,6 +90,13 @@ public class MainActivity extends AppCompatActivity {
 
     ImageView usePreviousBitmap;
 
+    ConstraintLayout createImageFromLibrary;
+    ConstraintLayout pickImageFromDb;
+    ConstraintLayout pickImageFromGallery;
+    TextView useOne;
+
+    ImageView roundImage;
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
@@ -101,9 +114,9 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-               bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), CurrentWorkingFilePath);
+               //bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), CurrentWorkingFilePath);
 
-                //bitmap = GlideBitmapFactory.decodeFile(getRealPathFromDocumentUri(MainActivity.this,CurrentWorkingFilePath));
+                bitmap = GlideBitmapFactory.decodeFile(getRealPathFromDocumentUri(MainActivity.this,CurrentWorkingFilePath));
 
 
 
@@ -124,10 +137,6 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-                /*
-
-                bitmap = getResizedBitmap(bitmap,1500);*/
-
                 WindowManager wm = (WindowManager) getApplication().getSystemService(Context.WINDOW_SERVICE);
                 Display display = wm.getDefaultDisplay();
                 DisplayMetrics metrics = new DisplayMetrics();
@@ -135,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
 
                // bitmap = scale(bitmap,metrics.widthPixels,metrics.heightPixels);
 
-                //bitmap = getResizedBitmap(bitmap,1500);*/
+                bitmap = getResizedBitmap(bitmap,1500);
                 bitmap = decodeSampledBitmapFromResource(getRealPathFromDocumentUri(MainActivity.this,getImageUri(MainActivity.this,bitmap)),metrics.widthPixels,metrics.heightPixels);
                 CurrentWorkingFilePath = getImageUri(MainActivity.this,bitmap);
 
@@ -147,23 +156,18 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-                images.add(bitmap);
-                filePaths.add(CurrentWorkingFilePath);
+                images.add(0,bitmap);
+                filePaths.add(0,CurrentWorkingFilePath);
                 startActivity(new Intent(getApplicationContext(),EditorActivity.class));
                 dialog.dismiss();
 
             }
             catch (Exception e)
             {
-
-            }
-
-            {
-
                 try {
 
-                    bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), CurrentWorkingFilePath);
-                   // bitmap = GlideBitmapFactory.decodeFile(getRealPathFromDocumentUri(MainActivity.this,CurrentWorkingFilePath));
+                    // bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), CurrentWorkingFilePath);
+                    bitmap = GlideBitmapFactory.decodeFile(getRealPathFromDocumentUri(MainActivity.this,CurrentWorkingFilePath));
 
 
 
@@ -174,21 +178,25 @@ public class MainActivity extends AppCompatActivity {
 
                     //bitmap = scale(bitmap,metrics.widthPixels,metrics.heightPixels);
 //
-                    //bitmap = getResizedBitmap(bitmap,1500);
+                    bitmap = getResizedBitmap(bitmap,1500);
 
                     bitmap = decodeSampledBitmapFromResource(getRealPathFromDocumentUri(MainActivity.this,data.getData()),metrics.widthPixels,metrics.heightPixels);
 
-                    images.add(bitmap);
+                    images.add(0,bitmap);
                     CurrentWorkingFilePath = data.getData();
-                    filePaths.add(CurrentWorkingFilePath);
+                    filePaths.add(0,CurrentWorkingFilePath);
                     startActivity(new Intent(getApplicationContext(),EditorActivity.class));
                     dialog.dismiss();
                 }
                 catch (Exception es)
                 {
-                    Toast.makeText(this, "" + es.getMessage(), Toast.LENGTH_SHORT).show();
                     es.printStackTrace();
                 }
+            }
+
+            {
+
+
 
 
             }
@@ -201,14 +209,47 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
+
+        createBitmap = (ImageView) findViewById(R.id.createBitmap);
+        createImageFromLibrary = (ConstraintLayout) findViewById(R.id.createImageFromLibrary);
+        pickImageFromDb = (ConstraintLayout) findViewById(R.id.pickImageFromDb);
+        pickImageFromGallery = (ConstraintLayout) findViewById(R.id.pickImageFromGallery);
+        imageView = (ImageView) findViewById(R.id.imageView);
+        roundImage = (ImageView) findViewById(R.id.roundImage);
+        selectPictureText = findViewById(R.id.selectPictureText);
+
+
+
+
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#018577")));
+
+
         Runtime rt = Runtime.getRuntime();
         int maxMemory = (int)rt.freeMemory();
-        //GlideBitmapPool.initialize(maxMemory); // 10mb max memory size
-        Toast.makeText(this, "" + maxMemory, Toast.LENGTH_LONG).show();
+        GlideBitmapPool.initialize(maxMemory);
 
 
 
-        imageView = (ImageView) findViewById(R.id.imageView);
+
+
+        //pickImageFromGallery.animate().alpha(0.0f).setDuration(0).translationY(2000);
+
+
+        Animation top = AnimationUtils.loadAnimation(MainActivity.this, R.anim.bottomtotop);
+        Animation bottom = AnimationUtils.loadAnimation(MainActivity.this, R.anim.toptobottom);
+        pickImageFromGallery.startAnimation(top);
+        createImageFromLibrary.startAnimation(top);
+        pickImageFromDb.startAnimation(top);
+        roundImage.startAnimation(bottom);
+        selectPictureText.startAnimation(bottom);
+
+
+
+
+
+
+
+
         Animation pulse = AnimationUtils.loadAnimation(this, R.anim.pulse);
         imageView.startAnimation(pulse);
 
@@ -218,13 +259,124 @@ public class MainActivity extends AppCompatActivity {
         dialog = new ProgressDialog(MainActivity.this);
         dialog.setMessage("Loading");
 
+        useOne = (TextView) findViewById(R.id.useOne);
+        useOne.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                {
+
+                    if(!isPermissonGranted())
+                    {
+                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                    }
+                    if(!isPermissonGranted2())
+                    {
+                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
+                    }
+                    if(isPermissonGranted() && isPermissonGranted2())
+                    {
+                        startActivity(new Intent(MainActivity.this,UsePreviouslyEditedImageActivity.class));
+                    }
+                }
+                else
+                {
+                    startActivity(new Intent(MainActivity.this,UsePreviouslyEditedImageActivity.class));
+                }
+            }
+        });
 
 
-        createBitmap = (ImageView) findViewById(R.id.createBitmap);
 
+
+
+
+        pickImageFromDb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                {
+
+                    if(!isPermissonGranted())
+                    {
+                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                    }
+                    if(!isPermissonGranted2())
+                    {
+                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
+                    }
+                    if(isPermissonGranted() && isPermissonGranted2())
+                    {
+                        startActivity(new Intent(MainActivity.this,UsePreviouslyEditedImageActivity.class));
+                    }
+                }
+                else
+                {
+                    startActivity(new Intent(MainActivity.this,UsePreviouslyEditedImageActivity.class));
+                }
+
+            }
+        });
+        createImageFromLibrary.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                {
+
+                    if(!isPermissonGranted())
+                    {
+                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                    }
+                    if(!isPermissonGranted2())
+                    {
+                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
+                    }
+                    if(isPermissonGranted() && isPermissonGranted2())
+                    {
+                        startActivity(new Intent(getApplicationContext(),CreateABackgroundActivity.class));
+                    }
+                }
+                else
+                {
+                    startActivity(new Intent(getApplicationContext(),CreateABackgroundActivity.class));
+                }
+
+            }
+        });
 
         createBitmap.startAnimation(pulse);
         createOne = (TextView) findViewById(R.id.createOne);
+
+
+        createOne.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                {
+
+                    if(!isPermissonGranted())
+                    {
+                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                    }
+                    if(!isPermissonGranted2())
+                    {
+                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
+                    }
+                    if(isPermissonGranted() && isPermissonGranted2())
+                    {
+                        startActivity(new Intent(getApplicationContext(),CreateABackgroundActivity.class));
+                    }
+                }
+                else
+                {
+                    startActivity(new Intent(getApplicationContext(),CreateABackgroundActivity.class));
+                }
+            }
+        });
         fromGalery = (TextView) findViewById(R.id.fromGalery);
 
         createBitmap.setOnClickListener(new View.OnClickListener() {
@@ -256,12 +408,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        selectPictureText = findViewById(R.id.selectPictureText);
 
-        Typeface typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.kaputaunicode);
-        selectPictureText.setTypeface(typeface);
-        createOne.setTypeface(typeface);
-        fromGalery.setTypeface(typeface);
+
+        //Typeface typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.kaputaunicode);
+        //selectPictureText.setTypeface(typeface);
+        //createOne.setTypeface(typeface);
+        //fromGalery.setTypeface(typeface);
 
         usePreviousBitmap = (ImageView) findViewById(R.id.usePreviousBitmap);
         usePreviousBitmap.startAnimation(pulse);
@@ -532,7 +684,7 @@ public class MainActivity extends AppCompatActivity {
     public Uri getImageUri(Context inContext, Bitmap inImage)
     {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        inImage.compress(Bitmap.CompressFormat.JPEG, 0, bytes);
         String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
         return Uri.parse(path);
     }
@@ -596,7 +748,7 @@ public class MainActivity extends AppCompatActivity {
                     {
 
                         images.remove(i);
-                        //GlideBitmapPool.clearMemory();
+                        GlideBitmapPool.clearMemory();
                     }
                 }
 

@@ -5,102 +5,140 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:scrollbars="none"
-    android:background="@drawable/backgroundblur"
     xmlns:android="http://schemas.android.com/apk/res/android" >
 
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="50dp"
     tools:context=".CreateABackgroundActivity">
 
-
     <ImageView
-        android:id="@+id/userCreatedImage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:adjustViewBounds="true"
-        android:background="@drawable/imageborder"
-        android:maxHeight="300dp"
-        android:padding="5dp"
-        android:src="@drawable/createbitmap"
+        android:id="@+id/topGreenPannel"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:background="#018577"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 
-    <EditText
-        android:id="@+id/width"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/imageView2"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="32dp"
-        android:alpha="0.6"
-        android:background="@drawable/edittext_background"
-        android:hint="Width"
-        android:inputType="numberDecimal"
-        android:textColor="@android:color/black"
-        android:textColorHint="@android:color/black"
+        android:layout_height="match_parent"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="4dp"
+        android:background="@drawable/custom_drop_shadow_drawable"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/userCreatedImage" />
-
-    <EditText
-        android:id="@+id/height"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="32dp"
-        android:alpha="0.6"
-        android:background="@drawable/edittext_background"
-        android:hint="Height"
-        android:inputType="numberDecimal"
-        android:textColor="@android:color/black"
-        android:textColorHint="@android:color/black"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/width" />
-
-    <ImageView
-        android:id="@+id/pickColor"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="32dp"
-        android:src="@drawable/ic_colors"
-        app:layout_constraintStart_toStartOf="@+id/height"
-        app:layout_constraintTop_toBottomOf="@+id/height" />
+        app:layout_constraintTop_toTopOf="@+id/topGreenPannel">
 
 
-    <Button
-        android:id="@+id/create"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginStart="90dp"
-        android:layout_marginEnd="32dp"
-        android:background="@drawable/border"
-        android:text="Create"
-        app:layout_constraintEnd_toEndOf="@+id/height"
-        app:layout_constraintStart_toEndOf="@+id/pickColor"
-        app:layout_constraintTop_toTopOf="@+id/pickColor" />
+        <ImageView
+            android:id="@+id/userCreatedImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:adjustViewBounds="true"
+            android:background="@drawable/imageborder"
+            android:maxHeight="300dp"
+            android:padding="5dp"
+            android:src="@drawable/createbitmap"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/width"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="32dp"
+            android:alpha="0.6"
+            android:background="@drawable/edittext_background"
+            android:hint="Width"
+            android:inputType="numberDecimal"
+            android:textColor="@android:color/black"
+            android:textColorHint="@android:color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/userCreatedImage" />
+
+        <EditText
+            android:id="@+id/height"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="32dp"
+            android:alpha="0.6"
+            android:background="@drawable/edittext_background"
+            android:hint="Height"
+            android:inputType="numberDecimal"
+            android:textColor="@android:color/black"
+            android:textColorHint="@android:color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/width" />
+
+        <ImageView
+            android:id="@+id/pickColor"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="24dp"
+            android:src="@drawable/ic_color_blue"
+            app:layout_constraintStart_toStartOf="@+id/height"
+            app:layout_constraintTop_toBottomOf="@+id/height" />
+
+        <Button
+            android:id="@+id/create"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginStart="90dp"
+            android:layout_marginEnd="32dp"
+            android:background="@drawable/border"
+            android:text="Create"
+            app:layout_constraintBottom_toBottomOf="@+id/pickColor"
+            app:layout_constraintEnd_toEndOf="@+id/height"
+            app:layout_constraintStart_toEndOf="@+id/pickColor"
+            app:layout_constraintTop_toTopOf="@+id/pickColor" />
 
 
-    <Button
-        android:id="@+id/useImage"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="32dp"
-        android:background="@drawable/border"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:text="Use Image"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/create" />
+        <Button
+            android:id="@+id/useImage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="32dp"
+            android:background="@drawable/border"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="Use Image"
+            app:layout_constraintBottom_toBottomOf="@+id/imageView2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/create" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!--
+
+
+
+
+
+
+
+
+
+-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -28,6 +28,9 @@ import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
 
 import java.io.ByteArrayOutputStream;
 
+import static com.sba.sinhalaphotoeditor.MainActivity.decodeSampledBitmapFromResource;
+import static com.sba.sinhalaphotoeditor.UsePreviouslyEditedImageActivity.getRealPathFromDocumentUri;
+
 public class CreateABackgroundActivity extends AppCompatActivity {
 
     ImageView userCreatedImage;
@@ -199,7 +202,7 @@ public class CreateABackgroundActivity extends AppCompatActivity {
     public Uri getImageUri(Context inContext, Bitmap inImage)
     {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        inImage.compress(Bitmap.CompressFormat.JPEG, 0, bytes);
         String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
         return Uri.parse(path);
     }

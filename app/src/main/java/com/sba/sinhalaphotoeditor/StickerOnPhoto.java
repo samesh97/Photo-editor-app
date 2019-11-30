@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -29,6 +30,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 
+import com.glidebitmappool.GlideBitmapPool;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
 
 import java.io.File;
@@ -93,6 +95,8 @@ public class StickerOnPhoto extends AppCompatActivity implements RotationGesture
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#018577")));
 
         //setup the scale detection and rotation detection for the textview
         scaleGestureDetector = new ScaleGestureDetector(StickerOnPhoto.this,new simpleOnScaleGestureListener());
@@ -223,35 +227,53 @@ public class StickerOnPhoto extends AppCompatActivity implements RotationGesture
         //RelativeLayout.LayoutParams baseLayoutParams = new RelativeLayout.LayoutParams(width,height);
         baseLayout.setBackgroundColor(Color.parseColor("#000000"));
 
-        //working layout
-        workingLayout = new RelativeLayout(StickerOnPhoto.this);
-        RelativeLayout.LayoutParams workingLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
-        workingLayoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
-        workingLayout.setLayoutParams(workingLayoutParams);
 
-        //image view
-        sourceImageView = new ImageView(StickerOnPhoto.this);
-        RelativeLayout.LayoutParams sourceImageParams;
-        if(bitmapForImageView.getHeight() > bitmapForImageView.getWidth())
+        if(width == height)
         {
-            int y = (metrics.widthPixels / width) * height;
-            int dif = y - metrics.heightPixels;
-            y = y + dif;
-            int x = (((metrics.heightPixels) / (height)) * (width + dif));
-            //x = x + (x - metrics.widthPixels);
-
-            sourceImageParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+            width = (int )pixelTodp(StickerOnPhoto.this,width);
+            workingLayout = new RelativeLayout(StickerOnPhoto.this);
+            RelativeLayout.LayoutParams workingLayoutParams = new RelativeLayout.LayoutParams(metrics.widthPixels,metrics.widthPixels);
+            workingLayout.setBackgroundColor(Color.TRANSPARENT);
+            workingLayoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+            workingLayout.setLayoutParams(workingLayoutParams);
         }
-        else if(bitmapForImageView.getHeight() < bitmapForImageView.getWidth())
+        else if(height > width)
         {
-            sourceImageParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            width = (int )pixelTodp(StickerOnPhoto.this,width);
+            height = (int) pixelTodp(StickerOnPhoto.this,height);
+
+
+
+
+            workingLayout = new RelativeLayout(StickerOnPhoto.this);
+            RelativeLayout.LayoutParams workingLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,metrics.heightPixels);
+            workingLayout.setBackgroundColor(Color.TRANSPARENT);
+            workingLayoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+            workingLayout.setLayoutParams(workingLayoutParams);
         }
         else
         {
-            sourceImageParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            width = (int )pixelTodp(StickerOnPhoto.this,width);
+            height = (int) pixelTodp(StickerOnPhoto.this,height);
+
+            workingLayout = new RelativeLayout(StickerOnPhoto.this);
+            RelativeLayout.LayoutParams workingLayoutParams = new RelativeLayout.LayoutParams(metrics.widthPixels,RelativeLayout.LayoutParams.WRAP_CONTENT);
+            workingLayout.setBackgroundColor(Color.TRANSPARENT);
+            workingLayoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+            workingLayout.setLayoutParams(workingLayoutParams);
         }
-        sourceImageParams.addRule(RelativeLayout.CENTER_IN_PARENT);
-        sourceImageView.setLayoutParams(sourceImageParams);
+
+
+
+
+        //working layout
+
+
+        //image view
+        sourceImageView = new ImageView(StickerOnPhoto.this);
+        //sourceImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+
         //sourceImageView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,height));
 
         //textview
@@ -423,7 +445,7 @@ public class StickerOnPhoto extends AppCompatActivity implements RotationGesture
                 String currentDateandTime = sdf.format(new Date());
                 helper.AddImage(helper.getBytes((MainActivity.images.get(MainActivity.imagePosition))),currentDateandTime);
                 MainActivity.deleteUndoRedoImages();
-                //GlideBitmapPool.clearMemory();
+                GlideBitmapPool.clearMemory();
             }
             });
         }
@@ -518,6 +540,11 @@ public class StickerOnPhoto extends AppCompatActivity implements RotationGesture
         canvas.setMatrix(scaleMatrix);
         canvas.drawBitmap(bitmap, middleX - bitmap.getWidth() / 2, middleY - bitmap.getHeight() / 2, new Paint(Paint.FILTER_BITMAP_FLAG));
         return scaledBitmap;
+    }
+    public static float pixelTodp(Context c, float pixel) {
+        float density = c.getResources().getDisplayMetrics().density;
+        float dp = pixel / density;
+        return dp;
     }
 
 

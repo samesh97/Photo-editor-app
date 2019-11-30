@@ -47,6 +47,7 @@ import com.flask.colorpicker.ColorPickerView;
 import com.flask.colorpicker.OnColorSelectedListener;
 import com.flask.colorpicker.builder.ColorPickerClickListener;
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
+import com.glidebitmappool.GlideBitmapPool;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
 
 import java.io.File;
@@ -128,6 +129,7 @@ public class TextOnImage extends AppCompatActivity implements RotationGestureDet
 
 
 
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#018577")));
 
         Typeface typeface;
         typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.iskpota);
@@ -732,7 +734,7 @@ public class TextOnImage extends AppCompatActivity implements RotationGestureDet
                 String currentDateandTime = sdf.format(new Date());
                 helper.AddImage(helper.getBytes((MainActivity.images.get(MainActivity.imagePosition))),currentDateandTime);
                 MainActivity.deleteUndoRedoImages();
-                //GlideBitmapPool.clearMemory();
+                GlideBitmapPool.clearMemory();
             }
             });
         }

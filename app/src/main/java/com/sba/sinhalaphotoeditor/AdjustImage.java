@@ -13,6 +13,7 @@ import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -29,7 +30,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 
-
+import com.glidebitmappool.GlideBitmapPool;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
 import com.warkiz.tickseekbar.OnSeekChangeListener;
 import com.warkiz.tickseekbar.SeekParams;
@@ -124,6 +125,8 @@ public class AdjustImage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_adjust_image);
+
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#018577")));
 
 
         render = new Render(AdjustImage.this);
@@ -284,7 +287,7 @@ public class AdjustImage extends AppCompatActivity {
                     }
                     MainActivity.deleteUndoRedoImages();
 
-                    //GlideBitmapPool.clearMemory();
+                    GlideBitmapPool.clearMemory();
 
 
 

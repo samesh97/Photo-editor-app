@@ -93,7 +93,7 @@ public class EditorActivity extends AppCompatActivity {
     ArrayList<Bitmap> stickerList4 = new ArrayList<>();
     ArrayList<Bitmap> stickerList5 = new ArrayList<>();
 
-    //private AdView mAdView;
+//    private AdView mAdView;
 
 
     DatabaseHelper helper = new DatabaseHelper(EditorActivity.this);
@@ -148,7 +148,6 @@ public class EditorActivity extends AppCompatActivity {
                     // MainActivity.images.remove(MainActivity.imagePosition);
                     MainActivity.CurrentWorkingFilePath = MainActivity.filePaths.get(--MainActivity.imagePosition);
                     userSelectedImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
-                    Toast.makeText(this, ""  + MainActivity.imagePosition, Toast.LENGTH_SHORT).show();
                 }
                 catch (Exception e)
                 {
@@ -187,7 +186,6 @@ public class EditorActivity extends AppCompatActivity {
                     // MainActivity.images.remove(MainActivity.imagePosition);
                     MainActivity.CurrentWorkingFilePath = MainActivity.filePaths.get(MainActivity.imagePosition++);
                     userSelectedImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
-                    Toast.makeText(this, ""  + MainActivity.imagePosition, Toast.LENGTH_SHORT).show();
                 }
                 catch (Exception e)
                 {
@@ -465,7 +463,7 @@ public class EditorActivity extends AppCompatActivity {
 
 
 
-     /*   MobileAds.initialize(this, new OnInitializationCompleteListener() {
+/*        MobileAds.initialize(this, new OnInitializationCompleteListener() {
             @Override
             public void onInitializationComplete(InitializationStatus initializationStatus) {
             }
@@ -503,7 +501,7 @@ public class EditorActivity extends AppCompatActivity {
         }
 
 
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#2c2f33")));
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#018577")));
 
         dia = new Dialog(this, R.style.DialogSlideAnim);
 
@@ -989,7 +987,7 @@ public class EditorActivity extends AppCompatActivity {
     public Uri getImageUri(Context inContext, Bitmap inImage)
     {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        inImage.compress(Bitmap.CompressFormat.JPEG, 0, bytes);
         String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
         return Uri.parse(path);
     }

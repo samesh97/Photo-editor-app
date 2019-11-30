@@ -17,6 +17,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
@@ -24,19 +25,112 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Random;
 
+import render.animations.Flip;
+import render.animations.Render;
+
 public class ImageSavingActivity extends AppCompatActivity {
 
     ImageView saveFinalImage;
     ImageView userSavingImage;
     ImageView shareFinalImage;
 
+
+    ImageView shareImageView;
+    TextView fromGalery;
+
+    Render render;
+
+    ImageView downloadImageView;
+
+    TextView downloadImageText;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_saving);
 
+        render = new Render(ImageSavingActivity.this);
+
         saveFinalImage = (ImageView) findViewById(R.id.saveFinalImage);
         userSavingImage = (ImageView) findViewById(R.id.userSavingImage);
+
+        fromGalery = findViewById(R.id.fromGalery);
+
+        shareImageView = findViewById(R.id.shareImageView);
+
+        downloadImageView = findViewById(R.id.downloadImageView);
+
+        downloadImageText = findViewById(R.id.downloadImageText);
+
+        shareImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                shareImageUri(getImageUri(getApplicationContext(),MainActivity.images.get(MainActivity.imagePosition)));
+            }
+        });
+
+        fromGalery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                shareImageUri(getImageUri(getApplicationContext(),MainActivity.images.get(MainActivity.imagePosition)));
+            }
+        });
+
+        downloadImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                new AlertDialog.Builder(ImageSavingActivity.this).setIcon(R.drawable.ic_star_half).setTitle("ඇප් එක Rate කරන්න")
+                        .setIcon(R.drawable.ic_star_half)
+                        .setMessage("මෙවැනි Apps තවත් නිර්මාණය කිරිමට අපට ඔබගේ වටිනා Rate එක ලබා දෙන්න!")
+                        .setPositiveButton("Okay", new DialogInterface.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which)
+                            {
+                                SaveImage(MainActivity.images.get(MainActivity.imagePosition));
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id="+"com.sba.sinhalaphotoeditor")));
+                            }
+                        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        SaveImage(MainActivity.images.get(MainActivity.imagePosition));
+                    }
+                }).show();
+            }
+        });
+
+        downloadImageText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                new AlertDialog.Builder(ImageSavingActivity.this).setIcon(R.drawable.ic_star_half).setTitle("ඇප් එක Rate කරන්න")
+                        .setIcon(R.drawable.ic_star_half)
+                        .setMessage("මෙවැනි Apps තවත් නිර්මාණය කිරිමට අපට ඔබගේ වටිනා Rate එක ලබා දෙන්න!")
+                        .setPositiveButton("Okay", new DialogInterface.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which)
+                            {
+                                SaveImage(MainActivity.images.get(MainActivity.imagePosition));
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id="+"com.sba.sinhalaphotoeditor")));
+                            }
+                        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        SaveImage(MainActivity.images.get(MainActivity.imagePosition));
+                    }
+                }).show();
+            }
+        });
+
+
+
+
         shareFinalImage = (ImageView) findViewById(R.id.shareFinalImage);
 
         shareFinalImage.setOnClickListener(new View.OnClickListener() {
@@ -74,6 +168,9 @@ public class ImageSavingActivity extends AppCompatActivity {
 
             }
         });
+
+        render.setAnimation(Flip.InX(userSavingImage));
+        render.start();
 
 
 
