@@ -221,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#018577")));
+//        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#018577")));
 
 
         Runtime rt = Runtime.getRuntime();

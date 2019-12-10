@@ -6,24 +6,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:scrollbars="none"
-    android:background="@android:color/white"
+    android:background="#114f5e"
     xmlns:android="http://schemas.android.com/apk/res/android" >
 
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
+    android:background="#114f5e"
     android:paddingBottom="50dp">
 
 
     <ImageView
         android:id="@+id/topGreenPannel"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
-        android:background="#018577"
+        android:layout_height="180dp"
+        android:background="@drawable/samplewalpaper"
+        android:scaleType="fitCenter"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+
+
 
     <ImageView
         android:id="@+id/bottomWhitePannel"
@@ -56,7 +61,7 @@
         android:fontFamily="@font/kaputaunicode"
         android:gravity="center"
         android:text="පිංතූරයක් තෝරා ගන්න"
-        android:textColor="#018577"
+        android:textColor="#FFFFFF"
         android:textSize="30sp"
         android:textStyle="bold"
         android:typeface="sans"
@@ -69,9 +74,9 @@
         android:id="@+id/pickImageFromGallery"
         android:layout_width="match_parent"
         android:layout_height="110dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="32dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="10dp"
         android:background="@drawable/custom_drop_shadow_drawable"
         android:onClick="showFileChooser"
         app:layout_constraintEnd_toEndOf="parent"
@@ -114,23 +119,18 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-
-
-
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/createImageFromLibrary"
         android:layout_width="match_parent"
         android:layout_height="110dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="10dp"
         android:background="@drawable/custom_drop_shadow_drawable"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pickImageFromGallery" >
-
+        app:layout_constraintTop_toBottomOf="@+id/pickImageFromGallery">
 
 
         <ImageView
@@ -162,19 +162,16 @@
             app:layout_constraintTop_toTopOf="@+id/createBitmap" />
 
 
-
-
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/pickImageFromDb"
         android:layout_width="match_parent"
         android:layout_height="110dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="10dp"
         android:background="@drawable/custom_drop_shadow_drawable"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"

@@ -52,38 +52,35 @@ public class AddEffects extends AppCompatActivity {
         System.loadLibrary("NativeImageProcessor");
     }
 
-    CircleImageView filter1, filter2, filter3, filter4, filter5, filter6, filter7,filter8;
-    CircleImageView filter9, filter10, filter11, filter12, filter13, filter14, filter15,filter16;
-    Bitmap currentEditingBitmap;
-    ArrayList<CircleImageView> images = new ArrayList<>();
-    ImageView userSelectedImage;
+    private CircleImageView filter1, filter2, filter3, filter4, filter5, filter6, filter7,filter8;
+    private CircleImageView filter9, filter10, filter11, filter12, filter13, filter14, filter15,filter16;
+    private Bitmap currentEditingBitmap;
+    private ArrayList<CircleImageView> images = new ArrayList<>();
+    private ImageView userSelectedImage;
 
 
-    Bitmap filter1Bitmap,filter2Bitmap,filter3Bitmap,filter4Bitmap,filter5Bitmap,filter6Bitmap,filter7Bitmap,filter8Bitmap = null;
-    Bitmap filter9Bitmap,filter10Bitmap,filter11Bitmap,filter12Bitmap,filter13Bitmap,filter14Bitmap,filter15Bitmap,filter16Bitmap = null;
+    private Bitmap filter1Bitmap,filter2Bitmap,filter3Bitmap,filter4Bitmap,filter5Bitmap,filter6Bitmap,filter7Bitmap,filter8Bitmap = null;
+    private Bitmap filter9Bitmap,filter10Bitmap,filter11Bitmap,filter12Bitmap,filter13Bitmap,filter14Bitmap,filter15Bitmap,filter16Bitmap = null;
 
-    ProgressDialog dialog;
-    ProgressDialog pdLoading;
+    private ProgressDialog dialog;
+    private ProgressDialog pdLoading;
 
-    Bitmap addedEffectBitmap = null;
-    private Handler handler = new Handler();
-    boolean isImageCreated = false;
+    private Bitmap addedEffectBitmap = null;
 
-    ArrayList<Bitmap> allFilterBitmaps = new ArrayList<>();
+    private ArrayList<Bitmap> allFilterBitmaps = new ArrayList<>();
 
 
-    public static final int INTERVAL = 1000;
     //private AdView mAdView;
 
-    DatabaseHelper helper = new DatabaseHelper(AddEffects.this);
+    private DatabaseHelper helper = new DatabaseHelper(AddEffects.this);
 
-    List<Filter> filters;
+    private List<Filter> filters;
 
-    AsyncCaller caller;
+    private AsyncCaller caller;
 
-    String type = null;
+    private String type = null;
 
-    Render render;
+    private Render render;
 
 
 
@@ -172,10 +169,8 @@ public class AddEffects extends AppCompatActivity {
         GlideBitmapPool.initialize(maxMemory); // 10mb max memory size
 
         render = new Render(AddEffects.this);
-
         dialog = new ProgressDialog(AddEffects.this);
         pdLoading = new ProgressDialog(AddEffects.this);
-
         caller = new AsyncCaller();
 
 
@@ -196,27 +191,12 @@ public class AddEffects extends AppCompatActivity {
 
 
 
+        init();
 
 
+        setData();
 
 
-        filter1 = (CircleImageView) findViewById(R.id.filter1);
-        filter2 = (CircleImageView) findViewById(R.id.filter2);
-        filter3 = (CircleImageView) findViewById(R.id.filter3);
-        filter4 = (CircleImageView) findViewById(R.id.filter4);
-        filter5 = (CircleImageView) findViewById(R.id.filter5);
-        filter6 = (CircleImageView) findViewById(R.id.filter6);
-        filter7 = (CircleImageView) findViewById(R.id.filter7);
-        filter8 = (CircleImageView) findViewById(R.id.filter8);
-        filter9 = (CircleImageView) findViewById(R.id.filter9);
-        filter10 = (CircleImageView) findViewById(R.id.filter10);
-        filter11 = (CircleImageView) findViewById(R.id.filter11);
-        filter12 = (CircleImageView) findViewById(R.id.filter12);
-        filter13 = (CircleImageView) findViewById(R.id.filter13);
-        filter14 = (CircleImageView) findViewById(R.id.filter14);
-        filter15 = (CircleImageView) findViewById(R.id.filter15);
-        filter16 = (CircleImageView) findViewById(R.id.filter16);
-        userSelectedImage = (ImageView) findViewById(R.id.userSelectedImage);
 
 
 
@@ -229,61 +209,6 @@ public class AddEffects extends AppCompatActivity {
         //imageProcessor.doInvert(bitmap);
 
 
-
-        images.add(filter1);
-        images.add(filter2);
-        images.add(filter3);
-        images.add(filter4);
-        images.add(filter5);
-        images.add(filter6);
-        images.add(filter7);
-        images.add(filter8);
-        images.add(filter9);
-        images.add(filter10);
-        images.add(filter11);
-        images.add(filter12);
-        images.add(filter13);
-        images.add(filter14);
-        images.add(filter15);
-        images.add(filter16);
-
-        allFilterBitmaps.add(filter1Bitmap);
-        allFilterBitmaps.add(filter2Bitmap);
-        allFilterBitmaps.add(filter3Bitmap);
-        allFilterBitmaps.add(filter4Bitmap);
-        allFilterBitmaps.add(filter5Bitmap);
-        allFilterBitmaps.add(filter6Bitmap);
-        allFilterBitmaps.add(filter7Bitmap);
-        allFilterBitmaps.add(filter8Bitmap);
-        allFilterBitmaps.add(filter9Bitmap);
-        allFilterBitmaps.add(filter10Bitmap);
-        allFilterBitmaps.add(filter11Bitmap);
-        allFilterBitmaps.add(filter12Bitmap);
-        allFilterBitmaps.add(filter13Bitmap);
-        allFilterBitmaps.add(filter14Bitmap);
-        allFilterBitmaps.add(filter15Bitmap);
-        allFilterBitmaps.add(filter16Bitmap);
-
-
-
-        currentEditingBitmap = MainActivity.images.get(MainActivity.imagePosition);
-
-
-        userSelectedImage.setImageBitmap(currentEditingBitmap);
-        render.setAnimation(Flip.InX(userSelectedImage));
-        render.start();
-
-        Bitmap resizedImage = null;
-
-        filters = FilterPack.getFilterPack(AddEffects.this);
-
-
-        for (int i = 0; i < images.size(); i++)
-        {
-            resizedImage = getResizedBitmap(currentEditingBitmap,150);
-            images.get(i).setImageBitmap(filters.get(i).processFilter(resizedImage));
-
-        }
 
 
 
@@ -737,6 +662,87 @@ public class AddEffects extends AppCompatActivity {
 
 
 
+    }
+
+    private void setData()
+    {
+
+        images.add(filter1);
+        images.add(filter2);
+        images.add(filter3);
+        images.add(filter4);
+        images.add(filter5);
+        images.add(filter6);
+        images.add(filter7);
+        images.add(filter8);
+        images.add(filter9);
+        images.add(filter10);
+        images.add(filter11);
+        images.add(filter12);
+        images.add(filter13);
+        images.add(filter14);
+        images.add(filter15);
+        images.add(filter16);
+
+        allFilterBitmaps.add(filter1Bitmap);
+        allFilterBitmaps.add(filter2Bitmap);
+        allFilterBitmaps.add(filter3Bitmap);
+        allFilterBitmaps.add(filter4Bitmap);
+        allFilterBitmaps.add(filter5Bitmap);
+        allFilterBitmaps.add(filter6Bitmap);
+        allFilterBitmaps.add(filter7Bitmap);
+        allFilterBitmaps.add(filter8Bitmap);
+        allFilterBitmaps.add(filter9Bitmap);
+        allFilterBitmaps.add(filter10Bitmap);
+        allFilterBitmaps.add(filter11Bitmap);
+        allFilterBitmaps.add(filter12Bitmap);
+        allFilterBitmaps.add(filter13Bitmap);
+        allFilterBitmaps.add(filter14Bitmap);
+        allFilterBitmaps.add(filter15Bitmap);
+        allFilterBitmaps.add(filter16Bitmap);
+
+
+
+        currentEditingBitmap = MainActivity.images.get(MainActivity.imagePosition);
+
+
+        userSelectedImage.setImageBitmap(currentEditingBitmap);
+        render.setAnimation(Flip.InX(userSelectedImage));
+        render.start();
+
+        Bitmap resizedImage = null;
+
+        filters = FilterPack.getFilterPack(AddEffects.this);
+
+
+        for (int i = 0; i < images.size(); i++)
+        {
+            resizedImage = getResizedBitmap(currentEditingBitmap,150);
+            images.get(i).setImageBitmap(filters.get(i).processFilter(resizedImage));
+
+        }
+
+    }
+    private void init()
+    {
+
+        filter1 =  findViewById(R.id.filter1);
+        filter2 =  findViewById(R.id.filter2);
+        filter3 =  findViewById(R.id.filter3);
+        filter4 = findViewById(R.id.filter4);
+        filter5 = findViewById(R.id.filter5);
+        filter6 =  findViewById(R.id.filter6);
+        filter7 =  findViewById(R.id.filter7);
+        filter8 =  findViewById(R.id.filter8);
+        filter9 =  findViewById(R.id.filter9);
+        filter10 =  findViewById(R.id.filter10);
+        filter11 =  findViewById(R.id.filter11);
+        filter12 = findViewById(R.id.filter12);
+        filter13 =  findViewById(R.id.filter13);
+        filter14 = findViewById(R.id.filter14);
+        filter15 =  findViewById(R.id.filter15);
+        filter16 =  findViewById(R.id.filter16);
+        userSelectedImage =  findViewById(R.id.userSelectedImage);
     }
 
     public Bitmap getResizedBitmap(Bitmap image, int maxSize)
