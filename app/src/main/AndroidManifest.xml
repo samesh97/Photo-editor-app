@@ -16,8 +16,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".UsePreviouslyEditedImageActivity"
-            android:label="Edited Images"></activity>
+        <activity android:name=".walkthrough.WalkThroughActivity"
+            android:theme="@style/NoActionBarAppTheme"></activity>
+        <activity
+            android:name=".UsePreviouslyEditedImageActivity"
+            android:label="Edited Images" />
         <activity
             android:name=".AddEffects"
             android:label="Add Effect" />
@@ -40,8 +43,8 @@
         <activity
             android:name=".MainActivity"
             android:label="Editor"
-            android:theme="@style/NoActionBarAppTheme"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/NoActionBarAppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -61,12 +64,6 @@
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
-
-
-
-     <!-- <meta-data
-            android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3538783908730049~6469108180"/>-->
     </application>
 
 </manifest>

@@ -35,6 +35,7 @@ import com.zomato.photofilters.imageprocessors.Filter;
 
 
 import java.io.ByteArrayOutputStream;
+import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -75,8 +76,6 @@ public class AddEffects extends AppCompatActivity {
     private DatabaseHelper helper = new DatabaseHelper(AddEffects.this);
 
     private List<Filter> filters;
-
-    private AsyncCaller caller;
 
     private String type = null;
 
@@ -142,9 +141,7 @@ public class AddEffects extends AppCompatActivity {
     {
         if (item.getItemId() == R.id.setImage)
         {
-
             new RunInBackground().execute();
-
         }
         return true;
 
@@ -158,7 +155,15 @@ public class AddEffects extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_effects);
 
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#018577")));
+        try
+        {
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#018577")));
+        }
+        catch (NullPointerException e)
+        {
+            e.printStackTrace();
+        }
+
 
 
         GlideBitmapPool.clearMemory();
@@ -171,7 +176,10 @@ public class AddEffects extends AppCompatActivity {
         render = new Render(AddEffects.this);
         dialog = new ProgressDialog(AddEffects.this);
         pdLoading = new ProgressDialog(AddEffects.this);
-        caller = new AsyncCaller();
+        AsyncCaller caller = new AsyncCaller();
+
+
+
 
 
        /* MobileAds.initialize(this, new OnInitializationCompleteListener() {
@@ -192,9 +200,8 @@ public class AddEffects extends AppCompatActivity {
 
 
         init();
-
-
         setData();
+        onClickListners();
 
 
 
@@ -205,14 +212,9 @@ public class AddEffects extends AppCompatActivity {
 
 
 
-
-        //imageProcessor.doInvert(bitmap);
-
-
-
-
-
-
+    }
+    private void onClickListners()
+    {
         filter1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
@@ -235,8 +237,8 @@ public class AddEffects extends AppCompatActivity {
 
                 render.setAnimation(Bounce.In(filter1));
                 render.start();
-                    type = "0";
-                    new AsyncCaller().execute();
+                type = "0";
+                new AsyncCaller().execute();
 
             }
         });
@@ -289,8 +291,8 @@ public class AddEffects extends AppCompatActivity {
 
                 render.setAnimation(Bounce.In(filter3));
                 render.start();
-                    type = "2";
-                    //caller.execute();
+                type = "2";
+                //caller.execute();
                 new AsyncCaller().execute();
 
 
@@ -317,8 +319,8 @@ public class AddEffects extends AppCompatActivity {
                 render.setAnimation(Bounce.In(filter4));
                 render.start();
 
-                    type = "3";
-                    //caller.execute();
+                type = "3";
+                //caller.execute();
                 new AsyncCaller().execute();
 
 
@@ -344,8 +346,8 @@ public class AddEffects extends AppCompatActivity {
 
                 render.setAnimation(Bounce.In(filter5));
                 render.start();
-                    type = "4";
-                    //caller.execute();
+                type = "4";
+                //caller.execute();
                 new AsyncCaller().execute();
 
 
@@ -371,8 +373,8 @@ public class AddEffects extends AppCompatActivity {
                 render.setAnimation(Bounce.In(filter6));
                 render.start();
 
-                    type = "5";
-                    //caller.execute();
+                type = "5";
+                //caller.execute();
                 new AsyncCaller().execute();
 
 
@@ -398,8 +400,8 @@ public class AddEffects extends AppCompatActivity {
                 render.setAnimation(Bounce.In(filter7));
                 render.start();
 
-                    type = "6";
-                    //caller.execute();
+                type = "6";
+                //caller.execute();
                 new AsyncCaller().execute();
 
 
@@ -426,8 +428,8 @@ public class AddEffects extends AppCompatActivity {
 
                 render.setAnimation(Bounce.In(filter8));
                 render.start();
-                    type = "7";
-                    //caller.execute();
+                type = "7";
+                //caller.execute();
                 new AsyncCaller().execute();
 
 
@@ -454,8 +456,8 @@ public class AddEffects extends AppCompatActivity {
                 render.setAnimation(Bounce.In(filter9));
                 render.start();
 
-                    type = "8";
-                    //caller.execute();
+                type = "8";
+                //caller.execute();
                 new AsyncCaller().execute();
 
 
@@ -482,8 +484,8 @@ public class AddEffects extends AppCompatActivity {
                 render.setAnimation(Bounce.In(filter10));
                 render.start();
 
-                    type = "9";
-                    //caller.execute();
+                type = "9";
+                //caller.execute();
                 new AsyncCaller().execute();
 
 
@@ -510,8 +512,8 @@ public class AddEffects extends AppCompatActivity {
                 render.setAnimation(Bounce.In(filter11));
                 render.start();
 
-                    type = "10";
-                    //caller.execute();
+                type = "10";
+                //caller.execute();
                 new AsyncCaller().execute();
 
 
@@ -538,8 +540,8 @@ public class AddEffects extends AppCompatActivity {
 
                 render.setAnimation(Bounce.In(filter12));
                 render.start();
-                    type = "11";
-                    //caller.execute();
+                type = "11";
+                //caller.execute();
                 new AsyncCaller().execute();
 
 
@@ -566,8 +568,8 @@ public class AddEffects extends AppCompatActivity {
 
                 render.setAnimation(Bounce.In(filter13));
                 render.start();
-                    type = "12";
-                    //caller.execute();
+                type = "12";
+                //caller.execute();
                 new AsyncCaller().execute();
 
 
@@ -594,8 +596,8 @@ public class AddEffects extends AppCompatActivity {
 
                 render.setAnimation(Bounce.In(filter14));
                 render.start();
-                    type = "13";
-                    //caller.execute();
+                type = "13";
+                //caller.execute();
                 new AsyncCaller().execute();
 
 
@@ -622,8 +624,8 @@ public class AddEffects extends AppCompatActivity {
 
                 render.setAnimation(Bounce.In(filter15));
                 render.start();
-                    type = "14";
-                    //caller.execute();
+                type = "14";
+                //caller.execute();
                 new AsyncCaller().execute();
 
 
@@ -650,18 +652,13 @@ public class AddEffects extends AppCompatActivity {
                 }
                 render.setAnimation(Bounce.In(filter16));
                 render.start();
-                    type = "15";
-                    //caller.execute();
+                type = "15";
+                //caller.execute();
                 new AsyncCaller().execute();
 
 
             }
         });
-
-
-
-
-
     }
 
     private void setData()
@@ -794,69 +791,55 @@ public class AddEffects extends AppCompatActivity {
                 {
                     x = getResizedBitmap(currentEditingBitmap,1000);
 
-                    if(type.equals("0"))
-                    {
-                        allFilterBitmaps.set(0,filters.get(0).processFilter(x));
-                    }
-                    else if(type.equals("1"))
-                    {
-                        allFilterBitmaps.set(1,filters.get(1).processFilter(x));
-                    }
-                    else if(type.equals("2"))
-                    {
-                        allFilterBitmaps.set(2,filters.get(2).processFilter(x));
-                    }
-                    else if(type.equals("3"))
-                    {
-                        allFilterBitmaps.set(3,filters.get(3).processFilter(x));
-                    }
-                    else if(type.equals("4"))
-                    {
-                        allFilterBitmaps.set(4,filters.get(4).processFilter(x));
-                    }
-                    else if(type.equals("5"))
-                    {
-                        allFilterBitmaps.set(5,filters.get(5).processFilter(x));
-                    }
-                    else if(type.equals("6"))
-                    {
-                        allFilterBitmaps.set(6,filters.get(6).processFilter(x));
-                    }
-                    else if(type.equals("7"))
-                    {
-                        allFilterBitmaps.set(7,filters.get(7).processFilter(x));
-                    }
-                    else if(type.equals("8"))
-                    {
-                        allFilterBitmaps.set(8,filters.get(8).processFilter(x));
-                    }
-                    else if(type.equals("9"))
-                    {
-                        allFilterBitmaps.set(9,filters.get(9).processFilter(x));
-                    }
-                    else if(type.equals("10"))
-                    {
-                        allFilterBitmaps.set(10,filters.get(10).processFilter(x));
-                    }
-                    else if(type.equals("11"))
-                    {
-                        allFilterBitmaps.set(11,filters.get(11).processFilter(x));
-                    }
-                    else if(type.equals("12"))
-                    {
-                        allFilterBitmaps.set(12,filters.get(12).processFilter(x));
-                    }
-                    else if(type.equals("13"))
-                    {
-                        allFilterBitmaps.set(13,filters.get(13).processFilter(x));
-                    }
-                    else if(type.equals("14"))
-                    {
-                        allFilterBitmaps.set(14,filters.get(14).processFilter(x));
-                    }
-                    else if(type.equals("15"))
-                    {
-                        allFilterBitmaps.set(15,filters.get(15).processFilter(x));
+                    switch (type) {
+                        case "0":
+                            allFilterBitmaps.set(0, filters.get(0).processFilter(x));
+                            break;
+                        case "1":
+                            allFilterBitmaps.set(1, filters.get(1).processFilter(x));
+                            break;
+                        case "2":
+                            allFilterBitmaps.set(2, filters.get(2).processFilter(x));
+                            break;
+                        case "3":
+                            allFilterBitmaps.set(3, filters.get(3).processFilter(x));
+                            break;
+                        case "4":
+                            allFilterBitmaps.set(4, filters.get(4).processFilter(x));
+                            break;
+                        case "5":
+                            allFilterBitmaps.set(5, filters.get(5).processFilter(x));
+                            break;
+                        case "6":
+                            allFilterBitmaps.set(6, filters.get(6).processFilter(x));
+                            break;
+                        case "7":
+                            allFilterBitmaps.set(7, filters.get(7).processFilter(x));
+                            break;
+                        case "8":
+                            allFilterBitmaps.set(8, filters.get(8).processFilter(x));
+                            break;
+                        case "9":
+                            allFilterBitmaps.set(9, filters.get(9).processFilter(x));
+                            break;
+                        case "10":
+                            allFilterBitmaps.set(10, filters.get(10).processFilter(x));
+                            break;
+                        case "11":
+                            allFilterBitmaps.set(11, filters.get(11).processFilter(x));
+                            break;
+                        case "12":
+                            allFilterBitmaps.set(12, filters.get(12).processFilter(x));
+                            break;
+                        case "13":
+                            allFilterBitmaps.set(13, filters.get(13).processFilter(x));
+                            break;
+                        case "14":
+                            allFilterBitmaps.set(14, filters.get(14).processFilter(x));
+                            break;
+                        case "15":
+                            allFilterBitmaps.set(15, filters.get(15).processFilter(x));
+                            break;
                     }
                 }
                 catch (OutOfMemoryError e)
@@ -960,13 +943,19 @@ public class AddEffects extends AppCompatActivity {
 
             //this method will be running on UI thread
             pdLoading.dismiss();
+
+
+
         }
+
 
 
     }
 
     private class RunInBackground extends AsyncTask<Void,Void,Void>
     {
+
+
         Bitmap lastBitmap;
         @Override
         protected void onPreExecute() {
@@ -1013,6 +1002,8 @@ public class AddEffects extends AppCompatActivity {
                 //currentEditingBitmap.recycle();
             }
             });
+
+            this.cancel(true);
         }
 
         @Override
@@ -1072,1049 +1063,795 @@ public class AddEffects extends AppCompatActivity {
         currentEditingBitmap = MainActivity.images.get(MainActivity.imagePosition);
         Bitmap x = getResizedBitmap(currentEditingBitmap,1200);
 
-        if(type.equals("0"))
-        {
+        switch (type) {
+            case "0":
 
-            if(filter2Bitmap != null)
-            {
-                filter2Bitmap.recycle();
-            }
-            if(filter3Bitmap != null)
-            {
-                filter3Bitmap.recycle();
-            }
-            if(filter4Bitmap != null)
-            {
-                filter4Bitmap.recycle();
-            }
-            if(filter5Bitmap != null)
-            {
-                filter5Bitmap.recycle();
-            }
-            if(filter6Bitmap != null)
-            {
-                filter6Bitmap.recycle();
-            }
-            if(filter7Bitmap != null)
-            {
-                filter7Bitmap.recycle();
-            }
-            if(filter8Bitmap != null)
-            {
-                filter8Bitmap.recycle();
-            }
-            if(filter9Bitmap != null)
-            {
-                filter9Bitmap.recycle();
-            }
-            if(filter10Bitmap != null)
-            {
-                filter10Bitmap.recycle();
-            }
-            if(filter11Bitmap != null)
-            {
-                filter11Bitmap.recycle();
-            }
-            if(filter12Bitmap != null)
-            {
-                filter12Bitmap.recycle();
-            }
-            if(filter13Bitmap != null)
-            {
-                filter13Bitmap.recycle();
-            }
-            if(filter14Bitmap != null)
-            {
-                filter14Bitmap.recycle();
-            }
-            if(filter15Bitmap != null)
-            {
-                filter15Bitmap.recycle();
-            }
-            if(filter16Bitmap != null)
-            {
-                filter16Bitmap.recycle();
-            }
+                if (filter2Bitmap != null) {
+                    filter2Bitmap.recycle();
+                }
+                if (filter3Bitmap != null) {
+                    filter3Bitmap.recycle();
+                }
+                if (filter4Bitmap != null) {
+                    filter4Bitmap.recycle();
+                }
+                if (filter5Bitmap != null) {
+                    filter5Bitmap.recycle();
+                }
+                if (filter6Bitmap != null) {
+                    filter6Bitmap.recycle();
+                }
+                if (filter7Bitmap != null) {
+                    filter7Bitmap.recycle();
+                }
+                if (filter8Bitmap != null) {
+                    filter8Bitmap.recycle();
+                }
+                if (filter9Bitmap != null) {
+                    filter9Bitmap.recycle();
+                }
+                if (filter10Bitmap != null) {
+                    filter10Bitmap.recycle();
+                }
+                if (filter11Bitmap != null) {
+                    filter11Bitmap.recycle();
+                }
+                if (filter12Bitmap != null) {
+                    filter12Bitmap.recycle();
+                }
+                if (filter13Bitmap != null) {
+                    filter13Bitmap.recycle();
+                }
+                if (filter14Bitmap != null) {
+                    filter14Bitmap.recycle();
+                }
+                if (filter15Bitmap != null) {
+                    filter15Bitmap.recycle();
+                }
+                if (filter16Bitmap != null) {
+                    filter16Bitmap.recycle();
+                }
 
-            x = filters.get(0).processFilter(x);
-        }
-        else if(type.equals("1"))
-        {
+                x = filters.get(0).processFilter(x);
+                break;
+            case "1":
 
-            if(filter1Bitmap != null)
-            {
-                filter1Bitmap.recycle();
-            }
-            if(filter3Bitmap != null)
-            {
-                filter3Bitmap.recycle();
-            }
-            if(filter4Bitmap != null)
-            {
-                filter4Bitmap.recycle();
-            }
-            if(filter5Bitmap != null)
-            {
-                filter5Bitmap.recycle();
-            }
-            if(filter6Bitmap != null)
-            {
-                filter6Bitmap.recycle();
-            }
-            if(filter7Bitmap != null)
-            {
-                filter7Bitmap.recycle();
-            }
-            if(filter8Bitmap != null)
-            {
-                filter8Bitmap.recycle();
-            }
-            if(filter9Bitmap != null)
-            {
-                filter9Bitmap.recycle();
-            }
-            if(filter10Bitmap != null)
-            {
-                filter10Bitmap.recycle();
-            }
-            if(filter11Bitmap != null)
-            {
-                filter11Bitmap.recycle();
-            }
-            if(filter12Bitmap != null)
-            {
-                filter12Bitmap.recycle();
-            }
-            if(filter13Bitmap != null)
-            {
-                filter13Bitmap.recycle();
-            }
-            if(filter14Bitmap != null)
-            {
-                filter14Bitmap.recycle();
-            }
-            if(filter15Bitmap != null)
-            {
-                filter15Bitmap.recycle();
-            }
-            if(filter16Bitmap != null)
-            {
-                filter16Bitmap.recycle();
-            }
-            x = filters.get(1).processFilter(x);
-        }
-        else if(type.equals("2"))
-        {
+                if (filter1Bitmap != null) {
+                    filter1Bitmap.recycle();
+                }
+                if (filter3Bitmap != null) {
+                    filter3Bitmap.recycle();
+                }
+                if (filter4Bitmap != null) {
+                    filter4Bitmap.recycle();
+                }
+                if (filter5Bitmap != null) {
+                    filter5Bitmap.recycle();
+                }
+                if (filter6Bitmap != null) {
+                    filter6Bitmap.recycle();
+                }
+                if (filter7Bitmap != null) {
+                    filter7Bitmap.recycle();
+                }
+                if (filter8Bitmap != null) {
+                    filter8Bitmap.recycle();
+                }
+                if (filter9Bitmap != null) {
+                    filter9Bitmap.recycle();
+                }
+                if (filter10Bitmap != null) {
+                    filter10Bitmap.recycle();
+                }
+                if (filter11Bitmap != null) {
+                    filter11Bitmap.recycle();
+                }
+                if (filter12Bitmap != null) {
+                    filter12Bitmap.recycle();
+                }
+                if (filter13Bitmap != null) {
+                    filter13Bitmap.recycle();
+                }
+                if (filter14Bitmap != null) {
+                    filter14Bitmap.recycle();
+                }
+                if (filter15Bitmap != null) {
+                    filter15Bitmap.recycle();
+                }
+                if (filter16Bitmap != null) {
+                    filter16Bitmap.recycle();
+                }
+                x = filters.get(1).processFilter(x);
+                break;
+            case "2":
 
-            if(filter1Bitmap != null)
-            {
-                filter1Bitmap.recycle();
-            }
-            if(filter2Bitmap != null)
-            {
-                filter2Bitmap.recycle();
-            }
-            if(filter4Bitmap != null)
-            {
-                filter4Bitmap.recycle();
-            }
-            if(filter5Bitmap != null)
-            {
-                filter5Bitmap.recycle();
-            }
-            if(filter6Bitmap != null)
-            {
-                filter6Bitmap.recycle();
-            }
-            if(filter7Bitmap != null)
-            {
-                filter7Bitmap.recycle();
-            }
-            if(filter8Bitmap != null)
-            {
-                filter8Bitmap.recycle();
-            }
-            if(filter9Bitmap != null)
-            {
-                filter9Bitmap.recycle();
-            }
-            if(filter10Bitmap != null)
-            {
-                filter10Bitmap.recycle();
-            }
-            if(filter11Bitmap != null)
-            {
-                filter11Bitmap.recycle();
-            }
-            if(filter12Bitmap != null)
-            {
-                filter12Bitmap.recycle();
-            }
-            if(filter13Bitmap != null)
-            {
-                filter13Bitmap.recycle();
-            }
-            if(filter14Bitmap != null)
-            {
-                filter14Bitmap.recycle();
-            }
-            if(filter15Bitmap != null)
-            {
-                filter15Bitmap.recycle();
-            }
-            if(filter16Bitmap != null)
-            {
-                filter16Bitmap.recycle();
-            }
+                if (filter1Bitmap != null) {
+                    filter1Bitmap.recycle();
+                }
+                if (filter2Bitmap != null) {
+                    filter2Bitmap.recycle();
+                }
+                if (filter4Bitmap != null) {
+                    filter4Bitmap.recycle();
+                }
+                if (filter5Bitmap != null) {
+                    filter5Bitmap.recycle();
+                }
+                if (filter6Bitmap != null) {
+                    filter6Bitmap.recycle();
+                }
+                if (filter7Bitmap != null) {
+                    filter7Bitmap.recycle();
+                }
+                if (filter8Bitmap != null) {
+                    filter8Bitmap.recycle();
+                }
+                if (filter9Bitmap != null) {
+                    filter9Bitmap.recycle();
+                }
+                if (filter10Bitmap != null) {
+                    filter10Bitmap.recycle();
+                }
+                if (filter11Bitmap != null) {
+                    filter11Bitmap.recycle();
+                }
+                if (filter12Bitmap != null) {
+                    filter12Bitmap.recycle();
+                }
+                if (filter13Bitmap != null) {
+                    filter13Bitmap.recycle();
+                }
+                if (filter14Bitmap != null) {
+                    filter14Bitmap.recycle();
+                }
+                if (filter15Bitmap != null) {
+                    filter15Bitmap.recycle();
+                }
+                if (filter16Bitmap != null) {
+                    filter16Bitmap.recycle();
+                }
 
-            x = filters.get(2).processFilter(x);
-        }
-        else if(type.equals("3"))
-        {
+                x = filters.get(2).processFilter(x);
+                break;
+            case "3":
 
-            if(filter1Bitmap != null)
-            {
-                filter1Bitmap.recycle();
-            }
-            if(filter2Bitmap != null)
-            {
-                filter2Bitmap.recycle();
-            }
-            if(filter3Bitmap != null)
-            {
-                filter3Bitmap.recycle();
-            }
-            if(filter5Bitmap != null)
-            {
-                filter5Bitmap.recycle();
-            }
-            if(filter6Bitmap != null)
-            {
-                filter6Bitmap.recycle();
-            }
-            if(filter7Bitmap != null)
-            {
-                filter7Bitmap.recycle();
-            }
-            if(filter8Bitmap != null)
-            {
-                filter8Bitmap.recycle();
-            }
-            if(filter9Bitmap != null)
-            {
-                filter9Bitmap.recycle();
-            }
-            if(filter10Bitmap != null)
-            {
-                filter10Bitmap.recycle();
-            }
-            if(filter11Bitmap != null)
-            {
-                filter11Bitmap.recycle();
-            }
-            if(filter12Bitmap != null)
-            {
-                filter12Bitmap.recycle();
-            }
-            if(filter13Bitmap != null)
-            {
-                filter13Bitmap.recycle();
-            }
-            if(filter14Bitmap != null)
-            {
-                filter14Bitmap.recycle();
-            }
-            if(filter15Bitmap != null)
-            {
-                filter15Bitmap.recycle();
-            }
-            if(filter16Bitmap != null)
-            {
-                filter16Bitmap.recycle();
-            }
-            x = filters.get(3).processFilter(x);
-        }
-        else if(type.equals("4"))
-        {
+                if (filter1Bitmap != null) {
+                    filter1Bitmap.recycle();
+                }
+                if (filter2Bitmap != null) {
+                    filter2Bitmap.recycle();
+                }
+                if (filter3Bitmap != null) {
+                    filter3Bitmap.recycle();
+                }
+                if (filter5Bitmap != null) {
+                    filter5Bitmap.recycle();
+                }
+                if (filter6Bitmap != null) {
+                    filter6Bitmap.recycle();
+                }
+                if (filter7Bitmap != null) {
+                    filter7Bitmap.recycle();
+                }
+                if (filter8Bitmap != null) {
+                    filter8Bitmap.recycle();
+                }
+                if (filter9Bitmap != null) {
+                    filter9Bitmap.recycle();
+                }
+                if (filter10Bitmap != null) {
+                    filter10Bitmap.recycle();
+                }
+                if (filter11Bitmap != null) {
+                    filter11Bitmap.recycle();
+                }
+                if (filter12Bitmap != null) {
+                    filter12Bitmap.recycle();
+                }
+                if (filter13Bitmap != null) {
+                    filter13Bitmap.recycle();
+                }
+                if (filter14Bitmap != null) {
+                    filter14Bitmap.recycle();
+                }
+                if (filter15Bitmap != null) {
+                    filter15Bitmap.recycle();
+                }
+                if (filter16Bitmap != null) {
+                    filter16Bitmap.recycle();
+                }
+                x = filters.get(3).processFilter(x);
+                break;
+            case "4":
 
-            if(filter1Bitmap != null)
-            {
-                filter1Bitmap.recycle();
-            }
-            if(filter2Bitmap != null)
-            {
-                filter2Bitmap.recycle();
-            }
-            if(filter3Bitmap != null)
-            {
-                filter3Bitmap.recycle();
-            }
-            if(filter4Bitmap != null)
-            {
-                filter4Bitmap.recycle();
-            }
-            if(filter6Bitmap != null)
-            {
-                filter6Bitmap.recycle();
-            }
-            if(filter7Bitmap != null)
-            {
-                filter7Bitmap.recycle();
-            }
-            if(filter8Bitmap != null)
-            {
-                filter8Bitmap.recycle();
-            }
-            if(filter9Bitmap != null)
-            {
-                filter9Bitmap.recycle();
-            }
-            if(filter10Bitmap != null)
-            {
-                filter10Bitmap.recycle();
-            }
-            if(filter11Bitmap != null)
-            {
-                filter11Bitmap.recycle();
-            }
-            if(filter12Bitmap != null)
-            {
-                filter12Bitmap.recycle();
-            }
-            if(filter13Bitmap != null)
-            {
-                filter13Bitmap.recycle();
-            }
-            if(filter14Bitmap != null)
-            {
-                filter14Bitmap.recycle();
-            }
-            if(filter15Bitmap != null)
-            {
-                filter15Bitmap.recycle();
-            }
-            if(filter16Bitmap != null)
-            {
-                filter16Bitmap.recycle();
-            }
-            x = filters.get(4).processFilter(x);
-        }
-        else if(type.equals("5"))
-        {
+                if (filter1Bitmap != null) {
+                    filter1Bitmap.recycle();
+                }
+                if (filter2Bitmap != null) {
+                    filter2Bitmap.recycle();
+                }
+                if (filter3Bitmap != null) {
+                    filter3Bitmap.recycle();
+                }
+                if (filter4Bitmap != null) {
+                    filter4Bitmap.recycle();
+                }
+                if (filter6Bitmap != null) {
+                    filter6Bitmap.recycle();
+                }
+                if (filter7Bitmap != null) {
+                    filter7Bitmap.recycle();
+                }
+                if (filter8Bitmap != null) {
+                    filter8Bitmap.recycle();
+                }
+                if (filter9Bitmap != null) {
+                    filter9Bitmap.recycle();
+                }
+                if (filter10Bitmap != null) {
+                    filter10Bitmap.recycle();
+                }
+                if (filter11Bitmap != null) {
+                    filter11Bitmap.recycle();
+                }
+                if (filter12Bitmap != null) {
+                    filter12Bitmap.recycle();
+                }
+                if (filter13Bitmap != null) {
+                    filter13Bitmap.recycle();
+                }
+                if (filter14Bitmap != null) {
+                    filter14Bitmap.recycle();
+                }
+                if (filter15Bitmap != null) {
+                    filter15Bitmap.recycle();
+                }
+                if (filter16Bitmap != null) {
+                    filter16Bitmap.recycle();
+                }
+                x = filters.get(4).processFilter(x);
+                break;
+            case "5":
 
-            if(filter1Bitmap != null)
-            {
-                filter1Bitmap.recycle();
-            }
-            if(filter2Bitmap != null)
-            {
-                filter2Bitmap.recycle();
-            }
-            if(filter3Bitmap != null)
-            {
-                filter3Bitmap.recycle();
-            }
-            if(filter4Bitmap != null)
-            {
-                filter4Bitmap.recycle();
-            }
-            if(filter5Bitmap != null)
-            {
-                filter5Bitmap.recycle();
-            }
-            if(filter7Bitmap != null)
-            {
-                filter7Bitmap.recycle();
-            }
-            if(filter8Bitmap != null)
-            {
-                filter8Bitmap.recycle();
-            }
-            if(filter9Bitmap != null)
-            {
-                filter9Bitmap.recycle();
-            }
-            if(filter10Bitmap != null)
-            {
-                filter10Bitmap.recycle();
-            }
-            if(filter11Bitmap != null)
-            {
-                filter11Bitmap.recycle();
-            }
-            if(filter12Bitmap != null)
-            {
-                filter12Bitmap.recycle();
-            }
-            if(filter13Bitmap != null)
-            {
-                filter13Bitmap.recycle();
-            }
-            if(filter14Bitmap != null)
-            {
-                filter14Bitmap.recycle();
-            }
-            if(filter15Bitmap != null)
-            {
-                filter15Bitmap.recycle();
-            }
-            if(filter16Bitmap != null)
-            {
-                filter16Bitmap.recycle();
-            }
+                if (filter1Bitmap != null) {
+                    filter1Bitmap.recycle();
+                }
+                if (filter2Bitmap != null) {
+                    filter2Bitmap.recycle();
+                }
+                if (filter3Bitmap != null) {
+                    filter3Bitmap.recycle();
+                }
+                if (filter4Bitmap != null) {
+                    filter4Bitmap.recycle();
+                }
+                if (filter5Bitmap != null) {
+                    filter5Bitmap.recycle();
+                }
+                if (filter7Bitmap != null) {
+                    filter7Bitmap.recycle();
+                }
+                if (filter8Bitmap != null) {
+                    filter8Bitmap.recycle();
+                }
+                if (filter9Bitmap != null) {
+                    filter9Bitmap.recycle();
+                }
+                if (filter10Bitmap != null) {
+                    filter10Bitmap.recycle();
+                }
+                if (filter11Bitmap != null) {
+                    filter11Bitmap.recycle();
+                }
+                if (filter12Bitmap != null) {
+                    filter12Bitmap.recycle();
+                }
+                if (filter13Bitmap != null) {
+                    filter13Bitmap.recycle();
+                }
+                if (filter14Bitmap != null) {
+                    filter14Bitmap.recycle();
+                }
+                if (filter15Bitmap != null) {
+                    filter15Bitmap.recycle();
+                }
+                if (filter16Bitmap != null) {
+                    filter16Bitmap.recycle();
+                }
 
-            x = filters.get(5).processFilter(x);
-        }
-        else if(type.equals("6"))
-        {
+                x = filters.get(5).processFilter(x);
+                break;
+            case "6":
 
-            if(filter1Bitmap != null)
-            {
-                filter1Bitmap.recycle();
-            }
-            if(filter2Bitmap != null)
-            {
-                filter2Bitmap.recycle();
-            }
-            if(filter3Bitmap != null)
-            {
-                filter3Bitmap.recycle();
-            }
-            if(filter4Bitmap != null)
-            {
-                filter4Bitmap.recycle();
-            }
-            if(filter5Bitmap != null)
-            {
-                filter5Bitmap.recycle();
-            }
-            if(filter6Bitmap != null)
-            {
-                filter6Bitmap.recycle();
-            }
-            if(filter8Bitmap != null)
-            {
-                filter8Bitmap.recycle();
-            }
-            if(filter9Bitmap != null)
-            {
-                filter9Bitmap.recycle();
-            }
-            if(filter10Bitmap != null)
-            {
-                filter10Bitmap.recycle();
-            }
-            if(filter11Bitmap != null)
-            {
-                filter11Bitmap.recycle();
-            }
-            if(filter12Bitmap != null)
-            {
-                filter12Bitmap.recycle();
-            }
-            if(filter13Bitmap != null)
-            {
-                filter13Bitmap.recycle();
-            }
-            if(filter14Bitmap != null)
-            {
-                filter14Bitmap.recycle();
-            }
-            if(filter15Bitmap != null)
-            {
-                filter15Bitmap.recycle();
-            }
-            if(filter16Bitmap != null)
-            {
-                filter16Bitmap.recycle();
-            }
-            x = filters.get(6).processFilter(x);
-        }
-        else if(type.equals("7"))
-        {
+                if (filter1Bitmap != null) {
+                    filter1Bitmap.recycle();
+                }
+                if (filter2Bitmap != null) {
+                    filter2Bitmap.recycle();
+                }
+                if (filter3Bitmap != null) {
+                    filter3Bitmap.recycle();
+                }
+                if (filter4Bitmap != null) {
+                    filter4Bitmap.recycle();
+                }
+                if (filter5Bitmap != null) {
+                    filter5Bitmap.recycle();
+                }
+                if (filter6Bitmap != null) {
+                    filter6Bitmap.recycle();
+                }
+                if (filter8Bitmap != null) {
+                    filter8Bitmap.recycle();
+                }
+                if (filter9Bitmap != null) {
+                    filter9Bitmap.recycle();
+                }
+                if (filter10Bitmap != null) {
+                    filter10Bitmap.recycle();
+                }
+                if (filter11Bitmap != null) {
+                    filter11Bitmap.recycle();
+                }
+                if (filter12Bitmap != null) {
+                    filter12Bitmap.recycle();
+                }
+                if (filter13Bitmap != null) {
+                    filter13Bitmap.recycle();
+                }
+                if (filter14Bitmap != null) {
+                    filter14Bitmap.recycle();
+                }
+                if (filter15Bitmap != null) {
+                    filter15Bitmap.recycle();
+                }
+                if (filter16Bitmap != null) {
+                    filter16Bitmap.recycle();
+                }
+                x = filters.get(6).processFilter(x);
+                break;
+            case "7":
 
-            if(filter1Bitmap != null)
-            {
-                filter1Bitmap.recycle();
-            }
-            if(filter2Bitmap != null)
-            {
-                filter2Bitmap.recycle();
-            }
-            if(filter3Bitmap != null)
-            {
-                filter3Bitmap.recycle();
-            }
-            if(filter4Bitmap != null)
-            {
-                filter4Bitmap.recycle();
-            }
-            if(filter5Bitmap != null)
-            {
-                filter5Bitmap.recycle();
-            }
-            if(filter6Bitmap != null)
-            {
-                filter6Bitmap.recycle();
-            }
-            if(filter7Bitmap != null)
-            {
-                filter7Bitmap.recycle();
-            }
-            if(filter9Bitmap != null)
-            {
-                filter9Bitmap.recycle();
-            }
-            if(filter10Bitmap != null)
-            {
-                filter10Bitmap.recycle();
-            }
-            if(filter11Bitmap != null)
-            {
-                filter11Bitmap.recycle();
-            }
-            if(filter12Bitmap != null)
-            {
-                filter12Bitmap.recycle();
-            }
-            if(filter13Bitmap != null)
-            {
-                filter13Bitmap.recycle();
-            }
-            if(filter14Bitmap != null)
-            {
-                filter14Bitmap.recycle();
-            }
-            if(filter15Bitmap != null)
-            {
-                filter15Bitmap.recycle();
-            }
-            if(filter16Bitmap != null)
-            {
-                filter16Bitmap.recycle();
-            }
+                if (filter1Bitmap != null) {
+                    filter1Bitmap.recycle();
+                }
+                if (filter2Bitmap != null) {
+                    filter2Bitmap.recycle();
+                }
+                if (filter3Bitmap != null) {
+                    filter3Bitmap.recycle();
+                }
+                if (filter4Bitmap != null) {
+                    filter4Bitmap.recycle();
+                }
+                if (filter5Bitmap != null) {
+                    filter5Bitmap.recycle();
+                }
+                if (filter6Bitmap != null) {
+                    filter6Bitmap.recycle();
+                }
+                if (filter7Bitmap != null) {
+                    filter7Bitmap.recycle();
+                }
+                if (filter9Bitmap != null) {
+                    filter9Bitmap.recycle();
+                }
+                if (filter10Bitmap != null) {
+                    filter10Bitmap.recycle();
+                }
+                if (filter11Bitmap != null) {
+                    filter11Bitmap.recycle();
+                }
+                if (filter12Bitmap != null) {
+                    filter12Bitmap.recycle();
+                }
+                if (filter13Bitmap != null) {
+                    filter13Bitmap.recycle();
+                }
+                if (filter14Bitmap != null) {
+                    filter14Bitmap.recycle();
+                }
+                if (filter15Bitmap != null) {
+                    filter15Bitmap.recycle();
+                }
+                if (filter16Bitmap != null) {
+                    filter16Bitmap.recycle();
+                }
 
-            x = filters.get(7).processFilter(x);
-        }
-        else if(type.equals("8"))
-        {
+                x = filters.get(7).processFilter(x);
+                break;
+            case "8":
 
-            if(filter1Bitmap != null)
-            {
-                filter1Bitmap.recycle();
-            }
-            if(filter2Bitmap != null)
-            {
-                filter2Bitmap.recycle();
-            }
-            if(filter3Bitmap != null)
-            {
-                filter3Bitmap.recycle();
-            }
-            if(filter4Bitmap != null)
-            {
-                filter4Bitmap.recycle();
-            }
-            if(filter5Bitmap != null)
-            {
-                filter5Bitmap.recycle();
-            }
-            if(filter6Bitmap != null)
-            {
-                filter6Bitmap.recycle();
-            }
-            if(filter7Bitmap != null)
-            {
-                filter7Bitmap.recycle();
-            }
-            if(filter8Bitmap != null)
-            {
-                filter8Bitmap.recycle();
-            }
-            if(filter10Bitmap != null)
-            {
-                filter10Bitmap.recycle();
-            }
-            if(filter11Bitmap != null)
-            {
-                filter11Bitmap.recycle();
-            }
-            if(filter12Bitmap != null)
-            {
-                filter12Bitmap.recycle();
-            }
-            if(filter13Bitmap != null)
-            {
-                filter13Bitmap.recycle();
-            }
-            if(filter14Bitmap != null)
-            {
-                filter14Bitmap.recycle();
-            }
-            if(filter15Bitmap != null)
-            {
-                filter15Bitmap.recycle();
-            }
-            if(filter16Bitmap != null)
-            {
-                filter16Bitmap.recycle();
-            }
-            x = filters.get(8).processFilter(x);
-        }
-        else if(type.equals("9"))
-        {
+                if (filter1Bitmap != null) {
+                    filter1Bitmap.recycle();
+                }
+                if (filter2Bitmap != null) {
+                    filter2Bitmap.recycle();
+                }
+                if (filter3Bitmap != null) {
+                    filter3Bitmap.recycle();
+                }
+                if (filter4Bitmap != null) {
+                    filter4Bitmap.recycle();
+                }
+                if (filter5Bitmap != null) {
+                    filter5Bitmap.recycle();
+                }
+                if (filter6Bitmap != null) {
+                    filter6Bitmap.recycle();
+                }
+                if (filter7Bitmap != null) {
+                    filter7Bitmap.recycle();
+                }
+                if (filter8Bitmap != null) {
+                    filter8Bitmap.recycle();
+                }
+                if (filter10Bitmap != null) {
+                    filter10Bitmap.recycle();
+                }
+                if (filter11Bitmap != null) {
+                    filter11Bitmap.recycle();
+                }
+                if (filter12Bitmap != null) {
+                    filter12Bitmap.recycle();
+                }
+                if (filter13Bitmap != null) {
+                    filter13Bitmap.recycle();
+                }
+                if (filter14Bitmap != null) {
+                    filter14Bitmap.recycle();
+                }
+                if (filter15Bitmap != null) {
+                    filter15Bitmap.recycle();
+                }
+                if (filter16Bitmap != null) {
+                    filter16Bitmap.recycle();
+                }
+                x = filters.get(8).processFilter(x);
+                break;
+            case "9":
 
-            if(filter1Bitmap != null)
-            {
-                filter1Bitmap.recycle();
-            }
-            if(filter2Bitmap != null)
-            {
-                filter2Bitmap.recycle();
-            }
-            if(filter3Bitmap != null)
-            {
-                filter3Bitmap.recycle();
-            }
-            if(filter4Bitmap != null)
-            {
-                filter4Bitmap.recycle();
-            }
-            if(filter5Bitmap != null)
-            {
-                filter5Bitmap.recycle();
-            }
-            if(filter6Bitmap != null)
-            {
-                filter6Bitmap.recycle();
-            }
-            if(filter7Bitmap != null)
-            {
-                filter7Bitmap.recycle();
-            }
-            if(filter8Bitmap != null)
-            {
-                filter8Bitmap.recycle();
-            }
-            if(filter9Bitmap != null)
-            {
-                filter9Bitmap.recycle();
-            }
-            if(filter11Bitmap != null)
-            {
-                filter11Bitmap.recycle();
-            }
-            if(filter12Bitmap != null)
-            {
-                filter12Bitmap.recycle();
-            }
-            if(filter13Bitmap != null)
-            {
-                filter13Bitmap.recycle();
-            }
-            if(filter14Bitmap != null)
-            {
-                filter14Bitmap.recycle();
-            }
-            if(filter15Bitmap != null)
-            {
-                filter15Bitmap.recycle();
-            }
-            if(filter16Bitmap != null)
-            {
-                filter16Bitmap.recycle();
-            }
-            x = filters.get(9).processFilter(x);
-        }
-        else if(type.equals("10"))
-        {
+                if (filter1Bitmap != null) {
+                    filter1Bitmap.recycle();
+                }
+                if (filter2Bitmap != null) {
+                    filter2Bitmap.recycle();
+                }
+                if (filter3Bitmap != null) {
+                    filter3Bitmap.recycle();
+                }
+                if (filter4Bitmap != null) {
+                    filter4Bitmap.recycle();
+                }
+                if (filter5Bitmap != null) {
+                    filter5Bitmap.recycle();
+                }
+                if (filter6Bitmap != null) {
+                    filter6Bitmap.recycle();
+                }
+                if (filter7Bitmap != null) {
+                    filter7Bitmap.recycle();
+                }
+                if (filter8Bitmap != null) {
+                    filter8Bitmap.recycle();
+                }
+                if (filter9Bitmap != null) {
+                    filter9Bitmap.recycle();
+                }
+                if (filter11Bitmap != null) {
+                    filter11Bitmap.recycle();
+                }
+                if (filter12Bitmap != null) {
+                    filter12Bitmap.recycle();
+                }
+                if (filter13Bitmap != null) {
+                    filter13Bitmap.recycle();
+                }
+                if (filter14Bitmap != null) {
+                    filter14Bitmap.recycle();
+                }
+                if (filter15Bitmap != null) {
+                    filter15Bitmap.recycle();
+                }
+                if (filter16Bitmap != null) {
+                    filter16Bitmap.recycle();
+                }
+                x = filters.get(9).processFilter(x);
+                break;
+            case "10":
 
-            if(filter1Bitmap != null)
-            {
-                filter1Bitmap.recycle();
-            }
-            if(filter2Bitmap != null)
-            {
-                filter2Bitmap.recycle();
-            }
-            if(filter3Bitmap != null)
-            {
-                filter3Bitmap.recycle();
-            }
-            if(filter4Bitmap != null)
-            {
-                filter4Bitmap.recycle();
-            }
-            if(filter5Bitmap != null)
-            {
-                filter5Bitmap.recycle();
-            }
-            if(filter6Bitmap != null)
-            {
-                filter6Bitmap.recycle();
-            }
-            if(filter7Bitmap != null)
-            {
-                filter7Bitmap.recycle();
-            }
-            if(filter8Bitmap != null)
-            {
-                filter8Bitmap.recycle();
-            }
-            if(filter9Bitmap != null)
-            {
-                filter9Bitmap.recycle();
-            }
-            if(filter10Bitmap != null)
-            {
-                filter10Bitmap.recycle();
-            }
-            if(filter12Bitmap != null)
-            {
-                filter12Bitmap.recycle();
-            }
-            if(filter13Bitmap != null)
-            {
-                filter13Bitmap.recycle();
-            }
-            if(filter14Bitmap != null)
-            {
-                filter14Bitmap.recycle();
-            }
-            if(filter15Bitmap != null)
-            {
-                filter15Bitmap.recycle();
-            }
-            if(filter16Bitmap != null)
-            {
-                filter16Bitmap.recycle();
-            }
-            x = filters.get(10).processFilter(x);
-        }
-        else if(type.equals("11"))
-        {
+                if (filter1Bitmap != null) {
+                    filter1Bitmap.recycle();
+                }
+                if (filter2Bitmap != null) {
+                    filter2Bitmap.recycle();
+                }
+                if (filter3Bitmap != null) {
+                    filter3Bitmap.recycle();
+                }
+                if (filter4Bitmap != null) {
+                    filter4Bitmap.recycle();
+                }
+                if (filter5Bitmap != null) {
+                    filter5Bitmap.recycle();
+                }
+                if (filter6Bitmap != null) {
+                    filter6Bitmap.recycle();
+                }
+                if (filter7Bitmap != null) {
+                    filter7Bitmap.recycle();
+                }
+                if (filter8Bitmap != null) {
+                    filter8Bitmap.recycle();
+                }
+                if (filter9Bitmap != null) {
+                    filter9Bitmap.recycle();
+                }
+                if (filter10Bitmap != null) {
+                    filter10Bitmap.recycle();
+                }
+                if (filter12Bitmap != null) {
+                    filter12Bitmap.recycle();
+                }
+                if (filter13Bitmap != null) {
+                    filter13Bitmap.recycle();
+                }
+                if (filter14Bitmap != null) {
+                    filter14Bitmap.recycle();
+                }
+                if (filter15Bitmap != null) {
+                    filter15Bitmap.recycle();
+                }
+                if (filter16Bitmap != null) {
+                    filter16Bitmap.recycle();
+                }
+                x = filters.get(10).processFilter(x);
+                break;
+            case "11":
 
-            if(filter1Bitmap != null)
-            {
-                filter1Bitmap.recycle();
-            }
-            if(filter2Bitmap != null)
-            {
-                filter2Bitmap.recycle();
-            }
-            if(filter3Bitmap != null)
-            {
-                filter3Bitmap.recycle();
-            }
-            if(filter4Bitmap != null)
-            {
-                filter4Bitmap.recycle();
-            }
-            if(filter5Bitmap != null)
-            {
-                filter5Bitmap.recycle();
-            }
-            if(filter6Bitmap != null)
-            {
-                filter6Bitmap.recycle();
-            }
-            if(filter7Bitmap != null)
-            {
-                filter7Bitmap.recycle();
-            }
-            if(filter8Bitmap != null)
-            {
-                filter8Bitmap.recycle();
-            }
-            if(filter9Bitmap != null)
-            {
-                filter9Bitmap.recycle();
-            }
-            if(filter10Bitmap != null)
-            {
-                filter10Bitmap.recycle();
-            }
-            if(filter11Bitmap != null)
-            {
-                filter11Bitmap.recycle();
-            }
-            if(filter13Bitmap != null)
-            {
-                filter13Bitmap.recycle();
-            }
-            if(filter14Bitmap != null)
-            {
-                filter14Bitmap.recycle();
-            }
-            if(filter15Bitmap != null)
-            {
-                filter15Bitmap.recycle();
-            }
-            if(filter16Bitmap != null)
-            {
-                filter16Bitmap.recycle();
-            }
-            x = filters.get(11).processFilter(x);
-        }
-        else if(type.equals("12"))
-        {
+                if (filter1Bitmap != null) {
+                    filter1Bitmap.recycle();
+                }
+                if (filter2Bitmap != null) {
+                    filter2Bitmap.recycle();
+                }
+                if (filter3Bitmap != null) {
+                    filter3Bitmap.recycle();
+                }
+                if (filter4Bitmap != null) {
+                    filter4Bitmap.recycle();
+                }
+                if (filter5Bitmap != null) {
+                    filter5Bitmap.recycle();
+                }
+                if (filter6Bitmap != null) {
+                    filter6Bitmap.recycle();
+                }
+                if (filter7Bitmap != null) {
+                    filter7Bitmap.recycle();
+                }
+                if (filter8Bitmap != null) {
+                    filter8Bitmap.recycle();
+                }
+                if (filter9Bitmap != null) {
+                    filter9Bitmap.recycle();
+                }
+                if (filter10Bitmap != null) {
+                    filter10Bitmap.recycle();
+                }
+                if (filter11Bitmap != null) {
+                    filter11Bitmap.recycle();
+                }
+                if (filter13Bitmap != null) {
+                    filter13Bitmap.recycle();
+                }
+                if (filter14Bitmap != null) {
+                    filter14Bitmap.recycle();
+                }
+                if (filter15Bitmap != null) {
+                    filter15Bitmap.recycle();
+                }
+                if (filter16Bitmap != null) {
+                    filter16Bitmap.recycle();
+                }
+                x = filters.get(11).processFilter(x);
+                break;
+            case "12":
 
-            if(filter1Bitmap != null)
-            {
-                filter1Bitmap.recycle();
-            }
-            if(filter2Bitmap != null)
-            {
-                filter2Bitmap.recycle();
-            }
-            if(filter3Bitmap != null)
-            {
-                filter3Bitmap.recycle();
-            }
-            if(filter4Bitmap != null)
-            {
-                filter4Bitmap.recycle();
-            }
-            if(filter5Bitmap != null)
-            {
-                filter5Bitmap.recycle();
-            }
-            if(filter6Bitmap != null)
-            {
-                filter6Bitmap.recycle();
-            }
-            if(filter7Bitmap != null)
-            {
-                filter7Bitmap.recycle();
-            }
-            if(filter8Bitmap != null)
-            {
-                filter8Bitmap.recycle();
-            }
-            if(filter9Bitmap != null)
-            {
-                filter9Bitmap.recycle();
-            }
-            if(filter10Bitmap != null)
-            {
-                filter10Bitmap.recycle();
-            }
-            if(filter11Bitmap != null)
-            {
-                filter11Bitmap.recycle();
-            }
-            if(filter12Bitmap != null)
-            {
-                filter12Bitmap.recycle();
-            }
-            if(filter14Bitmap != null)
-            {
-                filter14Bitmap.recycle();
-            }
-            if(filter15Bitmap != null)
-            {
-                filter15Bitmap.recycle();
-            }
-            if(filter16Bitmap != null)
-            {
-                filter16Bitmap.recycle();
-            }
-            x = filters.get(12).processFilter(x);
-        }
-        else if(type.equals("13"))
-        {
+                if (filter1Bitmap != null) {
+                    filter1Bitmap.recycle();
+                }
+                if (filter2Bitmap != null) {
+                    filter2Bitmap.recycle();
+                }
+                if (filter3Bitmap != null) {
+                    filter3Bitmap.recycle();
+                }
+                if (filter4Bitmap != null) {
+                    filter4Bitmap.recycle();
+                }
+                if (filter5Bitmap != null) {
+                    filter5Bitmap.recycle();
+                }
+                if (filter6Bitmap != null) {
+                    filter6Bitmap.recycle();
+                }
+                if (filter7Bitmap != null) {
+                    filter7Bitmap.recycle();
+                }
+                if (filter8Bitmap != null) {
+                    filter8Bitmap.recycle();
+                }
+                if (filter9Bitmap != null) {
+                    filter9Bitmap.recycle();
+                }
+                if (filter10Bitmap != null) {
+                    filter10Bitmap.recycle();
+                }
+                if (filter11Bitmap != null) {
+                    filter11Bitmap.recycle();
+                }
+                if (filter12Bitmap != null) {
+                    filter12Bitmap.recycle();
+                }
+                if (filter14Bitmap != null) {
+                    filter14Bitmap.recycle();
+                }
+                if (filter15Bitmap != null) {
+                    filter15Bitmap.recycle();
+                }
+                if (filter16Bitmap != null) {
+                    filter16Bitmap.recycle();
+                }
+                x = filters.get(12).processFilter(x);
+                break;
+            case "13":
 
-            if(filter1Bitmap != null)
-            {
-                filter1Bitmap.recycle();
-            }
-            if(filter2Bitmap != null)
-            {
-                filter2Bitmap.recycle();
-            }
-            if(filter3Bitmap != null)
-            {
-                filter3Bitmap.recycle();
-            }
-            if(filter4Bitmap != null)
-            {
-                filter4Bitmap.recycle();
-            }
-            if(filter5Bitmap != null)
-            {
-                filter5Bitmap.recycle();
-            }
-            if(filter6Bitmap != null)
-            {
-                filter6Bitmap.recycle();
-            }
-            if(filter7Bitmap != null)
-            {
-                filter7Bitmap.recycle();
-            }
-            if(filter8Bitmap != null)
-            {
-                filter8Bitmap.recycle();
-            }
-            if(filter9Bitmap != null)
-            {
-                filter9Bitmap.recycle();
-            }
-            if(filter10Bitmap != null)
-            {
-                filter10Bitmap.recycle();
-            }
-            if(filter11Bitmap != null)
-            {
-                filter11Bitmap.recycle();
-            }
-            if(filter12Bitmap != null)
-            {
-                filter12Bitmap.recycle();
-            }
-            if(filter13Bitmap != null)
-            {
-                filter13Bitmap.recycle();
-            }
-            if(filter15Bitmap != null)
-            {
-                filter15Bitmap.recycle();
-            }
-            if(filter16Bitmap != null)
-            {
-                filter16Bitmap.recycle();
-            }
-            x = filters.get(13).processFilter(x);
-        }
-        else if(type.equals("14"))
-        {
+                if (filter1Bitmap != null) {
+                    filter1Bitmap.recycle();
+                }
+                if (filter2Bitmap != null) {
+                    filter2Bitmap.recycle();
+                }
+                if (filter3Bitmap != null) {
+                    filter3Bitmap.recycle();
+                }
+                if (filter4Bitmap != null) {
+                    filter4Bitmap.recycle();
+                }
+                if (filter5Bitmap != null) {
+                    filter5Bitmap.recycle();
+                }
+                if (filter6Bitmap != null) {
+                    filter6Bitmap.recycle();
+                }
+                if (filter7Bitmap != null) {
+                    filter7Bitmap.recycle();
+                }
+                if (filter8Bitmap != null) {
+                    filter8Bitmap.recycle();
+                }
+                if (filter9Bitmap != null) {
+                    filter9Bitmap.recycle();
+                }
+                if (filter10Bitmap != null) {
+                    filter10Bitmap.recycle();
+                }
+                if (filter11Bitmap != null) {
+                    filter11Bitmap.recycle();
+                }
+                if (filter12Bitmap != null) {
+                    filter12Bitmap.recycle();
+                }
+                if (filter13Bitmap != null) {
+                    filter13Bitmap.recycle();
+                }
+                if (filter15Bitmap != null) {
+                    filter15Bitmap.recycle();
+                }
+                if (filter16Bitmap != null) {
+                    filter16Bitmap.recycle();
+                }
+                x = filters.get(13).processFilter(x);
+                break;
+            case "14":
 
-            if(filter1Bitmap != null)
-            {
-                filter1Bitmap.recycle();
-            }
-            if(filter2Bitmap != null)
-            {
-                filter2Bitmap.recycle();
-            }
-            if(filter3Bitmap != null)
-            {
-                filter3Bitmap.recycle();
-            }
-            if(filter4Bitmap != null)
-            {
-                filter4Bitmap.recycle();
-            }
-            if(filter5Bitmap != null)
-            {
-                filter5Bitmap.recycle();
-            }
-            if(filter6Bitmap != null)
-            {
-                filter6Bitmap.recycle();
-            }
-            if(filter7Bitmap != null)
-            {
-                filter7Bitmap.recycle();
-            }
-            if(filter8Bitmap != null)
-            {
-                filter8Bitmap.recycle();
-            }
-            if(filter9Bitmap != null)
-            {
-                filter9Bitmap.recycle();
-            }
-            if(filter10Bitmap != null)
-            {
-                filter10Bitmap.recycle();
-            }
-            if(filter11Bitmap != null)
-            {
-                filter11Bitmap.recycle();
-            }
-            if(filter12Bitmap != null)
-            {
-                filter12Bitmap.recycle();
-            }
-            if(filter13Bitmap != null)
-            {
-                filter13Bitmap.recycle();
-            }
-            if(filter14Bitmap != null)
-            {
-                filter14Bitmap.recycle();
-            }
-            if(filter16Bitmap != null)
-            {
-                filter16Bitmap.recycle();
-            }
-            x = filters.get(14).processFilter(x);
-        }
-        else if(type.equals("15"))
-        {
+                if (filter1Bitmap != null) {
+                    filter1Bitmap.recycle();
+                }
+                if (filter2Bitmap != null) {
+                    filter2Bitmap.recycle();
+                }
+                if (filter3Bitmap != null) {
+                    filter3Bitmap.recycle();
+                }
+                if (filter4Bitmap != null) {
+                    filter4Bitmap.recycle();
+                }
+                if (filter5Bitmap != null) {
+                    filter5Bitmap.recycle();
+                }
+                if (filter6Bitmap != null) {
+                    filter6Bitmap.recycle();
+                }
+                if (filter7Bitmap != null) {
+                    filter7Bitmap.recycle();
+                }
+                if (filter8Bitmap != null) {
+                    filter8Bitmap.recycle();
+                }
+                if (filter9Bitmap != null) {
+                    filter9Bitmap.recycle();
+                }
+                if (filter10Bitmap != null) {
+                    filter10Bitmap.recycle();
+                }
+                if (filter11Bitmap != null) {
+                    filter11Bitmap.recycle();
+                }
+                if (filter12Bitmap != null) {
+                    filter12Bitmap.recycle();
+                }
+                if (filter13Bitmap != null) {
+                    filter13Bitmap.recycle();
+                }
+                if (filter14Bitmap != null) {
+                    filter14Bitmap.recycle();
+                }
+                if (filter16Bitmap != null) {
+                    filter16Bitmap.recycle();
+                }
+                x = filters.get(14).processFilter(x);
+                break;
+            case "15":
 
-            if(filter1Bitmap != null)
-            {
-                filter1Bitmap.recycle();
-            }
-            if(filter2Bitmap != null)
-            {
-                filter2Bitmap.recycle();
-            }
-            if(filter3Bitmap != null)
-            {
-                filter3Bitmap.recycle();
-            }
-            if(filter4Bitmap != null)
-            {
-                filter4Bitmap.recycle();
-            }
-            if(filter5Bitmap != null)
-            {
-                filter5Bitmap.recycle();
-            }
-            if(filter6Bitmap != null)
-            {
-                filter6Bitmap.recycle();
-            }
-            if(filter7Bitmap != null)
-            {
-                filter7Bitmap.recycle();
-            }
-            if(filter8Bitmap != null)
-            {
-                filter8Bitmap.recycle();
-            }
-            if(filter9Bitmap != null)
-            {
-                filter9Bitmap.recycle();
-            }
-            if(filter10Bitmap != null)
-            {
-                filter10Bitmap.recycle();
-            }
-            if(filter11Bitmap != null)
-            {
-                filter11Bitmap.recycle();
-            }
-            if(filter12Bitmap != null)
-            {
-                filter12Bitmap.recycle();
-            }
-            if(filter13Bitmap != null)
-            {
-                filter13Bitmap.recycle();
-            }
-            if(filter14Bitmap != null)
-            {
-                filter14Bitmap.recycle();
-            }
-            if(filter15Bitmap != null)
-            {
-                filter15Bitmap.recycle();
-            }
-            x = filters.get(15).processFilter(x);
+                if (filter1Bitmap != null) {
+                    filter1Bitmap.recycle();
+                }
+                if (filter2Bitmap != null) {
+                    filter2Bitmap.recycle();
+                }
+                if (filter3Bitmap != null) {
+                    filter3Bitmap.recycle();
+                }
+                if (filter4Bitmap != null) {
+                    filter4Bitmap.recycle();
+                }
+                if (filter5Bitmap != null) {
+                    filter5Bitmap.recycle();
+                }
+                if (filter6Bitmap != null) {
+                    filter6Bitmap.recycle();
+                }
+                if (filter7Bitmap != null) {
+                    filter7Bitmap.recycle();
+                }
+                if (filter8Bitmap != null) {
+                    filter8Bitmap.recycle();
+                }
+                if (filter9Bitmap != null) {
+                    filter9Bitmap.recycle();
+                }
+                if (filter10Bitmap != null) {
+                    filter10Bitmap.recycle();
+                }
+                if (filter11Bitmap != null) {
+                    filter11Bitmap.recycle();
+                }
+                if (filter12Bitmap != null) {
+                    filter12Bitmap.recycle();
+                }
+                if (filter13Bitmap != null) {
+                    filter13Bitmap.recycle();
+                }
+                if (filter14Bitmap != null) {
+                    filter14Bitmap.recycle();
+                }
+                if (filter15Bitmap != null) {
+                    filter15Bitmap.recycle();
+                }
+                x = filters.get(15).processFilter(x);
+                break;
         }
 
         return x;

@@ -10,7 +10,7 @@
     <ImageView
         android:id="@+id/topGreenPannel"
         android:layout_width="match_parent"
-        android:layout_height="180dp"
+        android:layout_height="300dp"
         android:background="@drawable/samplewalpaper"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

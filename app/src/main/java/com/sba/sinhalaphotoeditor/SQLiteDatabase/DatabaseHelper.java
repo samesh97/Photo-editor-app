@@ -18,12 +18,12 @@ import java.util.Stack;
 public class DatabaseHelper extends SQLiteOpenHelper
 {
 
-    public static final String DATABASE_NAME = "Images.db";
-    public static final String TABLE_NAME = "Images";
+    private static final String DATABASE_NAME = "Images.db";
+    private static final String TABLE_NAME = "Images";
 
-    public static final String COL_1 = "Id";
-    public static final String COL_2 = "Image";
-    public static final String COL_3 = "DateTime";
+    private static final String COL_1 = "Id";
+    private static final String COL_2 = "Image";
+    private static final String COL_3 = "DateTime";
 
     public DatabaseHelper(@Nullable Context context)
     {
@@ -70,8 +70,8 @@ public class DatabaseHelper extends SQLiteOpenHelper
     {
         //deleteUnnessaryImages();
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME + " ORDER BY " + COL_1 + " DESC",null);
-        return cursor;
+        return db.rawQuery("SELECT * FROM " + TABLE_NAME + " ORDER BY " + COL_1 + " DESC",null);
+
     }
     public Cursor GetAllImagesASC()
     {
@@ -113,6 +113,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
     {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME,null);
+        cursor.close();
         return cursor.getCount();
     }
     public void deleteUnnessaryImages()

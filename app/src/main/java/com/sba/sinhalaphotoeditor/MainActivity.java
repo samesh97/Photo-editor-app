@@ -3,27 +3,20 @@ package com.sba.sinhalaphotoeditor;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
 import android.media.ExifInterface;
-import android.media.Image;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Handler;
 import android.provider.MediaStore;
 
 import androidx.annotation.NonNull;
@@ -31,11 +24,9 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
 
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
@@ -43,20 +34,13 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import com.glidebitmappool.GlideBitmapFactory;
 import com.glidebitmappool.GlideBitmapPool;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+import com.sba.sinhalaphotoeditor.walkthrough.WalkThroughActivity;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -96,6 +80,21 @@ public class MainActivity extends AppCompatActivity {
     TextView useOne;
 
     ImageView roundImage;
+
+
+    @Override
+    protected void onStart()
+    {
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("com.sba.photoeditor", 0); // 0 - for private mode
+        //SharedPreferences.Editor editor = pref.edit();
+        boolean isWalkThroughNeeded = pref.getBoolean("isWalkThroughNeeded",false);
+        if(!isWalkThroughNeeded)
+        {
+            startActivity(new Intent(MainActivity.this, WalkThroughActivity.class));
+            finish();
+        }
+        super.onStart();
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
