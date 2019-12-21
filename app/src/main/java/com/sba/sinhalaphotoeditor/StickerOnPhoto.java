@@ -3,6 +3,7 @@ package com.sba.sinhalaphotoeditor;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -17,6 +18,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,12 +35,15 @@ import android.widget.Toast;
 import com.glidebitmappool.GlideBitmapPool;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import render.animations.Bounce;
 import render.animations.Render;
@@ -96,7 +101,7 @@ public class StickerOnPhoto extends AppCompatActivity implements RotationGesture
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#018577")));
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#114f5e")));
 
         //setup the scale detection and rotation detection for the textview
         scaleGestureDetector = new ScaleGestureDetector(StickerOnPhoto.this,new simpleOnScaleGestureListener());
@@ -545,6 +550,51 @@ public class StickerOnPhoto extends AppCompatActivity implements RotationGesture
         float density = c.getResources().getDisplayMetrics().density;
         float dp = pixel / density;
         return dp;
+    }
+    public Uri getImageUri(Context inContext, Bitmap inImage)
+    {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+
+
+        String realPath = getRealPathFromDocumentUri(getApplicationContext(),Uri.parse(path));
+        Log.d("image",realPath);
+
+        File file = new File(realPath);
+        if(file.exists())
+        {
+            file.delete();
+            Log.d("image","deleted");
+        }
+
+        return Uri.parse(path);
+    }
+    public static String getRealPathFromDocumentUri(Context context, Uri uri){
+        String filePath = "";
+
+        Pattern p = Pattern.compile("(\\d+)$");
+        Matcher m = p.matcher(uri.toString());
+        if (!m.find()) {
+            //Log.e(ImageConverter.class.getSimpleName(), "ID for requested image not found: " + uri.toString());
+            return filePath;
+        }
+        String imgId = m.group();
+
+        String[] column = { MediaStore.Images.Media.DATA };
+        String sel = MediaStore.Images.Media._ID + "=?";
+
+        Cursor cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                column, sel, new String[]{ imgId }, null);
+
+        int columnIndex = cursor.getColumnIndex(column[0]);
+
+        if (cursor.moveToFirst()) {
+            filePath = cursor.getString(columnIndex);
+        }
+        cursor.close();
+
+        return filePath;
     }
 
 

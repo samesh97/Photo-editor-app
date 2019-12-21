@@ -20,9 +20,11 @@
             android:theme="@style/NoActionBarAppTheme"></activity>
         <activity
             android:name=".UsePreviouslyEditedImageActivity"
+            android:screenOrientation="portrait"
             android:label="Edited Images" />
         <activity
             android:name=".AddEffects"
+            android:screenOrientation="portrait"
             android:label="Add Effect" />
         <activity
             android:name=".AdjustImage"

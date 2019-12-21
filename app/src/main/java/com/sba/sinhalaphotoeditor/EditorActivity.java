@@ -7,6 +7,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -17,6 +18,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -62,6 +64,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import render.animations.Render;
 import render.animations.*;
@@ -106,11 +110,10 @@ public class EditorActivity extends AppCompatActivity {
     {
         if(MainActivity.images.size() > 1)
         {
-            new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setTitle("Exit")
+            new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setTitle("අවවාදයයි!")
                     .setIcon(R.drawable.ic_delete)
-                    .setMessage("You will lose everything you have edited," +
-                            " Are you sure you want to exit?")
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                    .setMessage("ඉවත් වීමකද ඔබ සකසාගෙන ඇති සියලුම පිංතූර මැකෙන අතර\nමෙය නැවත ලබාගත නොහැක.\nතවමත් ඔබට ඉවත් වීමට අවශ්\u200Dයද?")
+                    .setPositiveButton("අවශයයි", new DialogInterface.OnClickListener()
                     {
                         @Override
                         public void onClick(DialogInterface dialog, int which)
@@ -120,7 +123,7 @@ public class EditorActivity extends AppCompatActivity {
                             finish();
 
                         }
-                    }).setNegativeButton("No", null).show();
+                    }).setNegativeButton("අවශ්\u200Dය නැත", null).show();
         }
         else
         {
@@ -491,17 +494,9 @@ public class EditorActivity extends AppCompatActivity {
 
 
 
-        try
-        {
-            CreateABackgroundActivity.useImage.setEnabled(true);
-        }
-        catch(Exception e)
-        {
-
-        }
 
 
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#018577")));
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#114f5e")));
 
         dia = new Dialog(this, R.style.DialogSlideAnim);
 
@@ -742,7 +737,22 @@ public class EditorActivity extends AppCompatActivity {
                     render.setAnimation(Attention.Bounce(addCrop));
                     render.start();
                     addCrop.setEnabled(false);
-                    CropImage.activity(getImageUri(getApplicationContext(),MainActivity.images.get(MainActivity.imagePosition))).start(EditorActivity.this);
+                    final Uri uri = getImageUri(getApplicationContext(),MainActivity.images.get(MainActivity.imagePosition),false);
+                    CropImage.activity(uri).start(EditorActivity.this);
+
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            File f = new File(getRealPathFromDocumentUri(getApplicationContext(),uri));
+                            if(f.exists())
+                            {
+                                f.delete();
+                            }
+                        }
+                    },5000);
+
                 }
                 else
                 {
@@ -984,13 +994,6 @@ public class EditorActivity extends AppCompatActivity {
 
         }
     }
-    public Uri getImageUri(Context inContext, Bitmap inImage)
-    {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 0, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-        return Uri.parse(path);
-    }
     public Bitmap getResizedBitmap(Bitmap image, int maxSize)
     {
         int width = image.getWidth();
@@ -1035,6 +1038,55 @@ public class EditorActivity extends AppCompatActivity {
         canvas.setMatrix(scaleMatrix);
         canvas.drawBitmap(bitmap, middleX - bitmap.getWidth() / 2, middleY - bitmap.getHeight() / 2, new Paint(Paint.FILTER_BITMAP_FLAG));
         return scaledBitmap;
+    }
+    public Uri getImageUri(Context inContext, Bitmap inImage,Boolean isNeededToDelete)
+    {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+
+
+        if(isNeededToDelete)
+        {
+            String realPath = getRealPathFromDocumentUri(getApplicationContext(),Uri.parse(path));
+            Log.d("image",realPath);
+
+            File file = new File(realPath);
+            if(file.exists())
+            {
+                file.delete();
+                Log.d("image","deleted");
+            }
+        }
+
+
+        return Uri.parse(path);
+    }
+    public static String getRealPathFromDocumentUri(Context context, Uri uri){
+        String filePath = "";
+
+        Pattern p = Pattern.compile("(\\d+)$");
+        Matcher m = p.matcher(uri.toString());
+        if (!m.find()) {
+            //Log.e(ImageConverter.class.getSimpleName(), "ID for requested image not found: " + uri.toString());
+            return filePath;
+        }
+        String imgId = m.group();
+
+        String[] column = { MediaStore.Images.Media.DATA };
+        String sel = MediaStore.Images.Media._ID + "=?";
+
+        Cursor cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                column, sel, new String[]{ imgId }, null);
+
+        int columnIndex = cursor.getColumnIndex(column[0]);
+
+        if (cursor.moveToFirst()) {
+            filePath = cursor.getString(columnIndex);
+        }
+        cursor.close();
+
+        return filePath;
     }
 
 

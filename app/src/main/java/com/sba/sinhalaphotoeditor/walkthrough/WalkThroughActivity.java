@@ -83,11 +83,11 @@ public class WalkThroughActivity extends AppCompatActivity {
         titles.add("පිංතූරයක් උඩට පිංතූරයක් එකතු කරගන්නා ආකරය");
         description.add("මෙහිදී අපට edit කරන පින්තූරය මතට තවත් photos එක් කරගැනීම සදහා ගැලරියට යා හැක.\nගැලරියෙන් photo එකක් තෝරාගෙන අවශ්\u200Dය පරිදි එහි size එක වෙනස්කරගෙන එය අවශ්\u200Dය ස්ථානයට ගෙන ගොස් උඩම ඇති හරි ලකුන click කිරීමෙන් පින්තූරයට යොදගත හැක.");
 
-        titles.add("Stickers එකතු කරගන්නා ආකරය");
+        titles.add("ස්ටිකර්ස් එකතු කරගන්නා ආකරය");
         description.add("මෙහිදී අපට පින්තුරය මතට stickers එක් කරගත හැක.\nsticker එකක් තෝරාගෙන අවශ්\u200Dය පරිදි එහි size එක වෙනස්කරගෙන එය අවශ්\u200Dය ස්ථානයට ගෙන ගොස් උඩම ඇති හරි ලකුන click කිරීමෙන් පින්තූරයට යොදගත හැක.");
 
 
-        titles.add("Filters එකතු කරගන්නා ආකරය");
+        titles.add("ෆිල්ටර්ස් එකතු කරගන්නා ආකරය");
         description.add("මෙහිදී අපට photo එකට filters යොදාගත හැක.\nපහලින් එන filters click කර බලමින්  photo එකට වඩාත්ම ගැලපෙන filter එක තෝරාගත් පසු උඩම ඇති හරි ලකුන click කිරීමෙන් පින්තූරයට යොදගත හැක.");
 
         titles.add("පිංතූරයක් Adjust කරන ආකාරය");
@@ -111,7 +111,7 @@ public class WalkThroughActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                if(next.getText().equals("Finish"))
+                if(next.getText().equals("අවසන් කරන්න"))
                 {
                     SharedPreferences pref = getApplicationContext().getSharedPreferences("com.sba.photoeditor", 0); // 0 - for private mode
                     SharedPreferences.Editor editor = pref.edit();
@@ -146,11 +146,11 @@ public class WalkThroughActivity extends AppCompatActivity {
 
                 if (position == (viewPager.getAdapter().getCount())-1)
                 {
-                    next.setText("Finish");
+                    next.setText("අවසන් කරන්න");
                 }
                 else
                 {
-                    next.setText("Next");
+                    next.setText("ඉදිරියට");
                 }
 
                 if (position == 0)

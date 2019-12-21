@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -37,9 +38,12 @@ import com.warkiz.tickseekbar.SeekParams;
 import com.warkiz.tickseekbar.TickSeekBar;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 import render.animations.*;
@@ -126,7 +130,7 @@ public class AdjustImage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_adjust_image);
 
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#018577")));
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#114f5e")));
 
 
         render = new Render(AdjustImage.this);
@@ -223,13 +227,6 @@ public class AdjustImage extends AppCompatActivity {
 
 
 
-    }
-    public Uri getImageUri(Context inContext, Bitmap inImage)
-    {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-        return Uri.parse(path);
     }
     public static Bitmap changeBitmapContrastBrightness(Bitmap bmp, float contrast, float brightness)
     {
@@ -381,6 +378,51 @@ public class AdjustImage extends AppCompatActivity {
         canvasResult.drawBitmap(src, 0, 0, paint);
 
         return bitmapResult;
+    }
+    public Uri getImageUri(Context inContext, Bitmap inImage)
+    {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+
+
+        String realPath = getRealPathFromDocumentUri(getApplicationContext(),Uri.parse(path));
+        Log.d("image",realPath);
+
+        File file = new File(realPath);
+        if(file.exists())
+        {
+            file.delete();
+            Log.d("image","deleted");
+        }
+
+        return Uri.parse(path);
+    }
+    public static String getRealPathFromDocumentUri(Context context, Uri uri){
+        String filePath = "";
+
+        Pattern p = Pattern.compile("(\\d+)$");
+        Matcher m = p.matcher(uri.toString());
+        if (!m.find()) {
+            //Log.e(ImageConverter.class.getSimpleName(), "ID for requested image not found: " + uri.toString());
+            return filePath;
+        }
+        String imgId = m.group();
+
+        String[] column = { MediaStore.Images.Media.DATA };
+        String sel = MediaStore.Images.Media._ID + "=?";
+
+        Cursor cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                column, sel, new String[]{ imgId }, null);
+
+        int columnIndex = cursor.getColumnIndex(column[0]);
+
+        if (cursor.moveToFirst()) {
+            filePath = cursor.getString(columnIndex);
+        }
+        cursor.close();
+
+        return filePath;
     }
 
 

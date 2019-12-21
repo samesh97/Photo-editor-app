@@ -16,10 +16,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -33,6 +36,7 @@ import com.glidebitmappool.GlideBitmapPool;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -50,9 +54,6 @@ public class UsePreviouslyEditedImageActivity extends AppCompatActivity {
     ProgressDialog pdLoading;
 
     Button deleteAll;
-
-
-
 
     @Override
     protected void onStop() {
@@ -209,6 +210,11 @@ public class UsePreviouslyEditedImageActivity extends AppCompatActivity {
             date.setText(dates.get(position));
             image.setImageBitmap(images.get(position));
 
+            Animation top = AnimationUtils.loadAnimation(UsePreviouslyEditedImageActivity.this, R.anim.bottomtotop);
+            top.setDuration(500);
+            view.setAnimation(top);
+            top.start();
+
 
             delete.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -248,13 +254,6 @@ public class UsePreviouslyEditedImageActivity extends AppCompatActivity {
             });
             return view;
         }
-    }
-    public Uri getImageUri(Context inContext, Bitmap inImage)
-    {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.PNG, 0, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-        return Uri.parse(path);
     }
     public class AsyncCaller extends AsyncTask<Void, Void, Void>
     {
@@ -379,6 +378,25 @@ public class UsePreviouslyEditedImageActivity extends AppCompatActivity {
             }
         }
         return inSampleSize;
+    }
+    public Uri getImageUri(Context inContext, Bitmap inImage)
+    {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+
+
+        String realPath = getRealPathFromDocumentUri(getApplicationContext(),Uri.parse(path));
+        Log.d("image",realPath);
+
+        File file = new File(realPath);
+        if(file.exists())
+        {
+            file.delete();
+            Log.d("image","deleted");
+        }
+
+        return Uri.parse(path);
     }
     public static String getRealPathFromDocumentUri(Context context, Uri uri){
         String filePath = "";

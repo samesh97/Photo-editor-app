@@ -27,6 +27,7 @@ import androidx.core.content.ContextCompat;
 
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
@@ -38,9 +39,11 @@ import android.widget.TextView;
 
 import com.glidebitmappool.GlideBitmapFactory;
 import com.glidebitmappool.GlideBitmapPool;
+import com.sba.sinhalaphotoeditor.progressdialog.PhotoEditorProgressDialog;
 import com.sba.sinhalaphotoeditor.walkthrough.WalkThroughActivity;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -70,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
     static ArrayList<Bitmap> images = new ArrayList<>();
     static ArrayList<Uri> filePaths = new ArrayList<>();
 
-    ProgressDialog dialog;
+    PhotoEditorProgressDialog dialog;
 
     ImageView usePreviousBitmap;
 
@@ -224,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         Runtime rt = Runtime.getRuntime();
-        int maxMemory = (int)rt.freeMemory();
+        int maxMemory = (int)rt.maxMemory();
         GlideBitmapPool.initialize(maxMemory);
 
 
@@ -255,8 +258,8 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        dialog = new ProgressDialog(MainActivity.this);
-        dialog.setMessage("Loading");
+        dialog = new PhotoEditorProgressDialog(MainActivity.this);
+        //dialog.setMessage("Loading");
 
         useOne = (TextView) findViewById(R.id.useOne);
         useOne.setOnClickListener(new View.OnClickListener() {
@@ -680,13 +683,6 @@ public class MainActivity extends AppCompatActivity {
         }
         ///return bitmap;
     }
-    public Uri getImageUri(Context inContext, Bitmap inImage)
-    {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 0, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-        return Uri.parse(path);
-    }
     public Bitmap getResizedBitmap(Bitmap image, int maxSize)
     {
 
@@ -702,32 +698,6 @@ public class MainActivity extends AppCompatActivity {
             width = (int) (height * bitmapRatio);
         }
         return Bitmap.createScaledBitmap(image, width, height, true);
-    }
-    public static String getRealPathFromDocumentUri(Context context, Uri uri){
-        String filePath = "";
-
-        Pattern p = Pattern.compile("(\\d+)$");
-        Matcher m = p.matcher(uri.toString());
-        if (!m.find()) {
-            //Log.e(ImageConverter.class.getSimpleName(), "ID for requested image not found: " + uri.toString());
-            return filePath;
-        }
-        String imgId = m.group();
-
-        String[] column = { MediaStore.Images.Media.DATA };
-        String sel = MediaStore.Images.Media._ID + "=?";
-
-        Cursor cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                column, sel, new String[]{ imgId }, null);
-
-        int columnIndex = cursor.getColumnIndex(column[0]);
-
-        if (cursor.moveToFirst()) {
-            filePath = cursor.getString(columnIndex);
-        }
-        cursor.close();
-
-        return filePath;
     }
     public static void deleteUndoRedoImages()
     {
@@ -812,6 +782,51 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return inSampleSize;
+    }
+    public Uri getImageUri(Context inContext, Bitmap inImage)
+    {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+
+
+        String realPath = getRealPathFromDocumentUri(getApplicationContext(),Uri.parse(path));
+        Log.d("image",realPath);
+
+        File file = new File(realPath);
+        if(file.exists())
+        {
+            file.delete();
+            Log.d("image","deleted");
+        }
+
+        return Uri.parse(path);
+    }
+    public static String getRealPathFromDocumentUri(Context context, Uri uri){
+        String filePath = "";
+
+        Pattern p = Pattern.compile("(\\d+)$");
+        Matcher m = p.matcher(uri.toString());
+        if (!m.find()) {
+            //Log.e(ImageConverter.class.getSimpleName(), "ID for requested image not found: " + uri.toString());
+            return filePath;
+        }
+        String imgId = m.group();
+
+        String[] column = { MediaStore.Images.Media.DATA };
+        String sel = MediaStore.Images.Media._ID + "=?";
+
+        Cursor cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                column, sel, new String[]{ imgId }, null);
+
+        int columnIndex = cursor.getColumnIndex(column[0]);
+
+        if (cursor.moveToFirst()) {
+            filePath = cursor.getString(columnIndex);
+        }
+        cursor.close();
+
+        return filePath;
     }
 
 

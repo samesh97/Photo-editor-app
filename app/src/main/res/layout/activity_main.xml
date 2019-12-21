@@ -9,211 +9,210 @@
     android:background="#114f5e"
     xmlns:android="http://schemas.android.com/apk/res/android" >
 
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity"
-    android:background="#114f5e"
-    android:paddingBottom="50dp">
-
-
-    <ImageView
-        android:id="@+id/topGreenPannel"
-        android:layout_width="match_parent"
-        android:layout_height="180dp"
-        android:background="@drawable/samplewalpaper"
-        android:scaleType="fitCenter"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-
-
-    <ImageView
-        android:id="@+id/bottomWhitePannel"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="120dp"
-        android:background="@android:color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/topGreenPannel" />
+        tools:context=".MainActivity"
+        android:background="#114f5e"
+        android:paddingBottom="@dimen/padding_50">
 
-    <ImageView
-        android:id="@+id/roundImage"
-        android:layout_width="130dp"
-        android:layout_height="130dp"
-        android:background="@drawable/roundimageborder"
-        android:src="@drawable/greenlogo"
-        app:layout_constraintBottom_toBottomOf="@+id/topGreenPannel"
-        app:layout_constraintEnd_toEndOf="@+id/topGreenPannel"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/topGreenPannel" />
-
-
-    <TextView
-        android:id="@+id/selectPictureText"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        android:fontFamily="@font/kaputaunicode"
-        android:gravity="center"
-        android:text="පිංතූරයක් තෝරා ගන්න"
-        android:textColor="#FFFFFF"
-        android:textSize="30sp"
-        android:textStyle="bold"
-        android:typeface="sans"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/roundImage" />
-
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/pickImageFromGallery"
-        android:layout_width="match_parent"
-        android:layout_height="110dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="10dp"
-        android:background="@drawable/custom_drop_shadow_drawable"
-        android:onClick="showFileChooser"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/selectPictureText">
 
         <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginStart="24dp"
-            android:background="@drawable/greenborder"
+            android:id="@+id/topGreenPannel"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/image_height"
+            android:background="@drawable/samplewalpaper"
+            android:scaleType="fitCenter"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+
+
+        <ImageView
+            android:id="@+id/bottomWhitePannel"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/white_panel_margin"
+            android:background="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/topGreenPannel" />
+
+        <ImageView
+            android:id="@+id/roundImage"
+            android:layout_width="@dimen/logo_width"
+            android:layout_height="@dimen/logo_height"
+            android:src="@drawable/greenlogo"
+            app:layout_constraintBottom_toBottomOf="@+id/topGreenPannel"
+            app:layout_constraintEnd_toEndOf="@+id/topGreenPannel"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/topGreenPannel" />
+
+
+        <TextView
+            android:id="@+id/selectPictureText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_top_8"
+            android:fontFamily="@font/kaputaunicode"
+            android:gravity="center"
+            android:text="පිංතූරයක් තෝරා ගන්න"
+            android:textColor="#FFFFFF"
+            android:textSize="@dimen/activity_main_topic_text_size"
+            android:textStyle="bold"
+            android:typeface="sans"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/roundImage" />
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/pickImageFromGallery"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/background_height"
+            android:layout_marginStart="@dimen/margin_start"
+            android:layout_marginTop="@dimen/margin_top"
+            android:layout_marginEnd="@dimen/margin_end"
+            android:background="@drawable/custom_drop_shadow_drawable"
             android:onClick="showFileChooser"
-            android:src="@drawable/addimage"
-            app:layout_constraintBottom_toBottomOf="@+id/pickImageFromGallery"
-            app:layout_constraintStart_toStartOf="@+id/pickImageFromGallery"
-            app:layout_constraintTop_toTopOf="@+id/pickImageFromGallery" />
-
-
-        <TextView
-            android:id="@+id/fromGalery"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="100dp"
-            android:layout_marginEnd="8dp"
-            android:fontFamily="@font/kaputaunicode"
-            android:onClick="showFileChooser"
-            android:text="ගැලරියෙන් තෝරා ගන්න"
-            android:textColor="#018577"
-            android:textSize="23sp"
-            android:textStyle="bold"
-            android:typeface="sans"
-            app:layout_constraintBottom_toBottomOf="@+id/pickImageFromGallery"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/imageView"
-            app:layout_constraintTop_toTopOf="@+id/pickImageFromGallery" />
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/selectPictureText">
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="@dimen/image_40"
+                android:layout_height="@dimen/image_40"
+                android:layout_marginStart="@dimen/image_margin_start_24"
+                android:background="@drawable/greenborder"
+                android:onClick="showFileChooser"
+                android:src="@drawable/addimage"
+                app:layout_constraintBottom_toBottomOf="@+id/pickImageFromGallery"
+                app:layout_constraintStart_toStartOf="@+id/pickImageFromGallery"
+                app:layout_constraintTop_toTopOf="@+id/pickImageFromGallery" />
+
+
+            <TextView
+                android:id="@+id/fromGalery"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/text_margin"
+                android:fontFamily="@font/kaputaunicode"
+                android:gravity="center"
+                android:onClick="showFileChooser"
+                android:text="ගැලරියෙන් තෝරා ගන්න"
+                android:textColor="#018577"
+                android:textSize="@dimen/activity_main_sub_text_view_size"
+                android:textStyle="bold"
+                android:typeface="sans"
+                app:layout_constraintBottom_toBottomOf="@+id/pickImageFromGallery"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/imageView"
+                app:layout_constraintTop_toTopOf="@+id/pickImageFromGallery" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/createImageFromLibrary"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/background_height"
+            android:layout_marginStart="@dimen/background_margin_start"
+            android:layout_marginTop="@dimen/back_margin_top"
+            android:layout_marginEnd="@dimen/back_margin_end"
+            android:background="@drawable/custom_drop_shadow_drawable"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pickImageFromGallery">
+
+
+            <ImageView
+                android:id="@+id/createBitmap"
+                android:layout_width="@dimen/image_40"
+                android:layout_height="@dimen/image_40"
+                android:layout_marginStart="@dimen/image_margin_start_24"
+                android:background="@drawable/greenborder"
+                android:src="@drawable/createbitmap"
+                app:layout_constraintBottom_toBottomOf="@+id/createImageFromLibrary"
+                app:layout_constraintStart_toStartOf="@+id/createImageFromLibrary"
+                app:layout_constraintTop_toTopOf="@+id/createImageFromLibrary" />
+
+            <TextView
+                android:id="@+id/createOne"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/text_margin"
+                android:fontFamily="@font/kaputaunicode"
+                android:gravity="center"
+                android:text="පසුබිමක් සකසා ගන්න"
+                android:textColor="#018577"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:typeface="sans"
+                app:layout_constraintBottom_toBottomOf="@+id/createBitmap"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/createBitmap"
+                app:layout_constraintTop_toTopOf="@+id/createBitmap" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/pickImageFromDb"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/background_height"
+            android:layout_marginStart="@dimen/back_margin_10"
+            android:layout_marginTop="@dimen/back_margin_top_10"
+            android:layout_marginEnd="@dimen/back_margin_end_10"
+            android:background="@drawable/custom_drop_shadow_drawable"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/createImageFromLibrary">
+
+
+            <ImageView
+                android:id="@+id/usePreviousBitmap"
+                android:layout_width="@dimen/image_40"
+                android:layout_height="@dimen/image_40"
+                android:layout_marginStart="@dimen/image_margin_start_24"
+                android:background="@drawable/greenborder"
+                android:src="@drawable/addfromimages"
+                app:layout_constraintBottom_toBottomOf="@+id/pickImageFromDb"
+                app:layout_constraintStart_toStartOf="@+id/pickImageFromDb"
+                app:layout_constraintTop_toTopOf="@+id/pickImageFromDb" />
+
+
+            <TextView
+                android:id="@+id/useOne"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="24dp"
+                android:fontFamily="@font/kaputaunicode"
+                android:gravity="center"
+                android:text="සැකසු පසුබිමක් තෝරා ගන්න"
+                android:textColor="#018577"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:typeface="sans"
+                app:layout_constraintBottom_toBottomOf="@+id/usePreviousBitmap"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/usePreviousBitmap"
+                app:layout_constraintTop_toTopOf="@+id/usePreviousBitmap" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/createImageFromLibrary"
-        android:layout_width="match_parent"
-        android:layout_height="110dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="10dp"
-        android:background="@drawable/custom_drop_shadow_drawable"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pickImageFromGallery">
-
-
-        <ImageView
-            android:id="@+id/createBitmap"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginStart="24dp"
-            android:background="@drawable/greenborder"
-            android:src="@drawable/createbitmap"
-            app:layout_constraintBottom_toBottomOf="@+id/createImageFromLibrary"
-            app:layout_constraintStart_toStartOf="@+id/createImageFromLibrary"
-            app:layout_constraintTop_toTopOf="@+id/createImageFromLibrary" />
-
-        <TextView
-            android:id="@+id/createOne"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="100dp"
-            android:layout_marginEnd="8dp"
-            android:fontFamily="@font/kaputaunicode"
-            android:text="පසුබිමක් සකසා ගන්න"
-            android:textColor="#018577"
-            android:textSize="23sp"
-            android:textStyle="bold"
-            android:typeface="sans"
-            app:layout_constraintBottom_toBottomOf="@+id/createBitmap"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/createBitmap"
-            app:layout_constraintTop_toTopOf="@+id/createBitmap" />
-
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/pickImageFromDb"
-        android:layout_width="match_parent"
-        android:layout_height="110dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="10dp"
-        android:background="@drawable/custom_drop_shadow_drawable"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/createImageFromLibrary">
-
-
-        <ImageView
-            android:id="@+id/usePreviousBitmap"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginStart="24dp"
-            android:background="@drawable/greenborder"
-            android:src="@drawable/addfromimages"
-            app:layout_constraintBottom_toBottomOf="@+id/pickImageFromDb"
-            app:layout_constraintStart_toStartOf="@+id/pickImageFromDb"
-            app:layout_constraintTop_toTopOf="@+id/pickImageFromDb" />
-
-
-        <TextView
-            android:id="@+id/useOne"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="100dp"
-            android:layout_marginEnd="8dp"
-            android:fontFamily="@font/kaputaunicode"
-            android:text="සැකසු පසුබිමක් තෝරා ගන්න"
-            android:textColor="#018577"
-            android:textSize="23sp"
-            android:textStyle="bold"
-            android:typeface="sans"
-            app:layout_constraintBottom_toBottomOf="@+id/usePreviousBitmap"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/usePreviousBitmap"
-            app:layout_constraintTop_toTopOf="@+id/usePreviousBitmap" />
-
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>

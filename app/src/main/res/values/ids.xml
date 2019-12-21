@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <item type="id" name="redImage" />
+    <item type="id" name="greenImage" />
+    <item type="id" name="yellowImage" />
+    <item type="id" name="orangeImage" />
+
+    <item type="id" name="linearLayout" />
+    <item type="id" name="constraintLayout" />
+
+    <item type="id" name="just" />
+</resources>

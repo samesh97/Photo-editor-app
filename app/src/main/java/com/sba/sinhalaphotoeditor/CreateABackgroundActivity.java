@@ -2,9 +2,11 @@ package com.sba.sinhalaphotoeditor;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -13,6 +15,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
@@ -27,6 +30,9 @@ import com.flask.colorpicker.builder.ColorPickerClickListener;
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.sba.sinhalaphotoeditor.MainActivity.decodeSampledBitmapFromResource;
 import static com.sba.sinhalaphotoeditor.UsePreviouslyEditedImageActivity.getRealPathFromDocumentUri;
@@ -39,9 +45,11 @@ public class CreateABackgroundActivity extends AppCompatActivity {
     int color = -99;
     Bitmap createdBitmap = null;
     ImageView pickColor;
-    static Button useImage;
+    Button useImage;
     Boolean isImageCreating = false;
-    Boolean isButtonPressed = false;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +61,7 @@ public class CreateABackgroundActivity extends AppCompatActivity {
         DisplayMetrics metrics = new DisplayMetrics();
         display.getMetrics(metrics);
         int widtha = metrics.widthPixels;
+
 
 
         create = (Button) findViewById(R.id.create);
@@ -84,6 +93,7 @@ public class CreateABackgroundActivity extends AppCompatActivity {
                     MainActivity.CurrentWorkingFilePath = getImageUri(getApplicationContext(),createdBitmap);
 
                     startActivity(new Intent(getApplicationContext(),EditorActivity.class));
+                    finish();
                 }
             }
         });
@@ -202,9 +212,47 @@ public class CreateABackgroundActivity extends AppCompatActivity {
     public Uri getImageUri(Context inContext, Bitmap inImage)
     {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 0, bytes);
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
         String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+
+
+        String realPath = getRealPathFromDocumentUri(getApplicationContext(),Uri.parse(path));
+        Log.d("image",realPath);
+
+        File file = new File(realPath);
+        if(file.exists())
+        {
+            file.delete();
+            Log.d("image","deleted");
+        }
+
         return Uri.parse(path);
+    }
+    public static String getRealPathFromDocumentUri(Context context, Uri uri){
+        String filePath = "";
+
+        Pattern p = Pattern.compile("(\\d+)$");
+        Matcher m = p.matcher(uri.toString());
+        if (!m.find()) {
+            //Log.e(ImageConverter.class.getSimpleName(), "ID for requested image not found: " + uri.toString());
+            return filePath;
+        }
+        String imgId = m.group();
+
+        String[] column = { MediaStore.Images.Media.DATA };
+        String sel = MediaStore.Images.Media._ID + "=?";
+
+        Cursor cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                column, sel, new String[]{ imgId }, null);
+
+        int columnIndex = cursor.getColumnIndex(column[0]);
+
+        if (cursor.moveToFirst()) {
+            filePath = cursor.getString(columnIndex);
+        }
+        cursor.close();
+
+        return filePath;
     }
 
 }

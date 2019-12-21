@@ -8,6 +8,7 @@ import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -28,6 +29,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 
+import com.bumptech.glide.Glide;
 import com.glidebitmappool.GlideBitmapPool;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
 import com.zomato.photofilters.FilterPack;
@@ -35,12 +37,17 @@ import com.zomato.photofilters.imageprocessors.Filter;
 
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import render.animations.*;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -157,7 +164,7 @@ public class AddEffects extends AppCompatActivity {
 
         try
         {
-            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#018577")));
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#114f5e")));
         }
         catch (NullPointerException e)
         {
@@ -170,7 +177,7 @@ public class AddEffects extends AppCompatActivity {
 
 
         Runtime rt = Runtime.getRuntime();
-        int maxMemory = (int)rt.freeMemory();
+        int maxMemory = (int)rt.maxMemory();
         GlideBitmapPool.initialize(maxMemory); // 10mb max memory size
 
         render = new Render(AddEffects.this);
@@ -202,8 +209,6 @@ public class AddEffects extends AppCompatActivity {
         init();
         setData();
         onClickListners();
-
-
 
 
 
@@ -758,12 +763,51 @@ public class AddEffects extends AppCompatActivity {
         }
         return Bitmap.createScaledBitmap(image, width, height, true);
     }
+
     public Uri getImageUri(Context inContext, Bitmap inImage)
     {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
         String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+
+
+        String realPath = getRealPathFromDocumentUri(getApplicationContext(),Uri.parse(path));
+        Log.d("image",realPath);
+
+        File file = new File(realPath);
+        if(file.exists())
+        {
+            file.delete();
+            Log.d("image","deleted");
+        }
+
         return Uri.parse(path);
+    }
+    public static String getRealPathFromDocumentUri(Context context, Uri uri){
+        String filePath = "";
+
+        Pattern p = Pattern.compile("(\\d+)$");
+        Matcher m = p.matcher(uri.toString());
+        if (!m.find()) {
+            //Log.e(ImageConverter.class.getSimpleName(), "ID for requested image not found: " + uri.toString());
+            return filePath;
+        }
+        String imgId = m.group();
+
+        String[] column = { MediaStore.Images.Media.DATA };
+        String sel = MediaStore.Images.Media._ID + "=?";
+
+        Cursor cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                column, sel, new String[]{ imgId }, null);
+
+        int columnIndex = cursor.getColumnIndex(column[0]);
+
+        if (cursor.moveToFirst()) {
+            filePath = cursor.getString(columnIndex);
+        }
+        cursor.close();
+
+        return filePath;
     }
     private class AsyncCaller extends AsyncTask<Void, Void, Void>
     {
@@ -1856,6 +1900,7 @@ public class AddEffects extends AppCompatActivity {
 
         return x;
     }
+
 
 
 
