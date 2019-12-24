@@ -11,7 +11,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         tools:context=".MainActivity"
         android:background="#114f5e"
         android:paddingBottom="@dimen/padding_50">
@@ -28,7 +28,33 @@
             app:layout_constraintTop_toTopOf="parent" />
 
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/custom_drop_shadow_drawable"
+            app:layout_constraintEnd_toEndOf="@+id/topGreenPannel"
+            app:layout_constraintTop_toTopOf="parent">
 
+            <Spinner
+                android:id="@+id/languagePicker"
+                style="@style/spinner_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="6dp"
+                android:layout_marginBottom="2dp"
+                android:drawSelectorOnTop="true"
+                android:entries="@array/select_language"
+                android:spinnerMode="dropdown"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ImageView
             android:id="@+id/bottomWhitePannel"
@@ -57,11 +83,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_top_8"
-            android:fontFamily="@font/kaputaunicode"
             android:gravity="center"
-            android:text="පිංතූරයක් තෝරා ගන්න"
+            android:text="@string/select_an_image_text"
             android:textColor="#FFFFFF"
-            android:textSize="@dimen/activity_main_topic_text_size"
+            android:textSize="30sp"
+            android:fontFamily="@font/gemunulibrebold"
             android:textStyle="bold"
             android:typeface="sans"
             app:layout_constraintEnd_toEndOf="parent"
@@ -101,12 +127,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/text_margin"
-                android:fontFamily="@font/kaputaunicode"
                 android:gravity="center"
                 android:onClick="showFileChooser"
-                android:text="ගැලරියෙන් තෝරා ගන්න"
+                android:text="@string/select_from_galery_text"
                 android:textColor="#018577"
-                android:textSize="@dimen/activity_main_sub_text_view_size"
+                android:textSize="22sp"
+                android:fontFamily="@font/gemunulibrebold"
                 android:textStyle="bold"
                 android:typeface="sans"
                 app:layout_constraintBottom_toBottomOf="@+id/pickImageFromGallery"
@@ -148,11 +174,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/text_margin"
-                android:fontFamily="@font/kaputaunicode"
                 android:gravity="center"
-                android:text="පසුබිමක් සකසා ගන්න"
+                android:text="@string/create_a_background_text"
                 android:textColor="#018577"
-                android:textSize="17sp"
+                android:textSize="22sp"
+                android:fontFamily="@font/gemunulibrebold"
                 android:textStyle="bold"
                 android:typeface="sans"
                 app:layout_constraintBottom_toBottomOf="@+id/createBitmap"
@@ -195,13 +221,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="24dp"
-                android:fontFamily="@font/kaputaunicode"
                 android:gravity="center"
-                android:text="සැකසු පසුබිමක් තෝරා ගන්න"
+                android:text="@string/select_a_background_text"
                 android:textColor="#018577"
-                android:textSize="17sp"
                 android:textStyle="bold"
                 android:typeface="sans"
+                android:textSize="22sp"
+                android:fontFamily="@font/gemunulibrebold"
                 app:layout_constraintBottom_toBottomOf="@+id/usePreviousBitmap"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/usePreviousBitmap"

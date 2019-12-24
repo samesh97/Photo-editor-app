@@ -7,12 +7,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -131,6 +133,12 @@ public class TextOnImage extends AppCompatActivity implements RotationGestureDet
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+        Runtime rt = Runtime.getRuntime();
+        int maxMemory = (int)rt.freeMemory();
+        GlideBitmapPool.initialize(maxMemory);
+        GlideBitmapPool.clearMemory();
 
 
 
@@ -259,28 +267,24 @@ public class TextOnImage extends AppCompatActivity implements RotationGestureDet
         Display display = wm.getDefaultDisplay();
         DisplayMetrics metrics = new DisplayMetrics();
         display.getMetrics(metrics);
-
         int width = metrics.widthPixels;
         int height = scaleImageKeepAspectRatio(bitmapForImageView,width);*/
 
         //bitmapForImageView = scale(bitmapForImageView,metrics.widthPixels,metrics.heightPixels);
 
 /*
-
         if(bitmapForImageView.getHeight() > bitmapForImageView.getWidth())
         {
             height = scaleImageKeepAspectRatio(bitmapForImageView,width);
             width = scaleImageKeepAspectRatio2(bitmapForImageView,height);
         }
         //resize the views as per the image size
-
         /*
         if(bitmapForImageView.getWidth()>bitmapForImageView.getHeight())
         {
             width = 1280;
             height = 720;
         }
-
         if(bitmapForImageView.getWidth()<bitmapForImageView.getHeight())
         {
             width = bitmapForImageView.getWidth();
@@ -358,7 +362,7 @@ public class TextOnImage extends AppCompatActivity implements RotationGestureDet
             float lastX = 0, lastY = 0;
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-               switch (motionEvent.getAction()) {
+                switch (motionEvent.getAction()) {
                     case (MotionEvent.ACTION_DOWN):
                         lastX = motionEvent.getX();
                         lastY = motionEvent.getY();
@@ -368,7 +372,8 @@ public class TextOnImage extends AppCompatActivity implements RotationGestureDet
                         float dx = motionEvent.getX() - lastX;
                         float dy = motionEvent.getY() - lastY;
                         float finalX = view.getX() + dx;
-                        float finalY = view.getY() + dy + view.getHeight();
+//                        float finalY = view.getY() + dy + view.getHeight();
+                        float finalY = view.getY() + dy;
                         view.setX(finalX);
                         view.setY(finalY);
                         break;
@@ -403,28 +408,28 @@ public class TextOnImage extends AppCompatActivity implements RotationGestureDet
         else if(item.getItemId() == R.id.setColor)
         {
             ColorPickerDialogBuilder.with(TextOnImage.this)
-                        .setTitle("Choose Color")
-                        .initialColor(Color.parseColor(textColor))
-                        .wheelType(ColorPickerView.WHEEL_TYPE.CIRCLE)
-                        .density(20)
-                        .setOnColorSelectedListener(new OnColorSelectedListener() {
-                            @Override
-                            public void onColorSelected(int i) {
+                    .setTitle("Choose Color")
+                    .initialColor(Color.parseColor(textColor))
+                    .wheelType(ColorPickerView.WHEEL_TYPE.CIRCLE)
+                    .density(20)
+                    .setOnColorSelectedListener(new OnColorSelectedListener() {
+                        @Override
+                        public void onColorSelected(int i) {
                             addTextView.setTextColor(i);
-                            }
-                        })
-                        .setPositiveButton("Ok", new ColorPickerClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i, Integer[] integers) {
-                                addTextView.setTextColor(i);
-                            }
-                        })
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
+                        }
+                    })
+                    .setPositiveButton("Ok", new ColorPickerClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i, Integer[] integers) {
+                            addTextView.setTextColor(i);
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
 
-                            }
-                        }).build().show();
+                        }
+                    }).build().show();
             return true;
         }
         else if(item.getItemId() == R.id.setFont)
@@ -580,7 +585,7 @@ public class TextOnImage extends AppCompatActivity implements RotationGestureDet
                         addTextView.setShadowLayer(2.5f, -1, 1, Color.BLACK);
                     }
 
-                   isBorderCheckTrue = true;
+                    isBorderCheckTrue = true;
                 }
                 else
                 {
@@ -755,6 +760,8 @@ public class TextOnImage extends AppCompatActivity implements RotationGestureDet
                 intent.putExtra(IMAGE_OUT_URI,imageOutUri.toString());
                 try {
                     Bitmap  bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageOutUri);
+                    bitmap = CropBitmapTransparency(bitmap);
+
 
                     MainActivity.imagePosition++;
                     MainActivity.images.add(MainActivity.imagePosition,bitmap);
@@ -870,6 +877,7 @@ public class TextOnImage extends AppCompatActivity implements RotationGestureDet
         String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
 
 
+
         String realPath = getRealPathFromDocumentUri(getApplicationContext(),Uri.parse(path));
         Log.d("image",realPath);
 
@@ -907,6 +915,36 @@ public class TextOnImage extends AppCompatActivity implements RotationGestureDet
         cursor.close();
 
         return filePath;
+    }
+    Bitmap CropBitmapTransparency(Bitmap sourceBitmap)
+    {
+        int minX = sourceBitmap.getWidth();
+        int minY = sourceBitmap.getHeight();
+        int maxX = -1;
+        int maxY = -1;
+        for(int y = 0; y < sourceBitmap.getHeight(); y++)
+        {
+            for(int x = 0; x < sourceBitmap.getWidth(); x++)
+            {
+                int alpha = (sourceBitmap.getPixel(x, y) >> 24) & 255;
+                if(alpha > 0)   // pixel is not 100% transparent
+                {
+                    if(x < minX)
+                        minX = x;
+                    if(x > maxX)
+                        maxX = x;
+                    if(y < minY)
+                        minY = y;
+                    if(y > maxY)
+                        maxY = y;
+                }
+            }
+        }
+        if((maxX < minX) || (maxY < minY))
+            return null; // Bitmap is entirely transparent
+
+        // crop bitmap to non-transparent area and return:
+        return Bitmap.createBitmap(sourceBitmap, minX, minY, (maxX - minX) + 1, (maxY - minY) + 1);
     }
 
 

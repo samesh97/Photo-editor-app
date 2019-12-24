@@ -13,7 +13,7 @@
         android:layout_height="match_parent"
         android:layout_marginBottom="@dimen/add_effect_image_margin"
         android:adjustViewBounds="true"
-        android:scaleType="centerCrop"
+        android:scaleType="centerInside"
         app:layout_constraintBottom_toTopOf="@+id/swipeRefreshLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"

@@ -18,9 +18,10 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter
 
     ArrayList<String> titles = new ArrayList<>();
     ArrayList<String> description = new ArrayList<>();
+    ArrayList<Drawable> topImages = new ArrayList<Drawable>();
 
 
-    public ViewPagerAdapter(@NonNull FragmentManager fm,ArrayList<Drawable> image1,ArrayList<Drawable> image2,ArrayList<Drawable> image3,ArrayList<String> titles,ArrayList<String> description)
+    public ViewPagerAdapter(@NonNull FragmentManager fm,ArrayList<Drawable> image1,ArrayList<Drawable> image2,ArrayList<Drawable> image3,ArrayList<String> titles,ArrayList<String> description,ArrayList<Drawable> topImages)
     {
         super(fm);
         this.image1 = image1;
@@ -28,6 +29,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter
         this.image3 = image3;
         this.titles = titles;
         this.description = description;
+        this.topImages = topImages;
     }
 
     @NonNull
@@ -68,7 +70,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter
             im3 = null;
         }
 
-        ViewPagerFragment fragment = new ViewPagerFragment(im1,im2,im3,titles.get(position),description.get(position));
+        ViewPagerFragment fragment = new ViewPagerFragment(im1,im2,im3,titles.get(position),description.get(position),topImages.get(position));
         return fragment;
     }
 

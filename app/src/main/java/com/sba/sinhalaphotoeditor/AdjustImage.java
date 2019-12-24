@@ -93,16 +93,6 @@ public class AdjustImage extends AppCompatActivity {
     protected void onDestroy()
     {
         super.onDestroy();
-/*
-        if(blurAddedImage != null)
-        {
-            blurAddedImage.recycle();
-
-        }
-        if(contrastAddedImage != null)
-        {
-            contrastAddedImage.recycle();
-        }*/
     }
 
 
@@ -129,6 +119,13 @@ public class AdjustImage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_adjust_image);
+
+
+        Runtime rt = Runtime.getRuntime();
+        int maxMemory = (int)rt.freeMemory();
+        GlideBitmapPool.initialize(maxMemory);
+        GlideBitmapPool.clearMemory();
+
 
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#114f5e")));
 

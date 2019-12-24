@@ -9,7 +9,7 @@ import android.renderscript.ScriptIntrinsicBlur;
 
 public class BlurUtils
 {
-    private static final float BITMAP_SCALE = 0.4f;
+    private static final float BITMAP_SCALE = 1f;
 
     //Set the radius of the Blur. Supported range 0 < radius <= 25
     private static float BLUR_RADIUS = 10.5f;

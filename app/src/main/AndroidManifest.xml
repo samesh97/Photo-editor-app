@@ -16,16 +16,23 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".walkthrough.WalkThroughActivity"
-            android:theme="@style/NoActionBarAppTheme"></activity>
+        <activity android:name=".welcomeScreen.WelcomeScreen"
+            android:theme="@style/NoActionBarAppTheme"
+            android:screenOrientation="portrait">
+
+        </activity>
+        <activity
+            android:name=".walkthrough.WalkThroughActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/NoActionBarAppTheme" />
         <activity
             android:name=".UsePreviouslyEditedImageActivity"
-            android:screenOrientation="portrait"
-            android:label="Edited Images" />
+            android:label="Edited Images"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".AddEffects"
-            android:screenOrientation="portrait"
-            android:label="Add Effect" />
+            android:label="Add Effect"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".AdjustImage"
             android:label="Add Blur"

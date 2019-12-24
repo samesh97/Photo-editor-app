@@ -52,8 +52,8 @@ import render.animations.Zoom;
 public class PhotoOnPhoto extends AppCompatActivity implements RotationGestureDetector.OnRotationGestureListener {
 
 
-    public static String IMAGE_IN_URI = "imageInURI";
-    public static String IMAGE_SIZE = "textFontSize";
+    //public static String IMAGE_IN_URI = "imageInURI";
+    //public static String IMAGE_SIZE = "textFontSize";
     public static String IMAGE_OUT_URI = "imageOutURI";
     public static String IMAGE_OUT_ERROR = "imageOutError";
 
@@ -100,6 +100,12 @@ public class PhotoOnPhoto extends AppCompatActivity implements RotationGestureDe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+        Runtime rt = Runtime.getRuntime();
+        int maxMemory = (int)rt.freeMemory();
+        GlideBitmapPool.initialize(maxMemory);
+        GlideBitmapPool.clearMemory();
 
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#114f5e")));
 
@@ -153,7 +159,7 @@ public class PhotoOnPhoto extends AppCompatActivity implements RotationGestureDe
     private void extractBundle()
     {   //extract the data from previous activity
         Bundle bundle = getIntent().getExtras();
-        imageInUri = Uri.parse(bundle.getString(IMAGE_IN_URI));
+       // imageInUri = Uri.parse(bundle.getString(IMAGE_IN_URI));
         IMAGE_ON_IMAGE_URI = Uri.parse((bundle.getString("IMAGE_ON_IMAGE_URI")));
 
     }
@@ -184,7 +190,7 @@ public class PhotoOnPhoto extends AppCompatActivity implements RotationGestureDe
         int width = metrics.widthPixels;
         int height = scaleImageKeepAspectRatio(bitmapForImageView,width);
 
-       // bitmapForImageView = scale(bitmapForImageView,metrics.widthPixels,metrics.heightPixels);
+        // bitmapForImageView = scale(bitmapForImageView,metrics.widthPixels,metrics.heightPixels);
 
 
 
@@ -194,7 +200,6 @@ public class PhotoOnPhoto extends AppCompatActivity implements RotationGestureDe
             width = scaleImageKeepAspectRatio2(bitmapForImageView,height);
         }
         //resize the views as per the image size
-
         /*
         if(bitmapForImageView.getWidth()>bitmapForImageView.getHeight())
         {
@@ -276,7 +281,7 @@ public class PhotoOnPhoto extends AppCompatActivity implements RotationGestureDe
             float lastX = 0, lastY = 0;
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-               switch (motionEvent.getAction()) {
+                switch (motionEvent.getAction()) {
                     case (MotionEvent.ACTION_DOWN):
                         lastX = motionEvent.getX();
                         lastY = motionEvent.getY();
@@ -286,7 +291,8 @@ public class PhotoOnPhoto extends AppCompatActivity implements RotationGestureDe
                         float dx = motionEvent.getX() - lastX;
                         float dy = motionEvent.getY() - lastY;
                         float finalX = view.getX() + dx;
-                        float finalY = view.getY() + dy + view.getHeight();
+//                        float finalY = view.getY() + dy + view.getHeight();
+                        float finalY = view.getY() + dy;
                         view.setX(finalX);
                         view.setY(finalY);
                         break;
@@ -419,6 +425,8 @@ public class PhotoOnPhoto extends AppCompatActivity implements RotationGestureDe
                 intent.putExtra(IMAGE_OUT_URI,imageOutUri.toString());
                 try {
                     Bitmap  bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageOutUri);
+
+                    bitmap = CropBitmapTransparency(bitmap);
                     MainActivity.imagePosition++;
                     MainActivity.images.add(MainActivity.imagePosition,bitmap);
                     if(EditorActivity.isNeededToDelete)
@@ -537,6 +545,38 @@ public class PhotoOnPhoto extends AppCompatActivity implements RotationGestureDe
         cursor.close();
 
         return filePath;
+    }
+
+
+    Bitmap CropBitmapTransparency(Bitmap sourceBitmap)
+    {
+        int minX = sourceBitmap.getWidth();
+        int minY = sourceBitmap.getHeight();
+        int maxX = -1;
+        int maxY = -1;
+        for(int y = 0; y < sourceBitmap.getHeight(); y++)
+        {
+            for(int x = 0; x < sourceBitmap.getWidth(); x++)
+            {
+                int alpha = (sourceBitmap.getPixel(x, y) >> 24) & 255;
+                if(alpha > 0)   // pixel is not 100% transparent
+                {
+                    if(x < minX)
+                        minX = x;
+                    if(x > maxX)
+                        maxX = x;
+                    if(y < minY)
+                        minY = y;
+                    if(y > maxY)
+                        maxY = y;
+                }
+            }
+        }
+        if((maxX < minX) || (maxY < minY))
+            return null; // Bitmap is entirely transparent
+
+        // crop bitmap to non-transparent area and return:
+        return Bitmap.createBitmap(sourceBitmap, minX, minY, (maxX - minX) + 1, (maxY - minY) + 1);
     }
 
 

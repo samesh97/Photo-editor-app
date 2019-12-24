@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="#114f5e"
+    android:layout_height="match_parent"
+    tools:context=".welcomeScreen.WelcomeScreen">
+
+
+    <ImageView
+        android:id="@+id/topGreenPannel"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/activity_image_saving_top_image_height"
+        android:scaleType="centerInside"
+        android:background="@drawable/samplewalpaper"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/activity_previous_image_margin_16"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="@dimen/activity_previous_image_margin_16"
+        android:fontFamily="@font/gemunulibrebold"
+        android:gravity="center"
+        android:text="Thank you for downloading!"
+        android:textColor="@android:color/white"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/topGreenPannel" />\
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/activity_previous_image_margin_16"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="@dimen/activity_previous_image_margin_16"
+        android:fontFamily="@font/gemunulibrebold"
+        android:gravity="center"
+        android:text="Please Choose the\n Prefered Language to Proceed"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/custom_drop_shadow_drawable"
+        app:layout_constraintEnd_toEndOf="@+id/textView3"
+        app:layout_constraintStart_toStartOf="@+id/textView3"
+        app:layout_constraintTop_toBottomOf="@+id/textView3">
+
+        <Spinner
+            android:id="@+id/languagePicker"
+            style="@style/spinner_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginEnd="6dp"
+            android:layout_marginBottom="6dp"
+            android:drawSelectorOnTop="true"
+            android:entries="@array/select_language"
+            android:spinnerMode="dropdown"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <Button
+        android:id="@+id/proceed"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/activity_previous_image_margin_16"
+        android:layout_marginTop="60dp"
+        android:layout_marginEnd="@dimen/activity_previous_image_margin_16"
+        android:background="@drawable/borderred"
+        android:fontFamily="@font/gemunulibrebold"
+        android:paddingTop="@dimen/activity_previous_image_padding_10"
+        android:paddingBottom="@dimen/activity_previous_image_padding_10"
+        android:text="proceed"
+        android:textSize="17sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2" />
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -28,6 +28,7 @@ import com.flask.colorpicker.ColorPickerView;
 import com.flask.colorpicker.OnColorSelectedListener;
 import com.flask.colorpicker.builder.ColorPickerClickListener;
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
+import com.glidebitmappool.GlideBitmapPool;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -55,6 +56,13 @@ public class CreateABackgroundActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_abackground);
+
+
+        Runtime rt = Runtime.getRuntime();
+        int maxMemory = (int)rt.freeMemory();
+        GlideBitmapPool.initialize(maxMemory);
+        GlideBitmapPool.clearMemory();
+
 
         WindowManager wm = (WindowManager) getApplication().getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
@@ -191,7 +199,7 @@ public class CreateABackgroundActivity extends AppCompatActivity {
                     @Override
                     public void onColorSelected(int i)
                     {
-                       color = i;
+                        color = i;
                     }
                 })
                 .setPositiveButton("Ok", new ColorPickerClickListener() {

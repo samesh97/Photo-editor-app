@@ -20,16 +20,17 @@ import com.sba.sinhalaphotoeditor.R;
 public class ViewPagerFragment extends Fragment
 {
 
-    private Drawable image1,image2,image3;
+    private Drawable image1,image2,image3,topImage;
     private String title,description;
 
-    public ViewPagerFragment(Drawable image1,Drawable image2,Drawable image3,String title,String description)
+    public ViewPagerFragment(Drawable image1,Drawable image2,Drawable image3,String title,String description,Drawable topImage)
     {
         this.image1 = image1;
         this.image2 = image2;
         this.image3 = image3;
         this.title = title;
         this.description = description;
+        this.topImage = topImage;
     }
     public ViewPagerFragment()
     {
@@ -50,6 +51,8 @@ public class ViewPagerFragment extends Fragment
 
         TextView titleTextView = view.findViewById(R.id.title);
         TextView descTextView = view.findViewById(R.id.description);
+
+        ImageView topGreenPannel = view.findViewById(R.id.topGreenPannel);
 
         if(image1 != null)
         {
@@ -77,6 +80,12 @@ public class ViewPagerFragment extends Fragment
         }
         titleTextView.setText(title);
         descTextView.setText(description);
+
+
+        if(topImage != null)
+        {
+            topGreenPannel.setBackground(topImage);
+        }
 
 
         return view;

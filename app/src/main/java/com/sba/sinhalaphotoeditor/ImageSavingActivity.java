@@ -21,6 +21,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.glidebitmappool.GlideBitmapPool;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -51,6 +53,12 @@ public class ImageSavingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_saving);
+
+
+        Runtime rt = Runtime.getRuntime();
+        int maxMemory = (int)rt.freeMemory();
+        GlideBitmapPool.initialize(maxMemory);
+        GlideBitmapPool.clearMemory();
 
         render = new Render(ImageSavingActivity.this);
 
@@ -85,10 +93,10 @@ public class ImageSavingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                new AlertDialog.Builder(ImageSavingActivity.this).setIcon(R.drawable.ic_star_half).setTitle("ඇප් එක Rate කරන්න")
+                new AlertDialog.Builder(ImageSavingActivity.this).setIcon(R.drawable.ic_star_half).setTitle(getResources().getString(R.string.rate_app_text))
                         .setIcon(R.drawable.ic_star_half)
-                        .setMessage("මෙවැනි Apps තවත් නිර්මාණය කිරිමට අපට ඔබගේ වටිනා Rate එක ලබා දෙන්න!")
-                        .setPositiveButton("Okay", new DialogInterface.OnClickListener()
+                        .setMessage(getResources().getString(R.string.rate_app_description))
+                        .setPositiveButton(getResources().getString(R.string.okay_text), new DialogInterface.OnClickListener()
                         {
                             @Override
                             public void onClick(DialogInterface dialog, int which)
@@ -96,7 +104,7 @@ public class ImageSavingActivity extends AppCompatActivity {
                                 SaveImage(MainActivity.images.get(MainActivity.imagePosition));
                                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id="+"com.sba.sinhalaphotoeditor")));
                             }
-                        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        }).setNegativeButton(getResources().getString(R.string.cannot_text), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which)
                     {
@@ -110,10 +118,10 @@ public class ImageSavingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                new AlertDialog.Builder(ImageSavingActivity.this).setIcon(R.drawable.ic_star_half).setTitle("ඇප් එක Rate කරන්න")
+                new AlertDialog.Builder(ImageSavingActivity.this).setIcon(R.drawable.ic_star_half).setTitle(getResources().getString(R.string.rate_app_text))
                         .setIcon(R.drawable.ic_star_half)
-                        .setMessage("මෙවැනි Apps තවත් නිර්මාණය කිරිමට අපට ඔබගේ වටිනා Rate එක ලබා දෙන්න!")
-                        .setPositiveButton("Okay", new DialogInterface.OnClickListener()
+                        .setMessage(getResources().getString(R.string.rate_app_description))
+                        .setPositiveButton(getResources().getString(R.string.okay_text), new DialogInterface.OnClickListener()
                         {
                             @Override
                             public void onClick(DialogInterface dialog, int which)
@@ -121,7 +129,7 @@ public class ImageSavingActivity extends AppCompatActivity {
                                 SaveImage(MainActivity.images.get(MainActivity.imagePosition));
                                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id="+"com.sba.sinhalaphotoeditor")));
                             }
-                        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        }).setNegativeButton(getResources().getString(R.string.cannot_text), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which)
                     {
@@ -150,10 +158,10 @@ public class ImageSavingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                new AlertDialog.Builder(ImageSavingActivity.this).setIcon(R.drawable.ic_star_half).setTitle("ඇප් එක Rate කරන්න")
+                new AlertDialog.Builder(ImageSavingActivity.this).setIcon(R.drawable.ic_star_half).setTitle(getResources().getString(R.string.rate_app_text))
                         .setIcon(R.drawable.ic_star_half)
-                        .setMessage("මෙවැනි Apps තවත් නිර්මාණය කිරිමට අපට ඔබගේ වටිනා Rate එක ලබා දෙන්න!")
-                        .setPositiveButton("Okay", new DialogInterface.OnClickListener()
+                        .setMessage(getResources().getString(R.string.rate_app_description))
+                        .setPositiveButton(getResources().getString(R.string.okay_text), new DialogInterface.OnClickListener()
                         {
                             @Override
                             public void onClick(DialogInterface dialog, int which)
@@ -161,12 +169,12 @@ public class ImageSavingActivity extends AppCompatActivity {
                                 SaveImage(MainActivity.images.get(MainActivity.imagePosition));
                                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id="+"com.sba.sinhalaphotoeditor")));
                             }
-                        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which)
-                            {
-                                SaveImage(MainActivity.images.get(MainActivity.imagePosition));
-                            }
+                        }).setNegativeButton(getResources().getString(R.string.cannot_text), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        SaveImage(MainActivity.images.get(MainActivity.imagePosition));
+                    }
                 }).show();
 
             }

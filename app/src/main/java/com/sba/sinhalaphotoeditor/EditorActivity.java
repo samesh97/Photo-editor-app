@@ -51,7 +51,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 
-
+import com.glidebitmappool.GlideBitmapPool;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
 import com.theartofdev.edmodo.cropper.CropImage;
 
@@ -110,10 +110,10 @@ public class EditorActivity extends AppCompatActivity {
     {
         if(MainActivity.images.size() > 1)
         {
-            new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setTitle("අවවාදයයි!")
+            new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setTitle(getResources().getString(R.string.warning_text))
                     .setIcon(R.drawable.ic_delete)
-                    .setMessage("ඉවත් වීමකද ඔබ සකසාගෙන ඇති සියලුම පිංතූර මැකෙන අතර\nමෙය නැවත ලබාගත නොහැක.\nතවමත් ඔබට ඉවත් වීමට අවශ්\u200Dයද?")
-                    .setPositiveButton("අවශයයි", new DialogInterface.OnClickListener()
+                    .setMessage(getResources().getString(R.string.are_you_sure_want_to_exit_text))
+                    .setPositiveButton(getResources().getString(R.string.yes_text), new DialogInterface.OnClickListener()
                     {
                         @Override
                         public void onClick(DialogInterface dialog, int which)
@@ -123,7 +123,7 @@ public class EditorActivity extends AppCompatActivity {
                             finish();
 
                         }
-                    }).setNegativeButton("අවශ්\u200Dය නැත", null).show();
+                    }).setNegativeButton(getResources().getString(R.string.no_text), null).show();
         }
         else
         {
@@ -196,7 +196,7 @@ public class EditorActivity extends AppCompatActivity {
                 }
 
 
-                
+
             }
             else
             {
@@ -297,7 +297,17 @@ public class EditorActivity extends AppCompatActivity {
             {
 
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), CurrentWorkingFilePath);
-                addImageOnImage(CurrentWorkingFilePath);
+                bitmap = getResizedBitmap(bitmap,1000);
+
+                Uri imgUri = getImageUri(getApplicationContext(),bitmap,false);
+
+                CropType = "PhotoOnPhotoCrop";
+
+                CropImage.activity(imgUri).start(EditorActivity.this);
+
+
+
+               // addImageOnImage(imgUri);
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -321,15 +331,6 @@ public class EditorActivity extends AppCompatActivity {
                     {
                         MainActivity.images.remove(i);
                     }
-
-            /*
-            MainActivity.bitmap = MainActivity.images.get(MainActivity.imagePosition);
-            MainActivity.CurrentWorkingFilePath = MainActivity.filePaths.get(MainActivity.imagePosition);
-            MainActivity.images.clear();
-            MainActivity.filePaths.clear();
-            MainActivity.imagePosition = 0;
-            MainActivity.images.add(MainActivity.bitmap);
-            MainActivity.filePaths.add(MainActivity.CurrentWorkingFilePath);*/
 
 
                 }
@@ -430,14 +431,23 @@ public class EditorActivity extends AppCompatActivity {
                     {
                         e.printStackTrace();
                     }
+                }
+
+
+
             }
-            else if(CropType.equals("PhotoOnPhotoCrop"))
-            {
+            else if(CropType.equals("PhotoOnPhotoCrop")) {
+                CropImage.ActivityResult result2 = CropImage.getActivityResult(data);
 
-            }
-
-
-
+                if (resultCode == RESULT_OK)
+                {
+                    Uri resultUri = result2.getUri();
+                    addImageOnImage(resultUri);
+                }
+                else
+                {
+                    Toast.makeText(this, "Something went wrong!", Toast.LENGTH_SHORT).show();
+                }
             }
             else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE)
             {
@@ -464,6 +474,11 @@ public class EditorActivity extends AppCompatActivity {
         setContentView(R.layout.activity_editor);
 
 
+        Runtime rt = Runtime.getRuntime();
+        int maxMemory = (int)rt.freeMemory();
+        GlideBitmapPool.initialize(maxMemory);
+        GlideBitmapPool.clearMemory();
+
 
 
 /*        MobileAds.initialize(this, new OnInitializationCompleteListener() {
@@ -471,7 +486,6 @@ public class EditorActivity extends AppCompatActivity {
             public void onInitializationComplete(InitializationStatus initializationStatus) {
             }
         });
-
         mAdView = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);*/
@@ -781,9 +795,9 @@ public class EditorActivity extends AppCompatActivity {
 
         Intent intent = new Intent(EditorActivity.this,PhotoOnPhoto.class);
         Bundle bundle = new Bundle();
-        bundle.putString(PhotoOnPhoto.IMAGE_IN_URI,MainActivity.CurrentWorkingFilePath.toString());
+//        bundle.putString(PhotoOnPhoto.IMAGE_IN_URI,MainActivity.CurrentWorkingFilePath.toString());
         bundle.putString("IMAGE_ON_IMAGE_URI",uri.toString());
-        bundle.putInt(PhotoOnPhoto.IMAGE_SIZE,1000);
+       // bundle.putInt(PhotoOnPhoto.IMAGE_SIZE,1000);
         intent.putExtras(bundle);
         startActivityForResult(intent, PhotoOnPhoto.IMAGE_ON_IMAGE_REQUEST_CODE);
     }

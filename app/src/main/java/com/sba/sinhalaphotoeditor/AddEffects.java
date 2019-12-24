@@ -177,8 +177,9 @@ public class AddEffects extends AppCompatActivity {
 
 
         Runtime rt = Runtime.getRuntime();
-        int maxMemory = (int)rt.maxMemory();
-        GlideBitmapPool.initialize(maxMemory); // 10mb max memory size
+        int maxMemory = (int)rt.freeMemory();
+        GlideBitmapPool.initialize(maxMemory);
+        GlideBitmapPool.clearMemory();
 
         render = new Render(AddEffects.this);
         dialog = new ProgressDialog(AddEffects.this);
@@ -194,15 +195,14 @@ public class AddEffects extends AppCompatActivity {
             public void onInitializationComplete(InitializationStatus initializationStatus) {
             }
         });
-
         mAdView = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);*/
 
-      //  dialog = new ProgressDialog(AddEffects.this);
+        //  dialog = new ProgressDialog(AddEffects.this);
 
-       // dialog.setMessage("Loading Filters..");
-       // dialog.setCancelable(false);
+        // dialog.setMessage("Loading Filters..");
+        // dialog.setCancelable(false);
 
 
 
@@ -977,7 +977,7 @@ public class AddEffects extends AppCompatActivity {
             if(type.equals("14"))
             {
                 userSelectedImage.setImageBitmap(x);
-                 addedEffectBitmap = x;
+                addedEffectBitmap = x;
             }
             if(type.equals("15"))
             {
@@ -1040,10 +1040,6 @@ public class AddEffects extends AppCompatActivity {
                 MainActivity.deleteUndoRedoImages();
 
 
-
-
-
-                //currentEditingBitmap.recycle();
             }
             });
 
@@ -1055,44 +1051,44 @@ public class AddEffects extends AppCompatActivity {
         {
             if(!isCancelled())
             {
-                    if(!isCancelled())
+                if(!isCancelled())
+                {
+                    if(addedEffectBitmap != null)
                     {
-                        if(addedEffectBitmap != null)
-                        {
 
-                            lastBitmap = getFinalImage();
-                            //lastBitmap = addedEffectBitmap;
+                        lastBitmap = getFinalImage();
+                        //lastBitmap = addedEffectBitmap;
 
-                            MainActivity.imagePosition++;
-                            MainActivity.images.add(MainActivity.imagePosition, lastBitmap);
+                        MainActivity.imagePosition++;
+                        MainActivity.images.add(MainActivity.imagePosition, lastBitmap);
 
 
 
 
-                            if (EditorActivity.isNeededToDelete) {
-                                try {
-                                    MainActivity.images.remove(MainActivity.imagePosition + 1);
-                                }
-                                catch (Exception e)
-                                {
-                                    Log.d("Error",e.getMessage());
-                                }
+                        if (EditorActivity.isNeededToDelete) {
+                            try {
+                                MainActivity.images.remove(MainActivity.imagePosition + 1);
                             }
-
-
-                            MainActivity.CurrentWorkingFilePath = getImageUri(AddEffects.this, lastBitmap);
-                            MainActivity.filePaths.add(getImageUri(AddEffects.this, lastBitmap));
-
-
-
-
-
-
-
-
-
+                            catch (Exception e)
+                            {
+                                Log.d("Error",e.getMessage());
+                            }
                         }
+
+
+                        MainActivity.CurrentWorkingFilePath = getImageUri(AddEffects.this, lastBitmap);
+                        MainActivity.filePaths.add(getImageUri(AddEffects.this, lastBitmap));
+
+
+
+
+
+
+
+
+
                     }
+                }
 
             }
             return null;
@@ -1906,4 +1902,3 @@ public class AddEffects extends AppCompatActivity {
 
 
 }
-

@@ -8,6 +8,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -17,6 +19,7 @@ import android.graphics.Paint;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
 import android.provider.MediaStore;
 
 import androidx.annotation.NonNull;
@@ -33,14 +36,18 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.glidebitmappool.GlideBitmapFactory;
 import com.glidebitmappool.GlideBitmapPool;
 import com.sba.sinhalaphotoeditor.progressdialog.PhotoEditorProgressDialog;
 import com.sba.sinhalaphotoeditor.walkthrough.WalkThroughActivity;
+import com.sba.sinhalaphotoeditor.welcomeScreen.WelcomeScreen;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -48,6 +55,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -58,8 +66,8 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int PICK_IMAGE_REQUEST = 234;
     static Bitmap bitmap;
-    static Uri CurrentWorkingFilePath;
-    static int imagePosition = 0;
+    public static Uri CurrentWorkingFilePath;
+    public static int imagePosition = 0;
     TextView selectPictureText,fromGalery,createOne;
 
     boolean isReadGranted = false;
@@ -69,9 +77,11 @@ public class MainActivity extends AppCompatActivity {
 
     ImageView createBitmap;
 
+    private static boolean isFirstTime = true;
 
-    static ArrayList<Bitmap> images = new ArrayList<>();
-    static ArrayList<Uri> filePaths = new ArrayList<>();
+
+    public static ArrayList<Bitmap> images = new ArrayList<>();
+    public static ArrayList<Uri> filePaths = new ArrayList<>();
 
     PhotoEditorProgressDialog dialog;
 
@@ -85,15 +95,19 @@ public class MainActivity extends AppCompatActivity {
     ImageView roundImage;
 
 
+    Spinner languagePicker;
+
+
+
+
     @Override
-    protected void onStart()
-    {
+    protected void onStart() {
+
         SharedPreferences pref = getApplicationContext().getSharedPreferences("com.sba.photoeditor", 0); // 0 - for private mode
         //SharedPreferences.Editor editor = pref.edit();
-        boolean isWalkThroughNeeded = pref.getBoolean("isWalkThroughNeeded",false);
-        if(!isWalkThroughNeeded)
-        {
-            startActivity(new Intent(MainActivity.this, WalkThroughActivity.class));
+        boolean isWalkThroughNeeded = pref.getBoolean("isWalkThroughNeeded", false);
+        if (!isWalkThroughNeeded) {
+            startActivity(new Intent(MainActivity.this, WelcomeScreen.class));
             finish();
         }
         super.onStart();
@@ -116,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-               //bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), CurrentWorkingFilePath);
+                //bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), CurrentWorkingFilePath);
 
                 bitmap = GlideBitmapFactory.decodeFile(getRealPathFromDocumentUri(MainActivity.this,CurrentWorkingFilePath));
 
@@ -144,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
                 DisplayMetrics metrics = new DisplayMetrics();
                 display.getMetrics(metrics);
 
-               // bitmap = scale(bitmap,metrics.widthPixels,metrics.heightPixels);
+                // bitmap = scale(bitmap,metrics.widthPixels,metrics.heightPixels);
 
                 bitmap = getResizedBitmap(bitmap,1500);
                 bitmap = decodeSampledBitmapFromResource(getRealPathFromDocumentUri(MainActivity.this,getImageUri(MainActivity.this,bitmap)),metrics.widthPixels,metrics.heightPixels);
@@ -212,6 +226,23 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
+        SharedPreferences pref2 = getApplicationContext().getSharedPreferences("com.sba.sinhalaphotoeditor", 0);
+        String code = pref2.getString("Language",null);
+        if(code != null)
+        {
+            if(isFirstTime)
+            {
+                setLocaleOnStart(code);
+            }
+
+        }
+
+
+
+
+
+
         createBitmap = (ImageView) findViewById(R.id.createBitmap);
         createImageFromLibrary = (ConstraintLayout) findViewById(R.id.createImageFromLibrary);
         pickImageFromDb = (ConstraintLayout) findViewById(R.id.pickImageFromDb);
@@ -219,6 +250,7 @@ public class MainActivity extends AppCompatActivity {
         imageView = (ImageView) findViewById(R.id.imageView);
         roundImage = (ImageView) findViewById(R.id.roundImage);
         selectPictureText = findViewById(R.id.selectPictureText);
+        languagePicker = findViewById(R.id.languagePicker);
 
 
 
@@ -227,8 +259,9 @@ public class MainActivity extends AppCompatActivity {
 
 
         Runtime rt = Runtime.getRuntime();
-        int maxMemory = (int)rt.maxMemory();
+        int maxMemory = (int)rt.freeMemory();
         GlideBitmapPool.initialize(maxMemory);
+        GlideBitmapPool.clearMemory();
 
 
 
@@ -243,6 +276,7 @@ public class MainActivity extends AppCompatActivity {
         createImageFromLibrary.startAnimation(top);
         pickImageFromDb.startAnimation(top);
         roundImage.startAnimation(bottom);
+        //languagePicker.startAnimation(bottom);
         selectPictureText.startAnimation(bottom);
 
 
@@ -448,6 +482,45 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+
+
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("com.sba.sinhalaphotoeditor", 0);
+        final int pos = pref.getInt("LanguagePosition",0);
+        languagePicker.setSelection(pos);
+
+
+
+
+        languagePicker.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+            {
+                if(pos != languagePicker.getSelectedItemPosition())
+                {
+                    switch (position)
+                    {
+                        case 1 :
+                            setLocale("si",position);
+                            break;
+
+                        case  2 :
+                            setLocale("en",position);
+                            break;
+                    }
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+
+
+
 
     }
     @Override
@@ -705,21 +778,21 @@ public class MainActivity extends AppCompatActivity {
 
         if(images.size() > 6)
         {
-                int size = images.size() - 6;
-                 MainActivity.imagePosition = MainActivity.imagePosition - size;
-                for(int i = 1; i <= size; i++)
+            int size = images.size() - 6;
+            MainActivity.imagePosition = MainActivity.imagePosition - size;
+            for(int i = 1; i <= size; i++)
+            {
+                if(i == imagePosition)
                 {
-                    if(i == imagePosition)
-                    {
-                        size++;
-                    }
-                    else
-                    {
-
-                        images.remove(i);
-                        GlideBitmapPool.clearMemory();
-                    }
+                    size++;
                 }
+                else
+                {
+
+                    images.remove(i);
+                    GlideBitmapPool.clearMemory();
+                }
+            }
 
 
         }
@@ -790,15 +863,25 @@ public class MainActivity extends AppCompatActivity {
         String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
 
 
-        String realPath = getRealPathFromDocumentUri(getApplicationContext(),Uri.parse(path));
+        final String realPath = getRealPathFromDocumentUri(getApplicationContext(),Uri.parse(path));
         Log.d("image",realPath);
 
-        File file = new File(realPath);
-        if(file.exists())
-        {
-            file.delete();
-            Log.d("image","deleted");
-        }
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run()
+            {
+
+                File file = new File(realPath);
+                if(file.exists())
+                {
+                    file.delete();
+                    Log.d("image","deleted");
+                }
+            }
+        },10000);
+
+
 
         return Uri.parse(path);
     }
@@ -827,6 +910,51 @@ public class MainActivity extends AppCompatActivity {
         cursor.close();
 
         return filePath;
+    }
+    public void setLocale(String lang,int position)
+    {
+        Locale myLocale = new Locale(lang);
+        Resources res = getResources();
+        DisplayMetrics dm = res.getDisplayMetrics();
+        Configuration conf = res.getConfiguration();
+        conf.locale = myLocale;
+        res.updateConfiguration(conf, dm);
+
+
+
+
+
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("com.sba.sinhalaphotoeditor", 0);
+        SharedPreferences.Editor editor = pref.edit();
+
+        editor.putInt("LanguagePosition",position);
+        editor.putString("Language",lang);
+
+        editor.apply();
+
+
+
+
+        Intent refresh = new Intent(this, MainActivity.class);
+        startActivity(refresh);
+        finish();
+    }
+    public void setLocaleOnStart(String lang)
+    {
+        Locale myLocale = new Locale(lang);
+        Resources res = getResources();
+        DisplayMetrics dm = res.getDisplayMetrics();
+        Configuration conf = res.getConfiguration();
+        conf.locale = myLocale;
+        res.updateConfiguration(conf, dm);
+
+
+        isFirstTime = false;
+
+        Intent refresh = new Intent(this, MainActivity.class);
+        startActivity(refresh);
+        finish();
+
     }
 
 
