@@ -10,8 +10,9 @@
     <ImageView
         android:id="@+id/topGreenPannel"
         android:layout_width="match_parent"
+        android:scaleType="fitXY"
+        android:src="@drawable/samplewalpaper"
         android:layout_height="@dimen/adjust_image_walpaper_height"
-        android:background="@drawable/samplewalpaper"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

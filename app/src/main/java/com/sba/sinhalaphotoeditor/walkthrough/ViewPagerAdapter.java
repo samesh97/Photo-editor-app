@@ -12,13 +12,13 @@ import java.util.ArrayList;
 public class ViewPagerAdapter extends FragmentStatePagerAdapter
 {
 
-    ArrayList<Drawable> image1 = new ArrayList<android.graphics.drawable.Drawable>();
-    ArrayList<Drawable> image2 = new ArrayList<Drawable>();
-    ArrayList<Drawable> image3 = new ArrayList<Drawable>();
+    private ArrayList<Drawable> image1 = new ArrayList<android.graphics.drawable.Drawable>();
+    private ArrayList<Drawable> image2 = new ArrayList<Drawable>();
+    private ArrayList<Drawable> image3 = new ArrayList<Drawable>();
 
-    ArrayList<String> titles = new ArrayList<>();
-    ArrayList<String> description = new ArrayList<>();
-    ArrayList<Drawable> topImages = new ArrayList<Drawable>();
+    private ArrayList<String> titles = new ArrayList<>();
+    private ArrayList<String> description = new ArrayList<>();
+    private ArrayList<Drawable> topImages = new ArrayList<Drawable>();
 
 
     public ViewPagerAdapter(@NonNull FragmentManager fm,ArrayList<Drawable> image1,ArrayList<Drawable> image2,ArrayList<Drawable> image3,ArrayList<String> titles,ArrayList<String> description,ArrayList<Drawable> topImages)

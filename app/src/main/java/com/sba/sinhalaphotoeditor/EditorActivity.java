@@ -14,6 +14,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -27,6 +28,10 @@ import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.app.ActivityCompat;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.renderscript.Allocation;
+import android.renderscript.Element;
+import android.renderscript.RenderScript;
+import android.renderscript.ScriptIntrinsicBlur;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -51,8 +56,17 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 
+import com.bumptech.glide.Glide;
 import com.glidebitmappool.GlideBitmapPool;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
+import com.sba.sinhalaphotoeditor.addTextOnImage.TextOnImageActivity;
+import com.sba.sinhalaphotoeditor.customGallery.MyCustomGallery;
+import com.sba.sinhalaphotoeditor.drawOnBitmap.DrawOnBitmapActivity;
 import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.io.ByteArrayOutputStream;
@@ -70,19 +84,22 @@ import java.util.regex.Pattern;
 import render.animations.Render;
 import render.animations.*;
 
+import static com.sba.sinhalaphotoeditor.customGallery.MyCustomGallery.IMAGE_PICK_RESULT_CODE;
+import static com.sba.sinhalaphotoeditor.customGallery.MyCustomGallery.selectedBitmap;
+
 public class EditorActivity extends AppCompatActivity {
 
     ImageView userSelectedImage;
     ImageView addText,addImage,addSticker,addCrop,addBlur;
     private static final int PICK_IMAGE_REQUEST = 234;
-    static boolean isNeededToDelete = false;
+    public static boolean isNeededToDelete = false;
 
     static int imageWidth,imageHeight;
 
     ImageView addEffect;
 
 
-    static int screenWidth,screenHeight;
+   public static int screenWidth,screenHeight;
 
     Dialog dia;
 
@@ -97,7 +114,7 @@ public class EditorActivity extends AppCompatActivity {
     ArrayList<Bitmap> stickerList4 = new ArrayList<>();
     ArrayList<Bitmap> stickerList5 = new ArrayList<>();
 
-//    private AdView mAdView;
+    private AdView mAdView;
 
 
     DatabaseHelper helper = new DatabaseHelper(EditorActivity.this);
@@ -119,7 +136,9 @@ public class EditorActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which)
                         {
 
-                            startActivity(new Intent(getApplicationContext(),MainActivity.class));
+                            Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
                             finish();
 
                         }
@@ -149,8 +168,12 @@ public class EditorActivity extends AppCompatActivity {
 
 
                     // MainActivity.images.remove(MainActivity.imagePosition);
-                    MainActivity.CurrentWorkingFilePath = MainActivity.filePaths.get(--MainActivity.imagePosition);
-                    userSelectedImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
+                    //MainActivity.CurrentWorkingFilePath = MainActivity.filePaths.get(--MainActivity.imagePosition);
+                    --MainActivity.imagePosition;
+                    //userSelectedImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
+                    setImageViewScaleType(userSelectedImage);
+                    Glide.with(getApplicationContext()).load(MainActivity.images.get(MainActivity.imagePosition)).into(userSelectedImage);
+
                 }
                 catch (Exception e)
                 {
@@ -187,8 +210,12 @@ public class EditorActivity extends AppCompatActivity {
 
 
                     // MainActivity.images.remove(MainActivity.imagePosition);
-                    MainActivity.CurrentWorkingFilePath = MainActivity.filePaths.get(MainActivity.imagePosition++);
-                    userSelectedImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
+                    //MainActivity.CurrentWorkingFilePath = MainActivity.filePaths.get(MainActivity.imagePosition++);
+                    MainActivity.imagePosition++;
+                    //userSelectedImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
+                    setImageViewScaleType(userSelectedImage);
+                    Glide.with(getApplicationContext()).load(MainActivity.images.get(MainActivity.imagePosition)).into(userSelectedImage);
+
                 }
                 catch (Exception e)
                 {
@@ -215,9 +242,9 @@ public class EditorActivity extends AppCompatActivity {
     {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == TextOnImage.TEXT_ON_IMAGE_REQUEST_CODE)
+        if(requestCode == TextOnImageActivity.TEXT_ON_IMAGE_REQUEST_CODE)
         {
-            if(resultCode == TextOnImage.TEXT_ON_IMAGE_RESULT_OK_CODE)
+            if(resultCode == TextOnImageActivity.TEXT_ON_IMAGE_RESULT_OK_CODE)
             {
 
                 if(MainActivity.imagePosition == MainActivity.images.size() - 1)
@@ -238,19 +265,20 @@ public class EditorActivity extends AppCompatActivity {
                     }
                 }
 
-                Uri resultImageUri = Uri.parse(data.getStringExtra(TextOnImage.IMAGE_OUT_URI));
+                Uri resultImageUri = Uri.parse(data.getStringExtra(TextOnImageActivity.IMAGE_OUT_URI));
 
                 //Bitmap  bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), resultImageUri);
                 //MainActivity.CurrentWorkingFilePath = MainActivity.filePaths.get(MainActivity.imagePosition);
-                userSelectedImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
+                //userSelectedImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
+                setImageViewScaleType(userSelectedImage);
+                Glide.with(getApplicationContext()).load(MainActivity.images.get(MainActivity.imagePosition)).into(userSelectedImage);
 
-                render.setAnimation(Zoom.InRight(userSelectedImage));
-                render.start();
+
 
             }
-            else if(resultCode == TextOnImage.TEXT_ON_IMAGE_RESULT_FAILED_CODE)
+            else if(resultCode == TextOnImageActivity.TEXT_ON_IMAGE_RESULT_FAILED_CODE)
             {
-                String errorInfo = data.getStringExtra(TextOnImage.IMAGE_OUT_ERROR);
+                String errorInfo = data.getStringExtra(TextOnImageActivity.IMAGE_OUT_ERROR);
                 Log.d("MainActivity", "onActivityResult: "+errorInfo);
             }
 
@@ -281,9 +309,10 @@ public class EditorActivity extends AppCompatActivity {
 
                 Uri resultImageUri = Uri.parse(data.getStringExtra(PhotoOnPhoto.IMAGE_OUT_URI));
                 //MainActivity.CurrentWorkingFilePath = MainActivity.filePaths.get(MainActivity.imagePosition);
-                userSelectedImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
-                render.setAnimation(Zoom.InRight(userSelectedImage));
-                render.start();
+                //userSelectedImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
+                setImageViewScaleType(userSelectedImage);
+                Glide.with(getApplicationContext()).load(MainActivity.images.get(MainActivity.imagePosition)).into(userSelectedImage);
+
             }
             if(requestCode == PhotoOnPhoto.IMAGE_ON_IMAGE_RESULT_FAILED_CODE)
             {
@@ -291,12 +320,15 @@ public class EditorActivity extends AppCompatActivity {
 
             }
         }
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            Uri CurrentWorkingFilePath = data.getData();
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == IMAGE_PICK_RESULT_CODE && selectedBitmap != null)
+        {
+            //Uri CurrentWorkingFilePath = data.getData();
             try
             {
 
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), CurrentWorkingFilePath);
+                Bitmap bitmap = selectedBitmap.copy(selectedBitmap.getConfig(),true);
+                selectedBitmap = null;
+                //Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), CurrentWorkingFilePath);
                 bitmap = getResizedBitmap(bitmap,1000);
 
                 Uri imgUri = getImageUri(getApplicationContext(),bitmap,false);
@@ -309,7 +341,9 @@ public class EditorActivity extends AppCompatActivity {
 
                // addImageOnImage(imgUri);
 
-            } catch (IOException e) {
+            }
+            catch (Exception e)
+            {
                 e.printStackTrace();
             }
         }
@@ -338,9 +372,10 @@ public class EditorActivity extends AppCompatActivity {
 
                 Uri resultImageUri = Uri.parse(data.getStringExtra(StickerOnPhoto.STICKER_OUT_URI));
                 //MainActivity.CurrentWorkingFilePath = MainActivity.filePaths.get(MainActivity.imagePosition);
-                userSelectedImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
-                render.setAnimation(Zoom.InRight(userSelectedImage));
-                render.start();
+                //userSelectedImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
+                setImageViewScaleType(userSelectedImage);
+                Glide.with(getApplicationContext()).load(MainActivity.images.get(MainActivity.imagePosition)).into(userSelectedImage);
+
             }
         }
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE)
@@ -418,9 +453,10 @@ public class EditorActivity extends AppCompatActivity {
                             helper.AddImage(helper.getBytes((MainActivity.images.get(MainActivity.imagePosition))),currentDateandTime);
                         }
                     });*/
-                        userSelectedImage.setImageBitmap(bitmap);
-                        render.setAnimation(Zoom.InRight(userSelectedImage));
-                        render.start();
+                        //userSelectedImage.setImageBitmap(bitmap);
+                        setImageViewScaleType(userSelectedImage);
+                        Glide.with(getApplicationContext()).load(bitmap).into(userSelectedImage);
+
 
                         MainActivity.deleteUndoRedoImages();
                         //GlideBitmapPool.clearMemory();
@@ -456,15 +492,17 @@ public class EditorActivity extends AppCompatActivity {
         }
         if(requestCode == 10  && resultCode == 11)
         {
-            userSelectedImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
-            render.setAnimation(Zoom.InRight(userSelectedImage));
-            render.start();
+            //userSelectedImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
+            setImageViewScaleType(userSelectedImage);
+            Glide.with(getApplicationContext()).load(MainActivity.images.get(MainActivity.imagePosition)).into(userSelectedImage);
+
         }
         if(requestCode == 20  && resultCode == 21)
         {
-            userSelectedImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
-            render.setAnimation(Zoom.InRight(userSelectedImage));
-            render.start();
+            //userSelectedImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
+            setImageViewScaleType(userSelectedImage);
+            Glide.with(getApplicationContext()).load(MainActivity.images.get(MainActivity.imagePosition)).into(userSelectedImage);
+
         }
     }
 
@@ -480,15 +518,14 @@ public class EditorActivity extends AppCompatActivity {
         GlideBitmapPool.clearMemory();
 
 
-
-/*        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+       MobileAds.initialize(this, new OnInitializationCompleteListener() {
             @Override
             public void onInitializationComplete(InitializationStatus initializationStatus) {
             }
         });
         mAdView = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);*/
+        mAdView.loadAd(adRequest);
 
 
 
@@ -521,6 +558,7 @@ public class EditorActivity extends AppCompatActivity {
         addCrop = (ImageView) findViewById(R.id.addCrop);
         addEffect = (ImageView) findViewById(R.id.addEffect);
         addBlur = (ImageView) findViewById(R.id.addBlur);
+        //ImageView drawOnBitmap = (ImageView) findViewById(R.id.drawOnBitmap);
 
 
         addBlur.setOnClickListener(new View.OnClickListener() {
@@ -563,12 +601,25 @@ public class EditorActivity extends AppCompatActivity {
 
         try
         {
-            userSelectedImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
+            //userSelectedImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
+            setImageViewScaleType(userSelectedImage);
+            Glide.with(getApplicationContext()).load(MainActivity.images.get(MainActivity.imagePosition)).into(userSelectedImage);
+
         }
         catch (Exception e)
         {
 
         }
+
+/*
+
+        drawOnBitmap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                startActivity(new Intent(getApplicationContext(), DrawOnBitmapActivity.class));
+            }
+        });*/
 
 
 
@@ -781,14 +832,14 @@ public class EditorActivity extends AppCompatActivity {
     {
 
         //pass the data to add it in image
-        Intent intent = new Intent(EditorActivity.this,TextOnImage.class);
+        Intent intent = new Intent(EditorActivity.this, TextOnImageActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putString(TextOnImage.IMAGE_IN_URI,MainActivity.CurrentWorkingFilePath.toString()); //image uri
-        bundle.putString(TextOnImage.TEXT_COLOR,"#FFFFFF");                 //initial color of the text
-        bundle.putFloat(TextOnImage.TEXT_FONT_SIZE,30.0f);                  //initial text size
-        bundle.putString(TextOnImage.TEXT_TO_WRITE,text);                   //text to be add in the image
+       // bundle.putString(TextOnImageActivity.IMAGE_IN_URI,MainActivity.CurrentWorkingFilePath.toString()); //image uri
+        bundle.putString(TextOnImageActivity.TEXT_COLOR,"#FFFFFF");                 //initial color of the text
+        bundle.putFloat(TextOnImageActivity.TEXT_FONT_SIZE,30.0f);                  //initial text size
+        bundle.putString(TextOnImageActivity.TEXT_TO_WRITE,text);                   //text to be add in the image
         intent.putExtras(bundle);
-        startActivityForResult(intent, TextOnImage.TEXT_ON_IMAGE_REQUEST_CODE); //start activity for the result
+        startActivityForResult(intent, TextOnImageActivity.TEXT_ON_IMAGE_REQUEST_CODE); //start activity for the result
     }
     private void addImageOnImage(Uri uri)
     {
@@ -847,10 +898,17 @@ public class EditorActivity extends AppCompatActivity {
     }
     private void showFileChooser()
     {
+        /*
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);*/
+
+
+        Intent intent = new Intent(EditorActivity.this, MyCustomGallery.class);
+        intent.putExtra("Activity","EditorActivity");
+        //startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+        startActivityForResult(intent,PICK_IMAGE_REQUEST);
     }
     private void addStickerOnImage()
     {
@@ -858,7 +916,7 @@ public class EditorActivity extends AppCompatActivity {
 
         Intent intent = new Intent(EditorActivity.this,StickerOnPhoto.class);
         Bundle bundle = new Bundle();
-        bundle.putString(StickerOnPhoto.STICKER_IN_URI,MainActivity.CurrentWorkingFilePath.toString());
+       // bundle.putString(StickerOnPhoto.STICKER_IN_URI,MainActivity.CurrentWorkingFilePath.toString());
         bundle.putInt(StickerOnPhoto.STICKER_SIZE,1000);
         intent.putExtras(bundle);
         startActivityForResult(intent, StickerOnPhoto.STICKER_ON_IMAGE_REQUEST_CODE);
@@ -926,6 +984,14 @@ public class EditorActivity extends AppCompatActivity {
             ImageView FourSticker = (ImageView) view.findViewById(R.id.FourSticker);
             ImageView FiveSticker = (ImageView) view.findViewById(R.id.FiveSticker);
 
+
+/*
+            Glide.with(getApplicationContext()).load(getResizedBitmap(stic1.get(position),80)).into(OneSticker);
+            Glide.with(getApplicationContext()).load(getResizedBitmap(stic2.get(position),80)).into(TwoSticker);
+            Glide.with(getApplicationContext()).load(getResizedBitmap(stic3.get(position),80)).into(ThreeSticker);
+            Glide.with(getApplicationContext()).load(getResizedBitmap(stic4.get(position),80)).into(FourSticker);
+            Glide.with(getApplicationContext()).load(getResizedBitmap(stic5.get(position),80)).into(FiveSticker);
+*/
 
             OneSticker.setImageBitmap(getResizedBitmap(stic1.get(position),80));
             TwoSticker.setImageBitmap(getResizedBitmap(stic2.get(position),80));
@@ -1101,6 +1167,61 @@ public class EditorActivity extends AppCompatActivity {
         cursor.close();
 
         return filePath;
+    }
+    public void setImageViewScaleType(ImageView image)
+    {
+
+        Bitmap bitmap = MainActivity.images.get(MainActivity.imagePosition);
+
+        int imageWidth = bitmap.getWidth();
+        int imageHeight = bitmap.getHeight();
+
+        if(imageHeight > imageWidth)
+        {
+            if(((float)imageHeight / (float)imageWidth) > 1.3)
+            {
+                image.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            }
+            else
+            {
+                image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                Bitmap blurbit = getBlurBitmap(bitmap.copy(bitmap.getConfig(),true),getApplicationContext());
+                BitmapDrawable ob = new BitmapDrawable(getResources(), blurbit);
+
+                image.setBackground(ob);
+                blurbit = null;
+            }
+
+        }
+        else
+        {
+            image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            Bitmap blurbit = getBlurBitmap(bitmap.copy(bitmap.getConfig(),true),getApplicationContext());
+            BitmapDrawable ob = new BitmapDrawable(getResources(), blurbit);
+
+            image.setBackground(ob);
+            blurbit = null;
+            image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        }
+
+    }
+    public Bitmap getBlurBitmap(Bitmap image, Context context)
+    {
+        final float BITMAP_SCALE = 0.01f;
+        final float BLUR_RADIUS = 25f;
+        int width = Math.round(image.getWidth() * BITMAP_SCALE);
+        int height = Math.round(image.getHeight() * BITMAP_SCALE);
+        Bitmap inputBitmap = Bitmap.createScaledBitmap(image, width, height, false);
+        Bitmap outputBitmap = Bitmap.createBitmap(inputBitmap);
+        RenderScript rs = RenderScript.create(context);
+        ScriptIntrinsicBlur theIntrinsic = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs));
+        Allocation tmpIn = Allocation.createFromBitmap(rs, inputBitmap);
+        Allocation tmpOut = Allocation.createFromBitmap(rs, outputBitmap);
+        theIntrinsic.setRadius(BLUR_RADIUS);
+        theIntrinsic.setInput(tmpIn);
+        theIntrinsic.forEach(tmpOut);
+        tmpOut.copyTo(outputBitmap);
+        return outputBitmap;
     }
 
 

@@ -16,6 +16,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
@@ -27,6 +28,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -43,8 +45,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.bumptech.glide.Glide;
 import com.glidebitmappool.GlideBitmapFactory;
 import com.glidebitmappool.GlideBitmapPool;
+import com.sba.sinhalaphotoeditor.customGallery.MyCustomGallery;
 import com.sba.sinhalaphotoeditor.progressdialog.PhotoEditorProgressDialog;
 import com.sba.sinhalaphotoeditor.walkthrough.WalkThroughActivity;
 import com.sba.sinhalaphotoeditor.welcomeScreen.WelcomeScreen;
@@ -59,6 +63,9 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.sba.sinhalaphotoeditor.customGallery.MyCustomGallery.IMAGE_PICK_RESULT_CODE;
+import static com.sba.sinhalaphotoeditor.customGallery.MyCustomGallery.selectedBitmap;
+
 public class MainActivity extends AppCompatActivity {
 
     ImageView imageView;
@@ -66,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int PICK_IMAGE_REQUEST = 234;
     static Bitmap bitmap;
-    public static Uri CurrentWorkingFilePath;
+    //public static Uri CurrentWorkingFilePath;
     public static int imagePosition = 0;
     TextView selectPictureText,fromGalery,createOne;
 
@@ -81,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public static ArrayList<Bitmap> images = new ArrayList<>();
-    public static ArrayList<Uri> filePaths = new ArrayList<>();
+    //public static ArrayList<Uri> filePaths = new ArrayList<>();
 
     PhotoEditorProgressDialog dialog;
 
@@ -98,15 +105,30 @@ public class MainActivity extends AppCompatActivity {
     Spinner languagePicker;
 
 
+    @Override
+    public void onBackPressed()
+    {
+        if(isExit)
+        {
+            isFirstTime = true;
+            super.onBackPressed();
+        }
+        else
+        {
+            isUserWantToExitTheApp();
+        }
 
+    }
 
     @Override
-    protected void onStart() {
+    protected void onStart()
+    {
 
         SharedPreferences pref = getApplicationContext().getSharedPreferences("com.sba.photoeditor", 0); // 0 - for private mode
         //SharedPreferences.Editor editor = pref.edit();
         boolean isWalkThroughNeeded = pref.getBoolean("isWalkThroughNeeded", false);
-        if (!isWalkThroughNeeded) {
+        if (!isWalkThroughNeeded)
+        {
             startActivity(new Intent(MainActivity.this, WelcomeScreen.class));
             finish();
         }
@@ -117,39 +139,24 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null)
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == IMAGE_PICK_RESULT_CODE && selectedBitmap != null)
         {
             dialog.show();
-            CurrentWorkingFilePath = data.getData();
+            //CurrentWorkingFilePath = data.getData();
             try
             {
 
                 images.clear();
-                filePaths.clear();
                 imagePosition = 0;
 
 
 
                 //bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), CurrentWorkingFilePath);
 
-                bitmap = GlideBitmapFactory.decodeFile(getRealPathFromDocumentUri(MainActivity.this,CurrentWorkingFilePath));
+                //bitmap = GlideBitmapFactory.decodeFile(getRealPathFromDocumentUri(MainActivity.this,CurrentWorkingFilePath));
 
-
-
-
-
-                Uri selectedPicture = data.getData();
-                // Get and resize profile image
-                String[] filePathColumn = {MediaStore.Images.Media.DATA};
-                Cursor cursor = MainActivity.this.getContentResolver().query(selectedPicture, filePathColumn, null, null, null);
-                cursor.moveToFirst();
-
-                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                String picturePath = cursor.getString(columnIndex);
-                cursor.close();
-                ExifInterface exif = new ExifInterface(picturePath);
-                int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
-                bitmap = rotateBitmap(bitmap, orientation);
+                bitmap = selectedBitmap.copy(selectedBitmap.getConfig(),true);
+                //selectedBitmap = null;
 
 
 
@@ -162,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
 
                 bitmap = getResizedBitmap(bitmap,1500);
                 bitmap = decodeSampledBitmapFromResource(getRealPathFromDocumentUri(MainActivity.this,getImageUri(MainActivity.this,bitmap)),metrics.widthPixels,metrics.heightPixels);
-                CurrentWorkingFilePath = getImageUri(MainActivity.this,bitmap);
+               // CurrentWorkingFilePath = getImageUri(MainActivity.this,bitmap);
 
 
 
@@ -173,7 +180,6 @@ public class MainActivity extends AppCompatActivity {
 
 
                 images.add(0,bitmap);
-                filePaths.add(0,CurrentWorkingFilePath);
                 startActivity(new Intent(getApplicationContext(),EditorActivity.class));
                 dialog.dismiss();
 
@@ -182,9 +188,14 @@ public class MainActivity extends AppCompatActivity {
             {
                 try {
 
-                    // bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), CurrentWorkingFilePath);
-                    bitmap = GlideBitmapFactory.decodeFile(getRealPathFromDocumentUri(MainActivity.this,CurrentWorkingFilePath));
+                    Log.d("exceptionError",e.getMessage());
 
+                    // bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), CurrentWorkingFilePath);
+                    //bitmap = GlideBitmapFactory.decodeFile(getRealPathFromDocumentUri(MainActivity.this,CurrentWorkingFilePath));
+
+
+                    bitmap = selectedBitmap.copy(selectedBitmap.getConfig(),true);
+                    selectedBitmap = null;
 
 
                     WindowManager wm = (WindowManager) getApplication().getSystemService(Context.WINDOW_SERVICE);
@@ -196,11 +207,9 @@ public class MainActivity extends AppCompatActivity {
 //
                     bitmap = getResizedBitmap(bitmap,1500);
 
-                    bitmap = decodeSampledBitmapFromResource(getRealPathFromDocumentUri(MainActivity.this,data.getData()),metrics.widthPixels,metrics.heightPixels);
+                    bitmap = decodeSampledBitmapFromResource(getRealPathFromDocumentUri(MainActivity.this,getImageUri(getApplicationContext(),bitmap)),metrics.widthPixels,metrics.heightPixels);
 
                     images.add(0,bitmap);
-                    CurrentWorkingFilePath = data.getData();
-                    filePaths.add(0,CurrentWorkingFilePath);
                     startActivity(new Intent(getApplicationContext(),EditorActivity.class));
                     dialog.dismiss();
                 }
@@ -225,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-
+        setTextViewFontAndSize();
 
         SharedPreferences pref2 = getApplicationContext().getSharedPreferences("com.sba.sinhalaphotoeditor", 0);
         String code = pref2.getString("Language",null);
@@ -251,6 +260,15 @@ public class MainActivity extends AppCompatActivity {
         roundImage = (ImageView) findViewById(R.id.roundImage);
         selectPictureText = findViewById(R.id.selectPictureText);
         languagePicker = findViewById(R.id.languagePicker);
+        TextView verionName = findViewById(R.id.verionName);
+
+        ImageView topGreenPannel;
+        topGreenPannel = findViewById(R.id.topGreenPannel);
+        Glide.with(getApplicationContext()).load(R.drawable.samplewalpaper).into(topGreenPannel);
+
+
+
+        verionName.setText("Version " + BuildConfig.VERSION_NAME);
 
 
 
@@ -446,10 +464,6 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        //Typeface typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.kaputaunicode);
-        //selectPictureText.setTypeface(typeface);
-        //createOne.setTypeface(typeface);
-        //fromGalery.setTypeface(typeface);
 
         usePreviousBitmap = (ImageView) findViewById(R.id.usePreviousBitmap);
         usePreviousBitmap.startAnimation(pulse);
@@ -506,6 +520,10 @@ public class MainActivity extends AppCompatActivity {
 
                         case  2 :
                             setLocale("en",position);
+                            break;
+
+                        case 3:
+                            setLocale("ta",position);
                             break;
                     }
                 }
@@ -582,10 +600,18 @@ public class MainActivity extends AppCompatActivity {
     }
     private void showFileChooser()
     {
+        /*
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);*/
+
+        Intent intent = new Intent(MainActivity.this, MyCustomGallery.class);
+        intent.putExtra("Activity","MainActivity");
+        //startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+        startActivityForResult(intent,PICK_IMAGE_REQUEST);
+
+
     }
     public boolean isPermissonGranted()
     {
@@ -606,7 +632,7 @@ public class MainActivity extends AppCompatActivity {
         return false;
 
     }
-    public boolean isUserWantToExitTheApp()
+    public void isUserWantToExitTheApp()
     {
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
@@ -621,6 +647,7 @@ public class MainActivity extends AppCompatActivity {
             {
 
                 isExit = true;
+                onBackPressed();
             }
         });
         dialog.setNegativeButton("No", new DialogInterface.OnClickListener()
@@ -633,7 +660,7 @@ public class MainActivity extends AppCompatActivity {
 
         dialog.show();
 
-        return isExit;
+
     }
     private Bitmap getDownsampledBitmap(Context ctx, Uri uri, int targetWidth, int targetHeight) {
         Bitmap bitmap = null;
@@ -936,6 +963,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         Intent refresh = new Intent(this, MainActivity.class);
+        //refresh.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(refresh);
         finish();
     }
@@ -952,10 +980,76 @@ public class MainActivity extends AppCompatActivity {
         isFirstTime = false;
 
         Intent refresh = new Intent(this, MainActivity.class);
+        //refresh.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(refresh);
         finish();
 
     }
+    public void setTextViewFontAndSize()
+    {
+
+        TextView selectPictureText = findViewById(R.id.selectPictureText);
+        TextView fromGalery = findViewById(R.id.fromGalery);
+        TextView createOne = findViewById(R.id.createOne);
+        TextView useOne = findViewById(R.id.useOne);
+
+        Typeface typeface;
+
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("com.sba.sinhalaphotoeditor", 0);
+        int pos = pref.getInt("LanguagePosition",-99);
+        if(pos != 99)
+        {
+            switch (pos)
+            {
+                case 1 :
+
+
+                    typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.gemunulibresemibold);
+                    selectPictureText.setTypeface(typeface);
+                    fromGalery.setTypeface(typeface);
+                    createOne.setTypeface(typeface);
+                    useOne.setTypeface(typeface);
+                    break;
+                case 2 :
+
+                    typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.englishfont);
+                    selectPictureText.setTypeface(typeface);
+
+
+                    fromGalery.setTypeface(typeface);
+
+
+                    createOne.setTypeface(typeface);
+
+
+
+
+                    useOne.setTypeface(typeface);
+
+
+                    break;
+                case 3:
+
+
+                    typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.tamilfont);
+
+
+                    selectPictureText.setTypeface(typeface);
+                    selectPictureText.setTextSize(20);
+
+                    fromGalery.setTypeface(typeface);
+                    fromGalery.setTextSize(14);
+
+                    createOne.setTypeface(typeface);
+                    createOne.setTextSize(14);
+
+                    useOne.setTypeface(typeface);
+                    useOne.setTextSize(14);
+                    break;
+            }
+        }
+    }
+
 
 
 }

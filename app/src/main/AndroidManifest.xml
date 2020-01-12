@@ -16,11 +16,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".welcomeScreen.WelcomeScreen"
-            android:theme="@style/NoActionBarAppTheme"
-            android:screenOrientation="portrait">
 
-        </activity>
+        <activity android:name=".customGallery.MyCustomGallery" android:screenOrientation="portrait" android:label="Pick Image"></activity>
+        <activity android:name=".addTextOnImage.TextOnImageActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name=".drawOnBitmap.DrawOnBitmapActivity" android:screenOrientation="portrait"/>
+        <activity
+            android:name=".welcomeScreen.WelcomeScreen"
+            android:screenOrientation="portrait"
+            android:theme="@style/NoActionBarAppTheme" />
         <activity
             android:name=".walkthrough.WalkThroughActivity"
             android:screenOrientation="portrait"
@@ -61,9 +64,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".TextOnImage"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".PhotoOnPhoto"
             android:screenOrientation="portrait" />
         <activity
@@ -73,6 +73,16 @@
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
+
+
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-3538783908730049~6469108180"/>
+
     </application>
 
 </manifest>
+
+
+<!--ca-app-pub-3538783908730049~6469108180-->
+<!--app id-->

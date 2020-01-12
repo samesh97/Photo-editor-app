@@ -13,12 +13,17 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.renderscript.Allocation;
+import android.renderscript.Element;
+import android.renderscript.RenderScript;
+import android.renderscript.ScriptIntrinsicBlur;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,6 +36,11 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.glidebitmappool.GlideBitmapPool;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
 import com.zomato.photofilters.FilterPack;
 import com.zomato.photofilters.imageprocessors.Filter;
@@ -78,7 +88,7 @@ public class AddEffects extends AppCompatActivity {
     private ArrayList<Bitmap> allFilterBitmaps = new ArrayList<>();
 
 
-    //private AdView mAdView;
+    private AdView mAdView;
 
     private DatabaseHelper helper = new DatabaseHelper(AddEffects.this);
 
@@ -190,14 +200,14 @@ public class AddEffects extends AppCompatActivity {
 
 
 
-       /* MobileAds.initialize(this, new OnInitializationCompleteListener() {
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
             @Override
             public void onInitializationComplete(InitializationStatus initializationStatus) {
             }
         });
         mAdView = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);*/
+        mAdView.loadAd(adRequest);
 
         //  dialog = new ProgressDialog(AddEffects.this);
 
@@ -708,9 +718,15 @@ public class AddEffects extends AppCompatActivity {
         currentEditingBitmap = MainActivity.images.get(MainActivity.imagePosition);
 
 
-        userSelectedImage.setImageBitmap(currentEditingBitmap);
-        render.setAnimation(Flip.InX(userSelectedImage));
-        render.start();
+       // userSelectedImage.setImageBitmap(currentEditingBitmap);
+        setImageViewScaleType(userSelectedImage);
+        Glide.with(getApplicationContext()).load(currentEditingBitmap).into(userSelectedImage);
+
+
+
+
+        //render.setAnimation(Flip.InX(userSelectedImage));
+        //render.start();
 
         Bitmap resizedImage = null;
 
@@ -906,82 +922,83 @@ public class AddEffects extends AppCompatActivity {
 
             if(type.equals("0"))
             {
-                userSelectedImage.setImageBitmap(x);
+                Glide.with(getApplicationContext()).load(x).into(userSelectedImage);
+                //userSelectedImage.setImageBitmap(x);
                 addedEffectBitmap = x;
             }
             if(type.equals("1"))
             {
-                userSelectedImage.setImageBitmap(x);
+                Glide.with(getApplicationContext()).load(x).into(userSelectedImage);
                 addedEffectBitmap = x;
             }
             if(type.equals("2"))
             {
-                userSelectedImage.setImageBitmap(x);
+                Glide.with(getApplicationContext()).load(x).into(userSelectedImage);
                 addedEffectBitmap = x;
             }
             if(type.equals("3"))
             {
-                userSelectedImage.setImageBitmap(x);
+                Glide.with(getApplicationContext()).load(x).into(userSelectedImage);
                 addedEffectBitmap = x;
             }
             if(type.equals("4"))
             {
-                userSelectedImage.setImageBitmap(x);
+                Glide.with(getApplicationContext()).load(x).into(userSelectedImage);
                 addedEffectBitmap = x;
             }
             if(type.equals("5"))
             {
-                userSelectedImage.setImageBitmap(x);
+                Glide.with(getApplicationContext()).load(x).into(userSelectedImage);
                 addedEffectBitmap = x;
             }
             if(type.equals("6"))
             {
-                userSelectedImage.setImageBitmap(x);
+                Glide.with(getApplicationContext()).load(x).into(userSelectedImage);
                 addedEffectBitmap = x;
             }
             if(type.equals("7"))
             {
-                userSelectedImage.setImageBitmap(x);
+                Glide.with(getApplicationContext()).load(x).into(userSelectedImage);
                 addedEffectBitmap = x;
             }
             if(type.equals("8"))
             {
-                userSelectedImage.setImageBitmap(x);
+                Glide.with(getApplicationContext()).load(x).into(userSelectedImage);
                 addedEffectBitmap = x;
             }
             if(type.equals("9"))
             {
-                userSelectedImage.setImageBitmap(x);
+                Glide.with(getApplicationContext()).load(x).into(userSelectedImage);
                 addedEffectBitmap = x;
             }
             if(type.equals("10"))
             {
-                userSelectedImage.setImageBitmap(x);
+                Glide.with(getApplicationContext()).load(x).into(userSelectedImage);
                 addedEffectBitmap = x;
             }
             if(type.equals("11"))
             {
-                userSelectedImage.setImageBitmap(x);
+                Glide.with(getApplicationContext()).load(x).into(userSelectedImage);
                 addedEffectBitmap = x;
             }
             if(type.equals("12"))
             {
-                userSelectedImage.setImageBitmap(x);
+                Glide.with(getApplicationContext()).load(x).into(userSelectedImage);
                 addedEffectBitmap = x;
             }
             if(type.equals("13"))
             {
-                userSelectedImage.setImageBitmap(x);
+                Glide.with(getApplicationContext()).load(x).into(userSelectedImage);
                 addedEffectBitmap = x;
             }
             if(type.equals("14"))
             {
-                userSelectedImage.setImageBitmap(x);
+                Glide.with(getApplicationContext()).load(x).into(userSelectedImage);
                 addedEffectBitmap = x;
             }
             if(type.equals("15"))
             {
-                userSelectedImage.setImageBitmap(x);
+                Glide.with(getApplicationContext()).load(x).into(userSelectedImage);
                 addedEffectBitmap = x;
             }
 
@@ -1002,7 +1019,8 @@ public class AddEffects extends AppCompatActivity {
 
         Bitmap lastBitmap;
         @Override
-        protected void onPreExecute() {
+        protected void onPreExecute()
+        {
             super.onPreExecute();
             dialog.setMessage("Loading..");
             dialog.setCancelable(false);
@@ -1076,8 +1094,8 @@ public class AddEffects extends AppCompatActivity {
                         }
 
 
-                        MainActivity.CurrentWorkingFilePath = getImageUri(AddEffects.this, lastBitmap);
-                        MainActivity.filePaths.add(getImageUri(AddEffects.this, lastBitmap));
+                        //MainActivity.CurrentWorkingFilePath = getImageUri(AddEffects.this, lastBitmap);
+                        //MainActivity.filePaths.add(getImageUri(AddEffects.this, lastBitmap));
 
 
 
@@ -1895,6 +1913,61 @@ public class AddEffects extends AppCompatActivity {
         }
 
         return x;
+    }
+    public Bitmap getBlurBitmap(Bitmap image, Context context)
+    {
+        final float BITMAP_SCALE = 0.01f;
+        final float BLUR_RADIUS = 25f;
+        int width = Math.round(image.getWidth() * BITMAP_SCALE);
+        int height = Math.round(image.getHeight() * BITMAP_SCALE);
+        Bitmap inputBitmap = Bitmap.createScaledBitmap(image, width, height, false);
+        Bitmap outputBitmap = Bitmap.createBitmap(inputBitmap);
+        RenderScript rs = RenderScript.create(context);
+        ScriptIntrinsicBlur theIntrinsic = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs));
+        Allocation tmpIn = Allocation.createFromBitmap(rs, inputBitmap);
+        Allocation tmpOut = Allocation.createFromBitmap(rs, outputBitmap);
+        theIntrinsic.setRadius(BLUR_RADIUS);
+        theIntrinsic.setInput(tmpIn);
+        theIntrinsic.forEach(tmpOut);
+        tmpOut.copyTo(outputBitmap);
+        return outputBitmap;
+    }
+    public void setImageViewScaleType(ImageView image)
+    {
+
+        Bitmap bitmap = MainActivity.images.get(MainActivity.imagePosition);
+
+        int imageWidth = bitmap.getWidth();
+        int imageHeight = bitmap.getHeight();
+
+        if(imageHeight > imageWidth)
+        {
+            if(((float)imageHeight / (float)imageWidth) > 1.3)
+            {
+                image.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            }
+            else
+            {
+                image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                Bitmap blurbit = getBlurBitmap(bitmap.copy(bitmap.getConfig(),true),getApplicationContext());
+                BitmapDrawable ob = new BitmapDrawable(getResources(), blurbit);
+
+                image.setBackground(ob);
+                blurbit = null;
+            }
+
+        }
+        else
+        {
+            image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            Bitmap blurbit = getBlurBitmap(bitmap.copy(bitmap.getConfig(),true),getApplicationContext());
+            BitmapDrawable ob = new BitmapDrawable(getResources(), blurbit);
+
+            image.setBackground(ob);
+            blurbit = null;
+            image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        }
+
     }
 
 

@@ -24,6 +24,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.flask.colorpicker.ColorPickerView;
 import com.flask.colorpicker.OnColorSelectedListener;
 import com.flask.colorpicker.builder.ColorPickerClickListener;
@@ -79,6 +80,12 @@ public class CreateABackgroundActivity extends AppCompatActivity {
         pickColor = (ImageView) findViewById(R.id.pickColor);
         useImage = (Button) findViewById(R.id.useImage);
 
+
+        ImageView topGreenPannel;
+        topGreenPannel = findViewById(R.id.topGreenPannel);
+        Glide.with(getApplicationContext()).load(R.drawable.samplewalpaper).into(topGreenPannel);
+
+
         userCreatedImage.setMaxWidth(widtha);
 
         useImage.setOnClickListener(new View.OnClickListener() {
@@ -94,11 +101,11 @@ public class CreateABackgroundActivity extends AppCompatActivity {
                     EditorActivity.imageHeight = Integer.parseInt(height.getText().toString());
 
                     MainActivity.images.clear();
-                    MainActivity.filePaths.clear();
+                    //MainActivity.filePaths.clear();
                     MainActivity.imagePosition = 0;
                     MainActivity.images.add(createdBitmap);
-                    MainActivity.filePaths.add(getImageUri(getApplicationContext(),createdBitmap));
-                    MainActivity.CurrentWorkingFilePath = getImageUri(getApplicationContext(),createdBitmap);
+                    //MainActivity.filePaths.add(getImageUri(getApplicationContext(),createdBitmap));
+                   // MainActivity.CurrentWorkingFilePath = getImageUri(getApplicationContext(),createdBitmap);
 
                     startActivity(new Intent(getApplicationContext(),EditorActivity.class));
                     finish();

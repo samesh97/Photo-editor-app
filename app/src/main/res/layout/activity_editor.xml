@@ -7,19 +7,8 @@
     android:layout_height="match_parent"
     tools:context=".EditorActivity">
 
-<!--
 
- <com.google.android.gms.ads.AdView
-        android:id="@+id/adView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        app:adSize="BANNER"
-        app:adUnitId="ca-app-pub-3538783908730049/9447798776"
-        app:layout_constraintBottom_toTopOf="@+id/swipeRefreshLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>-->
+
 
     <ImageView
         android:id="@+id/userSelectedImage"
@@ -33,9 +22,21 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.35">
+        app:layout_constraintVertical_bias="0.35"/>
 
-    </ImageView>
+
+
+ <com.google.android.gms.ads.AdView
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        app:adSize="BANNER"
+        app:adUnitId="ca-app-pub-3538783908730049/9447798776"
+        app:layout_constraintBottom_toTopOf="@+id/swipeRefreshLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <HorizontalScrollView
         android:id="@+id/swipeRefreshLayout"
@@ -124,6 +125,22 @@
                 app:layout_constraintTop_toTopOf="@+id/addEffect"
                 app:layout_constraintVertical_bias="0.466" />
 
+            <!--
+
+            <ImageView
+                android:id="@+id/addBlur"
+                android:layout_width="@dimen/activity_editor_image_width_height"
+                android:layout_height="@dimen/activity_editor_image_width_height"
+                android:layout_marginStart="@dimen/activity_editor_margin_12"
+                android:layout_marginEnd="@dimen/activity_editor_margin_12"
+                android:src="@drawable/addblur"
+                app:layout_constraintBottom_toBottomOf="@id/addCrop"
+                app:layout_constraintEnd_toEndOf="@id/drawOnBitmap"
+                app:layout_constraintStart_toEndOf="@+id/addCrop"
+                app:layout_constraintTop_toTopOf="@id/addCrop"
+                app:layout_constraintVertical_bias="0.466" />-->
+
+
             <ImageView
                 android:id="@+id/addBlur"
                 android:layout_width="@dimen/activity_editor_image_width_height"
@@ -131,10 +148,10 @@
                 android:layout_marginStart="@dimen/activity_editor_margin_12"
                 android:layout_marginEnd="@dimen/activity_editor_margin_16"
                 android:src="@drawable/addblur"
-                app:layout_constraintBottom_toBottomOf="@id/addCrop"
+                app:layout_constraintBottom_toBottomOf="@id/addEffect"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/addCrop"
-                app:layout_constraintTop_toTopOf="@id/addCrop"
+                app:layout_constraintTop_toTopOf="@id/addEffect"
                 app:layout_constraintVertical_bias="0.466" />
 
 

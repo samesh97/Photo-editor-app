@@ -1,17 +1,22 @@
 package com.sba.sinhalaphotoeditor.walkthrough;
 
 
+import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.sba.sinhalaphotoeditor.R;
 
 /**
@@ -54,9 +59,13 @@ public class ViewPagerFragment extends Fragment
 
         ImageView topGreenPannel = view.findViewById(R.id.topGreenPannel);
 
+
+
+
         if(image1 != null)
         {
-            imageView1.setImageDrawable(image1);
+           // imageView1.setImageDrawable(image1);
+            Glide.with(getActivity()).load(image1).into(imageView1);
         }
         else {
 
@@ -64,7 +73,8 @@ public class ViewPagerFragment extends Fragment
         }
         if(image2 != null)
         {
-            imageView2.setImageDrawable(image2);
+            //imageView2.setImageDrawable(image2);
+            Glide.with(getActivity()).load(image2).into(imageView2);
         }
         else
         {
@@ -72,7 +82,8 @@ public class ViewPagerFragment extends Fragment
         }
         if(image3 != null)
         {
-            imageView3.setImageDrawable(image3);
+            //imageView3.setImageDrawable(image3);
+            Glide.with(getActivity()).load(image3).into(imageView3);
         }
         else
         {
@@ -84,11 +95,69 @@ public class ViewPagerFragment extends Fragment
 
         if(topImage != null)
         {
-            topGreenPannel.setBackground(topImage);
+            //topGreenPannel.setBackground(topImage);
+            Glide.with(getActivity()).load(topImage).into(topGreenPannel);
         }
+
+        setTextViewFontAndSize(view);
 
 
         return view;
+    }
+    private void setTextViewFontAndSize(View view)
+    {
+
+        TextView title = view.findViewById(R.id.title);
+        TextView description = view.findViewById(R.id.description);
+
+
+
+        Typeface typeface;
+
+        SharedPreferences pref = getActivity().getSharedPreferences("com.sba.sinhalaphotoeditor", 0);
+        int pos = pref.getInt("LanguagePosition",-99);
+        if(pos != 99) {
+            switch (pos) {
+                case 1:
+
+
+                    typeface = ResourcesCompat.getFont(getActivity(), R.font.gemunulibresemibold);
+                    title.setTypeface(typeface);
+                    description.setTypeface(typeface);
+
+
+                    break;
+                case 2:
+
+                    typeface = ResourcesCompat.getFont(getActivity(), R.font.englishfont);
+                    title.setTypeface(typeface);
+
+
+                    description.setTypeface(typeface);
+
+
+
+
+
+
+                    break;
+                case 3:
+
+
+                    typeface = ResourcesCompat.getFont(getActivity(), R.font.tamilfont);
+
+
+                    title.setTypeface(typeface);
+                    title.setTextSize(20);
+
+                    description.setTypeface(typeface);
+
+
+
+
+                    break;
+            }
+        }
     }
 
 }

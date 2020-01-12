@@ -31,6 +31,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 
+import com.bumptech.glide.Glide;
 import com.glidebitmappool.GlideBitmapPool;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
 import com.warkiz.tickseekbar.OnSeekChangeListener;
@@ -70,6 +71,8 @@ public class AdjustImage extends AppCompatActivity {
     DatabaseHelper helper = new DatabaseHelper(AdjustImage.this);
 
     Render render;
+
+
 
     @Override
     protected void onStop() {
@@ -137,7 +140,17 @@ public class AdjustImage extends AppCompatActivity {
         adjustImage = (ImageView) findViewById(R.id.adjustImage);
         listner1 = (TickSeekBar) findViewById(R.id.listener);
         listener2 = (TickSeekBar) findViewById(R.id.listener2);
-        filterAddingBitmap = MainActivity.images.get(MainActivity.imagePosition);
+
+
+        ImageView topGreenPannel;
+        topGreenPannel = findViewById(R.id.topGreenPannel);
+        Glide.with(getApplicationContext()).load(R.drawable.samplewalpaper).into(topGreenPannel);
+
+
+        filterAddingBitmap = MainActivity.images.get(MainActivity.imagePosition).copy(MainActivity.images.get(MainActivity.imagePosition).getConfig(),true);
+
+
+
         adjustImage.setImageBitmap(filterAddingBitmap);
 
         render.setAnimation(Flip.InX(adjustImage));
@@ -201,7 +214,8 @@ public class AdjustImage extends AppCompatActivity {
                 }
 
                 currentEditingImage = contrastAddedImage;
-                adjustImage.setImageBitmap(currentEditingImage);
+                //adjustImage.setImageBitmap(currentEditingImage);
+                Glide.with(getApplicationContext()).load(currentEditingImage).into(adjustImage);
             }
 
             @Override
@@ -311,8 +325,8 @@ public class AdjustImage extends AppCompatActivity {
                     }
                 }
 
-                MainActivity.CurrentWorkingFilePath = getImageUri(AdjustImage.this, filterAddingBitmap);
-                MainActivity.filePaths.add(getImageUri(AdjustImage.this, filterAddingBitmap));
+                //MainActivity.CurrentWorkingFilePath = getImageUri(AdjustImage.this, filterAddingBitmap);
+               // MainActivity.filePaths.add(getImageUri(AdjustImage.this, filterAddingBitmap));
             }
             else if(blurValue > 0)
             {
@@ -328,8 +342,8 @@ public class AdjustImage extends AppCompatActivity {
                     }
                 }
 
-                MainActivity.CurrentWorkingFilePath = getImageUri(AdjustImage.this, filterAddingBitmap);
-                MainActivity.filePaths.add(getImageUri(AdjustImage.this, filterAddingBitmap));
+                //MainActivity.CurrentWorkingFilePath = getImageUri(AdjustImage.this, filterAddingBitmap);
+                //MainActivity.filePaths.add(getImageUri(AdjustImage.this, filterAddingBitmap));
             }
             else if(contrastValue > 0)
             {
@@ -346,8 +360,8 @@ public class AdjustImage extends AppCompatActivity {
                     }
                 }
 
-                MainActivity.CurrentWorkingFilePath = getImageUri(AdjustImage.this, filterAddingBitmap);
-                MainActivity.filePaths.add(getImageUri(AdjustImage.this, filterAddingBitmap));
+               // MainActivity.CurrentWorkingFilePath = getImageUri(AdjustImage.this, filterAddingBitmap);
+               // MainActivity.filePaths.add(getImageUri(AdjustImage.this, filterAddingBitmap));
             }
 
 

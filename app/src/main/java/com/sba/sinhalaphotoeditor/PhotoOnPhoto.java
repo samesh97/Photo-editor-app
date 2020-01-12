@@ -32,6 +32,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 
+import com.bumptech.glide.Glide;
 import com.glidebitmappool.GlideBitmapPool;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
 
@@ -257,6 +258,7 @@ public class PhotoOnPhoto extends AppCompatActivity implements RotationGestureDe
         setContentView(baseLayout,baseLayoutParams);
 
         sourceImageView.setImageBitmap(bitmapForImageView);
+        //Glide.with(getApplicationContext()).load(bitmapForImageView).into(sourceImageView);
 
         Render render = new Render(PhotoOnPhoto.this);
         render.setAnimation(Bounce.InUp(sourceImageView));
@@ -441,8 +443,8 @@ public class PhotoOnPhoto extends AppCompatActivity implements RotationGestureDe
                         }
                     }
 
-                    MainActivity.CurrentWorkingFilePath = imageOutUri;
-                    MainActivity.filePaths.add(imageOutUri);
+                   // MainActivity.CurrentWorkingFilePath = imageOutUri;
+                   // MainActivity.filePaths.add(imageOutUri);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

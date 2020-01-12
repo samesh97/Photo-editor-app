@@ -2,14 +2,17 @@ package com.sba.sinhalaphotoeditor;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.res.ResourcesCompat;
 
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.glidebitmappool.GlideBitmapPool;
 
 import java.io.ByteArrayOutputStream;
@@ -55,6 +59,8 @@ public class ImageSavingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_image_saving);
 
 
+        setTextViewFontAndSize();
+
         Runtime rt = Runtime.getRuntime();
         int maxMemory = (int)rt.freeMemory();
         GlideBitmapPool.initialize(maxMemory);
@@ -72,6 +78,12 @@ public class ImageSavingActivity extends AppCompatActivity {
         downloadImageView = findViewById(R.id.downloadImageView);
 
         downloadImageText = findViewById(R.id.downloadImageText);
+
+
+        ImageView topGreenPannel;
+        topGreenPannel = findViewById(R.id.topGreenPannel);
+        Glide.with(getApplicationContext()).load(R.drawable.samplewalpaper).into(topGreenPannel);
+
 
         shareImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -152,7 +164,8 @@ public class ImageSavingActivity extends AppCompatActivity {
             }
         });
 
-        userSavingImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
+        //userSavingImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
+        Glide.with(getApplicationContext()).load(MainActivity.images.get(MainActivity.imagePosition)).into(userSavingImage);
 
         saveFinalImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -187,35 +200,6 @@ public class ImageSavingActivity extends AppCompatActivity {
 
 
 
-    }
-    private boolean saveFile(Bitmap sourceImageBitmap, String fileName)
-    {
-
-
-        ActivityCompat.requestPermissions(ImageSavingActivity.this,
-                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                211);
-
-        String root = Environment.getExternalStorageDirectory().toString();
-        File myDir = new File(root+"/DCIM/SinhalaPhotoEditor/");
-        myDir.mkdirs();
-        String fname = "Image-" + fileName+ ".jpg";
-        File file = new File(myDir, fname);
-        if (file.exists()) file.delete();
-        Log.i("LOAD", root + fname);
-        try {
-            FileOutputStream out = new FileOutputStream(file);
-            sourceImageBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-            out.flush();
-            out.close();
-            return true;
-        } catch (Exception e)
-        {
-
-            Toast.makeText(this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
-            return false;
-        }
     }
     private void shareImageUri(Uri uri)
     {
@@ -269,7 +253,7 @@ public class ImageSavingActivity extends AppCompatActivity {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
         String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-
+/*
 
         String realPath = getRealPathFromDocumentUri(getApplicationContext(),Uri.parse(path));
         Log.d("image",realPath);
@@ -279,7 +263,7 @@ public class ImageSavingActivity extends AppCompatActivity {
         {
             file.delete();
             Log.d("image","deleted");
-        }
+        }*/
 
         return Uri.parse(path);
     }
@@ -308,5 +292,55 @@ public class ImageSavingActivity extends AppCompatActivity {
         cursor.close();
 
         return filePath;
+    }
+    public void setTextViewFontAndSize()
+    {
+
+        TextView downloadImageText = findViewById(R.id.downloadImageText);
+        TextView fromGalery = findViewById(R.id.fromGalery);
+
+
+        Typeface typeface;
+
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("com.sba.sinhalaphotoeditor", 0);
+        int pos = pref.getInt("LanguagePosition",-99);
+        if(pos != 99) {
+            switch (pos) {
+                case 1:
+
+
+                    typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.gemunulibresemibold);
+                    downloadImageText.setTypeface(typeface);
+                    fromGalery.setTypeface(typeface);
+
+                    break;
+                case 2:
+
+                    typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.englishfont);
+                    downloadImageText.setTypeface(typeface);
+
+
+                    fromGalery.setTypeface(typeface);
+
+
+
+
+
+                    break;
+                case 3:
+
+
+                    typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.tamilfont);
+
+
+                    downloadImageText.setTypeface(typeface);
+                    downloadImageText.setTextSize(20);
+
+                    fromGalery.setTypeface(typeface);
+                    fromGalery.setTextSize(14);
+
+                    break;
+            }
+        }
     }
 }

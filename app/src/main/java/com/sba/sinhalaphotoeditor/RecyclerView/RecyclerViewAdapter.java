@@ -26,6 +26,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.sba.sinhalaphotoeditor.EditorActivity;
 import com.sba.sinhalaphotoeditor.MainActivity;
 import com.sba.sinhalaphotoeditor.R;
@@ -79,7 +80,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder,final int position)
     {
-        holder.image.setImageBitmap(images.get(position));
+        //holder.image.setImageBitmap(images.get(position));
+        Glide.with(context).load(images.get(position)).into(holder.image);
         holder.date.setText(dates.get(position));
 
 
@@ -192,7 +194,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 if(selectedImage != null)
                 {
                     MainActivity.images.clear();
-                    MainActivity.filePaths.clear();
+                   // MainActivity.filePaths.clear();
                     MainActivity.imagePosition = 0;
 
                     WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
@@ -205,14 +207,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                     //selectedImage = getResizedBitmap(selectedImage,1500);
 
                     //selectedImage = decodeSampledBitmapFromResource(getRealPathFromDocumentUri(UsePreviouslyEditedImageActivity.this,getImageUri(UsePreviouslyEditedImageActivity.this,selectedImage)),metrics.widthPixels,metrics.heightPixels);
-                    MainActivity.filePaths.add(getImageUri(context,selectedImage));
+                   // MainActivity.filePaths.add(getImageUri(context,selectedImage));
 
 
 
 
                     MainActivity.images.add(selectedImage);
-                    MainActivity.filePaths.add(getImageUri(context,selectedImage));
-                    MainActivity.CurrentWorkingFilePath = getImageUri(context,selectedImage);
+                   // MainActivity.filePaths.add(getImageUri(context,selectedImage));
+                   // MainActivity.CurrentWorkingFilePath = getImageUri(context,selectedImage);
 
                     context.startActivity(new Intent(context,EditorActivity.class));
                 }

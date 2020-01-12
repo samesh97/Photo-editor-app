@@ -17,7 +17,8 @@
         android:id="@+id/topGreenPannel"
         android:layout_width="match_parent"
         android:layout_height="@dimen/create_background_top_image_height"
-        android:background="@drawable/samplewalpaper"
+        android:scaleType="fitXY"
+        android:src="@drawable/samplewalpaper"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

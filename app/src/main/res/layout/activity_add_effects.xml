@@ -20,7 +20,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
-<!--
+
    <com.google.android.gms.ads.AdView
         android:id="@+id/adView"
         android:layout_width="wrap_content"
@@ -31,7 +31,7 @@
         app:adUnitId="ca-app-pub-3538783908730049/1216781500"
         app:layout_constraintBottom_toTopOf="@+id/swipeRefreshLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>-->
+        app:layout_constraintStart_toStartOf="parent"/>
 
 
 

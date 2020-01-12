@@ -1,14 +1,17 @@
 package com.sba.sinhalaphotoeditor.walkthrough;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sba.sinhalaphotoeditor.MainActivity;
@@ -38,6 +41,7 @@ public class WalkThroughActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_walk_through);
 
+        setTextViewFontAndSize();
 
         next = findViewById(R.id.next);
         previous = findViewById(R.id.previous);
@@ -188,5 +192,55 @@ public class WalkThroughActivity extends AppCompatActivity {
 
 
 
+    }
+    public void setTextViewFontAndSize()
+    {
+
+        Button previous = findViewById(R.id.previous);
+        Button next = findViewById(R.id.next);
+
+
+        Typeface typeface;
+
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("com.sba.sinhalaphotoeditor", 0);
+        int pos = pref.getInt("LanguagePosition",-99);
+        if(pos != 99) {
+            switch (pos) {
+                case 1:
+
+
+                    typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.gemunulibresemibold);
+                    previous.setTypeface(typeface);
+                    next.setTypeface(typeface);
+
+                    break;
+                case 2:
+
+                    typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.englishfont);
+                    previous.setTypeface(typeface);
+
+
+                    next.setTypeface(typeface);
+
+
+
+
+
+                    break;
+                case 3:
+
+
+                    typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.tamilfont);
+
+
+                    previous.setTypeface(typeface);
+                    previous.setTextSize(20);
+
+                    next.setTypeface(typeface);
+                    next.setTextSize(14);
+
+                    break;
+            }
+        }
     }
 }

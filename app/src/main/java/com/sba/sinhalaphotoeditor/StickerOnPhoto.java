@@ -32,6 +32,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 
+import com.bumptech.glide.Glide;
 import com.glidebitmappool.GlideBitmapPool;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
 
@@ -160,7 +161,7 @@ public class StickerOnPhoto extends AppCompatActivity implements RotationGesture
     private void extractBundle()
     {   //extract the data from previous activity
         Bundle bundle = getIntent().getExtras();
-        imageInUri = Uri.parse(bundle.getString(STICKER_IN_URI));
+//        imageInUri = Uri.parse(bundle.getString(STICKER_IN_URI));
         //STICKER_ON_IMAGE_URI = Uri.parse((bundle.getString("STICKER_ON_IMAGE_URI")));
 
     }
@@ -306,6 +307,8 @@ public class StickerOnPhoto extends AppCompatActivity implements RotationGesture
 
         sourceImageView.setImageBitmap(bitmapForImageView);
 
+        //Glide.with(getApplicationContext()).load(bitmapForImageView).into(sourceImageView);
+
         Render render = new Render(StickerOnPhoto.this);
         render.setAnimation(Bounce.InUp(sourceImageView));
         render.start();
@@ -317,6 +320,7 @@ public class StickerOnPhoto extends AppCompatActivity implements RotationGesture
         }
 
         addNewImage.setImageBitmap(EditorActivity.selectedSticker);
+        //Glide.with(getApplicationContext()).load(EditorActivity.selectedSticker).into(addNewImage);
         //addTextView.setTextSize(textFontSize);
 
 
@@ -491,10 +495,10 @@ public class StickerOnPhoto extends AppCompatActivity implements RotationGesture
                         }
 
                     }
-                    MainActivity.CurrentWorkingFilePath = imageOutUri;
+                    //MainActivity.CurrentWorkingFilePath = imageOutUri;
 
 
-                    MainActivity.filePaths.add(imageOutUri);
+                    //MainActivity.filePaths.add(imageOutUri);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

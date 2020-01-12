@@ -1,6 +1,7 @@
 package com.sba.sinhalaphotoeditor;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -9,10 +10,12 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -34,6 +37,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.bumptech.glide.Glide;
 import com.glidebitmappool.GlideBitmapPool;
 import com.sba.sinhalaphotoeditor.RecyclerView.RecyclerViewAdapter;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
@@ -96,6 +100,8 @@ public class UsePreviouslyEditedImageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_use_previously_edited_image);
 
 
+        setTextViewFontAndSize();
+
         Runtime rt = Runtime.getRuntime();
         int maxMemory = (int)rt.freeMemory();
         GlideBitmapPool.initialize(maxMemory);
@@ -116,6 +122,11 @@ public class UsePreviouslyEditedImageActivity extends AppCompatActivity {
 
         adapter = new RecyclerViewAdapter(UsePreviouslyEditedImageActivity.this,images,ids,dates);
         ImageList.setAdapter(adapter);
+
+
+        ImageView topGreenPannel;
+        topGreenPannel = findViewById(R.id.topGreenPannel);
+        Glide.with(getApplicationContext()).load(R.drawable.samplewalpaper).into(topGreenPannel);
 
 
         deleteAll = (Button) findViewById(R.id.deleteAll);
@@ -224,6 +235,56 @@ public class UsePreviouslyEditedImageActivity extends AppCompatActivity {
         cursor.close();
 
         return filePath;
+    }
+    public void setTextViewFontAndSize()
+    {
+
+        TextView textView = findViewById(R.id.textView);
+        Button deleteAll = findViewById(R.id.deleteAll);
+
+
+        Typeface typeface;
+
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("com.sba.sinhalaphotoeditor", 0);
+        int pos = pref.getInt("LanguagePosition",-99);
+        if(pos != 99) {
+            switch (pos) {
+                case 1:
+
+
+                    typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.gemunulibresemibold);
+                    textView.setTypeface(typeface);
+                    deleteAll.setTypeface(typeface);
+
+                    break;
+                case 2:
+
+                    typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.englishfont);
+                    textView.setTypeface(typeface);
+
+
+                    deleteAll.setTypeface(typeface);
+
+
+
+
+
+                    break;
+                case 3:
+
+
+                    typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.tamilfont);
+
+
+                    textView.setTypeface(typeface);
+                    textView.setTextSize(20);
+
+                    deleteAll.setTypeface(typeface);
+                    deleteAll.setTextSize(14);
+
+                    break;
+            }
+        }
     }
 }
 

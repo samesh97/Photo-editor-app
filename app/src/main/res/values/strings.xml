@@ -48,7 +48,6 @@
     <string name="warning_text">අවවාදයයි!</string>
 
 
-
     <string name="rate_app_text">ඇප් එක Rate කරන්න</string>
     <string name="rate_app_description">මෙවැනි Apps තවත් නිර්මාණය කිරිමට අපට ඔබගේ වටිනා Rate එක ලබා දෙන්න!</string>
     <string name="okay_text">Okay</string>
@@ -59,7 +58,6 @@
         <item>Language</item>
         <item>Sinhala</item>
         <item>English</item>
-        <item>Tamil</item>
     </string-array>
 
 </resources>

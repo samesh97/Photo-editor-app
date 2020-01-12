@@ -6,6 +6,7 @@
         <item name="colorPrimary">@color/material_dark_blue</item>
         <item name="colorPrimaryDark">@color/material_dark_blue</item>
         <item name="colorAccent">@color/material_dark_blue</item>
+        <item name="android:windowDisablePreview">true</item>
         <item name="android:windowFullscreen">true</item>
     </style>
 
@@ -22,6 +23,7 @@
         <item name="colorPrimary">@color/material_dark_blue</item>
         <item name="colorPrimaryDark">@color/material_dark_blue</item>
         <item name="colorAccent">@color/material_dark_blue</item>
+        <item name="android:windowDisablePreview">true</item>
         <item name="android:windowFullscreen">true</item>
     </style>
 

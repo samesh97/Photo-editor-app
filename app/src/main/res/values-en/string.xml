@@ -3,7 +3,7 @@
     <string name="app_name">Sinhala Photo Editor</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="select_an_image_text">Select an Image</string>
-    <string name="select_from_galery_text">Select From Galery</string>
+    <string name="select_from_galery_text">Select From Gallery</string>
     <string name="create_a_background_text">Create a Background</string>
     <string name="select_a_background_text">Choose a Background</string>
 
