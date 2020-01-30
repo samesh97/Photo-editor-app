@@ -98,4 +98,9 @@
     <dimen name="create_background_layout_margin_12">12dp</dimen>
     <dimen name="activity_main_topic_text_size">18sp</dimen>
     <dimen name="activity_main_sub_text_view_size">17sp</dimen>
+    <dimen name="language_picker_width">115dp</dimen>
+    <dimen name="language_picker_layout_width">140dp</dimen>
+    <dimen name="language_picker_layout_height">45dp</dimen>
+    <dimen name="select_picture_text_size">30sp</dimen>
+    <dimen name="select_from_gallery_text_size">22sp</dimen>
 </resources>

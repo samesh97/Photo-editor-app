@@ -6,13 +6,16 @@ import androidx.core.content.res.ResourcesCompat;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,12 +23,15 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.glidebitmappool.GlideBitmapPool;
+import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -36,6 +42,8 @@ import java.util.regex.Pattern;
 
 import render.animations.Flip;
 import render.animations.Render;
+
+import static com.sba.sinhalaphotoeditor.EditorActivity.screenHeight;
 
 public class ImageSavingActivity extends AppCompatActivity {
 
@@ -53,13 +61,18 @@ public class ImageSavingActivity extends AppCompatActivity {
 
     TextView downloadImageText;
 
+    private Methods methods;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_saving);
 
+        methods = new Methods(getApplicationContext());
 
         setTextViewFontAndSize();
+
+
 
         Runtime rt = Runtime.getRuntime();
         int maxMemory = (int)rt.freeMemory();
@@ -93,7 +106,8 @@ public class ImageSavingActivity extends AppCompatActivity {
             }
         });
 
-        fromGalery.setOnClickListener(new View.OnClickListener() {
+        fromGalery.setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View v)
             {
@@ -101,53 +115,21 @@ public class ImageSavingActivity extends AppCompatActivity {
             }
         });
 
-        downloadImageView.setOnClickListener(new View.OnClickListener() {
+        downloadImageView.setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View v)
             {
-                new AlertDialog.Builder(ImageSavingActivity.this).setIcon(R.drawable.ic_star_half).setTitle(getResources().getString(R.string.rate_app_text))
-                        .setIcon(R.drawable.ic_star_half)
-                        .setMessage(getResources().getString(R.string.rate_app_description))
-                        .setPositiveButton(getResources().getString(R.string.okay_text), new DialogInterface.OnClickListener()
-                        {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which)
-                            {
-                                SaveImage(MainActivity.images.get(MainActivity.imagePosition));
-                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id="+"com.sba.sinhalaphotoeditor")));
-                            }
-                        }).setNegativeButton(getResources().getString(R.string.cannot_text), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which)
-                    {
-                        SaveImage(MainActivity.images.get(MainActivity.imagePosition));
-                    }
-                }).show();
+               showDialog();
             }
         });
 
-        downloadImageText.setOnClickListener(new View.OnClickListener() {
+        downloadImageText.setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View v)
             {
-                new AlertDialog.Builder(ImageSavingActivity.this).setIcon(R.drawable.ic_star_half).setTitle(getResources().getString(R.string.rate_app_text))
-                        .setIcon(R.drawable.ic_star_half)
-                        .setMessage(getResources().getString(R.string.rate_app_description))
-                        .setPositiveButton(getResources().getString(R.string.okay_text), new DialogInterface.OnClickListener()
-                        {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which)
-                            {
-                                SaveImage(MainActivity.images.get(MainActivity.imagePosition));
-                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id="+"com.sba.sinhalaphotoeditor")));
-                            }
-                        }).setNegativeButton(getResources().getString(R.string.cannot_text), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which)
-                    {
-                        SaveImage(MainActivity.images.get(MainActivity.imagePosition));
-                    }
-                }).show();
+                showDialog();
             }
         });
 
@@ -156,7 +138,8 @@ public class ImageSavingActivity extends AppCompatActivity {
 
         shareFinalImage = (ImageView) findViewById(R.id.shareFinalImage);
 
-        shareFinalImage.setOnClickListener(new View.OnClickListener() {
+        shareFinalImage.setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View v)
             {
@@ -167,28 +150,12 @@ public class ImageSavingActivity extends AppCompatActivity {
         //userSavingImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
         Glide.with(getApplicationContext()).load(MainActivity.images.get(MainActivity.imagePosition)).into(userSavingImage);
 
-        saveFinalImage.setOnClickListener(new View.OnClickListener() {
+        saveFinalImage.setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View v)
             {
-                new AlertDialog.Builder(ImageSavingActivity.this).setIcon(R.drawable.ic_star_half).setTitle(getResources().getString(R.string.rate_app_text))
-                        .setIcon(R.drawable.ic_star_half)
-                        .setMessage(getResources().getString(R.string.rate_app_description))
-                        .setPositiveButton(getResources().getString(R.string.okay_text), new DialogInterface.OnClickListener()
-                        {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which)
-                            {
-                                SaveImage(MainActivity.images.get(MainActivity.imagePosition));
-                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id="+"com.sba.sinhalaphotoeditor")));
-                            }
-                        }).setNegativeButton(getResources().getString(R.string.cannot_text), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which)
-                    {
-                        SaveImage(MainActivity.images.get(MainActivity.imagePosition));
-                    }
-                }).show();
+                showDialog();
 
             }
         });
@@ -201,6 +168,58 @@ public class ImageSavingActivity extends AppCompatActivity {
 
 
     }
+
+    private void showDialog()
+    {
+        final Dialog dialog = new Dialog(ImageSavingActivity.this);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+
+        View view = getLayoutInflater().inflate(R.layout.exit_dialog_layout,null);
+
+        dialog.setContentView(view);
+
+        dialog.getWindow().setLayout(RelativeLayout.LayoutParams.FILL_PARENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
+
+        TextView message = view.findViewById(R.id.textView8);
+
+        message.setText(getResources().getString(R.string.rate_app_description));
+
+        TextView title = view.findViewById(R.id.textView7);
+
+
+        ImageView icon = view.findViewById(R.id.imageView4);
+        icon.setImageResource(R.drawable.ic_star_half);
+
+
+        title.setText(getResources().getString(R.string.rate_app_text));
+
+        Button yes = view.findViewById(R.id.yesButton);
+        Button no = view.findViewById(R.id.noButton);
+
+        yes.setText(getResources().getString(R.string.okay_text));
+        no.setText(getResources().getString(R.string.cannot_text));
+        yes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                methods.SaveImage(MainActivity.images.get(MainActivity.imagePosition));
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id="+"com.sba.sinhalaphotoeditor")));
+            }
+        });
+
+
+        no.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                methods.SaveImage(MainActivity.images.get(MainActivity.imagePosition));
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
     private void shareImageUri(Uri uri)
     {
         Intent intent = new Intent(android.content.Intent.ACTION_SEND);
@@ -208,45 +227,6 @@ public class ImageSavingActivity extends AppCompatActivity {
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         intent.setType("image/png");
         startActivity(intent);
-    }
-    private void SaveImage(Bitmap finalBitmap)
-    {
-
-        String root = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES).toString();
-        File myDir = new File(root + "/SinhalaPhotoEditor");
-        myDir.mkdirs();
-        Random generator = new Random();
-
-        int n = 10000;
-        n = generator.nextInt(n);
-        String fname = "Image-" + n + ".PNG";
-        File file = new File(myDir, fname);
-        if (file.exists()) file.delete();
-        try {
-            FileOutputStream out = new FileOutputStream(file);
-            finalBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-            // sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED,
-            //     Uri.parse("file://"+ Environment.getExternalStorageDirectory())));
-            out.flush();
-            out.close();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        Toast.makeText(ImageSavingActivity.this, "Saved to gallery", Toast.LENGTH_SHORT).show();
-// Tell the media scanner about the new file so that it is
-// immediately available to the user.
-        MediaScannerConnection.scanFile(this, new String[]{file.toString()}, null,
-                new MediaScannerConnection.OnScanCompletedListener() {
-                    public void onScanCompleted(String path, Uri uri) {
-                        Log.i("ExternalStorage", "Scanned " + path + ":");
-                        Log.i("ExternalStorage", "-> uri=" + uri);
-
-
-                    }
-                });
     }
     public Uri getImageUri(Context inContext, Bitmap inImage)
     {
@@ -266,32 +246,6 @@ public class ImageSavingActivity extends AppCompatActivity {
         }*/
 
         return Uri.parse(path);
-    }
-    public static String getRealPathFromDocumentUri(Context context, Uri uri){
-        String filePath = "";
-
-        Pattern p = Pattern.compile("(\\d+)$");
-        Matcher m = p.matcher(uri.toString());
-        if (!m.find()) {
-            //Log.e(ImageConverter.class.getSimpleName(), "ID for requested image not found: " + uri.toString());
-            return filePath;
-        }
-        String imgId = m.group();
-
-        String[] column = { MediaStore.Images.Media.DATA };
-        String sel = MediaStore.Images.Media._ID + "=?";
-
-        Cursor cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                column, sel, new String[]{ imgId }, null);
-
-        int columnIndex = cursor.getColumnIndex(column[0]);
-
-        if (cursor.moveToFirst()) {
-            filePath = cursor.getString(columnIndex);
-        }
-        cursor.close();
-
-        return filePath;
     }
     public void setTextViewFontAndSize()
     {

@@ -13,8 +13,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.drawable.AnimatedVectorDrawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -28,6 +30,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -38,9 +41,11 @@ import com.bumptech.glide.Glide;
 import com.glidebitmappool.GlideBitmapPool;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
 import com.zomato.photofilters.FilterPack;
 import com.zomato.photofilters.imageprocessors.Filter;
@@ -87,6 +92,8 @@ public class AddEffects extends AppCompatActivity {
 
     private ArrayList<Bitmap> allFilterBitmaps = new ArrayList<>();
 
+    private InterstitialAd mInterstitialAd;
+
 
     private AdView mAdView;
 
@@ -97,6 +104,12 @@ public class AddEffects extends AppCompatActivity {
     private String type = null;
 
     private Render render;
+
+
+    private Methods methods;
+
+
+
 
 
 
@@ -147,6 +160,21 @@ public class AddEffects extends AppCompatActivity {
         }
     }
 
+
+    @Override
+    public void onBackPressed()
+    {
+        if(mInterstitialAd.isLoaded())
+        {
+            mInterstitialAd.show();
+        }
+        else
+        {
+            super.onBackPressed();
+        }
+
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.photo_on_photo_menu, menu);
@@ -158,7 +186,16 @@ public class AddEffects extends AppCompatActivity {
     {
         if (item.getItemId() == R.id.setImage)
         {
-            new RunInBackground().execute();
+            if(mInterstitialAd.isLoaded())
+            {
+                mInterstitialAd.show();
+            }
+            else
+            {
+                mInterstitialAd.loadAd(new AdRequest.Builder().build());
+                new RunInBackground().execute();
+            }
+
         }
         return true;
 
@@ -167,10 +204,26 @@ public class AddEffects extends AppCompatActivity {
 
 
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_effects);
+
+
+
+
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {}
+        });
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId("ca-app-pub-3538783908730049/5147080745");
+        mInterstitialAd.loadAd(new AdRequest.Builder().build());
+
+
+
 
         try
         {
@@ -182,6 +235,7 @@ public class AddEffects extends AppCompatActivity {
         }
 
 
+        methods = new Methods(getApplicationContext());
 
         GlideBitmapPool.clearMemory();
 
@@ -193,7 +247,12 @@ public class AddEffects extends AppCompatActivity {
 
         render = new Render(AddEffects.this);
         dialog = new ProgressDialog(AddEffects.this);
+        dialog.setMessage("Loading..");
+        dialog.setCancelable(false);
+
         pdLoading = new ProgressDialog(AddEffects.this);
+        pdLoading.setMessage("Loading..");
+        pdLoading.setCancelable(false);
         AsyncCaller caller = new AsyncCaller();
 
 
@@ -719,7 +778,7 @@ public class AddEffects extends AppCompatActivity {
 
 
        // userSelectedImage.setImageBitmap(currentEditingBitmap);
-        setImageViewScaleType(userSelectedImage);
+        methods.setImageViewScaleType(userSelectedImage);
         Glide.with(getApplicationContext()).load(currentEditingBitmap).into(userSelectedImage);
 
 
@@ -735,7 +794,7 @@ public class AddEffects extends AppCompatActivity {
 
         for (int i = 0; i < images.size(); i++)
         {
-            resizedImage = getResizedBitmap(currentEditingBitmap,150);
+            resizedImage = methods.getResizedBitmap(currentEditingBitmap,150);
             images.get(i).setImageBitmap(filters.get(i).processFilter(resizedImage));
 
         }
@@ -763,68 +822,7 @@ public class AddEffects extends AppCompatActivity {
         userSelectedImage =  findViewById(R.id.userSelectedImage);
     }
 
-    public Bitmap getResizedBitmap(Bitmap image, int maxSize)
-    {
 
-        int width = image.getWidth();
-        int height = image.getHeight();
-
-        float bitmapRatio = (float)width / (float) height;
-        if (bitmapRatio > 1) {
-            width = maxSize;
-            height = (int) (width / bitmapRatio);
-        } else {
-            height = maxSize;
-            width = (int) (height * bitmapRatio);
-        }
-        return Bitmap.createScaledBitmap(image, width, height, true);
-    }
-
-    public Uri getImageUri(Context inContext, Bitmap inImage)
-    {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-
-
-        String realPath = getRealPathFromDocumentUri(getApplicationContext(),Uri.parse(path));
-        Log.d("image",realPath);
-
-        File file = new File(realPath);
-        if(file.exists())
-        {
-            file.delete();
-            Log.d("image","deleted");
-        }
-
-        return Uri.parse(path);
-    }
-    public static String getRealPathFromDocumentUri(Context context, Uri uri){
-        String filePath = "";
-
-        Pattern p = Pattern.compile("(\\d+)$");
-        Matcher m = p.matcher(uri.toString());
-        if (!m.find()) {
-            //Log.e(ImageConverter.class.getSimpleName(), "ID for requested image not found: " + uri.toString());
-            return filePath;
-        }
-        String imgId = m.group();
-
-        String[] column = { MediaStore.Images.Media.DATA };
-        String sel = MediaStore.Images.Media._ID + "=?";
-
-        Cursor cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                column, sel, new String[]{ imgId }, null);
-
-        int columnIndex = cursor.getColumnIndex(column[0]);
-
-        if (cursor.moveToFirst()) {
-            filePath = cursor.getString(columnIndex);
-        }
-        cursor.close();
-
-        return filePath;
-    }
     private class AsyncCaller extends AsyncTask<Void, Void, Void>
     {
 
@@ -849,7 +847,7 @@ public class AddEffects extends AppCompatActivity {
 
                 try
                 {
-                    x = getResizedBitmap(currentEditingBitmap,1000);
+                    x = methods.getResizedBitmap(currentEditingBitmap,1000);
 
                     switch (type) {
                         case "0":
@@ -1022,14 +1020,14 @@ public class AddEffects extends AppCompatActivity {
         protected void onPreExecute()
         {
             super.onPreExecute();
-            dialog.setMessage("Loading..");
-            dialog.setCancelable(false);
             dialog.show();
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+
+
             dialog.dismiss();
 
             try
@@ -1061,7 +1059,9 @@ public class AddEffects extends AppCompatActivity {
             }
             });
 
+
             this.cancel(true);
+
         }
 
         @Override
@@ -1119,7 +1119,7 @@ public class AddEffects extends AppCompatActivity {
 
 
         currentEditingBitmap = MainActivity.images.get(MainActivity.imagePosition);
-        Bitmap x = getResizedBitmap(currentEditingBitmap,1200);
+        Bitmap x = methods.getResizedBitmap(currentEditingBitmap,1200);
 
         switch (type) {
             case "0":
@@ -1914,64 +1914,5 @@ public class AddEffects extends AppCompatActivity {
 
         return x;
     }
-    public Bitmap getBlurBitmap(Bitmap image, Context context)
-    {
-        final float BITMAP_SCALE = 0.01f;
-        final float BLUR_RADIUS = 25f;
-        int width = Math.round(image.getWidth() * BITMAP_SCALE);
-        int height = Math.round(image.getHeight() * BITMAP_SCALE);
-        Bitmap inputBitmap = Bitmap.createScaledBitmap(image, width, height, false);
-        Bitmap outputBitmap = Bitmap.createBitmap(inputBitmap);
-        RenderScript rs = RenderScript.create(context);
-        ScriptIntrinsicBlur theIntrinsic = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs));
-        Allocation tmpIn = Allocation.createFromBitmap(rs, inputBitmap);
-        Allocation tmpOut = Allocation.createFromBitmap(rs, outputBitmap);
-        theIntrinsic.setRadius(BLUR_RADIUS);
-        theIntrinsic.setInput(tmpIn);
-        theIntrinsic.forEach(tmpOut);
-        tmpOut.copyTo(outputBitmap);
-        return outputBitmap;
-    }
-    public void setImageViewScaleType(ImageView image)
-    {
-
-        Bitmap bitmap = MainActivity.images.get(MainActivity.imagePosition);
-
-        int imageWidth = bitmap.getWidth();
-        int imageHeight = bitmap.getHeight();
-
-        if(imageHeight > imageWidth)
-        {
-            if(((float)imageHeight / (float)imageWidth) > 1.3)
-            {
-                image.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            }
-            else
-            {
-                image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-                Bitmap blurbit = getBlurBitmap(bitmap.copy(bitmap.getConfig(),true),getApplicationContext());
-                BitmapDrawable ob = new BitmapDrawable(getResources(), blurbit);
-
-                image.setBackground(ob);
-                blurbit = null;
-            }
-
-        }
-        else
-        {
-            image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-            Bitmap blurbit = getBlurBitmap(bitmap.copy(bitmap.getConfig(),true),getApplicationContext());
-            BitmapDrawable ob = new BitmapDrawable(getResources(), blurbit);
-
-            image.setBackground(ob);
-            blurbit = null;
-            image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-        }
-
-    }
-
-
-
-
 
 }

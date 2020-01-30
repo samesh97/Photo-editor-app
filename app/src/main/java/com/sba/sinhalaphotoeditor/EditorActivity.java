@@ -53,6 +53,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -60,9 +61,11 @@ import com.bumptech.glide.Glide;
 import com.glidebitmappool.GlideBitmapPool;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
 import com.sba.sinhalaphotoeditor.addTextOnImage.TextOnImageActivity;
 import com.sba.sinhalaphotoeditor.customGallery.MyCustomGallery;
@@ -121,28 +124,67 @@ public class EditorActivity extends AppCompatActivity {
 
     Render render;
 
+    private Methods methods;
+    private InterstitialAd mInterstitialAd;
+
 
     @Override
     public void onBackPressed()
     {
         if(MainActivity.images.size() > 1)
         {
-            new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setTitle(getResources().getString(R.string.warning_text))
-                    .setIcon(R.drawable.ic_delete)
-                    .setMessage(getResources().getString(R.string.are_you_sure_want_to_exit_text))
-                    .setPositiveButton(getResources().getString(R.string.yes_text), new DialogInterface.OnClickListener()
-                    {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which)
-                        {
 
-                            Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent);
-                            finish();
 
-                        }
-                    }).setNegativeButton(getResources().getString(R.string.no_text), null).show();
+
+
+            final Dialog dialog = new Dialog(this);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+
+
+
+            View view = getLayoutInflater().inflate(R.layout.exit_dialog_layout,null);
+
+            dialog.setContentView(view);
+
+            dialog.getWindow().setLayout(RelativeLayout.LayoutParams.FILL_PARENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
+
+            TextView message = view.findViewById(R.id.textView8);
+
+            message.setText(getResources().getString(R.string.are_you_sure_want_to_exit_text));
+
+            TextView title = view.findViewById(R.id.textView7);
+
+
+            title.setText(getResources().getString(R.string.warning_text));
+
+            Button yes = view.findViewById(R.id.yesButton);
+            Button no = view.findViewById(R.id.noButton);
+
+            yes.setText(getResources().getString(R.string.yes_text));
+            no.setText(getResources().getString(R.string.no_text));
+            yes.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v)
+                {
+                    Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    finish();
+                }
+            });
+
+
+            no.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v)
+                {
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+
+
         }
         else
         {
@@ -171,7 +213,7 @@ public class EditorActivity extends AppCompatActivity {
                     //MainActivity.CurrentWorkingFilePath = MainActivity.filePaths.get(--MainActivity.imagePosition);
                     --MainActivity.imagePosition;
                     //userSelectedImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
-                    setImageViewScaleType(userSelectedImage);
+                    methods.setImageViewScaleType(userSelectedImage);
                     Glide.with(getApplicationContext()).load(MainActivity.images.get(MainActivity.imagePosition)).into(userSelectedImage);
 
                 }
@@ -185,21 +227,52 @@ public class EditorActivity extends AppCompatActivity {
 
                 render.setAnimation(Attention.Shake(userSelectedImage));
                 render.start();
-                Toast.makeText(this, "You reached to the Original Photo", Toast.LENGTH_LONG).show();
+
+
+                View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
+
+                TextView toastMessage = view.findViewById(R.id.toastMessage);
+                toastMessage.setText(getResources().getString(R.string.you_reach_end_text));
+
+                Toast toast = new Toast(getApplicationContext());
+                toast.setDuration(Toast.LENGTH_LONG);
+                toast.setView(view);
+                toast.show();
+
+                //Toast.makeText(this, "You reached to the Original Photo", Toast.LENGTH_LONG).show();
             }
         }
         if(item.getItemId() == R.id.saveImage)
         {
-            if(MainActivity.images.size() > 0)
+            if(mInterstitialAd.isLoaded())
             {
-
-                startActivity(new Intent(getApplicationContext(),ImageSavingActivity.class));
-
+                mInterstitialAd.show();
             }
             else
             {
-                Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
+                mInterstitialAd.loadAd(new AdRequest.Builder().build());
+
+                if(MainActivity.images.size() > 0)
+                {
+
+                    startActivity(new Intent(getApplicationContext(),ImageSavingActivity.class));
+
+                }
+                else
+                {
+                    View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
+
+                    TextView toastMessage = view.findViewById(R.id.toastMessage);
+                    toastMessage.setText(getResources().getString(R.string.something_went_wrong_text));
+
+                    Toast toast = new Toast(getApplicationContext());
+                    toast.setDuration(Toast.LENGTH_LONG);
+                    toast.setView(view);
+                    toast.show();
+                    //Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
+                }
             }
+
         }
         if(item.getItemId() == R.id.redoImage)
         {
@@ -213,7 +286,7 @@ public class EditorActivity extends AppCompatActivity {
                     //MainActivity.CurrentWorkingFilePath = MainActivity.filePaths.get(MainActivity.imagePosition++);
                     MainActivity.imagePosition++;
                     //userSelectedImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
-                    setImageViewScaleType(userSelectedImage);
+                    methods.setImageViewScaleType(userSelectedImage);
                     Glide.with(getApplicationContext()).load(MainActivity.images.get(MainActivity.imagePosition)).into(userSelectedImage);
 
                 }
@@ -229,7 +302,18 @@ public class EditorActivity extends AppCompatActivity {
             {
                 render.setAnimation(Attention.Shake(userSelectedImage));
                 render.start();
-                Toast.makeText(this, "You reached to the end", Toast.LENGTH_LONG).show();
+
+
+                View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
+
+                TextView toastMessage = view.findViewById(R.id.toastMessage);
+                toastMessage.setText(getResources().getString(R.string.you_reach_end_text_2));
+
+                Toast toast = new Toast(getApplicationContext());
+                toast.setDuration(Toast.LENGTH_LONG);
+                toast.setView(view);
+                toast.show();
+                //Toast.makeText(this, "You reached to the end", Toast.LENGTH_LONG).show();
             }
         }
 
@@ -270,7 +354,7 @@ public class EditorActivity extends AppCompatActivity {
                 //Bitmap  bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), resultImageUri);
                 //MainActivity.CurrentWorkingFilePath = MainActivity.filePaths.get(MainActivity.imagePosition);
                 //userSelectedImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
-                setImageViewScaleType(userSelectedImage);
+                methods.setImageViewScaleType(userSelectedImage);
                 Glide.with(getApplicationContext()).load(MainActivity.images.get(MainActivity.imagePosition)).into(userSelectedImage);
 
 
@@ -299,7 +383,17 @@ public class EditorActivity extends AppCompatActivity {
                     MainActivity.bitmap = MainActivity.images.get(MainActivity.imagePosition);
                     for(int i = (MainActivity.imagePosition + 1); i < MainActivity.images.size(); i++)
                     {
-                        Toast.makeText(this, "Deleted " + i, Toast.LENGTH_SHORT).show();
+                        View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
+
+                        TextView toastMessage = view.findViewById(R.id.toastMessage);
+                        toastMessage.setText(getString(R.string.deleted_text) + i);
+
+                        Toast toast = new Toast(getApplicationContext());
+                        toast.setDuration(Toast.LENGTH_LONG);
+                        toast.setView(view);
+                        toast.show();
+
+                        //Toast.makeText(this, "Deleted " + i, Toast.LENGTH_SHORT).show();
                         MainActivity.images.remove(i);
                     }
 
@@ -310,7 +404,7 @@ public class EditorActivity extends AppCompatActivity {
                 Uri resultImageUri = Uri.parse(data.getStringExtra(PhotoOnPhoto.IMAGE_OUT_URI));
                 //MainActivity.CurrentWorkingFilePath = MainActivity.filePaths.get(MainActivity.imagePosition);
                 //userSelectedImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
-                setImageViewScaleType(userSelectedImage);
+                methods.setImageViewScaleType(userSelectedImage);
                 Glide.with(getApplicationContext()).load(MainActivity.images.get(MainActivity.imagePosition)).into(userSelectedImage);
 
             }
@@ -329,9 +423,9 @@ public class EditorActivity extends AppCompatActivity {
                 Bitmap bitmap = selectedBitmap.copy(selectedBitmap.getConfig(),true);
                 selectedBitmap = null;
                 //Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), CurrentWorkingFilePath);
-                bitmap = getResizedBitmap(bitmap,1000);
+                bitmap = methods.getResizedBitmap(bitmap,1000);
 
-                Uri imgUri = getImageUri(getApplicationContext(),bitmap,false);
+                Uri imgUri = methods.getImageUri(bitmap,false);
 
                 CropType = "PhotoOnPhotoCrop";
 
@@ -373,7 +467,7 @@ public class EditorActivity extends AppCompatActivity {
                 Uri resultImageUri = Uri.parse(data.getStringExtra(StickerOnPhoto.STICKER_OUT_URI));
                 //MainActivity.CurrentWorkingFilePath = MainActivity.filePaths.get(MainActivity.imagePosition);
                 //userSelectedImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
-                setImageViewScaleType(userSelectedImage);
+                methods.setImageViewScaleType(userSelectedImage);
                 Glide.with(getApplicationContext()).load(MainActivity.images.get(MainActivity.imagePosition)).into(userSelectedImage);
 
             }
@@ -437,7 +531,7 @@ public class EditorActivity extends AppCompatActivity {
                         DisplayMetrics metrics = new DisplayMetrics();
                         display.getMetrics(metrics);
 
-                        bitmap = scale(bitmap,metrics.widthPixels,metrics.heightPixels);
+                        bitmap = methods.scale(bitmap,metrics.widthPixels,metrics.heightPixels);
 
 
                         MainActivity.images.add(bitmap);
@@ -454,7 +548,7 @@ public class EditorActivity extends AppCompatActivity {
                         }
                     });*/
                         //userSelectedImage.setImageBitmap(bitmap);
-                        setImageViewScaleType(userSelectedImage);
+                        methods.setImageViewScaleType(userSelectedImage);
                         Glide.with(getApplicationContext()).load(bitmap).into(userSelectedImage);
 
 
@@ -482,7 +576,16 @@ public class EditorActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    Toast.makeText(this, "Something went wrong!", Toast.LENGTH_SHORT).show();
+                    View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
+
+                    TextView toastMessage = view.findViewById(R.id.toastMessage);
+                    toastMessage.setText(getResources().getString(R.string.something_went_wrong_text));
+
+                    Toast toast = new Toast(getApplicationContext());
+                    toast.setDuration(Toast.LENGTH_LONG);
+                    toast.setView(view);
+                    toast.show();
+                    //Toast.makeText(this, "Something went wrong!", Toast.LENGTH_SHORT).show();
                 }
             }
             else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE)
@@ -493,14 +596,14 @@ public class EditorActivity extends AppCompatActivity {
         if(requestCode == 10  && resultCode == 11)
         {
             //userSelectedImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
-            setImageViewScaleType(userSelectedImage);
+            methods.setImageViewScaleType(userSelectedImage);
             Glide.with(getApplicationContext()).load(MainActivity.images.get(MainActivity.imagePosition)).into(userSelectedImage);
 
         }
         if(requestCode == 20  && resultCode == 21)
         {
             //userSelectedImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
-            setImageViewScaleType(userSelectedImage);
+            methods.setImageViewScaleType(userSelectedImage);
             Glide.with(getApplicationContext()).load(MainActivity.images.get(MainActivity.imagePosition)).into(userSelectedImage);
 
         }
@@ -511,6 +614,23 @@ public class EditorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editor);
 
+
+
+
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {}
+        });
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId("ca-app-pub-3538783908730049/5147080745");
+        mInterstitialAd.loadAd(new AdRequest.Builder().build());
+
+
+
+
+
+
+        methods = new Methods(getApplicationContext());
 
         Runtime rt = Runtime.getRuntime();
         int maxMemory = (int)rt.freeMemory();
@@ -573,7 +693,16 @@ public class EditorActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    Toast.makeText(EditorActivity.this, "No image selected", Toast.LENGTH_SHORT).show();
+                    View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
+
+                    TextView toastMessage = view.findViewById(R.id.toastMessage);
+                    toastMessage.setText(getResources().getString(R.string.no_image_selected_text));
+
+                    Toast toast = new Toast(getApplicationContext());
+                    toast.setDuration(Toast.LENGTH_LONG);
+                    toast.setView(view);
+                    toast.show();
+
                 }
 
             }
@@ -592,7 +721,15 @@ public class EditorActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    Toast.makeText(EditorActivity.this, "No image selected", Toast.LENGTH_SHORT).show();
+                    View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
+
+                    TextView toastMessage = view.findViewById(R.id.toastMessage);
+                    toastMessage.setText(getResources().getString(R.string.no_image_selected_text));
+
+                    Toast toast = new Toast(getApplicationContext());
+                    toast.setDuration(Toast.LENGTH_LONG);
+                    toast.setView(view);
+                    toast.show();
                 }
 
 
@@ -602,7 +739,7 @@ public class EditorActivity extends AppCompatActivity {
         try
         {
             //userSelectedImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
-            setImageViewScaleType(userSelectedImage);
+            methods.setImageViewScaleType(userSelectedImage);
             Glide.with(getApplicationContext()).load(MainActivity.images.get(MainActivity.imagePosition)).into(userSelectedImage);
 
         }
@@ -755,7 +892,15 @@ public class EditorActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    Toast.makeText(EditorActivity.this, "No image selected", Toast.LENGTH_SHORT).show();
+                    View view2 = getLayoutInflater().inflate(R.layout.toast_layout,null);
+
+                    TextView toastMessage = view2.findViewById(R.id.toastMessage);
+                    toastMessage.setText(getResources().getString(R.string.no_image_selected_text));
+
+                    Toast toast = new Toast(getApplicationContext());
+                    toast.setDuration(Toast.LENGTH_LONG);
+                    toast.setView(view2);
+                    toast.show();
                 }
 
             }
@@ -774,7 +919,15 @@ public class EditorActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    Toast.makeText(EditorActivity.this, "No image selected", Toast.LENGTH_SHORT).show();
+                    View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
+
+                    TextView toastMessage = view.findViewById(R.id.toastMessage);
+                    toastMessage.setText(getResources().getString(R.string.no_image_selected_text));
+
+                    Toast toast = new Toast(getApplicationContext());
+                    toast.setDuration(Toast.LENGTH_LONG);
+                    toast.setView(view);
+                    toast.show();
                 }
 
             }
@@ -802,7 +955,7 @@ public class EditorActivity extends AppCompatActivity {
                     render.setAnimation(Attention.Bounce(addCrop));
                     render.start();
                     addCrop.setEnabled(false);
-                    final Uri uri = getImageUri(getApplicationContext(),MainActivity.images.get(MainActivity.imagePosition),false);
+                    final Uri uri = methods.getImageUri(MainActivity.images.get(MainActivity.imagePosition),false);
                     CropImage.activity(uri).start(EditorActivity.this);
 
 
@@ -810,7 +963,7 @@ public class EditorActivity extends AppCompatActivity {
                         @Override
                         public void run() {
 
-                            File f = new File(getRealPathFromDocumentUri(getApplicationContext(),uri));
+                            File f = new File(methods.getRealPathFromDocumentUri(uri));
                             if(f.exists())
                             {
                                 f.delete();
@@ -821,7 +974,15 @@ public class EditorActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    Toast.makeText(EditorActivity.this, "No image selected", Toast.LENGTH_SHORT).show();
+                    View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
+
+                    TextView toastMessage = view.findViewById(R.id.toastMessage);
+                    toastMessage.setText(getResources().getString(R.string.no_image_selected_text));
+
+                    Toast toast = new Toast(getApplicationContext());
+                    toast.setDuration(Toast.LENGTH_LONG);
+                    toast.setView(view);
+                    toast.show();
                 }
 
             }
@@ -855,8 +1016,52 @@ public class EditorActivity extends AppCompatActivity {
     public void showPopup()
     {
 
+        final Dialog dialog = new Dialog(this);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
 
+        View view = getLayoutInflater().inflate(R.layout.activity_popup_screen,null);
+        dialog.setContentView(view);
+
+        dialog.getWindow().setLayout(RelativeLayout.LayoutParams.FILL_PARENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
+
+
+        final EditText editText = (EditText) view.findViewById(R.id.updateText);
+        Button button1 = (Button) view.findViewById(R.id.update);
+
+
+
+
+
+        button1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                if(editText.getText().toString().equals("") || editText.getText().toString().trim().equals(""))
+                {
+                    View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
+
+                    TextView toastMessage = view.findViewById(R.id.toastMessage);
+                    toastMessage.setText(getResources().getString(R.string.enter_text));
+
+                    Toast toast = new Toast(getApplicationContext());
+                    toast.setDuration(Toast.LENGTH_LONG);
+                    toast.setView(view);
+                    toast.show();
+                    //Toast.makeText(EditorActivity.this, "Enter a text", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                dialog.dismiss();
+                addTextOnImage(editText.getText().toString());
+            }
+        });
+
+
+
+        dialog.show();
+
+
+        /*
         final AlertDialog dialogBuilder = new AlertDialog.Builder(this,R.style.DialogSlideAnim).create();
         //dialogBuilder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
@@ -893,7 +1098,7 @@ public class EditorActivity extends AppCompatActivity {
         });
 
         dialogBuilder.setView(dialogView);
-        dialogBuilder.show();
+        dialogBuilder.show();*/
 
     }
     private void showFileChooser()
@@ -993,11 +1198,11 @@ public class EditorActivity extends AppCompatActivity {
             Glide.with(getApplicationContext()).load(getResizedBitmap(stic5.get(position),80)).into(FiveSticker);
 */
 
-            OneSticker.setImageBitmap(getResizedBitmap(stic1.get(position),80));
-            TwoSticker.setImageBitmap(getResizedBitmap(stic2.get(position),80));
-            ThreeSticker.setImageBitmap(getResizedBitmap(stic3.get(position),80));
-            FourSticker.setImageBitmap(getResizedBitmap(stic4.get(position),80));
-            FiveSticker.setImageBitmap(getResizedBitmap(stic5.get(position),80));
+            OneSticker.setImageBitmap(methods.getResizedBitmap(stic1.get(position),80));
+            TwoSticker.setImageBitmap(methods.getResizedBitmap(stic2.get(position),80));
+            ThreeSticker.setImageBitmap(methods.getResizedBitmap(stic3.get(position),80));
+            FourSticker.setImageBitmap(methods.getResizedBitmap(stic4.get(position),80));
+            FiveSticker.setImageBitmap(methods.getResizedBitmap(stic5.get(position),80));
 
 
 
@@ -1074,156 +1279,5 @@ public class EditorActivity extends AppCompatActivity {
 
         }
     }
-    public Bitmap getResizedBitmap(Bitmap image, int maxSize)
-    {
-        int width = image.getWidth();
-        int height = image.getHeight();
-
-        float bitmapRatio = (float)width / (float) height;
-        if (bitmapRatio > 1) {
-            width = maxSize;
-            height = (int) (width / bitmapRatio);
-        } else {
-            height = maxSize;
-            width = (int) (height * bitmapRatio);
-        }
-        return Bitmap.createScaledBitmap(image, width, height, true);
-    }
-    private Bitmap scale(Bitmap bitmap, int maxWidth, int maxHeight) {
-        // Determine the constrained dimension, which determines both dimensions.
-        int width;
-        int height;
-        float widthRatio = (float)bitmap.getWidth() / maxWidth;
-        float heightRatio = (float)bitmap.getHeight() / maxHeight;
-        // Width constrained.
-        if (widthRatio >= heightRatio) {
-            width = maxWidth;
-            height = (int)(((float)width / bitmap.getWidth()) * bitmap.getHeight());
-        }
-        // Height constrained.
-        else {
-            height = maxHeight;
-            width = (int)(((float)height / bitmap.getHeight()) * bitmap.getWidth());
-        }
-        Bitmap scaledBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-
-        float ratioX = (float)width / bitmap.getWidth();
-        float ratioY = (float)height / bitmap.getHeight();
-        float middleX = width / 2.0f;
-        float middleY = height / 2.0f;
-        Matrix scaleMatrix = new Matrix();
-        scaleMatrix.setScale(ratioX, ratioY, middleX, middleY);
-
-        Canvas canvas = new Canvas(scaledBitmap);
-        canvas.setMatrix(scaleMatrix);
-        canvas.drawBitmap(bitmap, middleX - bitmap.getWidth() / 2, middleY - bitmap.getHeight() / 2, new Paint(Paint.FILTER_BITMAP_FLAG));
-        return scaledBitmap;
-    }
-    public Uri getImageUri(Context inContext, Bitmap inImage,Boolean isNeededToDelete)
-    {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-
-
-        if(isNeededToDelete)
-        {
-            String realPath = getRealPathFromDocumentUri(getApplicationContext(),Uri.parse(path));
-            Log.d("image",realPath);
-
-            File file = new File(realPath);
-            if(file.exists())
-            {
-                file.delete();
-                Log.d("image","deleted");
-            }
-        }
-
-
-        return Uri.parse(path);
-    }
-    public static String getRealPathFromDocumentUri(Context context, Uri uri){
-        String filePath = "";
-
-        Pattern p = Pattern.compile("(\\d+)$");
-        Matcher m = p.matcher(uri.toString());
-        if (!m.find()) {
-            //Log.e(ImageConverter.class.getSimpleName(), "ID for requested image not found: " + uri.toString());
-            return filePath;
-        }
-        String imgId = m.group();
-
-        String[] column = { MediaStore.Images.Media.DATA };
-        String sel = MediaStore.Images.Media._ID + "=?";
-
-        Cursor cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                column, sel, new String[]{ imgId }, null);
-
-        int columnIndex = cursor.getColumnIndex(column[0]);
-
-        if (cursor.moveToFirst()) {
-            filePath = cursor.getString(columnIndex);
-        }
-        cursor.close();
-
-        return filePath;
-    }
-    public void setImageViewScaleType(ImageView image)
-    {
-
-        Bitmap bitmap = MainActivity.images.get(MainActivity.imagePosition);
-
-        int imageWidth = bitmap.getWidth();
-        int imageHeight = bitmap.getHeight();
-
-        if(imageHeight > imageWidth)
-        {
-            if(((float)imageHeight / (float)imageWidth) > 1.3)
-            {
-                image.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            }
-            else
-            {
-                image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-                Bitmap blurbit = getBlurBitmap(bitmap.copy(bitmap.getConfig(),true),getApplicationContext());
-                BitmapDrawable ob = new BitmapDrawable(getResources(), blurbit);
-
-                image.setBackground(ob);
-                blurbit = null;
-            }
-
-        }
-        else
-        {
-            image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-            Bitmap blurbit = getBlurBitmap(bitmap.copy(bitmap.getConfig(),true),getApplicationContext());
-            BitmapDrawable ob = new BitmapDrawable(getResources(), blurbit);
-
-            image.setBackground(ob);
-            blurbit = null;
-            image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-        }
-
-    }
-    public Bitmap getBlurBitmap(Bitmap image, Context context)
-    {
-        final float BITMAP_SCALE = 0.01f;
-        final float BLUR_RADIUS = 25f;
-        int width = Math.round(image.getWidth() * BITMAP_SCALE);
-        int height = Math.round(image.getHeight() * BITMAP_SCALE);
-        Bitmap inputBitmap = Bitmap.createScaledBitmap(image, width, height, false);
-        Bitmap outputBitmap = Bitmap.createBitmap(inputBitmap);
-        RenderScript rs = RenderScript.create(context);
-        ScriptIntrinsicBlur theIntrinsic = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs));
-        Allocation tmpIn = Allocation.createFromBitmap(rs, inputBitmap);
-        Allocation tmpOut = Allocation.createFromBitmap(rs, outputBitmap);
-        theIntrinsic.setRadius(BLUR_RADIUS);
-        theIntrinsic.setInput(tmpIn);
-        theIntrinsic.forEach(tmpOut);
-        tmpOut.copyTo(outputBitmap);
-        return outputBitmap;
-    }
-
-
 
 }

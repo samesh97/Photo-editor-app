@@ -1,7 +1,9 @@
 package com.sba.sinhalaphotoeditor;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,18 +12,16 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.Paint;
+import android.graphics.Color;
 import android.graphics.Typeface;
-import android.media.ExifInterface;
+import android.graphics.drawable.AnimatedVectorDrawable;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Handler;
-import android.provider.MediaStore;
+
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -31,44 +31,50 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import com.bumptech.glide.Glide;
-import com.glidebitmappool.GlideBitmapFactory;
 import com.glidebitmappool.GlideBitmapPool;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.customGallery.MyCustomGallery;
+import com.sba.sinhalaphotoeditor.firebase.AppData;
 import com.sba.sinhalaphotoeditor.progressdialog.PhotoEditorProgressDialog;
-import com.sba.sinhalaphotoeditor.walkthrough.WalkThroughActivity;
 import com.sba.sinhalaphotoeditor.welcomeScreen.WelcomeScreen;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+
+import static com.sba.sinhalaphotoeditor.EditorActivity.screenHeight;
 import static com.sba.sinhalaphotoeditor.customGallery.MyCustomGallery.IMAGE_PICK_RESULT_CODE;
 import static com.sba.sinhalaphotoeditor.customGallery.MyCustomGallery.selectedBitmap;
 
 public class MainActivity extends AppCompatActivity {
 
-    ImageView imageView;
+    private ImageView imageView;
 
 
     private static final int PICK_IMAGE_REQUEST = 234;
@@ -90,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
     public static ArrayList<Bitmap> images = new ArrayList<>();
     //public static ArrayList<Uri> filePaths = new ArrayList<>();
 
-    PhotoEditorProgressDialog dialog;
+    private ProgressDialog dialog;
 
     ImageView usePreviousBitmap;
 
@@ -103,6 +109,23 @@ public class MainActivity extends AppCompatActivity {
 
 
     Spinner languagePicker;
+
+    private Methods methods;
+
+
+
+
+
+    ImageView animation;
+    AnimatedVectorDrawable animations;
+    View view;
+    FirebaseDatabase database;
+    DatabaseReference reference;
+
+
+
+
+
 
 
     @Override
@@ -141,90 +164,7 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == IMAGE_PICK_RESULT_CODE && selectedBitmap != null)
         {
-            dialog.show();
-            //CurrentWorkingFilePath = data.getData();
-            try
-            {
-
-                images.clear();
-                imagePosition = 0;
-
-
-
-                //bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), CurrentWorkingFilePath);
-
-                //bitmap = GlideBitmapFactory.decodeFile(getRealPathFromDocumentUri(MainActivity.this,CurrentWorkingFilePath));
-
-                bitmap = selectedBitmap.copy(selectedBitmap.getConfig(),true);
-                //selectedBitmap = null;
-
-
-
-                WindowManager wm = (WindowManager) getApplication().getSystemService(Context.WINDOW_SERVICE);
-                Display display = wm.getDefaultDisplay();
-                DisplayMetrics metrics = new DisplayMetrics();
-                display.getMetrics(metrics);
-
-                // bitmap = scale(bitmap,metrics.widthPixels,metrics.heightPixels);
-
-                bitmap = getResizedBitmap(bitmap,1500);
-                bitmap = decodeSampledBitmapFromResource(getRealPathFromDocumentUri(MainActivity.this,getImageUri(MainActivity.this,bitmap)),metrics.widthPixels,metrics.heightPixels);
-               // CurrentWorkingFilePath = getImageUri(MainActivity.this,bitmap);
-
-
-
-
-
-
-
-
-
-                images.add(0,bitmap);
-                startActivity(new Intent(getApplicationContext(),EditorActivity.class));
-                dialog.dismiss();
-
-            }
-            catch (Exception e)
-            {
-                try {
-
-                    Log.d("exceptionError",e.getMessage());
-
-                    // bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), CurrentWorkingFilePath);
-                    //bitmap = GlideBitmapFactory.decodeFile(getRealPathFromDocumentUri(MainActivity.this,CurrentWorkingFilePath));
-
-
-                    bitmap = selectedBitmap.copy(selectedBitmap.getConfig(),true);
-                    selectedBitmap = null;
-
-
-                    WindowManager wm = (WindowManager) getApplication().getSystemService(Context.WINDOW_SERVICE);
-                    Display display = wm.getDefaultDisplay();
-                    DisplayMetrics metrics = new DisplayMetrics();
-                    display.getMetrics(metrics);
-
-                    //bitmap = scale(bitmap,metrics.widthPixels,metrics.heightPixels);
-//
-                    bitmap = getResizedBitmap(bitmap,1500);
-
-                    bitmap = decodeSampledBitmapFromResource(getRealPathFromDocumentUri(MainActivity.this,getImageUri(getApplicationContext(),bitmap)),metrics.widthPixels,metrics.heightPixels);
-
-                    images.add(0,bitmap);
-                    startActivity(new Intent(getApplicationContext(),EditorActivity.class));
-                    dialog.dismiss();
-                }
-                catch (Exception es)
-                {
-                    es.printStackTrace();
-                }
-            }
-
-            {
-
-
-
-
-            }
+            new startActivity().execute();
         }
     }
 
@@ -234,6 +174,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
+
+
+
+        methods = new Methods(getApplicationContext());
         setTextViewFontAndSize();
 
         SharedPreferences pref2 = getApplicationContext().getSharedPreferences("com.sba.sinhalaphotoeditor", 0);
@@ -310,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        dialog = new PhotoEditorProgressDialog(MainActivity.this);
+        dialog = new ProgressDialog(MainActivity.this);
         //dialog.setMessage("Loading");
 
         useOne = (TextView) findViewById(R.id.useOne);
@@ -538,6 +482,21 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+        database = FirebaseDatabase.getInstance();
+        reference = database.getReference().child("AppInfo");
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run()
+            {
+                checkForTheCurrentVersion();
+            }
+        },1500);
+
+
+
+
+
 
 
     }
@@ -635,169 +594,57 @@ public class MainActivity extends AppCompatActivity {
     public void isUserWantToExitTheApp()
     {
 
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setIcon(android.R.drawable.ic_dialog_alert);
-        dialog.setTitle("Exit");
-        dialog.setIcon(R.drawable.ic_delete);
-        dialog.setMessage("Are you sure you want to exit?");
-        dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener()
-        {
-            @Override
-            public void onClick(DialogInterface dialog, int which)
-            {
+        final Dialog dialog = new Dialog(this);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
+
+
+        View view = getLayoutInflater().inflate(R.layout.exit_dialog_layout,null);
+
+        dialog.setContentView(view);
+
+        WindowManager wm = (WindowManager) getApplication().getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        DisplayMetrics metrics = new DisplayMetrics();
+        display.getMetrics(metrics);
+
+        dialog.getWindow().setLayout(RelativeLayout.LayoutParams.FILL_PARENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
+
+        TextView message = view.findViewById(R.id.textView8);
+
+        message.setText(getResources().getText(R.string.exit_app_confirmation_text));
+
+        TextView title = view.findViewById(R.id.textView7);
+
+
+        title.setText(getResources().getText(R.string.app_exit_text));
+
+        Button yes = view.findViewById(R.id.yesButton);
+        Button no = view.findViewById(R.id.noButton);
+
+        yes.setText(getResources().getText(R.string.exit_app_yes_text));
+        no.setText(getResources().getText(R.string.exit_app_no_text));
+        yes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
                 isExit = true;
                 onBackPressed();
             }
         });
-        dialog.setNegativeButton("No", new DialogInterface.OnClickListener()
-        {
+
+
+        no.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(View v)
+            {
+                dialog.dismiss();
                 isExit = false;
             }
         });
-
         dialog.show();
 
 
-    }
-    private Bitmap getDownsampledBitmap(Context ctx, Uri uri, int targetWidth, int targetHeight) {
-        Bitmap bitmap = null;
-        try {
-            BitmapFactory.Options outDimens = getBitmapDimensions(uri);
-
-            int sampleSize = calculateSampleSize(outDimens.outWidth, outDimens.outHeight, targetWidth, targetHeight);
-
-            bitmap = downsampleBitmap(uri, sampleSize);
-
-        } catch (Exception e) {
-            //handle the exception(s)
-        }
-
-        return bitmap;
-    }
-
-    private BitmapFactory.Options getBitmapDimensions(Uri uri) throws FileNotFoundException, IOException {
-        BitmapFactory.Options outDimens = new BitmapFactory.Options();
-        outDimens.inJustDecodeBounds = true; // the decoder will return null (no bitmap)
-
-        InputStream is= getContentResolver().openInputStream(uri);
-        // if Options requested only the size will be returned
-        BitmapFactory.decodeStream(is, null, outDimens);
-        is.close();
-
-        return outDimens;
-    }
-
-    private int calculateSampleSize(int width, int height, int targetWidth, int targetHeight) {
-        int inSampleSize = 1;
-
-        if (height > targetHeight || width > targetWidth) {
-
-            // Calculate ratios of height and width to requested height and
-            // width
-            final int heightRatio = Math.round((float) height
-                    / (float) targetHeight);
-            final int widthRatio = Math.round((float) width / (float) targetWidth);
-
-            // Choose the smallest ratio as inSampleSize value, this will
-            // guarantee
-            // a final image with both dimensions larger than or equal to the
-            // requested height and width.
-            inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
-        }
-        return inSampleSize;
-    }
-
-    private Bitmap downsampleBitmap(Uri uri, int sampleSize) throws FileNotFoundException, IOException {
-        Bitmap resizedBitmap;
-        BitmapFactory.Options outBitmap = new BitmapFactory.Options();
-        outBitmap.inJustDecodeBounds = false; // the decoder will return a bitmap
-        outBitmap.inSampleSize = sampleSize;
-
-        InputStream is = getContentResolver().openInputStream(uri);
-        resizedBitmap = BitmapFactory.decodeStream(is, null, outBitmap);
-        is.close();
-
-        return resizedBitmap;
-    }
-    public static Bitmap scaleBitmap(Bitmap bitmap, int newWidth, int newHeight) {
-        Bitmap scaledBitmap = Bitmap.createBitmap(newWidth, newHeight, Bitmap.Config.ARGB_8888);
-
-        float scaleX = newWidth / (float) bitmap.getWidth();
-        float scaleY = newHeight / (float) bitmap.getHeight();
-        float pivotX = 0;
-        float pivotY = 0;
-
-        Matrix scaleMatrix = new Matrix();
-        scaleMatrix.setScale(scaleX, scaleY, pivotX, pivotY);
-
-        Canvas canvas = new Canvas(scaledBitmap);
-        canvas.setMatrix(scaleMatrix);
-        canvas.drawBitmap(bitmap, 0, 0, new Paint(Paint.FILTER_BITMAP_FLAG));
-
-        return scaledBitmap;
-    }
-    public static Bitmap rotateBitmap(Bitmap bitmap, int orientation) {
-
-        Matrix matrix = new Matrix();
-        switch (orientation) {
-            case ExifInterface.ORIENTATION_NORMAL:
-                return bitmap;
-            case ExifInterface.ORIENTATION_FLIP_HORIZONTAL:
-                matrix.setScale(-1, 1);
-                break;
-            case ExifInterface.ORIENTATION_ROTATE_180:
-                matrix.setRotate(180);
-                break;
-            case ExifInterface.ORIENTATION_FLIP_VERTICAL:
-                matrix.setRotate(180);
-                matrix.postScale(-1, 1);
-                break;
-            case ExifInterface.ORIENTATION_TRANSPOSE:
-                matrix.setRotate(90);
-                matrix.postScale(-1, 1);
-                break;
-            case ExifInterface.ORIENTATION_ROTATE_90:
-                matrix.setRotate(90);
-                break;
-            case ExifInterface.ORIENTATION_TRANSVERSE:
-                matrix.setRotate(-90);
-                matrix.postScale(-1, 1);
-                break;
-            case ExifInterface.ORIENTATION_ROTATE_270:
-                matrix.setRotate(-90);
-                break;
-            default:
-                return bitmap;
-        }
-        try {
-            Bitmap bmRotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-            bitmap.recycle();
-            return bmRotated;
-        }
-        catch (OutOfMemoryError e) {
-            e.printStackTrace();
-            return null;
-        }
-        ///return bitmap;
-    }
-    public Bitmap getResizedBitmap(Bitmap image, int maxSize)
-    {
-
-        int width = image.getWidth();
-        int height = image.getHeight();
-
-        float bitmapRatio = (float)width / (float) height;
-        if (bitmapRatio > 1) {
-            width = maxSize;
-            height = (int) (width / bitmapRatio);
-        } else {
-            height = maxSize;
-            width = (int) (height * bitmapRatio);
-        }
-        return Bitmap.createScaledBitmap(image, width, height, true);
     }
     public static void deleteUndoRedoImages()
     {
@@ -823,120 +670,6 @@ public class MainActivity extends AppCompatActivity {
 
 
         }
-    }
-    private Bitmap scale(Bitmap bitmap, int maxWidth, int maxHeight) {
-        // Determine the constrained dimension, which determines both dimensions.
-        int width;
-        int height;
-        float widthRatio = (float)bitmap.getWidth() / maxWidth;
-        float heightRatio = (float)bitmap.getHeight() / maxHeight;
-        // Width constrained.
-        if (widthRatio >= heightRatio) {
-            width = maxWidth;
-            height = (int)(((float)width / bitmap.getWidth()) * bitmap.getHeight());
-        }
-        // Height constrained.
-        else {
-            height = maxHeight;
-            width = (int)(((float)height / bitmap.getHeight()) * bitmap.getWidth());
-        }
-        Bitmap scaledBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-
-        float ratioX = (float)width / bitmap.getWidth();
-        float ratioY = (float)height / bitmap.getHeight();
-        float middleX = width / 2.0f;
-        float middleY = height / 2.0f;
-        Matrix scaleMatrix = new Matrix();
-        scaleMatrix.setScale(ratioX, ratioY, middleX, middleY);
-
-        Canvas canvas = new Canvas(scaledBitmap);
-        canvas.setMatrix(scaleMatrix);
-        canvas.drawBitmap(bitmap, middleX - bitmap.getWidth() / 2, middleY - bitmap.getHeight() / 2, new Paint(Paint.FILTER_BITMAP_FLAG));
-        return scaledBitmap;
-    }
-    static Bitmap decodeSampledBitmapFromResource(String path,int reqWidth,
-                                                  int reqHeight) {
-        // First decode with inJustDecodeBounds=true to check dimensions
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(path, options);
-        // Calculate inSampleSize
-        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-        // Decode bitmap with inSampleSize set
-        options.inJustDecodeBounds = false;
-        return BitmapFactory.decodeFile(path,options);
-    }
-    //Given the bitmap size and View size calculate a subsampling size (powers of 2)
-    static int calculateInSampleSize( BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        int inSampleSize = 1;   //Default subsampling size
-        // See if image raw height and width is bigger than that of required view
-        if (options.outHeight > reqHeight || options.outWidth > reqWidth) {
-            //bigger
-            final int halfHeight = options.outHeight / 2;
-            final int halfWidth = options.outWidth / 2;
-            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-            // height and width larger than the requested height and width.
-            while ((halfHeight / inSampleSize) > reqHeight
-                    && (halfWidth / inSampleSize) > reqWidth) {
-                inSampleSize *= 2;
-            }
-        }
-        return inSampleSize;
-    }
-    public Uri getImageUri(Context inContext, Bitmap inImage)
-    {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-
-
-        final String realPath = getRealPathFromDocumentUri(getApplicationContext(),Uri.parse(path));
-        Log.d("image",realPath);
-
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run()
-            {
-
-                File file = new File(realPath);
-                if(file.exists())
-                {
-                    file.delete();
-                    Log.d("image","deleted");
-                }
-            }
-        },10000);
-
-
-
-        return Uri.parse(path);
-    }
-    public static String getRealPathFromDocumentUri(Context context, Uri uri){
-        String filePath = "";
-
-        Pattern p = Pattern.compile("(\\d+)$");
-        Matcher m = p.matcher(uri.toString());
-        if (!m.find()) {
-            //Log.e(ImageConverter.class.getSimpleName(), "ID for requested image not found: " + uri.toString());
-            return filePath;
-        }
-        String imgId = m.group();
-
-        String[] column = { MediaStore.Images.Media.DATA };
-        String sel = MediaStore.Images.Media._ID + "=?";
-
-        Cursor cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                column, sel, new String[]{ imgId }, null);
-
-        int columnIndex = cursor.getColumnIndex(column[0]);
-
-        if (cursor.moveToFirst()) {
-            filePath = cursor.getString(columnIndex);
-        }
-        cursor.close();
-
-        return filePath;
     }
     public void setLocale(String lang,int position)
     {
@@ -1049,8 +782,219 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+    public class startActivity extends AsyncTask<Void,Void,Void> {
+
+        @Override
+        protected void onPreExecute()
+        {
+            super.onPreExecute();
+            configDialog();
+
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid)
+        {
+            super.onPostExecute(aVoid);
+            checkAnimationOverTime();
+
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids)
+        {
+            images.clear();
+            imagePosition = 0;
+
+            bitmap = selectedBitmap.copy(selectedBitmap.getConfig(), true);
+            selectedBitmap = null;
+
+            bitmap = methods.getResizedBitmap(bitmap, 1500);
+            return null;
+
+        }
 
 
+    }
+    public void checkAnimationOverTime()
+    {
+
+
+
+        animations.stop();
+        Drawable drawable = getResources().getDrawable(R.drawable.finish_loading);
+        animation.setImageDrawable(drawable);
+
+        Drawable d = animation.getDrawable();
+        if (d instanceof AnimatedVectorDrawable) {
+
+            animations = (AnimatedVectorDrawable) d;
+            animations.start();
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run()
+                {
+                    images.add(0, bitmap);
+                    startActivity(new Intent(getApplicationContext(), EditorActivity.class));
+                    dialog.dismiss();
+                }
+            },2500);
+        }
+
+
+    }
+    public void configDialog()
+    {
+        dialog.show();
+        dialog.setCancelable(false);
+
+        WindowManager.LayoutParams lp = dialog.getWindow().getAttributes();
+        lp.dimAmount=0.1f; // Dim level. 0.0 - no dim, 1.0 - completely opaque
+        dialog.getWindow().setAttributes(lp);
+
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        view = getLayoutInflater().inflate(R.layout.custom_progress_dialog,null);
+        dialog.setContentView(view);
+
+        animation = view.findViewById(R.id.animation);
+
+        Drawable d = animation.getDrawable();
+        if (d instanceof AnimatedVectorDrawable) {
+
+            animations = (AnimatedVectorDrawable) d;
+            animations.start();
+        }
+    }
+    public void checkForTheCurrentVersion()
+    {
+        final int currentVersion = BuildConfig.VERSION_CODE;
+        final String currentVersionName = BuildConfig.VERSION_NAME;
+        final boolean appType = BuildConfig.DEBUG;
+
+        if (database == null)
+        {
+            database = FirebaseDatabase.getInstance();
+        }
+        if (reference == null)
+        {
+            reference = database.getReference().child("AppInfo");
+        }
+
+
+
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    AppData data = dataSnapshot.getValue(AppData.class);
+                    if (data != null) {
+                        if (data.getVersionCode() > currentVersion) {
+                            showUpgradeAppPopup(data);
+                        } else if (data.getVersionCode() < currentVersion) {
+                            if (appType) {
+                                //debug app version
+                                return;
+                            }
+                            AppData newData = new AppData();
+                            newData.setVersionCode(currentVersion);
+                            newData.setVersionName(currentVersionName);
+
+                            uploadAppDetails(newData);
+
+                        }
+                    }
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void showUpgradeAppPopup(AppData data)
+    {
+        if (data != null)
+        {
+            final Dialog popdialog = new Dialog(MainActivity.this);
+            View view = getLayoutInflater().inflate(R.layout.update_app_dialog, null);
+            popdialog.setContentView(view);
+            popdialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+            popdialog.setCanceledOnTouchOutside(false);
+
+            popdialog.getWindow().setGravity(Gravity.BOTTOM);
+
+            WindowManager.LayoutParams lp = popdialog.getWindow().getAttributes();
+            lp.dimAmount=0.8f; // Dim level. 0.0 - no dim, 1.0 - completely opaque
+            popdialog.getWindow().setAttributes(lp);
+
+            popdialog.getWindow().setLayout(RelativeLayout.LayoutParams.MATCH_PARENT, 500);
+
+            TextView versionName = view.findViewById(R.id.versionName);
+            Button updateAppButton = view.findViewById(R.id.updateAppButton);
+            ImageView close = view.findViewById(R.id.close);
+
+            if (data.getVersionName() != null) {
+                versionName.setText("V" + data.getVersionName());
+            }
+            updateAppButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse("market://details?id=com.sba.sinhalaphotoeditor"));
+                    startActivity(intent);
+
+                    popdialog.dismiss();
+                }
+            });
+
+            close.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    popdialog.dismiss();
+                }
+            });
+
+            if (!MainActivity.this.isFinishing())
+            {
+                popdialog.show();
+            }
+
+        }
+
+
+    }
+
+    public void uploadAppDetails(final AppData data) {
+        if (data == null) {
+            return;
+        }
+        if (reference == null) {
+            reference = database.getReference().child("AppInfo");
+        }
+        if (database == null) {
+            database = FirebaseDatabase.getInstance();
+        }
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                reference.setValue(data).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (!task.isSuccessful()) {
+                            uploadAppDetails(data);
+                        }
+                    }
+                });
+            }
+        });
+
+    }
 
 }
 

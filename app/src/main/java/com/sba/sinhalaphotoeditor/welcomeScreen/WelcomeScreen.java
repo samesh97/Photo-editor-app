@@ -76,7 +76,16 @@ public class WelcomeScreen extends AppCompatActivity {
             {
                 if(selectedLanguagePos == 0)
                 {
-                    Toast.makeText(WelcomeScreen.this, "Select a language first", Toast.LENGTH_SHORT).show();
+                    View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
+
+                    TextView toastMessage = view.findViewById(R.id.toastMessage);
+                    toastMessage.setText("Select a language first");
+
+                    Toast toast = new Toast(getApplicationContext());
+                    toast.setDuration(Toast.LENGTH_LONG);
+                    toast.setView(view);
+                    toast.show();
+                    //Toast.makeText(WelcomeScreen.this, "Select a language first", Toast.LENGTH_SHORT).show();
                 }
                 else
                 {

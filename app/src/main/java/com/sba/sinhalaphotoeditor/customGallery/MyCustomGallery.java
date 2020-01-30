@@ -11,12 +11,16 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.AnimatedVectorDrawable;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
@@ -28,16 +32,21 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.sba.sinhalaphotoeditor.AdjustImage;
 import com.sba.sinhalaphotoeditor.BlurUtils;
+import com.sba.sinhalaphotoeditor.EditorActivity;
 import com.sba.sinhalaphotoeditor.ExifUtil;
 import com.sba.sinhalaphotoeditor.MainActivity;
 import com.sba.sinhalaphotoeditor.R;
@@ -48,7 +57,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.sba.sinhalaphotoeditor.MainActivity.rotateBitmap;
 
 public class MyCustomGallery extends AppCompatActivity {
 
@@ -70,6 +78,12 @@ public class MyCustomGallery extends AppCompatActivity {
 
 
     SetData setData;
+
+
+
+
+
+
 
 
     @Override
@@ -131,7 +145,16 @@ public class MyCustomGallery extends AppCompatActivity {
             }
             else
             {
-                Toast.makeText(this, "Please select an image first", Toast.LENGTH_SHORT).show();
+                View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
+
+                TextView toastMessage = view.findViewById(R.id.toastMessage);
+                toastMessage.setText(getResources().getString(R.string.select_an_image_first_text));
+
+                Toast toast = new Toast(getApplicationContext());
+                toast.setDuration(Toast.LENGTH_LONG);
+                toast.setView(view);
+                toast.show();
+                //Toast.makeText(this, "Please select an image first", Toast.LENGTH_SHORT).show();
             }
             return true;
         }
@@ -456,13 +479,13 @@ public class MyCustomGallery extends AppCompatActivity {
             super.onPostExecute(aVoid);
 
 
-
+            dialog.dismiss();
             if(!setData.isCancelled())
             {
                 setData.cancel(true);
             }
             adapter.notifyDataSetChanged();
-            dialog.dismiss();
+
         }
 
         @Override
@@ -494,4 +517,5 @@ public class MyCustomGallery extends AppCompatActivity {
         tmpOut.copyTo(outputBitmap);
         return outputBitmap;
     }
+
 }

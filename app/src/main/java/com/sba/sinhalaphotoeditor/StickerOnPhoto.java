@@ -34,6 +34,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.glidebitmappool.GlideBitmapPool;
+import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
 
 import java.io.ByteArrayOutputStream;
@@ -81,6 +82,8 @@ public class StickerOnPhoto extends AppCompatActivity implements RotationGesture
 
     DatabaseHelper helper = new DatabaseHelper(StickerOnPhoto.this);
 
+    private Methods methods;
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -103,6 +106,8 @@ public class StickerOnPhoto extends AppCompatActivity implements RotationGesture
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
+        methods = new Methods(getApplicationContext());
 
         Runtime rt = Runtime.getRuntime();
         int maxMemory = (int)rt.freeMemory();
@@ -194,42 +199,7 @@ public class StickerOnPhoto extends AppCompatActivity implements RotationGesture
         int width = bitmapForImageView.getWidth();
         int height = bitmapForImageView.getHeight();
 
-        //bitmapForImageView = scale(bitmapForImageView,metrics.widthPixels,metrics.heightPixels);
 
-/*
-        if(bitmapForImageView.getHeight() > bitmapForImageView.getWidth())
-        {
-           // height = scaleImageKeepAspectRatio(bitmapForImageView,width);
-            Toast.makeText(this, "height is larger", Toast.LENGTH_SHORT).show();
-            height = bitmapForImageView.getHeight();
-            width = bitmapForImageView.getWidth();
-        }
-        //resize the views as per the image size
-        /*
-        if(bitmapForImageView.getWidth()>bitmapForImageView.getHeight())
-        {
-            width = 1280;
-            height = 720;
-        }
-*//*
-        else if(bitmapForImageView.getHeight() < bitmapForImageView.getWidth())
-        {
-            Toast.makeText(this, "width is larger", Toast.LENGTH_SHORT).show();
-            //width =  scaleImageKeepAspectRatio2(bitmapForImageView,height);
-            width = metrics.widthPixels;
-            height = scaleImageKeepAspectRatio(bitmapForImageView,width);
-        }
-        else
-        {
-            Toast.makeText(this, "width and height same", Toast.LENGTH_SHORT).show();
-            width = metrics.widthPixels;
-            height =  metrics.widthPixels;
-        }/*
-        /*else
-        {
-            width = 600;
-            height = 600;
-        }*/
 
         //create the layouts
         //base layout
@@ -241,7 +211,6 @@ public class StickerOnPhoto extends AppCompatActivity implements RotationGesture
 
         if(width == height)
         {
-            width = (int )pixelTodp(StickerOnPhoto.this,width);
             workingLayout = new RelativeLayout(StickerOnPhoto.this);
             RelativeLayout.LayoutParams workingLayoutParams = new RelativeLayout.LayoutParams(metrics.widthPixels,metrics.widthPixels);
             workingLayout.setBackgroundColor(Color.TRANSPARENT);
@@ -250,10 +219,6 @@ public class StickerOnPhoto extends AppCompatActivity implements RotationGesture
         }
         else if(height > width)
         {
-            width = (int )pixelTodp(StickerOnPhoto.this,width);
-            height = (int) pixelTodp(StickerOnPhoto.this,height);
-
-
 
 
             workingLayout = new RelativeLayout(StickerOnPhoto.this);
@@ -264,8 +229,6 @@ public class StickerOnPhoto extends AppCompatActivity implements RotationGesture
         }
         else
         {
-            width = (int )pixelTodp(StickerOnPhoto.this,width);
-            height = (int) pixelTodp(StickerOnPhoto.this,height);
 
             workingLayout = new RelativeLayout(StickerOnPhoto.this);
             RelativeLayout.LayoutParams workingLayoutParams = new RelativeLayout.LayoutParams(metrics.widthPixels,RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -418,22 +381,6 @@ public class StickerOnPhoto extends AppCompatActivity implements RotationGesture
         imageOutUri = Uri.fromFile(imageFile);
         return result;
     }
-    public int scaleImageKeepAspectRatio(Bitmap scaledGalleryBitmap,int width)
-    {
-        int imageWidth = scaledGalleryBitmap.getWidth();
-        int imageHeight = scaledGalleryBitmap.getHeight();
-        return  (imageHeight * width)/imageWidth;
-        //scaledGalleryBitmap = Bitmap.createScaledBitmap(scaledGalleryBitmap, 500, newHeight, false);
-
-    }
-    public int scaleImageKeepAspectRatio2(Bitmap scaledGalleryBitmap,int height)
-    {
-        int imageWidth = scaledGalleryBitmap.getWidth();
-        int imageHeight = scaledGalleryBitmap.getHeight();
-        return  (imageHeight / height) * imageWidth;
-        //scaledGalleryBitmap = Bitmap.createScaledBitmap(scaledGalleryBitmap, 500, newHeight, false);
-
-    }
     public class RunInBackground extends AsyncTask<Void,Void,Void>
     {
 
@@ -479,7 +426,7 @@ public class StickerOnPhoto extends AppCompatActivity implements RotationGesture
                 try {
                     Bitmap  bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageOutUri);
 
-                    bitmap = CropBitmapTransparency(bitmap);
+                    bitmap = methods.CropBitmapTransparency(bitmap);
 
                     MainActivity.imagePosition++;
                     MainActivity.images.add(MainActivity.imagePosition,bitmap);
@@ -528,116 +475,4 @@ public class StickerOnPhoto extends AppCompatActivity implements RotationGesture
         }
 
     }
-    private Bitmap scale(Bitmap bitmap, int maxWidth, int maxHeight) {
-        // Determine the constrained dimension, which determines both dimensions.
-        int width;
-        int height;
-        float widthRatio = (float)bitmap.getWidth() / maxWidth;
-        float heightRatio = (float)bitmap.getHeight() / maxHeight;
-        // Width constrained.
-        if (widthRatio >= heightRatio) {
-            width = maxWidth;
-            height = (int)(((float)width / bitmap.getWidth()) * bitmap.getHeight());
-        }
-        // Height constrained.
-        else {
-            height = maxHeight;
-            width = (int)(((float)height / bitmap.getHeight()) * bitmap.getWidth());
-        }
-        Bitmap scaledBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-
-        float ratioX = (float)width / bitmap.getWidth();
-        float ratioY = (float)height / bitmap.getHeight();
-        float middleX = width / 2.0f;
-        float middleY = height / 2.0f;
-        Matrix scaleMatrix = new Matrix();
-        scaleMatrix.setScale(ratioX, ratioY, middleX, middleY);
-
-        Canvas canvas = new Canvas(scaledBitmap);
-        canvas.setMatrix(scaleMatrix);
-        canvas.drawBitmap(bitmap, middleX - bitmap.getWidth() / 2, middleY - bitmap.getHeight() / 2, new Paint(Paint.FILTER_BITMAP_FLAG));
-        return scaledBitmap;
-    }
-    public static float pixelTodp(Context c, float pixel) {
-        float density = c.getResources().getDisplayMetrics().density;
-        float dp = pixel / density;
-        return dp;
-    }
-    public Uri getImageUri(Context inContext, Bitmap inImage)
-    {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-
-
-        String realPath = getRealPathFromDocumentUri(getApplicationContext(),Uri.parse(path));
-        Log.d("image",realPath);
-
-        File file = new File(realPath);
-        if(file.exists())
-        {
-            file.delete();
-            Log.d("image","deleted");
-        }
-
-        return Uri.parse(path);
-    }
-    public static String getRealPathFromDocumentUri(Context context, Uri uri){
-        String filePath = "";
-
-        Pattern p = Pattern.compile("(\\d+)$");
-        Matcher m = p.matcher(uri.toString());
-        if (!m.find()) {
-            //Log.e(ImageConverter.class.getSimpleName(), "ID for requested image not found: " + uri.toString());
-            return filePath;
-        }
-        String imgId = m.group();
-
-        String[] column = { MediaStore.Images.Media.DATA };
-        String sel = MediaStore.Images.Media._ID + "=?";
-
-        Cursor cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                column, sel, new String[]{ imgId }, null);
-
-        int columnIndex = cursor.getColumnIndex(column[0]);
-
-        if (cursor.moveToFirst()) {
-            filePath = cursor.getString(columnIndex);
-        }
-        cursor.close();
-
-        return filePath;
-    }
-    Bitmap CropBitmapTransparency(Bitmap sourceBitmap)
-    {
-        int minX = sourceBitmap.getWidth();
-        int minY = sourceBitmap.getHeight();
-        int maxX = -1;
-        int maxY = -1;
-        for(int y = 0; y < sourceBitmap.getHeight(); y++)
-        {
-            for(int x = 0; x < sourceBitmap.getWidth(); x++)
-            {
-                int alpha = (sourceBitmap.getPixel(x, y) >> 24) & 255;
-                if(alpha > 0)   // pixel is not 100% transparent
-                {
-                    if(x < minX)
-                        minX = x;
-                    if(x > maxX)
-                        maxX = x;
-                    if(y < minY)
-                        minY = y;
-                    if(y > maxY)
-                        maxY = y;
-                }
-            }
-        }
-        if((maxX < minX) || (maxY < minY))
-            return null; // Bitmap is entirely transparent
-
-        // crop bitmap to non-transparent area and return:
-        return Bitmap.createBitmap(sourceBitmap, minX, minY, (maxX - minX) + 1, (maxY - minY) + 1);
-    }
-
-
 }

@@ -97,4 +97,9 @@
 	<dimen name="row_text_size_16">19.2sp</dimen>
 	<dimen name="activity_main_topic_text_size">28sp</dimen>
 	<dimen name="activity_main_sub_text_view_size">17sp</dimen>
+    <dimen name="language_picker_width">115dp</dimen>
+	<dimen name="language_picker_layout_width">140dp</dimen>
+	<dimen name="language_picker_layout_height">45dp</dimen>
+	<dimen name="select_picture_text_size">30sp</dimen>
+	<dimen name="select_from_gallery_text_size">22sp</dimen>
 </resources>

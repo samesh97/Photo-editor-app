@@ -57,5 +57,33 @@
     <string name="okay_text">Okay</string>
     <string name="cannot_text">No</string>
 
+    <string name="app_exit_text">Exit</string>
+    <string name="exit_app_confirmation_text">Are you sure you want to exit?</string>
+    <string name="exit_app_yes_text">Yes</string>
+    <string name="exit_app_no_text">No</string>
+
+
+
+
+    <string name="no_images_available_text">No Images Available</string>
+    <string name="you_reach_end_text">You reached to the Original Photo</string>
+    <string name="we_will_fix_it_soon_text">Something is not right. We\'ll fix it soon</string>
+    <string name="something_went_wrong_text">Something went wrong</string>
+    <string name="you_reach_end_text_2">You reached to the end</string>
+    <string name="enter_text">Enter a text</string>
+    <string name="deleted_text">Deleted</string>
+    <string name="no_image_selected_text">No image selected</string>
+    <string name="enter_valid_width">Enter a valid width</string>
+    <string name="enter_valid_height">Enter a valid height</string>
+    <string name="pick_color_text">Pick a color</string>
+    <string name="width_exceed_text">You can only create of maximum width of 1000</string>
+    <string name="height_exceed_text">You can only create of maximum height of 1000</string>
+    <string name="height_is_low_text">You can only create of minimum width of 400</string>
+    <string name="width_is_low_text">You can only create of minimum width of 400</string>
+    <string name="height_is_low_text2">You can only create of minimum height of 400</string>
+    <string name="select_an_image_first_text">Please select an image first</string>
+    <string name="removed_text">Removed</string>
+    <string name="saved_to_gallery_text">Saved to gallery</string>
+
 
 </resources>

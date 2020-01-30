@@ -22,6 +22,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -30,14 +31,12 @@ import com.flask.colorpicker.OnColorSelectedListener;
 import com.flask.colorpicker.builder.ColorPickerClickListener;
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
 import com.glidebitmappool.GlideBitmapPool;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static com.sba.sinhalaphotoeditor.MainActivity.decodeSampledBitmapFromResource;
-import static com.sba.sinhalaphotoeditor.UsePreviouslyEditedImageActivity.getRealPathFromDocumentUri;
 
 public class CreateABackgroundActivity extends AppCompatActivity {
 
@@ -50,13 +49,38 @@ public class CreateABackgroundActivity extends AppCompatActivity {
     Button useImage;
     Boolean isImageCreating = false;
 
+    private InterstitialAd mInterstitialAd;
 
 
+    @Override
+    public void onBackPressed()
+    {
+        if(mInterstitialAd.isLoaded())
+        {
+            mInterstitialAd.show();
+        }
+        else
+        {
+            super.onBackPressed();
+        }
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_abackground);
+
+
+
+
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {}
+        });
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId("ca-app-pub-3538783908730049/5147080745");
+        mInterstitialAd.loadAd(new AdRequest.Builder().build());
 
 
         Runtime rt = Runtime.getRuntime();
@@ -96,19 +120,27 @@ public class CreateABackgroundActivity extends AppCompatActivity {
                 useImage.setEnabled(false);
                 if(createdBitmap != null)
                 {
+                    if(mInterstitialAd.isLoaded())
+                    {
+                        mInterstitialAd.show();
+                    }
+                    else
+                    {
+                        EditorActivity.imageWidth = Integer.parseInt(width.getText().toString());
+                        EditorActivity.imageHeight = Integer.parseInt(height.getText().toString());
 
-                    EditorActivity.imageWidth = Integer.parseInt(width.getText().toString());
-                    EditorActivity.imageHeight = Integer.parseInt(height.getText().toString());
+                        MainActivity.images.clear();
+                        //MainActivity.filePaths.clear();
+                        MainActivity.imagePosition = 0;
+                        MainActivity.images.add(createdBitmap);
+                        //MainActivity.filePaths.add(getImageUri(getApplicationContext(),createdBitmap));
+                        // MainActivity.CurrentWorkingFilePath = getImageUri(getApplicationContext(),createdBitmap);
 
-                    MainActivity.images.clear();
-                    //MainActivity.filePaths.clear();
-                    MainActivity.imagePosition = 0;
-                    MainActivity.images.add(createdBitmap);
-                    //MainActivity.filePaths.add(getImageUri(getApplicationContext(),createdBitmap));
-                   // MainActivity.CurrentWorkingFilePath = getImageUri(getApplicationContext(),createdBitmap);
+                        startActivity(new Intent(getApplicationContext(),EditorActivity.class));
+                        finish();
+                    }
 
-                    startActivity(new Intent(getApplicationContext(),EditorActivity.class));
-                    finish();
+
                 }
             }
         });
@@ -130,37 +162,90 @@ public class CreateABackgroundActivity extends AppCompatActivity {
                 }
                 if(width.getText().toString().equals(""))
                 {
-                    Toast.makeText(CreateABackgroundActivity.this, "Enter a valid width", Toast.LENGTH_SHORT).show();
+                    View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
+
+                    TextView toastMessage = view.findViewById(R.id.toastMessage);
+                    toastMessage.setText(getResources().getString(R.string.enter_valid_width));
+
+                    Toast toast = new Toast(getApplicationContext());
+                    toast.setDuration(Toast.LENGTH_LONG);
+                    toast.setView(view);
+                    toast.show();
+                    //Toast.makeText(CreateABackgroundActivity.this, "Enter a valid width", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if(height.getText().toString().equals(""))
                 {
-                    Toast.makeText(CreateABackgroundActivity.this, "Enter a valid height", Toast.LENGTH_SHORT).show();
+                    View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
+
+                    TextView toastMessage = view.findViewById(R.id.toastMessage);
+                    toastMessage.setText(getResources().getString(R.string.enter_valid_height));
+
+                    Toast toast = new Toast(getApplicationContext());
+                    toast.setDuration(Toast.LENGTH_LONG);
+                    toast.setView(view);
+                    toast.show();
+                    //Toast.makeText(CreateABackgroundActivity.this, "Enter a valid height", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if(color == -99)
                 {
-                    Toast.makeText(CreateABackgroundActivity.this, "Pick a color", Toast.LENGTH_SHORT).show();
+                    View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
+                    TextView toastMessage = view.findViewById(R.id.toastMessage);
+                    toastMessage.setText(getResources().getString(R.string.pick_color_text));
+                    Toast toast = new Toast(getApplicationContext());
+                    toast.setDuration(Toast.LENGTH_LONG);
+                    toast.setView(view);
+                    toast.show();
+                    //Toast.makeText(CreateABackgroundActivity.this, "Pick a color", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if(Integer.parseInt(width.getText().toString()) > 1000)
                 {
-                    Toast.makeText(CreateABackgroundActivity.this, "You can only create of maximum width of 1000", Toast.LENGTH_SHORT).show();
+                    View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
+                    TextView toastMessage = view.findViewById(R.id.toastMessage);
+                    toastMessage.setText(getResources().getString(R.string.width_exceed_text));
+                    Toast toast = new Toast(getApplicationContext());
+                    toast.setDuration(Toast.LENGTH_LONG);
+                    toast.setView(view);
+                    toast.show();
+                    //Toast.makeText(CreateABackgroundActivity.this, "You can only create of maximum width of 1000", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if(Integer.parseInt(height.getText().toString()) > 1000)
                 {
-                    Toast.makeText(CreateABackgroundActivity.this, "You can only create of maximum height of 1000", Toast.LENGTH_SHORT).show();
+                    View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
+                    TextView toastMessage = view.findViewById(R.id.toastMessage);
+                    toastMessage.setText(getResources().getString(R.string.height_exceed_text));
+                    Toast toast = new Toast(getApplicationContext());
+                    toast.setDuration(Toast.LENGTH_LONG);
+                    toast.setView(view);
+                    toast.show();
+                    //Toast.makeText(CreateABackgroundActivity.this, "You can only create of maximum height of 1000", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if(Integer.parseInt(width.getText().toString()) < 400)
                 {
-                    Toast.makeText(CreateABackgroundActivity.this, "You can only create of minimum width of 400", Toast.LENGTH_SHORT).show();
+                    View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
+                    TextView toastMessage = view.findViewById(R.id.toastMessage);
+                    toastMessage.setText(getResources().getString(R.string.width_is_low_text));
+                    Toast toast = new Toast(getApplicationContext());
+                    toast.setDuration(Toast.LENGTH_LONG);
+                    toast.setView(view);
+                    toast.show();
+                    //Toast.makeText(CreateABackgroundActivity.this, "You can only create of minimum width of 400", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if(Integer.parseInt(height.getText().toString()) < 400)
                 {
-                    Toast.makeText(CreateABackgroundActivity.this, "You can only create of minimum height of 400", Toast.LENGTH_SHORT).show();
+                    View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
+                    TextView toastMessage = view.findViewById(R.id.toastMessage);
+                    toastMessage.setText(getResources().getString(R.string.height_is_low_text2));
+                    Toast toast = new Toast(getApplicationContext());
+                    toast.setDuration(Toast.LENGTH_LONG);
+                    toast.setView(view);
+                    toast.show();
+                    //Toast.makeText(CreateABackgroundActivity.this, "You can only create of minimum height of 400", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -223,51 +308,6 @@ public class CreateABackgroundActivity extends AppCompatActivity {
 
                     }
                 }).build().show();
-    }
-    public Uri getImageUri(Context inContext, Bitmap inImage)
-    {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-
-
-        String realPath = getRealPathFromDocumentUri(getApplicationContext(),Uri.parse(path));
-        Log.d("image",realPath);
-
-        File file = new File(realPath);
-        if(file.exists())
-        {
-            file.delete();
-            Log.d("image","deleted");
-        }
-
-        return Uri.parse(path);
-    }
-    public static String getRealPathFromDocumentUri(Context context, Uri uri){
-        String filePath = "";
-
-        Pattern p = Pattern.compile("(\\d+)$");
-        Matcher m = p.matcher(uri.toString());
-        if (!m.find()) {
-            //Log.e(ImageConverter.class.getSimpleName(), "ID for requested image not found: " + uri.toString());
-            return filePath;
-        }
-        String imgId = m.group();
-
-        String[] column = { MediaStore.Images.Media.DATA };
-        String sel = MediaStore.Images.Media._ID + "=?";
-
-        Cursor cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                column, sel, new String[]{ imgId }, null);
-
-        int columnIndex = cursor.getColumnIndex(column[0]);
-
-        if (cursor.moveToFirst()) {
-            filePath = cursor.getString(columnIndex);
-        }
-        cursor.close();
-
-        return filePath;
     }
 
 }

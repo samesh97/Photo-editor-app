@@ -23,6 +23,7 @@ import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -39,6 +40,12 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.glidebitmappool.GlideBitmapPool;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.RecyclerView.RecyclerViewAdapter;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
 
@@ -62,6 +69,10 @@ public class UsePreviouslyEditedImageActivity extends AppCompatActivity {
 
     RecyclerViewAdapter adapter;
 
+    private Methods methods;
+
+    private InterstitialAd mInterstitialAd;
+
     @Override
     protected void onStop() {
         super.onStop();
@@ -81,6 +92,21 @@ public class UsePreviouslyEditedImageActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed()
+    {
+        if (mInterstitialAd.isLoaded())
+        {
+            mInterstitialAd.show();
+            mInterstitialAd.loadAd(new AdRequest.Builder().build());
+
+        }
+        else
+        {
+            super.onBackPressed();
+        }
+
+    }
 
     @Override
     protected void onDestroy() {
@@ -100,6 +126,20 @@ public class UsePreviouslyEditedImageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_use_previously_edited_image);
 
 
+
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {}
+        });
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId("ca-app-pub-3538783908730049/5147080745");
+        mInterstitialAd.loadAd(new AdRequest.Builder().build());
+
+
+
+
+
+        methods = new Methods(getApplicationContext());
         setTextViewFontAndSize();
 
         Runtime rt = Runtime.getRuntime();
@@ -160,7 +200,16 @@ public class UsePreviouslyEditedImageActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    Toast.makeText(UsePreviouslyEditedImageActivity.this, "No Images Available", Toast.LENGTH_SHORT).show();
+                    View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
+
+                    TextView toastMessage = view.findViewById(R.id.toastMessage);
+                    toastMessage.setText(getResources().getString(R.string.no_images_available_text));
+
+                    Toast toast = new Toast(getApplicationContext());
+                    toast.setDuration(Toast.LENGTH_LONG);
+                    toast.setView(view);
+                    toast.show();
+
                 }
 
             }
@@ -183,58 +232,22 @@ public class UsePreviouslyEditedImageActivity extends AppCompatActivity {
         }
         catch (Exception e)
         {
-            Toast.makeText(this, "Something is not right. We'll fix it soon", Toast.LENGTH_SHORT).show();
+            View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
+
+            TextView toastMessage = view.findViewById(R.id.toastMessage);
+            toastMessage.setText(getResources().getString(R.string.we_will_fix_it_soon_text));
+
+            Toast toast = new Toast(getApplicationContext());
+            toast.setDuration(Toast.LENGTH_LONG);
+            toast.setView(view);
+            toast.show();
+
         }
 
 
 
 
 
-    }
-    public Uri getImageUri(Context inContext, Bitmap inImage)
-    {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-
-
-        String realPath = getRealPathFromDocumentUri(getApplicationContext(),Uri.parse(path));
-        Log.d("image",realPath);
-
-        File file = new File(realPath);
-        if(file.exists())
-        {
-            file.delete();
-            Log.d("image","deleted");
-        }
-
-        return Uri.parse(path);
-    }
-    public static String getRealPathFromDocumentUri(Context context, Uri uri){
-        String filePath = "";
-
-        Pattern p = Pattern.compile("(\\d+)$");
-        Matcher m = p.matcher(uri.toString());
-        if (!m.find()) {
-            //Log.e(ImageConverter.class.getSimpleName(), "ID for requested image not found: " + uri.toString());
-            return filePath;
-        }
-        String imgId = m.group();
-
-        String[] column = { MediaStore.Images.Media.DATA };
-        String sel = MediaStore.Images.Media._ID + "=?";
-
-        Cursor cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                column, sel, new String[]{ imgId }, null);
-
-        int columnIndex = cursor.getColumnIndex(column[0]);
-
-        if (cursor.moveToFirst()) {
-            filePath = cursor.getString(columnIndex);
-        }
-        cursor.close();
-
-        return filePath;
     }
     public void setTextViewFontAndSize()
     {
