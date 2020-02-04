@@ -12,6 +12,8 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -31,6 +33,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -59,42 +62,44 @@ import render.animations.*;
 import static com.sba.sinhalaphotoeditor.activities.MyCustomGallery.IMAGE_PICK_RESULT_CODE;
 import static com.sba.sinhalaphotoeditor.activities.MyCustomGallery.selectedBitmap;
 
-public class EditorActivity extends AppCompatActivity {
+public class EditorActivity extends AppCompatActivity implements View.OnClickListener {
 
-    ImageView userSelectedImage;
-    ImageView addText,addImage,addSticker,addCrop,addBlur;
+    private ImageView userSelectedImage;
+    private ImageView addText,addImage,addSticker,addCrop,addBlur;
     private static final int PICK_IMAGE_REQUEST = 234;
     public static boolean isNeededToDelete = false;
 
     static int imageWidth,imageHeight;
 
-    ImageView addEffect;
+    private ImageView addEffect;
 
 
-   public static int screenWidth,screenHeight;
+    public static int screenWidth,screenHeight;
 
-    Dialog dia;
+    private Dialog dia;
 
-    String CropType = null;
+    private String CropType = null;
 
 
     public static Bitmap selectedSticker = null;
 
-    ArrayList<Bitmap> stickerList1 = new ArrayList<>();
-    ArrayList<Bitmap> stickerList2 = new ArrayList<>();
-    ArrayList<Bitmap> stickerList3 = new ArrayList<>();
-    ArrayList<Bitmap> stickerList4 = new ArrayList<>();
-    ArrayList<Bitmap> stickerList5 = new ArrayList<>();
+    private ArrayList<Bitmap> stickerList1 = new ArrayList<>();
+    private ArrayList<Bitmap> stickerList2 = new ArrayList<>();
+    private ArrayList<Bitmap> stickerList3 = new ArrayList<>();
+    private ArrayList<Bitmap> stickerList4 = new ArrayList<>();
+    private ArrayList<Bitmap> stickerList5 = new ArrayList<>();
 
     private AdView mAdView;
 
 
-    DatabaseHelper helper = new DatabaseHelper(EditorActivity.this);
+    private DatabaseHelper helper = new DatabaseHelper(EditorActivity.this);
 
-    Render render;
+    private Render render;
 
     private Methods methods;
     private InterstitialAd mInterstitialAd;
+
+    //private ConstraintLayout stickerLayout;
 
 
     @Override
@@ -104,11 +109,11 @@ public class EditorActivity extends AppCompatActivity {
         {
 
 
-
-
             final Dialog dialog = new Dialog(this);
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
+            if(dialog.getWindow() != null)
+            {
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            }
 
 
 
@@ -636,7 +641,11 @@ public class EditorActivity extends AppCompatActivity {
 
 
 
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#114f5e")));
+        if(getActionBar() != null && getSupportActionBar() != null)
+        {
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#114f5e")));
+        }
+
 
         dia = new Dialog(this, R.style.DialogSlideAnim);
 
@@ -647,63 +656,14 @@ public class EditorActivity extends AppCompatActivity {
         addCrop = (ImageView) findViewById(R.id.addCrop);
         addEffect = (ImageView) findViewById(R.id.addEffect);
         addBlur = (ImageView) findViewById(R.id.addBlur);
+       // stickerLayout = findViewById(R.id.stickerLayout);
         //ImageView drawOnBitmap = (ImageView) findViewById(R.id.drawOnBitmap);
 
 
-        addBlur.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                if(MainActivity.images.get(MainActivity.imagePosition) != null && MainActivity.images.size() > 0)
-                {
-                    render.setAnimation(Attention.Bounce(addBlur));
-                    render.start();
-                    startActivityForResult(new Intent(getApplicationContext(), AdjustImage.class),10);
-                }
-                else
-                {
-                    View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
-
-                    TextView toastMessage = view.findViewById(R.id.toastMessage);
-                    toastMessage.setText(getResources().getString(R.string.no_image_selected_text));
-
-                    Toast toast = new Toast(getApplicationContext());
-                    toast.setDuration(Toast.LENGTH_LONG);
-                    toast.setView(view);
-                    toast.show();
-
-                }
-
-            }
-        });
-
-        addEffect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-
-                if(MainActivity.images.get(MainActivity.imagePosition) != null && MainActivity.images.size() > 0)
-                {
-                    render.setAnimation(Attention.Bounce(addEffect));
-                    render.start();
-                    startActivityForResult(new Intent(getApplicationContext(), AddEffects.class),20);
-                }
-                else
-                {
-                    View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
-
-                    TextView toastMessage = view.findViewById(R.id.toastMessage);
-                    toastMessage.setText(getResources().getString(R.string.no_image_selected_text));
-
-                    Toast toast = new Toast(getApplicationContext());
-                    toast.setDuration(Toast.LENGTH_LONG);
-                    toast.setView(view);
-                    toast.show();
-                }
+        addBlur.setOnClickListener(this);
+        addEffect.setOnClickListener(this);
 
 
-            }
-        });
 
         try
         {
@@ -730,109 +690,6 @@ public class EditorActivity extends AppCompatActivity {
 
 
 
-
-        Bitmap b;
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji1);
-        stickerList1.add(b);
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji2);
-        stickerList2.add(b);
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji3);
-        stickerList3.add(b);
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji4);
-        stickerList4.add(b);
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji5);
-        stickerList5.add(b);
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji6);
-        stickerList1.add(b);
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji7);
-        stickerList2.add(b);
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji8);
-        stickerList3.add(b);
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji9);
-        stickerList4.add(b);
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji10);
-        stickerList5.add(b);
-
-
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji11);
-        stickerList1.add(b);
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji12);
-        stickerList2.add(b);
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji13);
-        stickerList3.add(b);
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji14);
-        stickerList4.add(b);
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji15);
-        stickerList5.add(b);
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji16);
-        stickerList1.add(b);
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji17);
-        stickerList2.add(b);
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji18);
-        stickerList3.add(b);
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji19);
-        stickerList4.add(b);
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji20);
-        stickerList5.add(b);
-
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji21);
-        stickerList1.add(b);
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji22);
-        stickerList2.add(b);
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji23);
-        stickerList3.add(b);
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji24);
-        stickerList4.add(b);
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji25);
-        stickerList5.add(b);
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji26);
-        stickerList1.add(b);
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji27);
-        stickerList2.add(b);
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji28);
-        stickerList3.add(b);
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji29);
-        stickerList4.add(b);
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji30);
-        stickerList5.add(b);
-
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji31);
-        stickerList1.add(b);
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji32);
-        stickerList2.add(b);
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji33);
-        stickerList3.add(b);
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji34);
-        stickerList4.add(b);
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji35);
-        stickerList5.add(b);
-
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji36);
-        stickerList1.add(b);
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji37);
-        stickerList2.add(b);
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji38);
-        stickerList3.add(b);
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji39);
-        stickerList4.add(b);
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji40);
-        stickerList5.add(b);
-
-
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji41);
-        stickerList1.add(b);
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji42);
-        stickerList2.add(b);
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji43);
-        stickerList3.add(b);
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji44);
-        stickerList4.add(b);
-        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji45);
-        stickerList5.add(b);
-
-
-
-
         try
         {
             imageWidth = MainActivity.images.get(MainActivity.imagePosition).getWidth();
@@ -840,7 +697,7 @@ public class EditorActivity extends AppCompatActivity {
         }
         catch (Exception e)
         {
-
+            e.printStackTrace();
         }
 
 
@@ -849,113 +706,189 @@ public class EditorActivity extends AppCompatActivity {
 
 
 
-        addText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view)
-            {
-                if(MainActivity.images.get(MainActivity.imagePosition) != null && MainActivity.images.size() > 0)
-                {
-                    render.setAnimation(Attention.Bounce(addText));
-                    render.start();
-                    showPopup();
-                }
-                else
-                {
-                    View view2 = getLayoutInflater().inflate(R.layout.toast_layout,null);
+        addText.setOnClickListener(this);
+        addImage.setOnClickListener(this);
+        addSticker.setOnClickListener(this);
+        addCrop.setOnClickListener(this);
 
-                    TextView toastMessage = view2.findViewById(R.id.toastMessage);
-                    toastMessage.setText(getResources().getString(R.string.no_image_selected_text));
+    }
 
-                    Toast toast = new Toast(getApplicationContext());
-                    toast.setDuration(Toast.LENGTH_LONG);
-                    toast.setView(view2);
-                    toast.show();
-                }
+    private void setStickers(ListViewAdapter adapter)
+    {
 
-            }
-        });
+        removeStickers();
+        Bitmap b;
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji1);
+        b = methods.getResizedBitmap(b,80);
+        stickerList1.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji2);
+        b = methods.getResizedBitmap(b,80);
+        stickerList2.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji3);
+        b = methods.getResizedBitmap(b,80);
+        stickerList3.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji4);
+        b = methods.getResizedBitmap(b,80);
+        stickerList4.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji5);
+        b = methods.getResizedBitmap(b,80);
+        stickerList5.add(b);
 
-        addImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                if(MainActivity.images.get(MainActivity.imagePosition) != null && MainActivity.images.size() > 0)
-                {
-                    CropType = "PhotoOnPhotoCrop";
-                    render.setAnimation(Attention.Bounce(addImage));
-                    render.start();
-                    showFileChooser();
-                }
-                else
-                {
-                    View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
+        adapter.notifyDataSetChanged();
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji6);
+        b = methods.getResizedBitmap(b,80);
+        stickerList1.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji7);
+        b = methods.getResizedBitmap(b,80);
+        stickerList2.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji8);
+        b = methods.getResizedBitmap(b,80);
+        stickerList3.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji9);
+        b = methods.getResizedBitmap(b,80);
+        stickerList4.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji10);
+        b = methods.getResizedBitmap(b,80);
+        stickerList5.add(b);
 
-                    TextView toastMessage = view.findViewById(R.id.toastMessage);
-                    toastMessage.setText(getResources().getString(R.string.no_image_selected_text));
+        adapter.notifyDataSetChanged();
 
-                    Toast toast = new Toast(getApplicationContext());
-                    toast.setDuration(Toast.LENGTH_LONG);
-                    toast.setView(view);
-                    toast.show();
-                }
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji11);
+        b = methods.getResizedBitmap(b,80);
+        stickerList1.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji12);
+        b = methods.getResizedBitmap(b,80);
+        stickerList2.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji13);
+        b = methods.getResizedBitmap(b,80);
+        stickerList3.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji14);
+        b = methods.getResizedBitmap(b,80);
+        stickerList4.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji15);
+        b = methods.getResizedBitmap(b,80);
+        stickerList5.add(b);
 
-            }
-        });
+        adapter.notifyDataSetChanged();
 
-        addSticker.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                render.setAnimation(Attention.Bounce(addSticker));
-                render.start();
-                showStickerPopup();
-            }
-        });
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji16);
+        b = methods.getResizedBitmap(b,80);
+        stickerList1.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji17);
+        b = methods.getResizedBitmap(b,80);
+        stickerList2.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji18);
+        b = methods.getResizedBitmap(b,80);
+        stickerList3.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji19);
+        b = methods.getResizedBitmap(b,80);
+        stickerList4.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji20);
+        b = methods.getResizedBitmap(b,80);
+        stickerList5.add(b);
+
+        adapter.notifyDataSetChanged();
+
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji21);
+        b = methods.getResizedBitmap(b,80);
+        stickerList1.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji22);
+        b = methods.getResizedBitmap(b,80);
+        stickerList2.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji23);
+        b = methods.getResizedBitmap(b,80);
+        stickerList3.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji24);
+        b = methods.getResizedBitmap(b,80);
+        stickerList4.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji25);
+        b = methods.getResizedBitmap(b,80);
+        stickerList5.add(b);
+
+        adapter.notifyDataSetChanged();
+
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji26);
+        b = methods.getResizedBitmap(b,80);
+        stickerList1.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji27);
+        b = methods.getResizedBitmap(b,80);
+        stickerList2.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji28);
+        b = methods.getResizedBitmap(b,80);
+        stickerList3.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji29);
+        b = methods.getResizedBitmap(b,80);
+        stickerList4.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji30);
+        b = methods.getResizedBitmap(b,80);
+        stickerList5.add(b);
+
+        adapter.notifyDataSetChanged();
+
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji31);
+        b = methods.getResizedBitmap(b,80);
+        stickerList1.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji32);
+        b = methods.getResizedBitmap(b,80);
+        stickerList2.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji33);
+        b = methods.getResizedBitmap(b,80);
+        stickerList3.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji34);
+        b = methods.getResizedBitmap(b,80);
+        stickerList4.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji35);
+        b = methods.getResizedBitmap(b,80);
+        stickerList5.add(b);
+
+        adapter.notifyDataSetChanged();
+
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji36);
+        b = methods.getResizedBitmap(b,80);
+        stickerList1.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji37);
+        b = methods.getResizedBitmap(b,80);
+        stickerList2.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji38);
+        b = methods.getResizedBitmap(b,80);
+        stickerList3.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji39);
+        b = methods.getResizedBitmap(b,80);
+        stickerList4.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji40);
+        b = methods.getResizedBitmap(b,80);
+        stickerList5.add(b);
+
+        adapter.notifyDataSetChanged();
 
 
-        addCrop.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                if(MainActivity.images.get(MainActivity.imagePosition) != null && MainActivity.images.size() > 0)
-                {
-                    CropType = "NormalCrop";
-                    render.setAnimation(Attention.Bounce(addCrop));
-                    render.start();
-                    addCrop.setEnabled(false);
-                    final Uri uri = methods.getImageUri(MainActivity.images.get(MainActivity.imagePosition),false);
-                    CropImage.activity(uri).start(EditorActivity.this);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji41);
+        b = methods.getResizedBitmap(b,80);
+        stickerList1.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji42);
+        b = methods.getResizedBitmap(b,80);
+        stickerList2.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji43);
+        b = methods.getResizedBitmap(b,80);
+        stickerList3.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji44);
+        b = methods.getResizedBitmap(b,80);
+        stickerList4.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji45);
+        b = methods.getResizedBitmap(b,80);
+        stickerList5.add(b);
 
+        adapter.notifyDataSetChanged();
+        b = null;
 
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-
-                            File f = new File(methods.getRealPathFromDocumentUri(uri));
-                            if(f.exists())
-                            {
-                                f.delete();
-                            }
-                        }
-                    },5000);
-
-                }
-                else
-                {
-                    View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
-
-                    TextView toastMessage = view.findViewById(R.id.toastMessage);
-                    toastMessage.setText(getResources().getString(R.string.no_image_selected_text));
-
-                    Toast toast = new Toast(getApplicationContext());
-                    toast.setDuration(Toast.LENGTH_LONG);
-                    toast.setView(view);
-                    toast.show();
-                }
-
-            }
-        });
+    }
+    public void removeStickers()
+    {
+        stickerList1.clear();
+        stickerList2.clear();
+        stickerList3.clear();
+        stickerList4.clear();
+        stickerList5.clear();
     }
 
     private void addTextOnImage(String text)
@@ -1098,24 +1031,215 @@ public class EditorActivity extends AppCompatActivity {
     private void showStickerPopup()
     {
 
+
+
+        /*
+        if(stickerLayout.getVisibility() == View.GONE)
+        {
+            ListView stickerListView = findViewById(R.id.stickerListView);
+            ProgressBar progressBar = findViewById(R.id.progressBar);
+
+            stickerLayout.setVisibility(View.VISIBLE);
+            ListViewAdapter adapter = new ListViewAdapter(stickerList1,stickerList2,stickerList3,stickerList4,stickerList5);
+            stickerListView.setAdapter(adapter);
+            setStickers(adapter,progressBar);
+        }
+        else
+        {
+            stickerLayout.setVisibility(View.GONE);
+            removeStickers();
+        }*/
+
+
+
+
         dia.setContentView(R.layout.activity_sticker_popup_screen);
         dia.setCancelable(true);
-        dia.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        dia.getWindow().setLayout(RelativeLayout.LayoutParams.FILL_PARENT,screenHeight / 2);
+        if(dia.getWindow() != null)
+        {
+            dia.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dia.getWindow().setLayout(RelativeLayout.LayoutParams.FILL_PARENT,screenHeight / 2);
+            Window window = dia.getWindow();
+            WindowManager.LayoutParams wlp = window.getAttributes();
+            wlp.gravity = Gravity.BOTTOM;
+            window.setAttributes(wlp);
+        }
 
-        Window window = dia.getWindow();
-        WindowManager.LayoutParams wlp = window.getAttributes();
 
-        wlp.gravity = Gravity.BOTTOM;
-        window.setAttributes(wlp);
+
 
 
         ListView list_alert = (ListView) dia.findViewById(R.id.stickeList);
         ListViewAdapter adapter = new ListViewAdapter(stickerList1,stickerList2,stickerList3,stickerList4,stickerList5);
         list_alert.setAdapter(adapter);
+        setStickers(adapter);
         dia.show();
 
     }
+
+    @Override
+    public void onClick(View v)
+    {
+
+
+        if(v == addBlur)
+        {
+
+                    if(MainActivity.images.get(MainActivity.imagePosition) != null && MainActivity.images.size() > 0)
+                    {
+                        render.setAnimation(Attention.Bounce(addBlur));
+                        render.start();
+                        startActivityForResult(new Intent(getApplicationContext(), AdjustImage.class),10);
+                    }
+                    else
+                    {
+                        View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
+
+                        TextView toastMessage = view.findViewById(R.id.toastMessage);
+                        toastMessage.setText(getResources().getString(R.string.no_image_selected_text));
+
+                        Toast toast = new Toast(getApplicationContext());
+                        toast.setDuration(Toast.LENGTH_LONG);
+                        toast.setView(view);
+                        toast.show();
+
+                    }
+
+        }
+        else if(v == addEffect)
+        {
+
+
+                    if(MainActivity.images.get(MainActivity.imagePosition) != null && MainActivity.images.size() > 0)
+                    {
+                        render.setAnimation(Attention.Bounce(addEffect));
+                        render.start();
+                        startActivityForResult(new Intent(getApplicationContext(), AddEffects.class),20);
+                    }
+                    else
+                    {
+                        View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
+
+                        TextView toastMessage = view.findViewById(R.id.toastMessage);
+                        toastMessage.setText(getResources().getString(R.string.no_image_selected_text));
+
+                        Toast toast = new Toast(getApplicationContext());
+                        toast.setDuration(Toast.LENGTH_LONG);
+                        toast.setView(view);
+                        toast.show();
+                    }
+
+
+
+        }
+        else if(v == addText)
+        {
+
+                    if(MainActivity.images.get(MainActivity.imagePosition) != null && MainActivity.images.size() > 0)
+                    {
+                        render.setAnimation(Attention.Bounce(addText));
+                        render.start();
+                        showPopup();
+                    }
+                    else
+                    {
+                        View view2 = getLayoutInflater().inflate(R.layout.toast_layout,null);
+
+                        TextView toastMessage = view2.findViewById(R.id.toastMessage);
+                        toastMessage.setText(getResources().getString(R.string.no_image_selected_text));
+
+                        Toast toast = new Toast(getApplicationContext());
+                        toast.setDuration(Toast.LENGTH_LONG);
+                        toast.setView(view2);
+                        toast.show();
+                    }
+
+        }
+        else if(v == addImage)
+        {
+
+                    if(MainActivity.images.get(MainActivity.imagePosition) != null && MainActivity.images.size() > 0)
+                    {
+                        CropType = "PhotoOnPhotoCrop";
+                        render.setAnimation(Attention.Bounce(addImage));
+                        render.start();
+                        showFileChooser();
+                    }
+                    else
+                    {
+                        View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
+
+                        TextView toastMessage = view.findViewById(R.id.toastMessage);
+                        toastMessage.setText(getResources().getString(R.string.no_image_selected_text));
+
+                        Toast toast = new Toast(getApplicationContext());
+                        toast.setDuration(Toast.LENGTH_LONG);
+                        toast.setView(view);
+                        toast.show();
+                    }
+
+        }
+        else if(v == addSticker)
+        {
+
+            render.setAnimation(Attention.Bounce(addSticker));
+            render.start();
+            showStickerPopup();
+
+
+        }
+        else if(v == addCrop)
+        {
+
+            if(MainActivity.images.get(MainActivity.imagePosition) != null && MainActivity.images.size() > 0)
+            {
+                CropType = "NormalCrop";
+                render.setAnimation(Attention.Bounce(addCrop));
+                render.start();
+                addCrop.setEnabled(false);
+                final Uri uri = methods.getImageUri(MainActivity.images.get(MainActivity.imagePosition),false);
+                CropImage.activity(uri).start(EditorActivity.this);
+
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        File f = new File(methods.getRealPathFromDocumentUri(uri));
+                        if(f.exists())
+                        {
+                            f.delete();
+                        }
+                    }
+                    },5000);
+
+            }
+            else
+            {
+                    View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
+
+                    TextView toastMessage = view.findViewById(R.id.toastMessage);
+                    toastMessage.setText(getResources().getString(R.string.no_image_selected_text));
+
+                    Toast toast = new Toast(getApplicationContext());
+                    toast.setDuration(Toast.LENGTH_LONG);
+                    toast.setView(view);
+                    toast.show();
+             }
+
+
+
+        }
+
+
+
+
+
+
+
+
+    }
+
     public class ListViewAdapter extends BaseAdapter implements AdapterView.OnItemClickListener
     {
         ArrayList<Bitmap> stic1;
@@ -1134,17 +1258,20 @@ public class EditorActivity extends AppCompatActivity {
             this.stic5 = stic5;
         }
         @Override
-        public int getCount() {
+        public int getCount()
+        {
             return stic5.size();
         }
 
         @Override
-        public Object getItem(int position) {
+        public Object getItem(int position)
+        {
             return null;
         }
 
         @Override
-        public long getItemId(int position) {
+        public long getItemId(int position)
+        {
             return 0;
         }
 
@@ -1167,11 +1294,11 @@ public class EditorActivity extends AppCompatActivity {
             Glide.with(getApplicationContext()).load(getResizedBitmap(stic5.get(position),80)).into(FiveSticker);
 */
 
-            OneSticker.setImageBitmap(methods.getResizedBitmap(stic1.get(position),80));
-            TwoSticker.setImageBitmap(methods.getResizedBitmap(stic2.get(position),80));
-            ThreeSticker.setImageBitmap(methods.getResizedBitmap(stic3.get(position),80));
-            FourSticker.setImageBitmap(methods.getResizedBitmap(stic4.get(position),80));
-            FiveSticker.setImageBitmap(methods.getResizedBitmap(stic5.get(position),80));
+            OneSticker.setImageBitmap(stic1.get(position));
+            TwoSticker.setImageBitmap(stic2.get(position));
+            ThreeSticker.setImageBitmap(stic3.get(position));
+            FourSticker.setImageBitmap(stic4.get(position));
+            FiveSticker.setImageBitmap(stic5.get(position));
 
 
 
@@ -1192,7 +1319,7 @@ public class EditorActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v)
                 {
-                    Bitmap x = stic1.get(position);
+                    Bitmap x = getRealSticker((position * 5) + 1);
                     selectedSticker = x;
                     addStickerOnImage();
                     dia.dismiss();
@@ -1202,7 +1329,7 @@ public class EditorActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v)
                 {
-                    Bitmap x = stic2.get(position);
+                    Bitmap x = getRealSticker((position * 5) + 2);
                     selectedSticker = x;
                     addStickerOnImage();
                     dia.dismiss();
@@ -1212,7 +1339,7 @@ public class EditorActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v)
                 {
-                    Bitmap x = stic3.get(position);
+                    Bitmap x = getRealSticker((position * 5) + 3);
                     selectedSticker = x;
                     addStickerOnImage();
                     dia.dismiss();
@@ -1222,7 +1349,7 @@ public class EditorActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v)
                 {
-                    Bitmap x = stic4.get(position);
+                    Bitmap x = getRealSticker((position * 5) + 4);
                     selectedSticker = x;
                     addStickerOnImage();
                     dia.dismiss();
@@ -1232,7 +1359,7 @@ public class EditorActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v)
                 {
-                    Bitmap x = stic5.get(position);
+                    Bitmap x = getRealSticker((position * 5) + 5);
                     selectedSticker = x;
                     addStickerOnImage();
                     dia.dismiss();
@@ -1247,6 +1374,115 @@ public class EditorActivity extends AppCompatActivity {
         {
 
         }
+    }
+    public Bitmap getRealSticker(int position)
+    {
+        Bitmap b;
+
+        switch (position)
+        {
+            case 1 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji1);
+                     break;
+            case 2 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji2);
+                break;
+            case 3 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji3);
+                break;
+            case 4 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji4);
+                break;
+            case 5 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji5);
+                break;
+            case 6 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji6);
+                break;
+            case 7 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji7);
+                break;
+            case 8 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji8);
+                break;
+            case 9 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji9);
+                break;
+            case 10 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji10);
+                break;
+            case 11 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji11);
+                break;
+            case 12 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji12);
+                break;
+            case 13 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji13);
+                break;
+            case 14 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji14);
+                break;
+            case 15 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji15);
+                break;
+            case 16 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji16);
+                break;
+            case 17 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji17);
+                break;
+            case 18 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji18);
+                break;
+            case 19 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji19);
+                break;
+            case 20 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji20);
+                break;
+            case 21 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji21);
+                break;
+            case 22 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji22);
+                break;
+            case 23 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji23);
+                break;
+            case 24 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji24);
+                break;
+            case 25 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji25);
+                break;
+            case 26 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji26);
+                break;
+            case 27 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji27);
+                break;
+            case 28 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji28);
+                break;
+            case 29 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji29);
+                break;
+            case 30 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji30);
+                break;
+            case 31 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji31);
+                break;
+            case 32 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji32);
+                break;
+            case 33 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji33);
+                break;
+            case 34 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji34);
+                break;
+            case 35 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji35);
+                break;
+            case 36 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji36);
+                break;
+            case 37 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji37);
+                break;
+            case 38 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji38);
+                break;
+            case 39 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji39);
+                break;
+            case 40 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji40);
+                break;
+            case 41 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji41);
+                break;
+            case 42 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji42);
+                break;
+            case 43 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji43);
+                break;
+            case 44 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji44);
+                break;
+            case 45 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji45);
+                break;
+            default:b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji1);
+                break;
+
+
+        }
+
+
+        return b;
+
+
+
+
     }
 
 }
