@@ -16,44 +16,52 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <activity android:name=".customGallery.MyCustomGallery" android:screenOrientation="portrait" android:label="Pick Image"></activity>
-        <activity android:name=".addTextOnImage.TextOnImageActivity" android:screenOrientation="portrait"></activity>
-        <activity android:name=".drawOnBitmap.DrawOnBitmapActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".activities.AddStickerOnImage"></activity>
+        <activity android:name=".activities.PhotoOnPhotoActivity" />
         <activity
-            android:name=".welcomeScreen.WelcomeScreen"
+            android:name=".activities.MyCustomGallery"
+            android:label="Pick Image"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.TextOnImageActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.drawOnBitmap.DrawOnBitmapActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.WelcomeScreen"
             android:screenOrientation="portrait"
             android:theme="@style/NoActionBarAppTheme" />
         <activity
-            android:name=".walkthrough.WalkThroughActivity"
+            android:name=".activities.walkthrough.WalkThroughActivity"
             android:screenOrientation="portrait"
             android:theme="@style/NoActionBarAppTheme" />
         <activity
-            android:name=".UsePreviouslyEditedImageActivity"
+            android:name=".activities.UsePreviouslyEditedImageActivity"
             android:label="Edited Images"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".AddEffects"
+            android:name=".activities.AddEffects"
             android:label="Add Effect"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".AdjustImage"
+            android:name=".activities.AdjustImage"
             android:label="Add Blur"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".CreateABackgroundActivity"
+            android:name=".activities.CreateABackgroundActivity"
             android:label="Create Image"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ImageSavingActivity"
+            android:name=".activities.ImageSavingActivity"
             android:label="Final Step"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".EditorActivity"
+            android:name=".activities.EditorActivity"
             android:label="Editor"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.MainActivity"
             android:label="Editor"
             android:screenOrientation="portrait"
             android:theme="@style/NoActionBarAppTheme">
@@ -74,24 +82,9 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
 
-
-
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3538783908730049~6469108180"/>
-
-
-        <!--
-        <service android:name=".firebase.MyFirebaseMessagingService">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>-->
-
+            android:value="ca-app-pub-3538783908730049~6469108180" />
     </application>
 
 </manifest>
-
-
-<!--ca-app-pub-3538783908730049~6469108180-->
-<!--app id-->

@@ -69,7 +69,7 @@ import render.animations.Bounce;
 import render.animations.Render;
 import render.animations.Zoom;
 
-//import static com.sba.sinhalaphotoeditor.EditorActivity.screenHeight;
+//import static com.sba.sinhalaphotoeditor.activities.EditorActivity.screenHeight;
 //
 //public class TextOnImage extends AppCompatActivity implements RotationGestureDetector.OnRotationGestureListener {
 //

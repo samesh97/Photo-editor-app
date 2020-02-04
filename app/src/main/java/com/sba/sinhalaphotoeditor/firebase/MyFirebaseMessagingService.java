@@ -17,7 +17,7 @@
 //
 //import com.google.firebase.messaging.FirebaseMessagingService;
 //import com.google.firebase.messaging.RemoteMessage;
-//import com.sba.sinhalaphotoeditor.MainActivity;
+//import com.sba.sinhalaphotoeditor.activities.MainActivity;
 //import com.sba.sinhalaphotoeditor.R;
 //
 //public class MyFirebaseMessagingService extends FirebaseMessagingService

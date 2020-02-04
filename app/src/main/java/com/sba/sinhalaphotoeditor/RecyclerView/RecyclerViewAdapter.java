@@ -27,15 +27,13 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.sba.sinhalaphotoeditor.EditorActivity;
-import com.sba.sinhalaphotoeditor.MainActivity;
+import com.sba.sinhalaphotoeditor.activities.EditorActivity;
+import com.sba.sinhalaphotoeditor.activities.MainActivity;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
-import com.sba.sinhalaphotoeditor.UsePreviouslyEditedImageActivity;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

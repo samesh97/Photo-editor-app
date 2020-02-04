@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:background="#114f5e"
     android:layout_height="match_parent"
-    tools:context=".welcomeScreen.WelcomeScreen">
+    tools:context=".activities.WelcomeScreen">
 
 
     <ImageView

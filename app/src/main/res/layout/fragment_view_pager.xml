@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/material_dark_blue"
-    tools:context=".walkthrough.ViewPagerFragment">
+    tools:context=".activities.walkthrough.ViewPagerFragment">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout

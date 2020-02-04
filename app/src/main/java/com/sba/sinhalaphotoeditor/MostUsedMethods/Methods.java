@@ -1,7 +1,6 @@
 package com.sba.sinhalaphotoeditor.MostUsedMethods;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -27,8 +26,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sba.sinhalaphotoeditor.ImageSavingActivity;
-import com.sba.sinhalaphotoeditor.MainActivity;
+import com.sba.sinhalaphotoeditor.activities.MainActivity;
 import com.sba.sinhalaphotoeditor.R;
 
 import java.io.ByteArrayOutputStream;
@@ -37,7 +35,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Method;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
