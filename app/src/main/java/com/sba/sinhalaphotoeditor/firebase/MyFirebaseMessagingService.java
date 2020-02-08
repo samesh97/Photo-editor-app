@@ -1,114 +1,109 @@
-//package com.sba.sinhalaphotoeditor.firebase;
-//
-//import android.app.LauncherActivity;
-//import android.app.Notification;
-//import android.app.NotificationChannel;
-//import android.app.NotificationManager;
-//import android.app.PendingIntent;
-//import android.content.Context;
-//import android.content.Intent;
-//import android.graphics.Color;
-//import android.os.Build;
-//import android.util.Log;
-//
-//import androidx.annotation.NonNull;
-//import androidx.core.app.NotificationCompat;
-//import androidx.core.content.ContextCompat;
-//
-//import com.google.firebase.messaging.FirebaseMessagingService;
-//import com.google.firebase.messaging.RemoteMessage;
-//import com.sba.sinhalaphotoeditor.activities.MainActivity;
-//import com.sba.sinhalaphotoeditor.R;
-//
-//public class MyFirebaseMessagingService extends FirebaseMessagingService
-//{
-//    @Override
-//    public void onMessageReceived(@NonNull RemoteMessage remoteMessage)
-//    {
-//        super.onMessageReceived(remoteMessage);
-//
-//        if(remoteMessage.getNotification() != null)
-//        {
-//            if(remoteMessage.getNotification().getTitle() != null && remoteMessage.getNotification().getBody() != null)
-//            {
-//                String message =  remoteMessage.getNotification().getBody();
-//                String title = remoteMessage.getNotification().getTitle();
-//
-//
-//                NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-//                int notifyId = 1;
-//                String channelId = "some_channel_id";
-//
-//                Notification notification = new Notification.Builder(MyFirebaseMessagingService.this)
-//                        .setContentTitle(title)
-//                        .setContentText(message)
-//                        .setSmallIcon(R.drawable.greenlogo)
-//                        .build();
-//
-//                notificationManager.notify(notifyId,notification);
-//                //sendNotification(MyFirebaseMessagingService.this,remoteMessage.getNotification().getTitle(),remoteMessage.getNotification().getBody());
-//            }
-//        }
-//
-//    }
-//
-//    @Override
-//    public void onNewToken(@NonNull String s)
-//    {
-//        Log.d("token",s);
-//        super.onNewToken(s);
-//    }
-//    public void sendNotification(Context context,String title,String message)
-//    {
-//        String idChannel = "my_channel_01";
-//        Intent mainIntent;
-//
-//        mainIntent = new Intent(context, MainActivity.class);
-//
-//        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, mainIntent, 0);
-//
-//        NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-//
-//        NotificationChannel mChannel = null;
-//        // The id of the channel.
-//
-//        int importance = NotificationManager.IMPORTANCE_HIGH;
-//
-//        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, null);
-//        builder.setContentTitle(context.getString(R.string.app_name))
-//                .setSmallIcon(R.drawable.greenlogo)
-//                .setContentIntent(pendingIntent)
-//                .setContentTitle(title)
-//                .setContentText(message);
-//
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-//        {
-//            mChannel = new NotificationChannel(idChannel, context.getString(R.string.app_name), importance);
-//            // Configure the notification channel.
-//            mChannel.setDescription(message);
-//            mChannel.enableLights(true);
-//            mChannel.setLightColor(Color.RED);
-//            mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
-//
-//            if(mNotificationManager != null)
-//            {
-//                mNotificationManager.createNotificationChannel(mChannel);
-//            }
-//
-//        }
-//        else
-//        {
-//            builder.setContentTitle(context.getString(R.string.app_name))
-//                    .setPriority(NotificationCompat.PRIORITY_HIGH)
-//                    .setColor(ContextCompat.getColor(context,R.color.material_dark_blue))
-//                    .setVibrate(new long[]{100, 250})
-//                    .setLights(Color.YELLOW, 500, 5000)
-//                    .setAutoCancel(true);
-//        }
-//        if(mNotificationManager != null)
-//        {
-//            mNotificationManager.notify(1, builder.build());
-//        }
-//
-//    }
-//}
+package com.sba.sinhalaphotoeditor.firebase;
+
+import android.app.LauncherActivity;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.os.Build;
+import android.provider.Settings;
+import android.util.Log;
+import android.widget.RemoteViews;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
+
+import com.google.firebase.messaging.FirebaseMessagingService;
+import com.google.firebase.messaging.RemoteMessage;
+import com.sba.sinhalaphotoeditor.activities.MainActivity;
+import com.sba.sinhalaphotoeditor.R;
+
+public class MyFirebaseMessagingService extends FirebaseMessagingService
+{
+    private static final String NOTIFICATION_CHANNEL_ID = "10001";
+
+    @Override
+    public void onMessageReceived(@NonNull RemoteMessage remoteMessage)
+    {
+
+        if(remoteMessage != null && remoteMessage.getNotification() != null)
+        {
+            String message = remoteMessage.getNotification().getBody();
+            String title = remoteMessage.getNotification().getTitle();
+
+            if (message != null && title != null && !message.equals("") && !title.equals(""))
+            {
+                createNotification(title, message);
+            }
+
+        }
+    }
+
+    @Override
+    public void onNewToken(@NonNull String s)
+    {
+        //saveToken(s);
+    }
+    public void createNotification(String title, String message)
+    {
+
+
+
+        //RemoteViews collapsedView = new RemoteViews(this.getPackageName(),R.layout.notication_collapsed );
+        //collapsedView.setTextViewText(R.id.title,title);
+
+        /**Creates an explicit intent for an Activity in your app**/
+        Intent resultIntent = new Intent(this , MainActivity.class);
+        resultIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        PendingIntent resultPendingIntent = PendingIntent.getActivity(this,
+                0 /* Request code */, resultIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
+        mBuilder.setSmallIcon(R.drawable.greenlogo);
+        mBuilder.setAutoCancel(false)
+               .setContentTitle(title)
+                .setContentText(message)
+                .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
+                .setContentIntent(resultPendingIntent);
+
+        NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)
+        {
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "NOTIFICATION_CHANNEL_NAME", importance);
+            notificationChannel.enableLights(true);
+            notificationChannel.setLightColor(Color.RED);
+            notificationChannel.enableVibration(true);
+            notificationChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+            assert mNotificationManager != null;
+            mBuilder.setChannelId(NOTIFICATION_CHANNEL_ID);
+            mNotificationManager.createNotificationChannel(notificationChannel);
+        }
+        if(mNotificationManager != null)
+        {
+            mNotificationManager.notify(0 /* Request Code */, mBuilder.build());
+        }
+
+    }
+    public void saveToken(String token)
+    {
+        SharedPreferences preferences = this.getSharedPreferences(getPackageName(),0);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("Token",token);
+        editor.apply();
+    }
+    public String getToken()
+    {
+        SharedPreferences preferences = this.getSharedPreferences(getPackageName(),0);
+        return  preferences.getString("Token",null);
+    }
+
+}
