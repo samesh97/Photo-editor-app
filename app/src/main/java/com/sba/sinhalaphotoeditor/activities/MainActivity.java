@@ -30,6 +30,7 @@ import androidx.core.content.res.ResourcesCompat;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
@@ -63,6 +64,8 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 
+import static com.sba.sinhalaphotoeditor.Config.Constants.FIREBASE_PAYLOAD_MESSAGE_TEXT;
+import static com.sba.sinhalaphotoeditor.Config.Constants.FIREBASE_PAYLOAD_TITLE_TEXT;
 import static com.sba.sinhalaphotoeditor.activities.MyCustomGallery.IMAGE_PICK_RESULT_CODE;
 import static com.sba.sinhalaphotoeditor.activities.MyCustomGallery.selectedBitmap;
 
@@ -135,6 +138,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+
+
 
 
         methods = new Methods(getApplicationContext());
@@ -448,6 +455,29 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
+        Intent intent = getIntent();
+        if(intent != null && intent.hasExtra(FIREBASE_PAYLOAD_TITLE_TEXT) && intent.hasExtra(FIREBASE_PAYLOAD_MESSAGE_TEXT))
+        {
+            Log.d("cameHere","came");
+            if(intent.getExtras() != null)
+            {
+                Log.d("cameHere","came");
+                String message = intent.getStringExtra(FIREBASE_PAYLOAD_MESSAGE_TEXT);
+                String title = intent.getStringExtra(FIREBASE_PAYLOAD_TITLE_TEXT);
+
+                if(message != null && title != null && !message.equals("") && !title.equals("") && !message.trim().equals("") && !title.trim().equals(""))
+                {
+                    Log.d("cameHere","came");
+                    Intent intent1 = new Intent(MainActivity.this,NotificationView.class);
+                    intent1.putExtra(FIREBASE_PAYLOAD_TITLE_TEXT,title);
+                    intent1.putExtra(FIREBASE_PAYLOAD_MESSAGE_TEXT,message);
+                    startActivity(intent1);
+
+                }
+            }
+
+        }
 
 
 
