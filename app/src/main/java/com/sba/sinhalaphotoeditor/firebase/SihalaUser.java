@@ -70,7 +70,7 @@ public class SihalaUser implements Serializable
     {
         this.phoneNumber = phoneNumber;
     }
-    public static void saveUser(Context context,SihalaUser user)
+    public void saveUser(Context context,SihalaUser user)
     {
         SharedPreferences pref = context.getSharedPreferences(SHARED_PREF_NAME,Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
@@ -82,7 +82,7 @@ public class SihalaUser implements Serializable
 
         editor.apply();
     }
-    public static SihalaUser getUser(Context context)
+    public SihalaUser getUser(Context context)
     {
         SihalaUser user = null;
 

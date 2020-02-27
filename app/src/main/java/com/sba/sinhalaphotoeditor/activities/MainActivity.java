@@ -26,6 +26,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -58,6 +59,7 @@ import com.sba.sinhalaphotoeditor.BuildConfig;
 import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.firebase.AppData;
+import com.sba.sinhalaphotoeditor.firebase.SihalaUser;
 
 
 import java.util.ArrayList;
@@ -160,12 +162,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         initViews();
+        initProfilePicture();
         methods = new Methods(getApplicationContext());
 
         setTextViewFontAndSize();
         setAppLanguage();
 
 
+    }
+
+    private void initProfilePicture()
+    {
+        CircleImageView profilePic = findViewById(R.id.profilePic);
+        SihalaUser user = new SihalaUser();
+        SihalaUser currentUser = user.getUser(MainActivity.this);
+
+        if(currentUser != null)
+        {
+            if(currentUser.getUserProfilePic() != null)
+            {
+                Glide.with(MainActivity.this)
+                        .load(currentUser.getUserProfilePic())
+                        .error(R.drawable.sampleprofilepic)
+                        .placeholder(R.drawable.sampleprofilepic)
+                        .into(profilePic);
+            }
+        }
     }
 
     private void initViews()
@@ -926,6 +948,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         {
             startActivity(new Intent(MainActivity.this, WelcomeScreen.class));
             finish();
+        }
+        else
+        {
+            SihalaUser user = new SihalaUser();
+            SihalaUser cUser = user.getUser(MainActivity.this);
+            if(cUser == null)
+            {
+                startActivity(new Intent(MainActivity.this, RegisterScreen.class));
+                finish();
+            }
         }
     }
     private void setAppLanguage()

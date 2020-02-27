@@ -8,149 +8,11 @@
     android:background="#114f5e"
     tools:context=".activities.MainActivity">
 
-    <!--
-
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#114f5e"
-        android:scrollbars="none"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">-->
-
-    <!--<androidx.constraintlayout.widget.Guideline-->
-    <!--android:id="@+id/guideline1"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:orientation="vertical"-->
-    <!--app:layout_constraintGuide_percent="0.1"/>-->
-
-
-    <!--<androidx.constraintlayout.widget.Guideline-->
-    <!--android:id="@+id/guideline2"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:orientation="vertical"-->
-    <!--app:layout_constraintGuide_percent="0.2"/>-->
-
-    <!--<androidx.constraintlayout.widget.Guideline-->
-    <!--android:id="@+id/guideline3"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:orientation="vertical"-->
-    <!--app:layout_constraintGuide_percent="0.3"/>-->
-
-    <!--<androidx.constraintlayout.widget.Guideline-->
-    <!--android:id="@+id/guideline4"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:orientation="vertical"-->
-    <!--app:layout_constraintGuide_percent="0.4"/>-->
-
-    <!--<androidx.constraintlayout.widget.Guideline-->
-    <!--android:id="@+id/guideline5"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:orientation="vertical"-->
-    <!--app:layout_constraintGuide_percent="0.5"/>-->
-
-    <!--<androidx.constraintlayout.widget.Guideline-->
-    <!--android:id="@+id/guideline6"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:orientation="vertical"-->
-    <!--app:layout_constraintGuide_percent="0.6"/>-->
-
-    <!--<androidx.constraintlayout.widget.Guideline-->
-    <!--android:id="@+id/guideline7"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:orientation="vertical"-->
-    <!--app:layout_constraintGuide_percent="0.7"/>-->
-
-    <!--<androidx.constraintlayout.widget.Guideline-->
-    <!--android:id="@+id/guideline8"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:orientation="vertical"-->
-    <!--app:layout_constraintGuide_percent="0.8"/>-->
-
-    <!--<androidx.constraintlayout.widget.Guideline-->
-    <!--android:id="@+id/guideline9"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:orientation="vertical"-->
-    <!--app:layout_constraintGuide_percent="0.9"/>-->
-
-
-    <!--<androidx.constraintlayout.widget.Guideline-->
-    <!--android:id="@+id/guideline11"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:orientation="horizontal"-->
-    <!--app:layout_constraintGuide_percent="0.1"/>-->
-
-    <!--<androidx.constraintlayout.widget.Guideline-->
-    <!--android:id="@+id/guideline12"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:orientation="horizontal"-->
-    <!--app:layout_constraintGuide_percent="0.2"/>-->
-
-    <!--<androidx.constraintlayout.widget.Guideline-->
-    <!--android:id="@+id/guideline13"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:orientation="horizontal"-->
-    <!--app:layout_constraintGuide_percent="0.3"/>-->
-
-    <!--<androidx.constraintlayout.widget.Guideline-->
-    <!--android:id="@+id/guideline14"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:orientation="horizontal"-->
-    <!--app:layout_constraintGuide_percent="0.4"/>-->
-
-    <!--<androidx.constraintlayout.widget.Guideline-->
-    <!--android:id="@+id/guideline15"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:orientation="horizontal"-->
-    <!--app:layout_constraintGuide_percent="0.5"/>-->
-
-    <!--<androidx.constraintlayout.widget.Guideline-->
-    <!--android:id="@+id/guideline16"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:orientation="horizontal"-->
-    <!--app:layout_constraintGuide_percent="0.6"/>-->
-
-    <!--<androidx.constraintlayout.widget.Guideline-->
-    <!--android:id="@+id/guideline17"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:orientation="horizontal"-->
-    <!--app:layout_constraintGuide_percent="0.7"/>-->
-
-    <!--<androidx.constraintlayout.widget.Guideline-->
-    <!--android:id="@+id/guideline18"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:orientation="horizontal"-->
-    <!--app:layout_constraintGuide_percent="0.8"/>-->
-
-    <!--<androidx.constraintlayout.widget.Guideline-->
-    <!--android:id="@+id/guideline19"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:orientation="horizontal"-->
-    <!--app:layout_constraintGuide_percent="0.9"/>-->
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#114f5e"
+        android:background="@drawable/gradient_blue"
         tools:context=".activities.MainActivity">
 
         <androidx.constraintlayout.widget.Guideline
@@ -241,6 +103,19 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profilePic"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="14dp"
+            android:src="@drawable/sampleprofilepic"
+            app:civ_border_color="#FFFFFF"
+            app:civ_border_width="2dp"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintTop_toBottomOf="@+id/constraintLayout3" />
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -491,6 +366,16 @@
 
     <!--</androidx.core.widget.NestedScrollView>-->
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/grass"
+        android:alpha="0.7"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
 
     <TextView
         android:id="@+id/verionName"
@@ -501,7 +386,7 @@
         android:gravity="center"
         android:text="Version 1.1.7"
         android:textColor="#FFFFFF"
-        android:textSize="19sp"
+        android:textSize="18sp"
         android:textStyle="bold"
         android:typeface="sans"
         app:layout_constraintBottom_toBottomOf="parent"

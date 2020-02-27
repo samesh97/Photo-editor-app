@@ -14,6 +14,7 @@ import android.widget.Button;
 
 import com.sba.sinhalaphotoeditor.activities.MainActivity;
 import com.sba.sinhalaphotoeditor.R;
+import com.sba.sinhalaphotoeditor.activities.RegisterScreen;
 
 import java.util.ArrayList;
 
@@ -137,7 +138,7 @@ public class WalkThroughActivity extends AppCompatActivity {
                     editor.putBoolean(IS_WALKTHROUGH_NEEDED_KEY,true);
                     editor.apply();
 
-                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    Intent intent = new Intent(getApplicationContext(), RegisterScreen.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                     finish();

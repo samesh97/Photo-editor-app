@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="@color/material_dark_blue"
+    android:layout_height="match_parent"
+    tools:context=".activities.RegisterScreen">
+
+
+    <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/profilePicture"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginStart="80dp"
+        android:layout_marginTop="76dp"
+        android:layout_marginEnd="81dp"
+        android:src="@drawable/sampleprofilepic"
+        app:civ_border_color="#FFFFFF"
+        app:civ_border_width="3dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <EditText
+        android:id="@+id/fullName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp"
+        android:alpha="0.6"
+        android:background="@drawable/opaciy"
+        android:hint="Name"
+        android:paddingLeft="10dp"
+        android:paddingTop="12dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="12dp"
+        android:textColor="#000000"
+        android:textColorHint="#000000"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profilePicture" />
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/rel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/opaciy"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fullName">
+
+        <com.rilixtech.CountryCodePicker
+            android:id="@+id/ccp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:alpha="0.6"
+            android:gravity="center"
+            android:paddingLeft="10dp"
+            android:paddingTop="12dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="14dp"
+            app:ccp_defaultNameCode="LK"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/phoneNumber"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_alignTop="@+id/ccp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:alpha="0.6"
+            android:background="@android:color/transparent"
+            android:hint="780000000"
+            android:inputType="number"
+            android:paddingLeft="10dp"
+            android:paddingTop="12dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="12dp"
+            android:textColor="#000000"
+            android:textColorHint="#000000"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/ccp"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <!--<EditText-->
+        <!--android:id="@+id/password"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginStart="24dp"-->
+        <!--android:layout_marginTop="8dp"-->
+        <!--android:layout_marginEnd="24dp"-->
+        <!--android:alpha="0.6"-->
+        <!--android:background="@drawable/opaciy"-->
+        <!--android:hint="Password"-->
+        <!--android:inputType="textPassword"-->
+        <!--android:paddingLeft="10dp"-->
+        <!--android:paddingTop="12dp"-->
+        <!--android:paddingRight="10dp"-->
+        <!--android:paddingBottom="12dp"-->
+        <!--android:textColor="#000000"-->
+        <!--android:textColorHint="#000000"-->
+        <!--android:textSize="15sp"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintHorizontal_bias="0.0"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/rel" />-->
+
+    <Button
+        android:id="@+id/loginButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/opaciy"
+        android:text="Next"
+        android:textColor="#ffffff"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rel" />
+
+    <!--<TextView-->
+        <!--android:id="@+id/loginLink"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginStart="8dp"-->
+        <!--android:layout_marginLeft="8dp"-->
+        <!--android:layout_marginTop="8dp"-->
+        <!--android:layout_marginEnd="8dp"-->
+        <!--android:layout_marginRight="8dp"-->
+        <!--android:text="Already Registered? Sign in Here"-->
+        <!--android:textColor="#ffffff"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/loginButton" />-->
+
+
+    <!--<EditText-->
+        <!--android:id="@+id/confirmPassword"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginStart="24dp"-->
+        <!--android:layout_marginTop="8dp"-->
+        <!--android:layout_marginEnd="24dp"-->
+        <!--android:alpha="0.6"-->
+        <!--android:background="@drawable/opaciy"-->
+        <!--android:ems="10"-->
+        <!--android:hint="Confirm Password"-->
+        <!--android:inputType="textPassword"-->
+        <!--android:paddingLeft="10dp"-->
+        <!--android:paddingTop="12dp"-->
+        <!--android:paddingRight="10dp"-->
+        <!--android:paddingBottom="12dp"-->
+        <!--android:textColor="#000000"-->
+        <!--android:textColorHint="#000000"-->
+        <!--android:textSize="15sp"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintHorizontal_bias="0.607"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/password" />-->
+
+</androidx.constraintlayout.widget.ConstraintLayout>
