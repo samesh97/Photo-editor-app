@@ -24,6 +24,13 @@ import com.sba.sinhalaphotoeditor.activities.walkthrough.WalkThroughActivity;
 
 import java.util.Locale;
 
+import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_ENGLISH;
+import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_KEY;
+import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_POSITION_KEY;
+import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_SINHALA;
+import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_TAMIL;
+import static com.sba.sinhalaphotoeditor.Config.Constants.SHARED_PREF_NAME;
+
 public class WelcomeScreen extends AppCompatActivity {
 
     private int selectedLanguagePos = 0;
@@ -34,7 +41,7 @@ public class WelcomeScreen extends AppCompatActivity {
         setContentView(R.layout.activity_welcome_screen);
 
 
-        //setTextViewFontAndSize();
+        setTextViewFontAndSize();
 
         Button proceed = findViewById(R.id.proceed);
         Spinner languagePicker = findViewById(R.id.languagePicker);
@@ -51,13 +58,13 @@ public class WelcomeScreen extends AppCompatActivity {
                 switch (position)
                 {
                     case 1:
-                        setLocale("si",position);
+                        setLocale(LANGUAGE_SINHALA,position);
                         break;
                     case 2:
-                        setLocale("en",position);
+                        setLocale(LANGUAGE_ENGLISH,position);
                         break;
                     case 3:
-                        setLocale("ta",position);
+                        setLocale(LANGUAGE_TAMIL,position);
                         break;
                 }
 
@@ -103,11 +110,11 @@ public class WelcomeScreen extends AppCompatActivity {
         res.updateConfiguration(conf, dm);
 
 
-        SharedPreferences pref = getApplicationContext().getSharedPreferences("com.sba.sinhalaphotoeditor", 0);
+        SharedPreferences pref = getApplicationContext().getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
 
-        editor.putInt("LanguagePosition",position);
-        editor.putString("Language",lang);
+        editor.putInt(LANGUAGE_POSITION_KEY,position);
+        editor.putString(LANGUAGE_KEY,lang);
 
         editor.apply();
 
@@ -122,8 +129,8 @@ public class WelcomeScreen extends AppCompatActivity {
 
         Typeface typeface;
 
-        SharedPreferences pref = getApplicationContext().getSharedPreferences("com.sba.sinhalaphotoeditor", 0);
-        int pos = pref.getInt("LanguagePosition",-99);
+        SharedPreferences pref = getApplicationContext().getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        int pos = pref.getInt(LANGUAGE_POSITION_KEY,-99);
         if(pos != 99) {
             switch (pos) {
                 case 1:

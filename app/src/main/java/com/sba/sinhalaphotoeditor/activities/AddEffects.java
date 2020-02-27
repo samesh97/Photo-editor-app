@@ -199,14 +199,11 @@ public class AddEffects extends AppCompatActivity {
 
 
 
-        try
+        if(getSupportActionBar() != null)
         {
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#114f5e")));
         }
-        catch (NullPointerException e)
-        {
-            e.printStackTrace();
-        }
+
 
 
         methods = new Methods(getApplicationContext());

@@ -43,7 +43,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage)
     {
 
-        Log.d("calledss","called");
         if(remoteMessage.getNotification() != null)
         {
             String message = remoteMessage.getData().get(FIREBASE_PAYLOAD_MESSAGE_TEXT);

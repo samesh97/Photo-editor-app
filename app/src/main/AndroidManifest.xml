@@ -16,8 +16,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.NotificationView"
-            android:theme="@style/NoActionBarAppTheme"></activity>
+        <activity android:name=".keyboard.KeyBoardAc">
+        </activity>
+        <activity
+            android:name=".activities.NotificationView"
+            android:theme="@style/NoActionBarAppTheme" />
         <activity android:name=".activities.AddStickerOnImage" />
         <activity android:name=".activities.PhotoOnPhotoActivity" />
         <activity
@@ -67,11 +70,13 @@
             android:label="Editor"
             android:screenOrientation="portrait"
             android:theme="@style/NoActionBarAppTheme">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
         <activity
             android:name=".PhotoOnPhoto"
@@ -93,6 +98,7 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/greenlogo" />

@@ -17,6 +17,10 @@ import com.sba.sinhalaphotoeditor.R;
 
 import java.util.ArrayList;
 
+import static com.sba.sinhalaphotoeditor.Config.Constants.IS_WALKTHROUGH_NEEDED_KEY;
+import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_POSITION_KEY;
+import static com.sba.sinhalaphotoeditor.Config.Constants.SHARED_PREF_NAME;
+
 public class WalkThroughActivity extends AppCompatActivity {
 
     ViewPager viewPager;
@@ -128,9 +132,9 @@ public class WalkThroughActivity extends AppCompatActivity {
             {
                 if(next.getText().equals(getResources().getString(R.string.finish_text)))
                 {
-                    SharedPreferences pref = getApplicationContext().getSharedPreferences("com.sba.photoeditor", 0);
+                    SharedPreferences pref = getApplicationContext().getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
                     SharedPreferences.Editor editor = pref.edit();
-                    editor.putBoolean("isWalkThroughNeeded",true);
+                    editor.putBoolean(IS_WALKTHROUGH_NEEDED_KEY,true);
                     editor.apply();
 
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
@@ -200,8 +204,8 @@ public class WalkThroughActivity extends AppCompatActivity {
 
         Typeface typeface;
 
-        SharedPreferences pref = getApplicationContext().getSharedPreferences("com.sba.sinhalaphotoeditor", 0);
-        int pos = pref.getInt("LanguagePosition",-99);
+        SharedPreferences pref = getApplicationContext().getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        int pos = pref.getInt(LANGUAGE_POSITION_KEY,-99);
         if(pos != 99) {
             switch (pos) {
                 case 1:

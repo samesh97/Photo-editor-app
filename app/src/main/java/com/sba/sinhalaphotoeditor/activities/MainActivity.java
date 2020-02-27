@@ -64,12 +64,22 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 
+import static com.sba.sinhalaphotoeditor.Config.Constants.ACTIVITY_EXTRA_KEY;
+import static com.sba.sinhalaphotoeditor.Config.Constants.APP_MARKET_LINK;
+import static com.sba.sinhalaphotoeditor.Config.Constants.FIREBASE_APP_INFO_REFERENCE;
 import static com.sba.sinhalaphotoeditor.Config.Constants.FIREBASE_PAYLOAD_MESSAGE_TEXT;
 import static com.sba.sinhalaphotoeditor.Config.Constants.FIREBASE_PAYLOAD_TITLE_TEXT;
+import static com.sba.sinhalaphotoeditor.Config.Constants.IS_WALKTHROUGH_NEEDED_KEY;
+import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_ENGLISH;
+import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_KEY;
+import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_POSITION_KEY;
+import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_SINHALA;
+import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_TAMIL;
+import static com.sba.sinhalaphotoeditor.Config.Constants.SHARED_PREF_NAME;
 import static com.sba.sinhalaphotoeditor.activities.MyCustomGallery.IMAGE_PICK_RESULT_CODE;
 import static com.sba.sinhalaphotoeditor.activities.MyCustomGallery.selectedBitmap;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
 
     private static final int PICK_IMAGE_REQUEST = 234;
@@ -90,6 +100,23 @@ public class MainActivity extends AppCompatActivity {
     private AnimatedVectorDrawable animations;
     private FirebaseDatabase database;
     private DatabaseReference reference;
+
+    private ImageView createBitmap;
+    private ConstraintLayout createImageFromLibrary;
+    private ConstraintLayout pickImageFromDb;
+    private ConstraintLayout pickImageFromGallery;
+    private ImageView imageView;
+    private ImageView roundImage;
+    private TextView selectPictureText;
+    private TextView verionName;
+    private ImageView topGreenPannel;
+    private TextView useOne;
+    private TextView createOne;
+    private TextView fromGalery;
+    private ImageView usePreviousBitmap;
+
+
+
 
 
 
@@ -113,14 +140,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart()
     {
 
-        SharedPreferences pref = getApplicationContext().getSharedPreferences("com.sba.photoeditor", 0); // 0 - for private mode
-        //SharedPreferences.Editor editor = pref.edit();
-        boolean isWalkThroughNeeded = pref.getBoolean("isWalkThroughNeeded", false);
-        if (!isWalkThroughNeeded)
-        {
-            startActivity(new Intent(MainActivity.this, WelcomeScreen.class));
-            finish();
-        }
+        checkWalkThroughNeededOrNot();
         super.onStart();
     }
 
@@ -139,47 +159,39 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-
-
-
-
+        initViews();
         methods = new Methods(getApplicationContext());
+
         setTextViewFontAndSize();
-
-        SharedPreferences pref2 = getApplicationContext().getSharedPreferences("com.sba.sinhalaphotoeditor", 0);
-        String code = pref2.getString("Language",null);
-        if(code != null)
-        {
-            if(isFirstTime)
-            {
-                setLocaleOnStart(code);
-            }
-
-        }
+        setAppLanguage();
 
 
-        ImageView createBitmap = (ImageView) findViewById(R.id.createBitmap);
-        ConstraintLayout createImageFromLibrary = (ConstraintLayout) findViewById(R.id.createImageFromLibrary);
-        ConstraintLayout pickImageFromDb = (ConstraintLayout) findViewById(R.id.pickImageFromDb);
-        ConstraintLayout pickImageFromGallery = (ConstraintLayout) findViewById(R.id.pickImageFromGallery);
-        ImageView imageView = (ImageView) findViewById(R.id.imageView);
-        ImageView roundImage = (ImageView) findViewById(R.id.roundImage);
-        TextView selectPictureText = findViewById(R.id.selectPictureText);
+    }
+
+    private void initViews()
+    {
+        createBitmap = (ImageView) findViewById(R.id.createBitmap);
+        createImageFromLibrary = (ConstraintLayout) findViewById(R.id.createImageFromLibrary);
+        pickImageFromDb = (ConstraintLayout) findViewById(R.id.pickImageFromDb);
+        pickImageFromGallery = (ConstraintLayout) findViewById(R.id.pickImageFromGallery);
+        imageView = (ImageView) findViewById(R.id.imageView);
+        roundImage = (ImageView) findViewById(R.id.roundImage);
+        selectPictureText = findViewById(R.id.selectPictureText);
         languagePicker = findViewById(R.id.languagePicker);
-        TextView verionName = findViewById(R.id.verionName);
-
-        ImageView topGreenPannel;
+        verionName = findViewById(R.id.verionName);
         topGreenPannel = findViewById(R.id.topGreenPannel);
+        createOne = (TextView) findViewById(R.id.createOne);
+        useOne = (TextView) findViewById(R.id.useOne);
+        fromGalery = (TextView) findViewById(R.id.fromGalery);
+        usePreviousBitmap = (ImageView) findViewById(R.id.usePreviousBitmap);
+
+
+
+        dialog = new ProgressDialog(MainActivity.this);
+
+
         Glide.with(getApplicationContext()).load(R.drawable.samplewalpaper).into(topGreenPannel);
-
-
-
         verionName.setText("Version " + BuildConfig.VERSION_NAME);
-
-
-
-
 //        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#018577")));
 
 
@@ -187,9 +199,6 @@ public class MainActivity extends AppCompatActivity {
         int maxMemory = (int)rt.freeMemory();
         GlideBitmapPool.initialize(maxMemory);
         GlideBitmapPool.clearMemory();
-
-
-
 
 
         //pickImageFromGallery.animate().alpha(0.0f).setDuration(0).translationY(2000);
@@ -215,196 +224,77 @@ public class MainActivity extends AppCompatActivity {
         imageView.startAnimation(pulse);
 
 
+        useOne.setOnClickListener(this);
+        pickImageFromDb.setOnClickListener(this);
+        createImageFromLibrary.setOnClickListener(this);
+        createOne.setOnClickListener(this);
+        createBitmap.setOnClickListener(this);
+        usePreviousBitmap.setOnClickListener(this);
 
-
-        dialog = new ProgressDialog(MainActivity.this);
-
-        TextView useOne = (TextView) findViewById(R.id.useOne);
-        useOne.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                {
-
-                    if(!isPermissonGranted())
-                    {
-                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-                    }
-                    if(!isPermissonGranted2())
-                    {
-                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
-                    }
-                    if(isPermissonGranted() && isPermissonGranted2())
-                    {
-                        startActivity(new Intent(MainActivity.this, UsePreviouslyEditedImageActivity.class));
-                    }
-                }
-                else
-                {
-                    startActivity(new Intent(MainActivity.this,UsePreviouslyEditedImageActivity.class));
-                }
-            }
-        });
-
-
-
-
-
-
-        pickImageFromDb.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                {
-
-                    if(!isPermissonGranted())
-                    {
-                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-                    }
-                    if(!isPermissonGranted2())
-                    {
-                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
-                    }
-                    if(isPermissonGranted() && isPermissonGranted2())
-                    {
-                        startActivity(new Intent(MainActivity.this,UsePreviouslyEditedImageActivity.class));
-                    }
-                }
-                else
-                {
-                    startActivity(new Intent(MainActivity.this,UsePreviouslyEditedImageActivity.class));
-                }
-
-            }
-        });
-        createImageFromLibrary.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                {
-
-                    if(!isPermissonGranted())
-                    {
-                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-                    }
-                    if(!isPermissonGranted2())
-                    {
-                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
-                    }
-                    if(isPermissonGranted() && isPermissonGranted2())
-                    {
-                        startActivity(new Intent(getApplicationContext(), CreateABackgroundActivity.class));
-                    }
-                }
-                else
-                {
-                    startActivity(new Intent(getApplicationContext(),CreateABackgroundActivity.class));
-                }
-
-            }
-        });
 
         createBitmap.startAnimation(pulse);
-        TextView createOne = (TextView) findViewById(R.id.createOne);
-
-
-        createOne.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                {
-
-                    if(!isPermissonGranted())
-                    {
-                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-                    }
-                    if(!isPermissonGranted2())
-                    {
-                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
-                    }
-                    if(isPermissonGranted() && isPermissonGranted2())
-                    {
-                        startActivity(new Intent(getApplicationContext(),CreateABackgroundActivity.class));
-                    }
-                }
-                else
-                {
-                    startActivity(new Intent(getApplicationContext(),CreateABackgroundActivity.class));
-                }
-            }
-        });
-        TextView fromGalery = (TextView) findViewById(R.id.fromGalery);
-
-        createBitmap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                {
-
-                    if(!isPermissonGranted())
-                    {
-                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-                    }
-                    if(!isPermissonGranted2())
-                    {
-                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
-                    }
-                    if(isPermissonGranted() && isPermissonGranted2())
-                    {
-                        startActivity(new Intent(getApplicationContext(),CreateABackgroundActivity.class));
-                    }
-                }
-                else
-                {
-                    startActivity(new Intent(getApplicationContext(),CreateABackgroundActivity.class));
-                }
-
-
-            }
-        });
-
-
-        ImageView usePreviousBitmap = (ImageView) findViewById(R.id.usePreviousBitmap);
         usePreviousBitmap.startAnimation(pulse);
 
-        usePreviousBitmap.setOnClickListener(new View.OnClickListener()
-        {
+
+
+        configLanguagePicker();
+
+
+
+
+
+
+        database = FirebaseDatabase.getInstance();
+        reference = database.getReference().child(FIREBASE_APP_INFO_REFERENCE);
+
+        new Handler().postDelayed(new Runnable() {
             @Override
-            public void onClick(View v)
+            public void run()
             {
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                {
-
-                    if(!isPermissonGranted())
-                    {
-                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-                    }
-                    if(!isPermissonGranted2())
-                    {
-                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
-                    }
-                    if(isPermissonGranted() && isPermissonGranted2())
-                    {
-                        startActivity(new Intent(MainActivity.this,UsePreviouslyEditedImageActivity.class));
-                    }
-                }
-                else
-                {
-                    startActivity(new Intent(MainActivity.this,UsePreviouslyEditedImageActivity.class));
-                }
-
+                checkForTheCurrentVersion();
             }
-        });
+        },1500);
 
 
 
-        SharedPreferences pref = getApplicationContext().getSharedPreferences("com.sba.sinhalaphotoeditor", 0);
-        final int pos = pref.getInt("LanguagePosition",0);
+
+        configPushNotification();
+
+
+
+
+    }
+
+    private void configPushNotification()
+    {
+        Intent intent = getIntent();
+        if(intent != null && intent.hasExtra(FIREBASE_PAYLOAD_TITLE_TEXT) && intent.hasExtra(FIREBASE_PAYLOAD_MESSAGE_TEXT))
+        {
+
+            if(intent.getExtras() != null)
+            {
+
+                String message = intent.getStringExtra(FIREBASE_PAYLOAD_MESSAGE_TEXT);
+                String title = intent.getStringExtra(FIREBASE_PAYLOAD_TITLE_TEXT);
+
+                if(message != null && title != null && !message.equals("") && !title.equals("") && !message.trim().equals("") && !title.trim().equals(""))
+                {
+
+                    Intent intent1 = new Intent(MainActivity.this,NotificationView.class);
+                    intent1.putExtra(FIREBASE_PAYLOAD_TITLE_TEXT,title);
+                    intent1.putExtra(FIREBASE_PAYLOAD_MESSAGE_TEXT,message);
+                    startActivity(intent1);
+
+                }
+            }
+
+        }
+    }
+
+    private void configLanguagePicker()
+    {
+        SharedPreferences pref = getApplicationContext().getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        final int pos = pref.getInt(LANGUAGE_POSITION_KEY,0);
         languagePicker.setSelection(pos);
 
 
@@ -419,15 +309,15 @@ public class MainActivity extends AppCompatActivity {
                     switch (position)
                     {
                         case 1 :
-                            setLocale("si",position);
+                            setLocale(LANGUAGE_SINHALA,position);
                             break;
 
                         case  2 :
-                            setLocale("en",position);
+                            setLocale(LANGUAGE_ENGLISH,position);
                             break;
 
                         case 3:
-                            setLocale("ta",position);
+                            setLocale(LANGUAGE_TAMIL,position);
                             break;
                     }
                 }
@@ -439,50 +329,9 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
-
-
-        database = FirebaseDatabase.getInstance();
-        reference = database.getReference().child("AppInfo");
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run()
-            {
-                checkForTheCurrentVersion();
-            }
-        },1500);
-
-
-
-
-        Intent intent = getIntent();
-        if(intent != null && intent.hasExtra(FIREBASE_PAYLOAD_TITLE_TEXT) && intent.hasExtra(FIREBASE_PAYLOAD_MESSAGE_TEXT))
-        {
-            Log.d("cameHere","came");
-            if(intent.getExtras() != null)
-            {
-                Log.d("cameHere","came");
-                String message = intent.getStringExtra(FIREBASE_PAYLOAD_MESSAGE_TEXT);
-                String title = intent.getStringExtra(FIREBASE_PAYLOAD_TITLE_TEXT);
-
-                if(message != null && title != null && !message.equals("") && !title.equals("") && !message.trim().equals("") && !title.trim().equals(""))
-                {
-                    Log.d("cameHere","came");
-                    Intent intent1 = new Intent(MainActivity.this,NotificationView.class);
-                    intent1.putExtra(FIREBASE_PAYLOAD_TITLE_TEXT,title);
-                    intent1.putExtra(FIREBASE_PAYLOAD_MESSAGE_TEXT,message);
-                    startActivity(intent1);
-
-                }
-            }
-
-        }
-
-
-
-
     }
+
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
     {
@@ -551,7 +400,7 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);*/
 
         Intent intent = new Intent(MainActivity.this, MyCustomGallery.class);
-        intent.putExtra("Activity","MainActivity");
+        intent.putExtra(ACTIVITY_EXTRA_KEY,"MainActivity");
         //startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
         startActivityForResult(intent,PICK_IMAGE_REQUEST);
 
@@ -673,11 +522,11 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        SharedPreferences pref = getApplicationContext().getSharedPreferences("com.sba.sinhalaphotoeditor", 0);
+        SharedPreferences pref = getApplicationContext().getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
 
-        editor.putInt("LanguagePosition",position);
-        editor.putString("Language",lang);
+        editor.putInt(LANGUAGE_POSITION_KEY,position);
+        editor.putString(LANGUAGE_KEY,lang);
 
         editor.apply();
 
@@ -717,8 +566,8 @@ public class MainActivity extends AppCompatActivity {
 
         Typeface typeface;
 
-        SharedPreferences pref = getApplicationContext().getSharedPreferences("com.sba.sinhalaphotoeditor", 0);
-        int pos = pref.getInt("LanguagePosition",-99);
+        SharedPreferences pref = getApplicationContext().getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        int pos = pref.getInt(LANGUAGE_POSITION_KEY,-99);
         if(pos != 99)
         {
             switch (pos)
@@ -771,6 +620,84 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+    @Override
+    public void onClick(View v)
+    {
+        if(v == useOne || v == usePreviousBitmap)
+        {
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            {
+
+                if(!isPermissonGranted())
+                {
+                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                }
+                if(!isPermissonGranted2())
+                {
+                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
+                }
+                if(isPermissonGranted() && isPermissonGranted2())
+                {
+                    startActivity(new Intent(MainActivity.this, UsePreviouslyEditedImageActivity.class));
+                }
+            }
+            else
+            {
+                startActivity(new Intent(MainActivity.this,UsePreviouslyEditedImageActivity.class));
+            }
+        }
+        else if(v == pickImageFromDb)
+        {
+                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                    {
+
+                        if(!isPermissonGranted())
+                        {
+                            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                        }
+                        if(!isPermissonGranted2())
+                        {
+                            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
+                        }
+                        if(isPermissonGranted() && isPermissonGranted2())
+                        {
+                            startActivity(new Intent(MainActivity.this,UsePreviouslyEditedImageActivity.class));
+                        }
+                    }
+                    else
+                    {
+                        startActivity(new Intent(MainActivity.this,UsePreviouslyEditedImageActivity.class));
+                    }
+
+        }
+        else if(v == createImageFromLibrary || v == createOne || v == createBitmap)
+        {
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            {
+
+                if(!isPermissonGranted())
+                {
+                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                }
+                if(!isPermissonGranted2())
+                {
+                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
+                }
+                if(isPermissonGranted() && isPermissonGranted2())
+                {
+                    startActivity(new Intent(getApplicationContext(), CreateABackgroundActivity.class));
+                }
+            }
+            else
+            {
+                startActivity(new Intent(getApplicationContext(),CreateABackgroundActivity.class));
+            }
+
+        }
+
+    }
+
     public class startActivity extends AsyncTask<Void,Void,Void> {
 
         @Override
@@ -807,10 +734,12 @@ public class MainActivity extends AppCompatActivity {
     }
     public void checkAnimationOverTime()
     {
+        if(animations.isRunning())
+        {
+            animations.invalidateSelf();
+            animations.stop();
+        }
 
-
-
-        animations.stop();
         Drawable drawable = getResources().getDrawable(R.drawable.finish_loading);
         animation.setImageDrawable(drawable);
 
@@ -839,7 +768,7 @@ public class MainActivity extends AppCompatActivity {
         dialog.setCancelable(false);
 
         WindowManager.LayoutParams lp = dialog.getWindow().getAttributes();
-        lp.dimAmount=0.1f; // Dim level. 0.0 - no dim, 1.0 - completely opaque
+        lp.dimAmount = 0.6f; // Dim level. 0.0 - no dim, 1.0 - completely opaque
         dialog.getWindow().setAttributes(lp);
 
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -867,7 +796,7 @@ public class MainActivity extends AppCompatActivity {
         }
         if (reference == null)
         {
-            reference = database.getReference().child("AppInfo");
+            reference = database.getReference().child(FIREBASE_APP_INFO_REFERENCE);
         }
 
 
@@ -938,7 +867,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setData(Uri.parse("market://details?id=com.sba.sinhalaphotoeditor"));
+                    intent.setData(Uri.parse(APP_MARKET_LINK));
                     startActivity(intent);
 
                     popdialog.dismiss();
@@ -968,7 +897,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         if (reference == null) {
-            reference = database.getReference().child("AppInfo");
+            reference = database.getReference().child(FIREBASE_APP_INFO_REFERENCE);
         }
         if (database == null) {
             database = FirebaseDatabase.getInstance();
@@ -987,6 +916,30 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+    private void checkWalkThroughNeededOrNot()
+    {
+        SharedPreferences pref = getApplicationContext().getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        //SharedPreferences.Editor editor = pref.edit();
+        boolean isWalkThroughNeeded = pref.getBoolean(IS_WALKTHROUGH_NEEDED_KEY, false);
+        if (!isWalkThroughNeeded)
+        {
+            startActivity(new Intent(MainActivity.this, WelcomeScreen.class));
+            finish();
+        }
+    }
+    private void setAppLanguage()
+    {
+        SharedPreferences pref2 = getApplicationContext().getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        String code = pref2.getString(LANGUAGE_KEY,null);
+        if(code != null)
+        {
+            if(isFirstTime)
+            {
+                setLocaleOnStart(code);
+            }
+
+        }
     }
 
 }

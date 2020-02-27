@@ -193,7 +193,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.75" />
+            app:layout_constraintGuide_percent="0.8" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline4"
@@ -207,14 +207,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.48" />
+            app:layout_constraintGuide_percent="0.5" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.61" />
+            app:layout_constraintGuide_percent="0.65" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline7"
@@ -350,10 +350,9 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginStart="20dp"
-                android:layout_marginTop="14dp"
+                android:layout_marginTop="22dp"
                 android:layout_marginEnd="20dp"
-                android:layout_marginBottom="14dp"
-                android:background="@drawable/greenborder"
+                android:layout_marginBottom="22dp"
                 android:onClick="showFileChooser"
                 android:src="@drawable/addimage"
                 app:layout_constraintBottom_toBottomOf="@+id/pickImageFromGallery"
@@ -406,10 +405,9 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginStart="20dp"
-                android:layout_marginTop="14dp"
+                android:layout_marginTop="22dp"
                 android:layout_marginEnd="20dp"
-                android:layout_marginBottom="14dp"
-                android:background="@drawable/greenborder"
+                android:layout_marginBottom="22dp"
                 android:src="@drawable/createbitmap"
                 app:layout_constraintBottom_toBottomOf="@+id/createImageFromLibrary"
                 app:layout_constraintEnd_toStartOf="@+id/guideline10"
@@ -459,10 +457,9 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginStart="20dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="22dp"
                 android:layout_marginEnd="20dp"
-                android:layout_marginBottom="16dp"
-                android:background="@drawable/greenborder"
+                android:layout_marginBottom="22dp"
                 android:src="@drawable/addfromimages"
                 app:layout_constraintBottom_toBottomOf="@+id/pickImageFromDb"
                 app:layout_constraintEnd_toStartOf="@+id/guideline11"
