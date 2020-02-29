@@ -282,20 +282,7 @@ public class Methods
             e.printStackTrace();
         }
 
-
-
-
-        View view = LayoutInflater.from(context).inflate(R.layout.toast_layout,null);
-
-        TextView toastMessage = view.findViewById(R.id.toastMessage);
-        toastMessage.setText("Saved to gallery");
-
-        Toast toast = new Toast(context);
-        toast.setDuration(Toast.LENGTH_LONG);
-        toast.setView(view);
-        toast.show();
-
-
+        showCustomToast(context,"Saved to Gallery");
 
 
 
@@ -488,6 +475,19 @@ public class Methods
         int imageHeight = scaledGalleryBitmap.getHeight();
         return  (imageHeight * width)/imageWidth;
         //scaledGalleryBitmap = Bitmap.createScaledBitmap(scaledGalleryBitmap, 500, newHeight, false);
+
+    }
+    public static void showCustomToast(Context context,String message)
+    {
+        View view = LayoutInflater.from(context).inflate(R.layout.toast_layout,null);
+
+        TextView toastMessage = view.findViewById(R.id.toastMessage);
+        toastMessage.setText(message);
+
+        Toast toast = new Toast(context);
+        toast.setDuration(Toast.LENGTH_LONG);
+        toast.setView(view);
+        toast.show();
 
     }
 

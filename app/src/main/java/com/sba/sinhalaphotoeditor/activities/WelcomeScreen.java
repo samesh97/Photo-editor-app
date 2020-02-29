@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.activities.walkthrough.WalkThroughActivity;
 
@@ -82,15 +83,7 @@ public class WelcomeScreen extends AppCompatActivity {
             {
                 if(selectedLanguagePos == 0)
                 {
-                    View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
-
-                    TextView toastMessage = view.findViewById(R.id.toastMessage);
-                    toastMessage.setText("Select a language first");
-
-                    Toast toast = new Toast(getApplicationContext());
-                    toast.setDuration(Toast.LENGTH_LONG);
-                    toast.setView(view);
-                    toast.show();
+                    Methods.showCustomToast(WelcomeScreen.this,"Select a language first");
                     //Toast.makeText(WelcomeScreen.this, "Select a language first", Toast.LENGTH_SHORT).show();
                 }
                 else

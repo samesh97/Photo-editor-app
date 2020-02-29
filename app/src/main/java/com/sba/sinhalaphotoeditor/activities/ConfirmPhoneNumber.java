@@ -225,7 +225,7 @@ public class ConfirmPhoneNumber extends AppCompatActivity {
             if (uri != null)
             {
 
-                final StorageReference sRef = storageReference.child("ProfilePictures/" + mAuth.getUid() + "." + getFileExtension(filePath));
+                final StorageReference sRef = storageReference.child("ProfilePictures/" + CountryCode + phone + "." + getFileExtension(filePath));
 
 
 
@@ -267,6 +267,13 @@ public class ConfirmPhoneNumber extends AppCompatActivity {
 
                                                 if(task.isSuccessful())
                                                 {
+
+                                                    if(FirebaseAuth.getInstance().getCurrentUser() != null)
+                                                    {
+                                                        FirebaseAuth.getInstance().getCurrentUser().delete();
+                                                    }
+
+
                                                     Intent intent = new Intent(ConfirmPhoneNumber.this,MainActivity.class);
                                                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | intent.FLAG_ACTIVITY_CLEAR_TASK);
                                                     startActivity(intent);

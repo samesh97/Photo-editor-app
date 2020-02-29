@@ -179,15 +179,7 @@ public class UsePreviouslyEditedImageActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
-
-                    TextView toastMessage = view.findViewById(R.id.toastMessage);
-                    toastMessage.setText(getResources().getString(R.string.no_images_available_text));
-
-                    Toast toast = new Toast(getApplicationContext());
-                    toast.setDuration(Toast.LENGTH_LONG);
-                    toast.setView(view);
-                    toast.show();
+                    Methods.showCustomToast(UsePreviouslyEditedImageActivity.this,getResources().getString(R.string.no_images_available_text));
 
                 }
 
@@ -211,15 +203,7 @@ public class UsePreviouslyEditedImageActivity extends AppCompatActivity {
         }
         catch (Exception e)
         {
-            View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
-
-            TextView toastMessage = view.findViewById(R.id.toastMessage);
-            toastMessage.setText(getResources().getString(R.string.we_will_fix_it_soon_text));
-
-            Toast toast = new Toast(getApplicationContext());
-            toast.setDuration(Toast.LENGTH_LONG);
-            toast.setView(view);
-            toast.show();
+            Methods.showCustomToast(UsePreviouslyEditedImageActivity.this,getResources().getString(R.string.we_will_fix_it_soon_text));
 
         }
 

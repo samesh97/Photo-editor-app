@@ -293,6 +293,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(intent != null && intent.hasExtra(FIREBASE_PAYLOAD_TITLE_TEXT) && intent.hasExtra(FIREBASE_PAYLOAD_MESSAGE_TEXT))
         {
 
+            Log.d("intentResult","MainActivitynotNUll");
             if(intent.getExtras() != null)
             {
 
@@ -302,6 +303,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if(message != null && title != null && !message.equals("") && !title.equals("") && !message.trim().equals("") && !title.trim().equals(""))
                 {
 
+
                     Intent intent1 = new Intent(MainActivity.this,NotificationView.class);
                     intent1.putExtra(FIREBASE_PAYLOAD_TITLE_TEXT,title);
                     intent1.putExtra(FIREBASE_PAYLOAD_MESSAGE_TEXT,message);
@@ -310,6 +312,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
 
+        }
+        else
+        {
+            Log.d("intentResult","MainActivityNUll");
         }
     }
 

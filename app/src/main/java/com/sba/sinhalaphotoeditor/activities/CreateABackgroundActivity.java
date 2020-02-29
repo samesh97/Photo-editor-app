@@ -31,6 +31,7 @@ import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.R;
 
 
@@ -159,89 +160,43 @@ public class CreateABackgroundActivity extends AppCompatActivity {
                 }
                 if(width.getText().toString().equals(""))
                 {
-                    View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
-
-                    TextView toastMessage = view.findViewById(R.id.toastMessage);
-                    toastMessage.setText(getResources().getString(R.string.enter_valid_width));
-
-                    Toast toast = new Toast(getApplicationContext());
-                    toast.setDuration(Toast.LENGTH_LONG);
-                    toast.setView(view);
-                    toast.show();
+                    Methods.showCustomToast(CreateABackgroundActivity.this,getResources().getString(R.string.enter_valid_width));
                     //Toast.makeText(CreateABackgroundActivity.this, "Enter a valid width", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if(height.getText().toString().equals(""))
                 {
-                    View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
-
-                    TextView toastMessage = view.findViewById(R.id.toastMessage);
-                    toastMessage.setText(getResources().getString(R.string.enter_valid_height));
-
-                    Toast toast = new Toast(getApplicationContext());
-                    toast.setDuration(Toast.LENGTH_LONG);
-                    toast.setView(view);
-                    toast.show();
+                    Methods.showCustomToast(CreateABackgroundActivity.this,getResources().getString(R.string.enter_valid_height));
                     //Toast.makeText(CreateABackgroundActivity.this, "Enter a valid height", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if(color == -99)
                 {
-                    View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
-                    TextView toastMessage = view.findViewById(R.id.toastMessage);
-                    toastMessage.setText(getResources().getString(R.string.pick_color_text));
-                    Toast toast = new Toast(getApplicationContext());
-                    toast.setDuration(Toast.LENGTH_LONG);
-                    toast.setView(view);
-                    toast.show();
+                    Methods.showCustomToast(CreateABackgroundActivity.this,getResources().getString(R.string.pick_color_text));
                     //Toast.makeText(CreateABackgroundActivity.this, "Pick a color", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if(Integer.parseInt(width.getText().toString()) > 1000)
                 {
-                    View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
-                    TextView toastMessage = view.findViewById(R.id.toastMessage);
-                    toastMessage.setText(getResources().getString(R.string.width_exceed_text));
-                    Toast toast = new Toast(getApplicationContext());
-                    toast.setDuration(Toast.LENGTH_LONG);
-                    toast.setView(view);
-                    toast.show();
+                    Methods.showCustomToast(CreateABackgroundActivity.this,getResources().getString(R.string.width_exceed_text));
                     //Toast.makeText(CreateABackgroundActivity.this, "You can only create of maximum width of 1000", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if(Integer.parseInt(height.getText().toString()) > 1000)
                 {
-                    View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
-                    TextView toastMessage = view.findViewById(R.id.toastMessage);
-                    toastMessage.setText(getResources().getString(R.string.height_exceed_text));
-                    Toast toast = new Toast(getApplicationContext());
-                    toast.setDuration(Toast.LENGTH_LONG);
-                    toast.setView(view);
-                    toast.show();
+                    Methods.showCustomToast(CreateABackgroundActivity.this,getResources().getString(R.string.height_exceed_text));
                     //Toast.makeText(CreateABackgroundActivity.this, "You can only create of maximum height of 1000", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if(Integer.parseInt(width.getText().toString()) < 400)
                 {
-                    View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
-                    TextView toastMessage = view.findViewById(R.id.toastMessage);
-                    toastMessage.setText(getResources().getString(R.string.width_is_low_text));
-                    Toast toast = new Toast(getApplicationContext());
-                    toast.setDuration(Toast.LENGTH_LONG);
-                    toast.setView(view);
-                    toast.show();
+                    Methods.showCustomToast(CreateABackgroundActivity.this,getResources().getString(R.string.width_is_low_text));
                     //Toast.makeText(CreateABackgroundActivity.this, "You can only create of minimum width of 400", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if(Integer.parseInt(height.getText().toString()) < 400)
                 {
-                    View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
-                    TextView toastMessage = view.findViewById(R.id.toastMessage);
-                    toastMessage.setText(getResources().getString(R.string.height_is_low_text2));
-                    Toast toast = new Toast(getApplicationContext());
-                    toast.setDuration(Toast.LENGTH_LONG);
-                    toast.setView(view);
-                    toast.show();
+                    Methods.showCustomToast(CreateABackgroundActivity.this,getResources().getString(R.string.height_is_low_text2));
                     //Toast.makeText(CreateABackgroundActivity.this, "You can only create of minimum height of 400", Toast.LENGTH_SHORT).show();
                     return;
                 }

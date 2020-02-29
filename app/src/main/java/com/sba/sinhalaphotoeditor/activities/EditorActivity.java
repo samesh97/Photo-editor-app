@@ -203,15 +203,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
                 render.start();
 
 
-                View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
-
-                TextView toastMessage = view.findViewById(R.id.toastMessage);
-                toastMessage.setText(getResources().getString(R.string.you_reach_end_text));
-
-                Toast toast = new Toast(getApplicationContext());
-                toast.setDuration(Toast.LENGTH_LONG);
-                toast.setView(view);
-                toast.show();
+                Methods.showCustomToast(EditorActivity.this,getResources().getString(R.string.you_reach_end_text));
 
                 //Toast.makeText(this, "You reached to the Original Photo", Toast.LENGTH_LONG).show();
             }
@@ -234,15 +226,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
                 }
                 else
                 {
-                    View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
-
-                    TextView toastMessage = view.findViewById(R.id.toastMessage);
-                    toastMessage.setText(getResources().getString(R.string.something_went_wrong_text));
-
-                    Toast toast = new Toast(getApplicationContext());
-                    toast.setDuration(Toast.LENGTH_LONG);
-                    toast.setView(view);
-                    toast.show();
+                    Methods.showCustomToast(EditorActivity.this,getResources().getString(R.string.something_went_wrong_text));
                     //Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -278,15 +262,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
                 render.start();
 
 
-                View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
-
-                TextView toastMessage = view.findViewById(R.id.toastMessage);
-                toastMessage.setText(getResources().getString(R.string.you_reach_end_text_2));
-
-                Toast toast = new Toast(getApplicationContext());
-                toast.setDuration(Toast.LENGTH_LONG);
-                toast.setView(view);
-                toast.show();
+                Methods.showCustomToast(EditorActivity.this,getResources().getString(R.string.you_reach_end_text_2));
                 //Toast.makeText(this, "You reached to the end", Toast.LENGTH_LONG).show();
             }
         }
@@ -357,15 +333,8 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
                     MainActivity.bitmap = MainActivity.images.get(MainActivity.imagePosition);
                     for(int i = (MainActivity.imagePosition + 1); i < MainActivity.images.size(); i++)
                     {
-                        View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
 
-                        TextView toastMessage = view.findViewById(R.id.toastMessage);
-                        toastMessage.setText(getString(R.string.deleted_text) + i);
-
-                        Toast toast = new Toast(getApplicationContext());
-                        toast.setDuration(Toast.LENGTH_LONG);
-                        toast.setView(view);
-                        toast.show();
+                        Methods.showCustomToast(EditorActivity.this,getString(R.string.deleted_text) + i);
 
                         //Toast.makeText(this, "Deleted " + i, Toast.LENGTH_SHORT).show();
                         MainActivity.images.remove(i);
@@ -550,15 +519,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
                 }
                 else
                 {
-                    View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
-
-                    TextView toastMessage = view.findViewById(R.id.toastMessage);
-                    toastMessage.setText(getResources().getString(R.string.something_went_wrong_text));
-
-                    Toast toast = new Toast(getApplicationContext());
-                    toast.setDuration(Toast.LENGTH_LONG);
-                    toast.setView(view);
-                    toast.show();
+                    Methods.showCustomToast(EditorActivity.this,getString(R.string.something_went_wrong_text));
                     //Toast.makeText(this, "Something went wrong!", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -941,15 +902,9 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
             {
                 if(editText.getText().toString().equals("") || editText.getText().toString().trim().equals(""))
                 {
-                    View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
 
-                    TextView toastMessage = view.findViewById(R.id.toastMessage);
-                    toastMessage.setText(getResources().getString(R.string.enter_text));
+                    Methods.showCustomToast(EditorActivity.this,getResources().getString(R.string.enter_text));
 
-                    Toast toast = new Toast(getApplicationContext());
-                    toast.setDuration(Toast.LENGTH_LONG);
-                    toast.setView(view);
-                    toast.show();
                     //Toast.makeText(EditorActivity.this, "Enter a text", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -1093,15 +1048,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
                     }
                     else
                     {
-                        View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
-
-                        TextView toastMessage = view.findViewById(R.id.toastMessage);
-                        toastMessage.setText(getResources().getString(R.string.no_image_selected_text));
-
-                        Toast toast = new Toast(getApplicationContext());
-                        toast.setDuration(Toast.LENGTH_LONG);
-                        toast.setView(view);
-                        toast.show();
+                        Methods.showCustomToast(EditorActivity.this,getResources().getString(R.string.no_image_selected_text));
 
                     }
 
@@ -1118,15 +1065,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
                     }
                     else
                     {
-                        View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
-
-                        TextView toastMessage = view.findViewById(R.id.toastMessage);
-                        toastMessage.setText(getResources().getString(R.string.no_image_selected_text));
-
-                        Toast toast = new Toast(getApplicationContext());
-                        toast.setDuration(Toast.LENGTH_LONG);
-                        toast.setView(view);
-                        toast.show();
+                        Methods.showCustomToast(EditorActivity.this,getResources().getString(R.string.no_image_selected_text));
                     }
 
 
@@ -1143,15 +1082,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
                     }
                     else
                     {
-                        View view2 = getLayoutInflater().inflate(R.layout.toast_layout,null);
-
-                        TextView toastMessage = view2.findViewById(R.id.toastMessage);
-                        toastMessage.setText(getResources().getString(R.string.no_image_selected_text));
-
-                        Toast toast = new Toast(getApplicationContext());
-                        toast.setDuration(Toast.LENGTH_LONG);
-                        toast.setView(view2);
-                        toast.show();
+                        Methods.showCustomToast(EditorActivity.this,getResources().getString(R.string.no_image_selected_text));
                     }
 
         }
@@ -1167,15 +1098,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
                     }
                     else
                     {
-                        View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
-
-                        TextView toastMessage = view.findViewById(R.id.toastMessage);
-                        toastMessage.setText(getResources().getString(R.string.no_image_selected_text));
-
-                        Toast toast = new Toast(getApplicationContext());
-                        toast.setDuration(Toast.LENGTH_LONG);
-                        toast.setView(view);
-                        toast.show();
+                        Methods.showCustomToast(EditorActivity.this,getResources().getString(R.string.no_image_selected_text));
                     }
 
         }
@@ -1216,16 +1139,8 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
             }
             else
             {
-                    View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
-
-                    TextView toastMessage = view.findViewById(R.id.toastMessage);
-                    toastMessage.setText(getResources().getString(R.string.no_image_selected_text));
-
-                    Toast toast = new Toast(getApplicationContext());
-                    toast.setDuration(Toast.LENGTH_LONG);
-                    toast.setView(view);
-                    toast.show();
-             }
+                    Methods.showCustomToast(EditorActivity.this,getResources().getString(R.string.no_image_selected_text));
+            }
 
 
 

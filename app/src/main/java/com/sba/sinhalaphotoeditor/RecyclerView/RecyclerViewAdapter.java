@@ -27,6 +27,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.activities.EditorActivity;
 import com.sba.sinhalaphotoeditor.activities.MainActivity;
 import com.sba.sinhalaphotoeditor.R;
@@ -106,17 +107,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                             dates.remove(position);
 
 
+                            Methods.showCustomToast(context,context.getResources().getString(R.string.removed_text));
 
-
-                            View view = LayoutInflater.from(context).inflate(R.layout.toast_layout,null);
-
-                            TextView toastMessage = view.findViewById(R.id.toastMessage);
-                            toastMessage.setText(context.getResources().getString(R.string.removed_text));
-
-                            Toast toast = new Toast(context);
-                            toast.setDuration(Toast.LENGTH_LONG);
-                            toast.setView(view);
-                            toast.show();
 
 
 
@@ -128,15 +120,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                         else
                         {
 
-                            View view = LayoutInflater.from(context).inflate(R.layout.toast_layout,null);
+                            Methods.showCustomToast(context,context.getString(R.string.something_went_wrong_text));
 
-                            TextView toastMessage = view.findViewById(R.id.toastMessage);
-                            toastMessage.setText(context.getResources().getString(R.string.something_went_wrong_text));
-
-                            Toast toast = new Toast(context);
-                            toast.setDuration(Toast.LENGTH_LONG);
-                            toast.setView(view);
-                            toast.show();
                             //Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show();
                         }
 

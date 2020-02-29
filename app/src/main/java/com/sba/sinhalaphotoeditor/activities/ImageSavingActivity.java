@@ -53,7 +53,7 @@ public class ImageSavingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_saving);
 
-        methods = new Methods(getApplicationContext());
+        methods = new Methods(ImageSavingActivity.this);
 
         setTextViewFontAndSize();
 

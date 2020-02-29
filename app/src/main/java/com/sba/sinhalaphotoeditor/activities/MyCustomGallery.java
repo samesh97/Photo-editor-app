@@ -30,6 +30,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.sba.sinhalaphotoeditor.ExifUtil;
+import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.R;
 
 import java.io.File;
@@ -124,15 +125,9 @@ public class MyCustomGallery extends AppCompatActivity {
             }
             else
             {
-                View view = getLayoutInflater().inflate(R.layout.toast_layout,null);
 
-                TextView toastMessage = view.findViewById(R.id.toastMessage);
-                toastMessage.setText(getResources().getString(R.string.select_an_image_first_text));
+                Methods.showCustomToast(MyCustomGallery.this,getResources().getString(R.string.select_an_image_first_text));
 
-                Toast toast = new Toast(getApplicationContext());
-                toast.setDuration(Toast.LENGTH_LONG);
-                toast.setView(view);
-                toast.show();
                 //Toast.makeText(this, "Please select an image first", Toast.LENGTH_SHORT).show();
             }
             return true;

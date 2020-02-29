@@ -3,30 +3,26 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@android:color/black"
     android:layout_height="match_parent"
+    android:background="@android:color/black"
     tools:context=".activities.EditorActivity">
-
-
 
 
     <ImageView
         android:id="@+id/userSelectedImage"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="@dimen/activity_editor_margin_60"
+        android:layout_height="0dp"
         android:adjustViewBounds="true"
         android:scaleType="centerInside"
-        app:layout_constraintBottom_toBottomOf="@+id/swipeRefreshLayout"
+        app:layout_constraintBottom_toTopOf="@+id/guideline20"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.35"/>
+        app:layout_constraintVertical_bias="0.35" />
 
 
-
- <com.google.android.gms.ads.AdView
+    <com.google.android.gms.ads.AdView
         android:id="@+id/adView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -34,11 +30,11 @@
         android:layout_centerHorizontal="true"
         app:adSize="BANNER"
         app:adUnitId="ca-app-pub-3538783908730049/9447798776"
-        app:layout_constraintBottom_toTopOf="@+id/swipeRefreshLayout"
+        app:layout_constraintBottom_toTopOf="@+id/guideline20"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent" />
 
-<!--
+    <!--
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/stickerLayout"
         android:layout_width="match_parent"
@@ -74,91 +70,162 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>-->
 
-    <HorizontalScrollView
-        android:id="@+id/swipeRefreshLayout"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/activity_editor_margin_60"
+        android:layout_height="0dp"
         android:background="@color/material_dark_blue"
-        android:scrollbars="none"
-        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline20">
+
+<!--
+        <HorizontalScrollView
+            android:id="@+id/swipeRefreshLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/material_dark_blue"
+            android:orientation="horizontal"
+            android:scrollbars="none"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">-->
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/middle1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.0" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/middle2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.165" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/middle3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.335" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/middle4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.5" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/middle5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.665" />
+
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/middle6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.835" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/middle7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="1.0" />
+
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/top"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.19" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/bottom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.81" />
 
 
             <ImageView
                 android:id="@+id/addText"
-                android:layout_width="@dimen/activity_editor_image_width_height"
-                android:layout_height="@dimen/activity_editor_image_width_height"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="12dp"
-                android:layout_marginEnd="@dimen/activity_editor_margin_12"
-                android:layout_marginBottom="8dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:src="@drawable/addtext"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/addImage"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/bottom"
+                app:layout_constraintEnd_toStartOf="@+id/middle2"
+                app:layout_constraintHorizontal_chainStyle="spread_inside"
+                app:layout_constraintStart_toStartOf="@+id/middle1"
+                app:layout_constraintTop_toTopOf="@+id/top"
                 app:layout_constraintVertical_bias="0.133" />
-
 
 
             <ImageView
                 android:id="@+id/addImage"
-                android:layout_width="@dimen/activity_editor_image_width_height"
-                android:layout_height="@dimen/activity_editor_image_width_height"
-                android:layout_marginStart="@dimen/activity_editor_margin_12"
-                android:layout_marginEnd="@dimen/activity_editor_margin_12"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:src="@drawable/addimage"
-                app:layout_constraintBottom_toBottomOf="@+id/addText"
-                app:layout_constraintEnd_toStartOf="@+id/addSticker"
-                app:layout_constraintStart_toEndOf="@+id/addText"
-                app:layout_constraintTop_toTopOf="@+id/addText"
+                app:layout_constraintBottom_toTopOf="@+id/bottom"
+                app:layout_constraintEnd_toStartOf="@+id/middle3"
+                app:layout_constraintStart_toStartOf="@+id/middle2"
+                app:layout_constraintTop_toTopOf="@+id/top"
                 app:layout_constraintVertical_bias="0.533" />
 
 
             <ImageView
                 android:id="@+id/addSticker"
-                android:layout_width="@dimen/activity_editor_image_width_height"
-                android:layout_height="@dimen/activity_editor_image_width_height"
-                android:layout_marginStart="@dimen/activity_editor_margin_12"
-                android:layout_marginEnd="@dimen/activity_editor_margin_12"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:src="@drawable/addsticker"
                 app:layout_constraintBottom_toBottomOf="@+id/addImage"
-                app:layout_constraintEnd_toStartOf="@+id/addEffect"
-                app:layout_constraintStart_toEndOf="@+id/addImage"
+                app:layout_constraintEnd_toStartOf="@+id/middle4"
+                app:layout_constraintStart_toStartOf="@+id/middle3"
                 app:layout_constraintTop_toTopOf="@+id/addImage"
                 app:layout_constraintVertical_bias="0.466" />
 
             <ImageView
                 android:id="@+id/addEffect"
-                android:layout_width="@dimen/activity_editor_image_width_height"
-                android:layout_height="@dimen/activity_editor_image_width_height"
-                android:layout_marginStart="@dimen/activity_editor_margin_12"
-                android:layout_marginEnd="@dimen/activity_editor_margin_12"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:src="@drawable/addeffect"
-                app:layout_constraintBottom_toBottomOf="@+id/addSticker"
-                app:layout_constraintEnd_toStartOf="@+id/addCrop"
-                app:layout_constraintStart_toEndOf="@+id/addSticker"
-                app:layout_constraintTop_toTopOf="@+id/addSticker"
-                app:layout_constraintVertical_bias="0.466" />
+                app:layout_constraintBottom_toTopOf="@+id/bottom"
+                app:layout_constraintEnd_toStartOf="@+id/middle5"
+                app:layout_constraintStart_toStartOf="@+id/middle4"
+                app:layout_constraintTop_toTopOf="@+id/top" />
 
             <ImageView
                 android:id="@+id/addCrop"
-                android:layout_width="@dimen/activity_editor_image_width_height"
-                android:layout_height="@dimen/activity_editor_image_width_height"
-                android:layout_marginStart="@dimen/activity_editor_margin_12"
-                android:layout_marginEnd="@dimen/activity_editor_margin_12"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:src="@drawable/addcrop"
-                app:layout_constraintBottom_toBottomOf="@+id/addEffect"
-                app:layout_constraintEnd_toStartOf="@+id/addBlur"
-                app:layout_constraintStart_toEndOf="@+id/addEffect"
-                app:layout_constraintTop_toTopOf="@+id/addEffect"
+                app:layout_constraintBottom_toTopOf="@+id/bottom"
+                app:layout_constraintEnd_toStartOf="@+id/middle6"
+                app:layout_constraintStart_toStartOf="@+id/middle5"
+                app:layout_constraintTop_toTopOf="@+id/top"
                 app:layout_constraintVertical_bias="0.466" />
 
             <!--
@@ -179,14 +246,12 @@
 
             <ImageView
                 android:id="@+id/addBlur"
-                android:layout_width="@dimen/activity_editor_image_width_height"
-                android:layout_height="@dimen/activity_editor_image_width_height"
-                android:layout_marginStart="@dimen/activity_editor_margin_12"
-                android:layout_marginEnd="16dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:src="@drawable/addblur"
-                app:layout_constraintBottom_toBottomOf="@id/addEffect"
+                app:layout_constraintBottom_toTopOf="@+id/bottom"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/addCrop"
+                app:layout_constraintStart_toStartOf="@+id/middle6"
                 app:layout_constraintTop_toTopOf="@id/addEffect"
                 app:layout_constraintVertical_bias="0.466" />
 
@@ -194,6 +259,21 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-    </HorizontalScrollView>
+        <!--</HorizontalScrollView>-->
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline20"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.89" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline22"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="1.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
