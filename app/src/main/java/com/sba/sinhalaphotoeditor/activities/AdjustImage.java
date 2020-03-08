@@ -22,7 +22,7 @@ import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
-import com.sba.sinhalaphotoeditor.BlurUtils;
+import com.sba.sinhalaphotoeditor.Config.BlurUtils;
 import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;

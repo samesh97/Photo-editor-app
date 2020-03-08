@@ -1,4 +1,4 @@
-package com.sba.sinhalaphotoeditor.RecyclerView;
+package com.sba.sinhalaphotoeditor.adapter;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -21,7 +21,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -38,7 +37,7 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyViewHolder>
+public class PreviuoslyEditedImageAdapter extends RecyclerView.Adapter<PreviuoslyEditedImageAdapter.MyViewHolder>
 {
 
     private ArrayList<Bitmap> images = new ArrayList<>();
@@ -57,7 +56,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
 
 
-    public RecyclerViewAdapter(Context context, ArrayList<Bitmap> images, ArrayList<Integer> ids, ArrayList<String> dates)
+    public PreviuoslyEditedImageAdapter(Context context, ArrayList<Bitmap> images, ArrayList<Integer> ids, ArrayList<String> dates)
     {
         this.images = images;
         this.ids = ids;

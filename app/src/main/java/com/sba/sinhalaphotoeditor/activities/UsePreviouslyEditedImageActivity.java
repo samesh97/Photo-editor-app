@@ -17,7 +17,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import com.bumptech.glide.Glide;
@@ -29,7 +28,7 @@ import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.R;
-import com.sba.sinhalaphotoeditor.RecyclerView.RecyclerViewAdapter;
+import com.sba.sinhalaphotoeditor.adapter.PreviuoslyEditedImageAdapter;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
 
 import java.util.ArrayList;
@@ -46,7 +45,7 @@ public class UsePreviouslyEditedImageActivity extends AppCompatActivity {
 
     Button deleteAll;
 
-    RecyclerViewAdapter adapter;
+    PreviuoslyEditedImageAdapter adapter;
 
     private Methods methods;
 
@@ -139,7 +138,7 @@ public class UsePreviouslyEditedImageActivity extends AppCompatActivity {
         ImageList = (RecyclerView) findViewById(R.id.ImageList);
         ImageList.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
-        adapter = new RecyclerViewAdapter(UsePreviouslyEditedImageActivity.this,images,ids,dates);
+        adapter = new PreviuoslyEditedImageAdapter(UsePreviouslyEditedImageActivity.this,images,ids,dates);
         ImageList.setAdapter(adapter);
 
 

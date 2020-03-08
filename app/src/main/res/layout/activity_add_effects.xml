@@ -3,22 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@android:color/black"
+    android:background="@color/material_dark_blue"
     android:layout_height="match_parent"
     tools:context=".activities.AddEffects">
 
     <ImageView
         android:id="@+id/userSelectedImage"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="@dimen/add_effect_image_margin"
+        android:layout_height="0dp"
         android:adjustViewBounds="true"
         android:scaleType="centerInside"
-        app:layout_constraintBottom_toTopOf="@+id/swipeRefreshLayout"
+        app:layout_constraintBottom_toTopOf="@+id/filterRecyclerView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
 
    <com.google.android.gms.ads.AdView
@@ -29,286 +28,35 @@
         android:layout_centerHorizontal="true"
         app:adSize="BANNER"
         app:adUnitId="ca-app-pub-3538783908730049/1216781500"
-        app:layout_constraintBottom_toTopOf="@+id/swipeRefreshLayout"
+        app:layout_constraintBottom_toTopOf="@+id/filterRecyclerView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
 
 
-
-
-    <HorizontalScrollView
-        android:id="@+id/swipeRefreshLayout"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/filterRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/horizontal_view_height"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
         android:background="@color/material_dark_blue"
-        android:scrollbars="none"
-        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"/>
 
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:visibility="gone"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/filterRecyclerView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/filter1"
-                android:layout_width="@dimen/effect_thumbnail_width_height"
-                android:layout_height="@dimen/effect_thumbnail_width_height"
-                android:layout_marginStart="@dimen/effect_thumbnail_margin_start"
-                android:layout_marginEnd="@dimen/effect_thumbnail_image_margin_end"
-                android:src="@drawable/addtext"
-                app:civ_border_color="#FFFFFF"
-                app:civ_border_width="2dp"
-                app:layout_constraintBottom_toBottomOf="@+id/filter2"
-                app:layout_constraintEnd_toStartOf="@+id/filter2"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/filter2"
-                app:layout_constraintVertical_bias="0.533" />
-
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/filter2"
-                android:layout_width="@dimen/effect_thumbnail_width_height"
-                android:layout_height="@dimen/effect_thumbnail_width_height"
-                android:layout_marginStart="@dimen/effect_thumbnail_margin_start"
-                android:layout_marginEnd="@dimen/effect_thumbnail_image_margin_end"
-                android:src="@drawable/addimage"
-                app:civ_border_color="#FFFFFF"
-                app:civ_border_width="2dp"
-                app:layout_constraintBottom_toBottomOf="@+id/filter3"
-                app:layout_constraintEnd_toStartOf="@+id/filter3"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toEndOf="@+id/filter1"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="1.0" />
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/filter3"
-                android:layout_width="@dimen/effect_thumbnail_width_height"
-                android:layout_height="@dimen/effect_thumbnail_width_height"
-                android:layout_marginStart="@dimen/effect_thumbnail_margin_start"
-                android:layout_marginEnd="@dimen/effect_thumbnail_image_margin_end"
-                android:src="@drawable/addsticker"
-                app:civ_border_color="#FFFFFF"
-                app:civ_border_width="2dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/filter4"
-                app:layout_constraintStart_toEndOf="@+id/filter2"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.466" />
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/filter4"
-                android:layout_width="@dimen/effect_thumbnail_width_height"
-                android:layout_height="@dimen/effect_thumbnail_width_height"
-                android:layout_marginStart="@dimen/effect_thumbnail_margin_start"
-                android:layout_marginEnd="@dimen/effect_thumbnail_image_margin_end"
-                android:src="@drawable/addeffect"
-                app:civ_border_color="#FFFFFF"
-                app:civ_border_width="2dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/filter5"
-                app:layout_constraintStart_toEndOf="@+id/filter3"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.466" />
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/filter5"
-                android:layout_width="@dimen/effect_thumbnail_width_height"
-                android:layout_height="@dimen/effect_thumbnail_width_height"
-                android:layout_marginStart="@dimen/effect_thumbnail_margin_start"
-                android:layout_marginEnd="@dimen/effect_thumbnail_image_margin_end"
-                android:src="@drawable/addcrop"
-                app:civ_border_color="#FFFFFF"
-                app:civ_border_width="2dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/filter6"
-                app:layout_constraintStart_toEndOf="@+id/filter4"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.466" />
-
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/filter6"
-                android:layout_width="@dimen/effect_thumbnail_width_height"
-                android:layout_height="@dimen/effect_thumbnail_width_height"
-                android:layout_marginStart="@dimen/effect_thumbnail_margin_start"
-                android:layout_marginEnd="@dimen/effect_thumbnail_image_margin_end"
-                android:src="@drawable/addcrop"
-                app:civ_border_color="#FFFFFF"
-                app:civ_border_width="2dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/filter7"
-                app:layout_constraintStart_toEndOf="@+id/filter5"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.466" />
-
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/filter7"
-                android:layout_width="@dimen/effect_thumbnail_width_height"
-                android:layout_height="@dimen/effect_thumbnail_width_height"
-                android:layout_marginStart="@dimen/effect_thumbnail_margin_start"
-                android:layout_marginEnd="@dimen/effect_thumbnail_image_margin_end"
-                android:src="@drawable/addcrop"
-                app:civ_border_color="#FFFFFF"
-                app:civ_border_width="2dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/filter8"
-                app:layout_constraintStart_toEndOf="@+id/filter6"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.466" />
-
-
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/filter8"
-                android:layout_width="@dimen/effect_thumbnail_width_height"
-                android:layout_height="@dimen/effect_thumbnail_width_height"
-                android:layout_marginStart="@dimen/effect_thumbnail_margin_start"
-                android:layout_marginEnd="@dimen/effect_thumbnail_image_margin_end"
-                android:src="@drawable/addcrop"
-                app:civ_border_color="#FFFFFF"
-                app:civ_border_width="2dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/filter9"
-                app:layout_constraintStart_toEndOf="@+id/filter7"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.466" />
-
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/filter9"
-                android:layout_width="@dimen/effect_thumbnail_width_height"
-                android:layout_height="@dimen/effect_thumbnail_width_height"
-                android:layout_marginStart="@dimen/effect_thumbnail_margin_start"
-                android:layout_marginEnd="@dimen/effect_thumbnail_image_margin_end"
-                android:src="@drawable/addcrop"
-                app:civ_border_color="#FFFFFF"
-                app:civ_border_width="2dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/filter10"
-                app:layout_constraintStart_toEndOf="@+id/filter8"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.466" />
-
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/filter10"
-                android:layout_width="@dimen/effect_thumbnail_width_height"
-                android:layout_height="@dimen/effect_thumbnail_width_height"
-                android:layout_marginStart="@dimen/effect_thumbnail_margin_start"
-                android:layout_marginEnd="@dimen/effect_thumbnail_image_margin_end"
-                android:src="@drawable/addcrop"
-                app:civ_border_color="#FFFFFF"
-                app:civ_border_width="2dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/filter11"
-                app:layout_constraintStart_toEndOf="@+id/filter9"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.466" />
-
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/filter11"
-                android:layout_width="@dimen/effect_thumbnail_width_height"
-                android:layout_height="@dimen/effect_thumbnail_width_height"
-                android:layout_marginStart="@dimen/effect_thumbnail_margin_start"
-                android:layout_marginEnd="@dimen/effect_thumbnail_image_margin_end"
-                android:src="@drawable/addcrop"
-                app:civ_border_color="#FFFFFF"
-                app:civ_border_width="2dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/filter12"
-                app:layout_constraintStart_toEndOf="@+id/filter10"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.466" />
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/filter12"
-                android:layout_width="@dimen/effect_thumbnail_width_height"
-                android:layout_height="@dimen/effect_thumbnail_width_height"
-                android:layout_marginStart="@dimen/effect_thumbnail_margin_start"
-                android:layout_marginEnd="@dimen/effect_thumbnail_image_margin_end"
-                android:src="@drawable/addcrop"
-                app:civ_border_color="#FFFFFF"
-                app:civ_border_width="2dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/filter13"
-                app:layout_constraintStart_toEndOf="@+id/filter11"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.466" />
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/filter13"
-                android:layout_width="@dimen/effect_thumbnail_width_height"
-                android:layout_height="@dimen/effect_thumbnail_width_height"
-                android:layout_marginStart="@dimen/effect_thumbnail_margin_start"
-                android:layout_marginEnd="@dimen/effect_thumbnail_image_margin_end"
-                android:src="@drawable/addcrop"
-                app:civ_border_color="#FFFFFF"
-                app:civ_border_width="2dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/filter14"
-                app:layout_constraintStart_toEndOf="@+id/filter12"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.466" />
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/filter14"
-                android:layout_width="@dimen/effect_thumbnail_width_height"
-                android:layout_height="@dimen/effect_thumbnail_width_height"
-                android:layout_marginStart="@dimen/effect_thumbnail_margin_start"
-                android:layout_marginEnd="@dimen/effect_thumbnail_image_margin_end"
-                android:src="@drawable/addcrop"
-                app:civ_border_color="#FFFFFF"
-                app:civ_border_width="2dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/filter15"
-                app:layout_constraintStart_toEndOf="@+id/filter13"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.466" />
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/filter15"
-                android:layout_width="@dimen/effect_thumbnail_width_height"
-                android:layout_height="@dimen/effect_thumbnail_width_height"
-                android:layout_marginStart="@dimen/effect_thumbnail_margin_start"
-                android:layout_marginEnd="@dimen/effect_thumbnail_image_margin_end"
-                android:src="@drawable/addcrop"
-                app:civ_border_color="#FFFFFF"
-                app:civ_border_width="2dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/filter16"
-                app:layout_constraintStart_toEndOf="@+id/filter14"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.466" />
-
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/filter16"
-                android:layout_width="@dimen/effect_thumbnail_width_height"
-                android:layout_height="@dimen/effect_thumbnail_width_height"
-                android:layout_marginStart="@dimen/effect_thumbnail_margin_start"
-                android:layout_marginEnd="@dimen/effect_thumbnail_image_margin_end"
-                android:src="@drawable/addcrop"
-                app:civ_border_color="#FFFFFF"
-                app:civ_border_width="2dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/filter15"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.466" />
-
-
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-    </HorizontalScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

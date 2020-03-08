@@ -1,4 +1,4 @@
-package com.sba.sinhalaphotoeditor;
+package com.sba.sinhalaphotoeditor.Config;
 
 import android.content.Context;
 import android.graphics.Bitmap;

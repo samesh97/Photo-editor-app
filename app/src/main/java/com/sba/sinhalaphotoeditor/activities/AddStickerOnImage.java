@@ -29,7 +29,7 @@ import com.github.chuross.library.ExpandableLayout;
 import com.glidebitmappool.GlideBitmapPool;
 import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.R;
-import com.sba.sinhalaphotoeditor.RotationGestureDetector;
+import com.sba.sinhalaphotoeditor.Config.RotationGestureDetector;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
 
 import java.io.File;
