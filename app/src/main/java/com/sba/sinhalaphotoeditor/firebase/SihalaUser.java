@@ -82,7 +82,7 @@ public class SihalaUser implements Serializable
 
         editor.apply();
     }
-    public SihalaUser getUser(Context context)
+    public static SihalaUser getUser(Context context)
     {
         SihalaUser user = null;
 

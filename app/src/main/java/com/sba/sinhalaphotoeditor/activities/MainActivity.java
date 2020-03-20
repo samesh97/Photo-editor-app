@@ -56,10 +56,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.sba.sinhalaphotoeditor.BuildConfig;
+import com.sba.sinhalaphotoeditor.Config.Constants;
 import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.firebase.AppData;
 import com.sba.sinhalaphotoeditor.firebase.SihalaUser;
+import com.sba.sinhalaphotoeditor.singleton.ImageList;
 
 
 import java.util.ArrayList;
@@ -86,13 +88,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private static final int PICK_IMAGE_REQUEST = 234;
     public static Bitmap bitmap;
-    public static int imagePosition = 0;
+//    public static int imagePosition = 0;
 
     private boolean isExit = false;
     private static boolean isFirstTime = true;
 
 
-    public static ArrayList<Bitmap> images = new ArrayList<>();
+//    public static ArrayList<Bitmap> images = new ArrayList<>();
     private ProgressDialog dialog;
     private Spinner languagePicker;
     private Methods methods;
@@ -119,6 +121,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
 
+    private ImageList.ImageListModel imageList = null;
 
 
 
@@ -141,8 +144,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onStart()
     {
-
-        checkWalkThroughNeededOrNot();
+        isNeedToOpenAnotherActivity();
         super.onStart();
     }
 
@@ -174,8 +176,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void initProfilePicture()
     {
         CircleImageView profilePic = findViewById(R.id.profilePic);
-        SihalaUser user = new SihalaUser();
-        SihalaUser currentUser = user.getUser(MainActivity.this);
+        SihalaUser currentUser = SihalaUser.getUser(MainActivity.this);
 
         if(currentUser != null)
         {
@@ -207,6 +208,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fromGalery = (TextView) findViewById(R.id.fromGalery);
         usePreviousBitmap = (ImageView) findViewById(R.id.usePreviousBitmap);
 
+
+
+        imageList = ImageList.getInstance();
 
 
         dialog = new ProgressDialog(MainActivity.this);
@@ -512,31 +516,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     }
-    public static void deleteUndoRedoImages()
-    {
-
-
-        if(images.size() > 6)
-        {
-            int size = images.size() - 6;
-            MainActivity.imagePosition = MainActivity.imagePosition - size;
-            for(int i = 1; i <= size; i++)
-            {
-                if(i == imagePosition)
-                {
-                    size++;
-                }
-                else
-                {
-
-                    images.remove(i);
-                    GlideBitmapPool.clearMemory();
-                }
-            }
-
-
-        }
-    }
     public void setLocale(String lang,int position)
     {
         Locale myLocale = new Locale(lang);
@@ -747,8 +726,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         protected Void doInBackground(Void... voids)
         {
-            images.clear();
-            imagePosition = 0;
+            imageList.clearImageList();
 
             bitmap = selectedBitmap.copy(selectedBitmap.getConfig(), true);
             selectedBitmap = null;
@@ -781,12 +759,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 @Override
                 public void run()
                 {
-                    images.add(0, bitmap);
+                    imageList.addBitmapToThisPosition(bitmap,0,false);
                     startActivity(new Intent(getApplicationContext(), EditorActivity.class));
                     dialog.dismiss();
                 }
             },2500);
         }
+
+
 
 
     }
@@ -945,7 +925,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
 
     }
-    private void checkWalkThroughNeededOrNot()
+    private void isNeedToOpenAnotherActivity()
     {
         SharedPreferences pref = getApplicationContext().getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         //SharedPreferences.Editor editor = pref.edit();
@@ -961,8 +941,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             SihalaUser cUser = user.getUser(MainActivity.this);
             if(cUser == null)
             {
-                startActivity(new Intent(MainActivity.this, RegisterScreen.class));
-                finish();
+                if(!Constants.isRegistrationSkipped)
+                {
+                    startActivity(new Intent(MainActivity.this, RegisterScreen.class));
+                    finish();
+                }
+
             }
         }
     }

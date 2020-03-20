@@ -47,6 +47,7 @@ import com.glidebitmappool.GlideBitmapPool;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.Config.RotationGestureDetector;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
+import com.sba.sinhalaphotoeditor.singleton.ImageList;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -455,7 +456,7 @@ public class TextOnImageActivity extends AppCompatActivity implements RotationGe
 
         //get the image bitmap
         //Bitmap bitmapForImageView = MediaStore.Images.Media.getBitmap(this.getContentResolver(),MainActivity.CurrentWorkingFilePath);
-        Bitmap bitmapForImageView = MainActivity.images.get(MainActivity.imagePosition).copy(MainActivity.images.get(MainActivity.imagePosition).getConfig(), true);
+        Bitmap bitmapForImageView = ImageList.getInstance().getCurrentBitmap().copy(ImageList.getInstance().getCurrentBitmap().getConfig(), true);
 
 
         //create the layouts
@@ -899,8 +900,8 @@ public class TextOnImageActivity extends AppCompatActivity implements RotationGe
                 //get Date and time
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd \nHH:mm:ss", Locale.getDefault());
                 String currentDateandTime = sdf.format(new Date());
-                helper.AddImage(helper.getBytes((MainActivity.images.get(MainActivity.imagePosition))),currentDateandTime);
-                MainActivity.deleteUndoRedoImages();
+                helper.AddImage(helper.getBytes((ImageList.getInstance().getCurrentBitmap())),currentDateandTime);
+                ImageList.getInstance().deleteUndoRedoImages();
                 GlideBitmapPool.clearMemory();
             }
             });
@@ -920,13 +921,12 @@ public class TextOnImageActivity extends AppCompatActivity implements RotationGe
                     bitmap = CropBitmapTransparency(bitmap);
 
 
-                    MainActivity.imagePosition++;
-                    MainActivity.images.add(MainActivity.imagePosition,bitmap);
+                    ImageList.getInstance().addBitmap(bitmap,true);
                     if(EditorActivity.isNeededToDelete)
                     {
                         try
                         {
-                            MainActivity.images.remove(MainActivity.imagePosition + 1);
+                            ImageList.getInstance().removeBitmap(ImageList.getInstance().getCurrentPosition() + 1,false);
                         }
                         catch (Exception e)
                         {

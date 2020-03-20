@@ -7,6 +7,20 @@
     android:layout_height="match_parent"
     tools:context=".activities.RegisterScreen">
 
+    <TextView
+        android:id="@+id/skip_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="15dp"
+        android:paddingTop="5dp"
+        android:paddingRight="15dp"
+        android:paddingBottom="5dp"
+        android:text="@string/text_skip"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
     <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/profilePicture"
@@ -37,8 +51,8 @@
         android:paddingTop="12dp"
         android:paddingRight="10dp"
         android:paddingBottom="12dp"
-        android:textColor="#000000"
-        android:textColorHint="#000000"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white"
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
@@ -67,6 +81,7 @@
             android:paddingLeft="10dp"
             android:paddingTop="12dp"
             android:paddingRight="10dp"
+            app:ccp_textColor="@android:color/white"
             android:paddingBottom="14dp"
             app:ccp_defaultNameCode="LK"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -90,8 +105,8 @@
             android:paddingTop="12dp"
             android:paddingRight="10dp"
             android:paddingBottom="12dp"
-            android:textColor="#000000"
-            android:textColorHint="#000000"
+            android:textColor="@android:color/white"
+            android:textColorHint="@android:color/white"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -124,21 +139,49 @@
         <!--app:layout_constraintStart_toStartOf="parent"-->
         <!--app:layout_constraintTop_toBottomOf="@+id/rel" />-->
 
-    <Button
-        android:id="@+id/loginButton"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="45dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="24dp"
         android:background="@drawable/opaciy"
-        android:text="Next"
-        android:textColor="#ffffff"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rel" />
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp"
+        app:layout_constraintEnd_toEndOf="@+id/rel"
+        app:layout_constraintStart_toStartOf="@+id/rel"
+        app:layout_constraintTop_toBottomOf="@+id/rel">
+
+
+        <Button
+            android:id="@+id/loginButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/opaciy"
+            android:text="Next"
+            android:textColor="#ffffff"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:indeterminate="true"
+            android:visibility="gone"
+            android:indeterminateTintMode="src_atop"
+            android:indeterminateTint="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="@+id/loginButton"
+            app:layout_constraintEnd_toEndOf="@+id/loginButton"
+            app:layout_constraintStart_toStartOf="@+id/loginButton"
+            app:layout_constraintTop_toTopOf="@+id/loginButton" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
     <!--<TextView-->
         <!--android:id="@+id/loginLink"-->

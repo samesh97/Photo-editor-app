@@ -29,6 +29,7 @@ import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
 import com.sba.sinhalaphotoeditor.adapter.FilterAdapter;
+import com.sba.sinhalaphotoeditor.singleton.ImageList;
 import com.zomato.photofilters.FilterPack;
 import com.zomato.photofilters.imageprocessors.Filter;
 
@@ -141,7 +142,8 @@ public class AddEffects extends AppCompatActivity implements OnBitmapChanged, On
     }
     private void setData()
     {
-        currentEditingBitmap = MainActivity.images.get(MainActivity.imagePosition);
+        currentEditingBitmap = ImageList.getInstance().getCurrentBitmap();
+        methods = new Methods(getApplicationContext());
         methods.setImageViewScaleType(userSelectedImage);
         Glide.with(getApplicationContext()).load(currentEditingBitmap).into(userSelectedImage);
 
@@ -174,9 +176,6 @@ public class AddEffects extends AppCompatActivity implements OnBitmapChanged, On
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#114f5e")));
         }
 
-
-
-        methods = new Methods(getApplicationContext());
 
         GlideBitmapPool.clearMemory();
 
@@ -229,9 +228,9 @@ public class AddEffects extends AppCompatActivity implements OnBitmapChanged, On
             //get Date and time
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd \nHH:mm:ss", Locale.getDefault());
             String currentDateandTime = sdf.format(new Date());
-            helper.AddImage(helper.getBytes((MainActivity.images.get(MainActivity.imagePosition))),currentDateandTime);
+            helper.AddImage(helper.getBytes(ImageList.getInstance().getCurrentBitmap()),currentDateandTime);
 
-            MainActivity.deleteUndoRedoImages();
+            ImageList.getInstance().deleteUndoRedoImages();
 
 
         }

@@ -76,6 +76,7 @@
     <string name="select_an_image_first_text">Please select an image first</string>
     <string name="removed_text">Removed</string>
     <string name="saved_to_gallery_text">Saved to gallery</string>
+    <string name="text_skip">Skip</string>
 
 
     <string-array name="select_language">

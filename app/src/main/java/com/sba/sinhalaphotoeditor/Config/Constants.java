@@ -48,6 +48,9 @@ public class Constants
     public static final String USER_PHONE_KEY = "SihalaUserPhoneNumber";
     public static final String USER_ID_KEY = "SihalaUserId";
 
+    //User registration
+    public static boolean isRegistrationSkipped = false;
+
 
 
 }

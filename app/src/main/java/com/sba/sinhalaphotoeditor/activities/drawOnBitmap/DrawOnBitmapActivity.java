@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.sba.sinhalaphotoeditor.activities.MainActivity;
 import com.sba.sinhalaphotoeditor.R;
+import com.sba.sinhalaphotoeditor.singleton.ImageList;
 
 public class DrawOnBitmapActivity extends AppCompatActivity {
 
@@ -58,7 +59,7 @@ public class DrawOnBitmapActivity extends AppCompatActivity {
 
         userSelectedImage = findViewById(R.id.userSelectedImage);
 
-        selectedBitmap = MainActivity.images.get(MainActivity.imagePosition);
+        selectedBitmap = ImageList.getInstance().getCurrentBitmap();
 /*
         if (selectedBitmap != null) {
             drawOnBitmap(selectedBitmap);

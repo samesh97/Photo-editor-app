@@ -24,6 +24,7 @@ import com.bumptech.glide.Glide;
 import com.glidebitmappool.GlideBitmapPool;
 import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.R;
+import com.sba.sinhalaphotoeditor.singleton.ImageList;
 
 import java.io.ByteArrayOutputStream;
 
@@ -87,7 +88,7 @@ public class ImageSavingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                shareImageUri(getImageUri(getApplicationContext(),MainActivity.images.get(MainActivity.imagePosition)));
+                shareImageUri(getImageUri(getApplicationContext(), ImageList.getInstance().getCurrentBitmap()));
             }
         });
 
@@ -96,7 +97,7 @@ public class ImageSavingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                shareImageUri(getImageUri(getApplicationContext(),MainActivity.images.get(MainActivity.imagePosition)));
+                shareImageUri(getImageUri(getApplicationContext(),ImageList.getInstance().getCurrentBitmap()));
             }
         });
 
@@ -128,12 +129,12 @@ public class ImageSavingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                shareImageUri(getImageUri(getApplicationContext(),MainActivity.images.get(MainActivity.imagePosition)));
+                shareImageUri(getImageUri(getApplicationContext(),ImageList.getInstance().getCurrentBitmap()));
             }
         });
 
         //userSavingImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
-        Glide.with(getApplicationContext()).load(MainActivity.images.get(MainActivity.imagePosition)).into(userSavingImage);
+        Glide.with(getApplicationContext()).load(ImageList.getInstance().getCurrentBitmap()).into(userSavingImage);
 
         saveFinalImage.setOnClickListener(new View.OnClickListener()
         {
@@ -188,7 +189,7 @@ public class ImageSavingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                methods.SaveImage(MainActivity.images.get(MainActivity.imagePosition));
+                methods.SaveImage(ImageList.getInstance().getCurrentBitmap());
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id="+"com.sba.sinhalaphotoeditor")));
             }
         });
@@ -198,7 +199,7 @@ public class ImageSavingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                methods.SaveImage(MainActivity.images.get(MainActivity.imagePosition));
+                methods.SaveImage(ImageList.getInstance().getCurrentBitmap());
                 dialog.dismiss();
             }
         });

@@ -28,6 +28,7 @@ import android.widget.Toast;
 
 import com.sba.sinhalaphotoeditor.activities.MainActivity;
 import com.sba.sinhalaphotoeditor.R;
+import com.sba.sinhalaphotoeditor.singleton.ImageList;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -51,7 +52,7 @@ public class Methods
     public void setImageViewScaleType(ImageView image)
     {
 
-        Bitmap bitmap = MainActivity.images.get(MainActivity.imagePosition);
+        Bitmap bitmap = ImageList.getInstance().getCurrentBitmap();
 
         int imageWidth = bitmap.getWidth();
         int imageHeight = bitmap.getHeight();

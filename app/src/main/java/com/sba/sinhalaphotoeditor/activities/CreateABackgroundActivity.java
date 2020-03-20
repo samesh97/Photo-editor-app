@@ -33,6 +33,7 @@ import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.R;
+import com.sba.sinhalaphotoeditor.singleton.ImageList;
 
 
 public class CreateABackgroundActivity extends AppCompatActivity {
@@ -127,12 +128,10 @@ public class CreateABackgroundActivity extends AppCompatActivity {
                         EditorActivity.imageWidth = Integer.parseInt(width.getText().toString());
                         EditorActivity.imageHeight = Integer.parseInt(height.getText().toString());
 
-                        MainActivity.images.clear();
-                        //MainActivity.filePaths.clear();
-                        MainActivity.imagePosition = 0;
-                        MainActivity.images.add(createdBitmap);
-                        //MainActivity.filePaths.add(getImageUri(getApplicationContext(),createdBitmap));
-                        // MainActivity.CurrentWorkingFilePath = getImageUri(getApplicationContext(),createdBitmap);
+
+                        ImageList.getInstance().clearImageList();
+                        ImageList.getInstance().addBitmap(createdBitmap,false);
+
 
                         startActivity(new Intent(getApplicationContext(), EditorActivity.class));
                         finish();

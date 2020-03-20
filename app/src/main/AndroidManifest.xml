@@ -27,7 +27,8 @@
 
         </activity>
         <activity android:name=".activities.ConfirmPhoneNumber" />
-        <activity android:name=".activities.RegisterScreen" />
+        <activity android:name=".activities.RegisterScreen" android:label="Register"
+            android:theme="@style/NoActionBarAppTheme"/>
         <activity android:name=".keyboard.KeyBoardAc" />
         <activity
             android:name=".activities.NotificationView"

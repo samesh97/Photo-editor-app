@@ -50,6 +50,7 @@ import com.google.android.gms.ads.initialization.OnInitializationCompleteListene
 import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
+import com.sba.sinhalaphotoeditor.singleton.ImageList;
 import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.io.File;
@@ -105,7 +106,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onBackPressed()
     {
-        if(MainActivity.images.size() > 1)
+        if(ImageList.getInstance().getImageListSize() > 1)
         {
 
 
@@ -177,18 +178,14 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
     {
         if(item.getItemId() == R.id.undoImage)
         {
-            if(MainActivity.imagePosition >= 1)
+            if(ImageList.getInstance().getCurrentPosition() >= 1)
             {
                 try
                 {
 
-
-                    // MainActivity.images.remove(MainActivity.imagePosition);
-                    //MainActivity.CurrentWorkingFilePath = MainActivity.filePaths.get(--MainActivity.imagePosition);
-                    --MainActivity.imagePosition;
-                    //userSelectedImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
+                    ImageList.getInstance().substractImagePosition(1);
                     methods.setImageViewScaleType(userSelectedImage);
-                    Glide.with(getApplicationContext()).load(MainActivity.images.get(MainActivity.imagePosition)).into(userSelectedImage);
+                    Glide.with(getApplicationContext()).load(ImageList.getInstance().getCurrentBitmap()).into(userSelectedImage);
 
                 }
                 catch (Exception e)
@@ -218,7 +215,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
             {
                 mInterstitialAd.loadAd(new AdRequest.Builder().build());
 
-                if(MainActivity.images.size() > 0)
+                if(ImageList.getInstance().getImageListSize() > 0)
                 {
 
                     startActivity(new Intent(getApplicationContext(), ImageSavingActivity.class));
@@ -234,18 +231,14 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         }
         if(item.getItemId() == R.id.redoImage)
         {
-            if(MainActivity.imagePosition < (MainActivity.images.size() - 1))
+            if(ImageList.getInstance().getCurrentPosition() < (ImageList.getInstance().getImageListSize() - 1))
             {
                 try
                 {
 
-
-                    // MainActivity.images.remove(MainActivity.imagePosition);
-                    //MainActivity.CurrentWorkingFilePath = MainActivity.filePaths.get(MainActivity.imagePosition++);
-                    MainActivity.imagePosition++;
-                    //userSelectedImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
+                    ImageList.getInstance().increaseImagePosition(1);
                     methods.setImageViewScaleType(userSelectedImage);
-                    Glide.with(getApplicationContext()).load(MainActivity.images.get(MainActivity.imagePosition)).into(userSelectedImage);
+                    Glide.with(getApplicationContext()).load(ImageList.getInstance().getCurrentBitmap()).into(userSelectedImage);
 
                 }
                 catch (Exception e)
@@ -281,17 +274,18 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
             if(resultCode == TextOnImageActivity.TEXT_ON_IMAGE_RESULT_OK_CODE)
             {
 
-                if(MainActivity.imagePosition == MainActivity.images.size() - 1)
+                if(ImageList.getInstance().getCurrentPosition() == ImageList.getInstance().getImageListSize() - 1)
                 {
                     isNeededToDelete = false;
                 }
                 else {
                     isNeededToDelete = true;
 
-                    MainActivity.bitmap = MainActivity.images.get(MainActivity.imagePosition);
-                    for (int i = (MainActivity.imagePosition); i < MainActivity.images.size(); i++) {
+                    MainActivity.bitmap = ImageList.getInstance().getCurrentBitmap();
+                    for (int i = (ImageList.getInstance().getCurrentPosition()); i < ImageList.getInstance().getImageListSize(); i++) {
                         try {
-                            MainActivity.images.remove(++i);
+                            ImageList.getInstance().removeBitmap(++i,false);
+
                         } catch (Exception e) {
 
                         }
@@ -305,7 +299,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
                 //MainActivity.CurrentWorkingFilePath = MainActivity.filePaths.get(MainActivity.imagePosition);
                 //userSelectedImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
                 methods.setImageViewScaleType(userSelectedImage);
-                Glide.with(getApplicationContext()).load(MainActivity.images.get(MainActivity.imagePosition)).into(userSelectedImage);
+                Glide.with(getApplicationContext()).load(ImageList.getInstance().getCurrentBitmap()).into(userSelectedImage);
 
 
 
@@ -322,7 +316,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
             if(resultCode == PhotoOnPhotoActivity.IMAGE_ON_IMAGE_RESULT_OK_CODE)
             {
 
-                if(MainActivity.imagePosition == MainActivity.images.size() - 1)
+                if(ImageList.getInstance().getCurrentPosition() == ImageList.getInstance().getImageListSize() - 1)
                 {
                     isNeededToDelete = false;
                 }
@@ -330,14 +324,12 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
                 {
 
                     isNeededToDelete = true;
-                    MainActivity.bitmap = MainActivity.images.get(MainActivity.imagePosition);
-                    for(int i = (MainActivity.imagePosition + 1); i < MainActivity.images.size(); i++)
+                    MainActivity.bitmap = ImageList.getInstance().getCurrentBitmap();
+                    for(int i = (ImageList.getInstance().getCurrentPosition() + 1); i < ImageList.getInstance().getImageListSize(); i++)
                     {
 
-                        Methods.showCustomToast(EditorActivity.this,getString(R.string.deleted_text) + i);
-
-                        //Toast.makeText(this, "Deleted " + i, Toast.LENGTH_SHORT).show();
-                        MainActivity.images.remove(i);
+                        //Methods.showCustomToast(EditorActivity.this,getString(R.string.deleted_text) + i);
+                        ImageList.getInstance().removeBitmap(i,false);
                     }
 
                 }
@@ -348,7 +340,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
                 //MainActivity.CurrentWorkingFilePath = MainActivity.filePaths.get(MainActivity.imagePosition);
                 //userSelectedImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
                 methods.setImageViewScaleType(userSelectedImage);
-                Glide.with(getApplicationContext()).load(MainActivity.images.get(MainActivity.imagePosition)).into(userSelectedImage);
+                Glide.with(getApplicationContext()).load(ImageList.getInstance().getCurrentBitmap()).into(userSelectedImage);
 
             }
             if(requestCode == PhotoOnPhotoActivity.IMAGE_ON_IMAGE_RESULT_FAILED_CODE)
@@ -389,7 +381,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
             if(resultCode == AddStickerOnImage.STICKER_ON_IMAGE_RESULT_OK_CODE)
             {
 
-                if(MainActivity.imagePosition == MainActivity.images.size() - 1)
+                if(ImageList.getInstance().getCurrentPosition() == ImageList.getInstance().getImageListSize() - 1)
                 {
                     isNeededToDelete = false;
                 }
@@ -397,21 +389,17 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
                 {
 
                     isNeededToDelete = true;
-                    MainActivity.bitmap = MainActivity.images.get(MainActivity.imagePosition);
-                    for(int i = (MainActivity.imagePosition + 1); i < MainActivity.images.size(); i++)
+                    MainActivity.bitmap = ImageList.getInstance().getCurrentBitmap();
+                    for(int i = (ImageList.getInstance().getCurrentPosition() + 1); i < ImageList.getInstance().getImageListSize(); i++)
                     {
-                        MainActivity.images.remove(i);
+                        ImageList.getInstance().removeBitmap(i,false);
                     }
 
 
                 }
 
-
-                //Uri resultImageUri = Uri.parse(data.getStringExtra(StickerOnPhoto.STICKER_OUT_URI));
-                //MainActivity.CurrentWorkingFilePath = MainActivity.filePaths.get(MainActivity.imagePosition);
-                //userSelectedImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
                 methods.setImageViewScaleType(userSelectedImage);
-                Glide.with(getApplicationContext()).load(MainActivity.images.get(MainActivity.imagePosition)).into(userSelectedImage);
+                Glide.with(getApplicationContext()).load(ImageList.getInstance().getCurrentBitmap()).into(userSelectedImage);
 
             }
         }
@@ -429,7 +417,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
                     try
                     {
 
-                        if(MainActivity.imagePosition == MainActivity.images.size() - 1)
+                        if(ImageList.getInstance().getCurrentPosition() == ImageList.getInstance().getImageListSize() - 1)
                         {
                             isNeededToDelete = false;
                         }
@@ -437,12 +425,12 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
                         {
                             isNeededToDelete = true;
 
-                            MainActivity.bitmap = MainActivity.images.get(MainActivity.imagePosition);
-                            for(int i = (MainActivity.imagePosition); i < MainActivity.images.size(); i++)
+                            MainActivity.bitmap = ImageList.getInstance().getCurrentBitmap();
+                            for(int i = (ImageList.getInstance().getCurrentPosition()); i < ImageList.getInstance().getImageListSize(); i++)
                             {
                                 try
                                 {
-                                    MainActivity.images.remove(++i);
+                                    ImageList.getInstance().removeBitmap(++i,false);
                                 }
                                 catch (Exception e)
                                 {
@@ -452,7 +440,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
                             }
                             try
                             {
-                                MainActivity.images.remove(MainActivity.imagePosition + 1);
+                                ImageList.getInstance().removeBitmap(ImageList.getInstance().getCurrentPosition() + 1,false);
                             }
                             catch (Exception e)
                             {
@@ -465,7 +453,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
 
 
 
-                        ++MainActivity.imagePosition;
+                        ImageList.getInstance().increaseImagePosition(1);
                         bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), resultUri);
 
 
@@ -477,7 +465,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
                         bitmap = methods.scale(bitmap,metrics.widthPixels,metrics.heightPixels);
 
 
-                        MainActivity.images.add(bitmap);
+                        ImageList.getInstance().addBitmap(bitmap,false);
                     /*
                     AsyncTask.execute(new Runnable()
                     {
@@ -495,7 +483,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
                         Glide.with(getApplicationContext()).load(bitmap).into(userSelectedImage);
 
 
-                        MainActivity.deleteUndoRedoImages();
+                        ImageList.getInstance().deleteUndoRedoImages();
                         //GlideBitmapPool.clearMemory();
 
 
@@ -532,14 +520,14 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         {
             //userSelectedImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
             methods.setImageViewScaleType(userSelectedImage);
-            Glide.with(getApplicationContext()).load(MainActivity.images.get(MainActivity.imagePosition)).into(userSelectedImage);
+            Glide.with(getApplicationContext()).load(ImageList.getInstance().getCurrentBitmap()).into(userSelectedImage);
 
         }
         if(requestCode == 20  && resultCode == 21)
         {
             //userSelectedImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
             methods.setImageViewScaleType(userSelectedImage);
-            Glide.with(getApplicationContext()).load(MainActivity.images.get(MainActivity.imagePosition)).into(userSelectedImage);
+            Glide.with(getApplicationContext()).load(ImageList.getInstance().getCurrentBitmap()).into(userSelectedImage);
 
         }
     }
@@ -630,7 +618,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         {
             //userSelectedImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
             methods.setImageViewScaleType(userSelectedImage);
-            Glide.with(getApplicationContext()).load(MainActivity.images.get(MainActivity.imagePosition)).into(userSelectedImage);
+            Glide.with(getApplicationContext()).load(ImageList.getInstance().getCurrentBitmap()).into(userSelectedImage);
 
         }
         catch (Exception e)
@@ -653,8 +641,8 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
 
         try
         {
-            imageWidth = MainActivity.images.get(MainActivity.imagePosition).getWidth();
-            imageHeight = MainActivity.images.get(MainActivity.imagePosition).getHeight();
+            imageWidth = ImageList.getInstance().getCurrentBitmap().getWidth();
+            imageHeight = ImageList.getInstance().getCurrentBitmap().getHeight();
         }
         catch (Exception e)
         {
@@ -1040,7 +1028,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         if(v == addBlur)
         {
 
-                    if(MainActivity.images.get(MainActivity.imagePosition) != null && MainActivity.images.size() > 0)
+                    if(ImageList.getInstance().getCurrentBitmap() != null && ImageList.getInstance().getImageListSize() > 0)
                     {
                         render.setAnimation(Attention.Bounce(addBlur));
                         render.start();
@@ -1057,7 +1045,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         {
 
 
-                    if(MainActivity.images.get(MainActivity.imagePosition) != null && MainActivity.images.size() > 0)
+                    if(ImageList.getInstance().getCurrentBitmap() != null && ImageList.getInstance().getImageListSize() > 0)
                     {
                         render.setAnimation(Attention.Bounce(addEffect));
                         render.start();
@@ -1074,7 +1062,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         else if(v == addText)
         {
 
-                    if(MainActivity.images.get(MainActivity.imagePosition) != null && MainActivity.images.size() > 0)
+                    if(ImageList.getInstance().getCurrentBitmap() != null && ImageList.getInstance().getImageListSize() > 0)
                     {
                         render.setAnimation(Attention.Bounce(addText));
                         render.start();
@@ -1089,7 +1077,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         else if(v == addImage)
         {
 
-                    if(MainActivity.images.get(MainActivity.imagePosition) != null && MainActivity.images.size() > 0)
+                    if(ImageList.getInstance().getCurrentBitmap() != null && ImageList.getInstance().getImageListSize() > 0)
                     {
                         CropType = "PhotoOnPhotoCrop";
                         render.setAnimation(Attention.Bounce(addImage));
@@ -1114,13 +1102,13 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         else if(v == addCrop)
         {
 
-            if(MainActivity.images.get(MainActivity.imagePosition) != null && MainActivity.images.size() > 0)
+            if(ImageList.getInstance().getCurrentBitmap() != null && ImageList.getInstance().getImageListSize() > 0)
             {
                 CropType = "NormalCrop";
                 render.setAnimation(Attention.Bounce(addCrop));
                 render.start();
                 addCrop.setEnabled(false);
-                final Uri uri = methods.getImageUri(MainActivity.images.get(MainActivity.imagePosition),false);
+                final Uri uri = methods.getImageUri(ImageList.getInstance().getCurrentBitmap(),false);
                 CropImage.activity(uri).start(EditorActivity.this);
 
 

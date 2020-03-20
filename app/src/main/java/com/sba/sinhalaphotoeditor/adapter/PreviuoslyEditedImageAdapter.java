@@ -31,6 +31,7 @@ import com.sba.sinhalaphotoeditor.activities.EditorActivity;
 import com.sba.sinhalaphotoeditor.activities.MainActivity;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
+import com.sba.sinhalaphotoeditor.singleton.ImageList;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -203,9 +204,7 @@ public class PreviuoslyEditedImageAdapter extends RecyclerView.Adapter<Previuosl
             {
                 if(selectedImage != null)
                 {
-                    MainActivity.images.clear();
-                   // MainActivity.filePaths.clear();
-                    MainActivity.imagePosition = 0;
+                    ImageList.getInstance().clearImageList();
 
                     WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
                     Display display = wm.getDefaultDisplay();
@@ -222,9 +221,7 @@ public class PreviuoslyEditedImageAdapter extends RecyclerView.Adapter<Previuosl
 
 
 
-                    MainActivity.images.add(selectedImage);
-                   // MainActivity.filePaths.add(getImageUri(context,selectedImage));
-                   // MainActivity.CurrentWorkingFilePath = getImageUri(context,selectedImage);
+                    ImageList.getInstance().addBitmap(selectedImage,false);
 
                     context.startActivity(new Intent(context,EditorActivity.class));
                 }

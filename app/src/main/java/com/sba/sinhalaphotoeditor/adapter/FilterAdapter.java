@@ -12,6 +12,7 @@ import com.sba.sinhalaphotoeditor.CallBacks.OnBitmapChanged;
 import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.activities.MainActivity;
+import com.sba.sinhalaphotoeditor.singleton.ImageList;
 import com.zomato.photofilters.imageprocessors.Filter;
 
 import java.util.List;
@@ -47,7 +48,7 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.FilterView
         if(filters != null)
         {
             Methods methods = new Methods(context);
-            final Bitmap currentBitmap = MainActivity.images.get(MainActivity.imagePosition).copy(MainActivity.images.get(MainActivity.imagePosition).getConfig(),true);
+            final Bitmap currentBitmap = ImageList.getInstance().getCurrentBitmap().copy(ImageList.getInstance().getCurrentBitmap().getConfig(),true);
 
 
             final Bitmap smallBitmap = methods.getResizedBitmap(filters.get(position).processFilter(currentBitmap),100);

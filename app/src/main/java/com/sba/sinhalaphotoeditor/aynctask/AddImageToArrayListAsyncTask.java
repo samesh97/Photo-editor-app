@@ -2,6 +2,7 @@ package com.sba.sinhalaphotoeditor.aynctask;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.ProgressBar;
 import com.sba.sinhalaphotoeditor.CallBacks.OnAsyncTaskState;
 import com.sba.sinhalaphotoeditor.activities.EditorActivity;
 import com.sba.sinhalaphotoeditor.activities.MainActivity;
+import com.sba.sinhalaphotoeditor.singleton.ImageList;
 
 public class AddImageToArrayListAsyncTask extends AsyncTask<Void,Void,Void>
 {
@@ -51,13 +53,12 @@ public class AddImageToArrayListAsyncTask extends AsyncTask<Void,Void,Void>
     {
         if(imageToBeAdded != null)
         {
-            MainActivity.imagePosition++;
-            MainActivity.images.add(MainActivity.imagePosition, imageToBeAdded);
+            ImageList.getInstance().addBitmap(imageToBeAdded,true);
 
 
             if (EditorActivity.isNeededToDelete) {
                 try {
-                    MainActivity.images.remove(MainActivity.imagePosition + 1);
+                    ImageList.getInstance().removeBitmap(ImageList.getInstance().getCurrentPosition() + 1,false);
                 }
                 catch (Exception e)
                 {

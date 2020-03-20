@@ -26,6 +26,7 @@ import com.sba.sinhalaphotoeditor.Config.BlurUtils;
 import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
+import com.sba.sinhalaphotoeditor.singleton.ImageList;
 import com.warkiz.tickseekbar.OnSeekChangeListener;
 import com.warkiz.tickseekbar.SeekParams;
 import com.warkiz.tickseekbar.TickSeekBar;
@@ -177,7 +178,7 @@ public class AdjustImage extends AppCompatActivity {
         Glide.with(getApplicationContext()).load(R.drawable.samplewalpaper).into(topGreenPannel);
 
 
-        filterAddingBitmap = MainActivity.images.get(MainActivity.imagePosition).copy(MainActivity.images.get(MainActivity.imagePosition).getConfig(),true);
+        filterAddingBitmap = ImageList.getInstance().getCurrentBitmap().copy(ImageList.getInstance().getCurrentBitmap().getConfig(),true);
 
 
 
@@ -299,11 +300,11 @@ public class AdjustImage extends AppCompatActivity {
                     //get Date and time
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd \nHH:mm:ss", Locale.getDefault());
                     String currentDateandTime = sdf.format(new Date());
-                    if(helper.AddImage(helper.getBytes((MainActivity.images.get(MainActivity.imagePosition))),currentDateandTime))
+                    if(helper.AddImage(helper.getBytes(ImageList.getInstance().getCurrentBitmap()),currentDateandTime))
                     {
                         bitmap = null;
                     }
-                    MainActivity.deleteUndoRedoImages();
+                    ImageList.getInstance().deleteUndoRedoImages();
 
                     GlideBitmapPool.clearMemory();
 
@@ -325,11 +326,10 @@ public class AdjustImage extends AppCompatActivity {
             {
                 bitmap = new BlurUtils().blur(AdjustImage.this,filterAddingBitmap, blurValue);
                 bitmap = methods.addSaturation(bitmap,contrastValue);
-                MainActivity.imagePosition++;
-                MainActivity.images.add(MainActivity.imagePosition, bitmap);
+                ImageList.getInstance().addBitmap(bitmap,true);
                 if (EditorActivity.isNeededToDelete) {
                     try {
-                        MainActivity.images.remove(MainActivity.imagePosition + 1);
+                       ImageList.getInstance().removeBitmap(ImageList.getInstance().getCurrentPosition() + 1,false);
                     } catch (Exception e) {
 
                     }
@@ -342,11 +342,10 @@ public class AdjustImage extends AppCompatActivity {
             {
                 bitmap = new BlurUtils().blur(AdjustImage.this,filterAddingBitmap, blurValue);
                 //bitmap = changeBitmapContrastBrightness(bitmap,contrastValue,0);
-                MainActivity.imagePosition++;
-                MainActivity.images.add(MainActivity.imagePosition, bitmap);
+                ImageList.getInstance().addBitmap(bitmap,true);
                 if (EditorActivity.isNeededToDelete) {
                     try {
-                        MainActivity.images.remove(MainActivity.imagePosition + 1);
+                        ImageList.getInstance().removeBitmap(ImageList.getInstance().getCurrentPosition() + 1,false);
                     } catch (Exception e) {
 
                     }
@@ -359,11 +358,10 @@ public class AdjustImage extends AppCompatActivity {
             {
                 //Bitmap bitmap = new BlurUtils().blur(AdjustImage.this,filterAddingBitmap, blurValue);
                 bitmap = methods.addSaturation(filterAddingBitmap,contrastValue);
-                MainActivity.imagePosition++;
-                MainActivity.images.add(MainActivity.imagePosition, bitmap);
+                ImageList.getInstance().addBitmap(bitmap,true);
                 if (EditorActivity.isNeededToDelete) {
                     try {
-                        MainActivity.images.remove(MainActivity.imagePosition + 1);
+                        ImageList.getInstance().removeBitmap(ImageList.getInstance().getCurrentPosition() + 1,false);
                     } catch (Exception e)
                     {
                         Log.d("Error",e.getMessage());

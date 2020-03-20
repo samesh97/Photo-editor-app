@@ -56,7 +56,6 @@ public class ConfirmPhoneNumber extends AppCompatActivity {
     private String mVerificationId;
     private String name;
     private String phone;
-   // private String password;
     private String uri;
     private Uri filePath;
     private StorageReference storageReference;
@@ -66,10 +65,15 @@ public class ConfirmPhoneNumber extends AppCompatActivity {
     private TextView textView;
     private String CountryCode;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confirm_phone_number);
+
+        pin = (Pinview) findViewById(R.id.pinview);
+        textView = (TextView) findViewById(R.id.textView);
+        varify = (Button) findViewById(R.id.varify);
 
 
         mAuth = FirebaseAuth.getInstance();
@@ -78,20 +82,31 @@ public class ConfirmPhoneNumber extends AppCompatActivity {
         Intent intent = getIntent();
         name = intent.getStringExtra("name");
         phone = intent.getStringExtra("phone");
-      //  password = intent.getStringExtra("password");
         uri = intent.getStringExtra("uri");
         CountryCode = intent.getStringExtra("CountryCode");
+        mVerificationId = intent.getStringExtra("mVerificationId");
+        code = intent.getStringExtra("code");
+
+        if(code != null)
+        {
+            pin.setValue(code);
+//            varify.callOnClick();
+        }
+        else
+        {
+            code = "null";
+        }
 
         pd = new ProgressDialog(ConfirmPhoneNumber.this);
         pd.setCancelable(false);
         pd.setMessage("Verifying..");
 
 
-        textView = (TextView) findViewById(R.id.textView);
+
         textView.setText("Enter the code We've sent \nto " + CountryCode + phone);
 
         filePath = Uri.parse(uri);
-        pin = (Pinview) findViewById(R.id.pinview);
+
 
         pin.setPinViewEventListener(new Pinview.PinViewEventListener() {
             @Override
@@ -106,15 +121,14 @@ public class ConfirmPhoneNumber extends AppCompatActivity {
         });
 
 
-        varify = (Button) findViewById(R.id.varify);
 
-        sendVerificationCode(phone);
+
+        //sendVerificationCode(phone);
 
         varify.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
-
 
                 if (!code.equals("null") && code.length() == 6)
                 {
@@ -134,49 +148,6 @@ public class ConfirmPhoneNumber extends AppCompatActivity {
 
 
     }
-    private void sendVerificationCode(String no)
-    {
-        PhoneAuthProvider.getInstance().verifyPhoneNumber(
-                CountryCode + Integer.parseInt(no),
-                60,
-                TimeUnit.SECONDS,
-                TaskExecutors.MAIN_THREAD,
-                mCallbacks);
-
-    }
-    private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-        @Override
-        public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential)
-        {
-
-            //Getting the code sent by SMS
-            String code = phoneAuthCredential.getSmsCode();
-
-            //sometime the code is not detected automatically
-            //in this case the code will be null
-            //so user has to manually enter the code
-            if (code != null)
-            {
-                // codd.setText(code);
-                //verifying the code
-                verifyVerificationCode(code);
-            }
-        }
-
-        @Override
-        public void onVerificationFailed(FirebaseException e) {
-            Toast.makeText(ConfirmPhoneNumber.this, e.getMessage(), Toast.LENGTH_LONG).show();
-        }
-
-        @Override
-        public void onCodeSent(String s, PhoneAuthProvider.ForceResendingToken forceResendingToken) {
-            super.onCodeSent(s, forceResendingToken);
-
-            //storing the verification id that is sent to the user
-            mVerificationId = s;
-            // Toast.makeText(ConfirmPhoneNumber.this,s, Toast.LENGTH_LONG).show();
-        }
-    };
 
     private void verifyVerificationCode(String code)
     {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Sinhala Photo Editor</string>
+    <string name="app_name">Sihala Photo Editor</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="select_an_image_text">படத்தை தெரிவு செய்யுங்கள்</string>
     <string name="select_from_galery_text">கெலரியிலிருந்து தெரிவு செய்யுங்கள்</string>
