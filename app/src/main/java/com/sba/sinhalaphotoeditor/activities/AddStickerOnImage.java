@@ -4,25 +4,39 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 
 import com.github.chuross.library.ExpandableLayout;
@@ -37,19 +51,19 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
 import render.animations.Bounce;
 import render.animations.Render;
 
-public class AddStickerOnImage extends AppCompatActivity implements RotationGestureDetector.OnRotationGestureListener {
+import static com.sba.sinhalaphotoeditor.activities.EditorActivity.screenHeight;
+
+public class AddStickerOnImage extends AppCompatActivity implements RotationGestureDetector.OnRotationGestureListener,View.OnTouchListener,View.OnLongClickListener {
 
 
 
-
-
-    public static String STICKER_IN_URI = "imageInURI";
     public static String STICKER_SIZE = "textFontSize";
     public static String STICKER_OUT_URI = "imageOutURI";
     public static String STICKER_OUT_ERROR = "imageOutError";
@@ -64,7 +78,7 @@ public class AddStickerOnImage extends AppCompatActivity implements RotationGest
 
     private Uri imageOutUri;
     private String saveDir="/tmp/";
-    ImageView addNewImage;
+    //ImageView addNewImage;
     private String errorAny = "";
     private ImageView sourceImageView;
     private ConstraintLayout workingLayout,baseLayout;
@@ -80,8 +94,26 @@ public class AddStickerOnImage extends AppCompatActivity implements RotationGest
     private SeekBar opacitySeekBar;
     private float opacityLevel = 1f;
 
+    private Dialog dia;
+    private ArrayList<Bitmap> stickerList1 = new ArrayList<>();
+    private ArrayList<Bitmap> stickerList2 = new ArrayList<>();
+    private ArrayList<Bitmap> stickerList3 = new ArrayList<>();
+    private ArrayList<Bitmap> stickerList4 = new ArrayList<>();
+    private ArrayList<Bitmap> stickerList5 = new ArrayList<>();
+
+    private int addedStickerCount = 0;
 
     private Methods methods;
+
+
+
+
+    private ArrayList<ImageView> addedStickersList = new ArrayList<>();
+    private int count = 0;
+    private int clickedId = 1;
+    float lastX = 0, lastY = 0;
+
+    private Button addNewStickerButton;
 
     @Override
     protected void onPause() {
@@ -125,8 +157,15 @@ public class AddStickerOnImage extends AppCompatActivity implements RotationGest
         setContentView(R.layout.activity_add_sticker_on_image);
 
 
+        dia = new Dialog(this);
 
-
+        addNewStickerButton = findViewById(R.id.addNewStickerButton);
+        addNewStickerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showStickerPopup();
+            }
+        });
 
         methods = new Methods(getApplicationContext());
 
@@ -159,7 +198,14 @@ public class AddStickerOnImage extends AppCompatActivity implements RotationGest
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
             {
                 opacityLevel = (progress / 100.0f);
-                addNewImage.setAlpha(opacityLevel);
+                for(ImageView imageView : addedStickersList)
+                {
+                    if(clickedId == imageView.getId())
+                    {
+                        imageView.setAlpha(opacityLevel);
+                    }
+                }
+
             }
 
             @Override
@@ -202,10 +248,57 @@ public class AddStickerOnImage extends AppCompatActivity implements RotationGest
     }
 
     @Override
-    public void OnRotation(RotationGestureDetector rotationDetector) {
-        float angle = rotationDetector.getAngle();
-        addNewImage.setRotation(angle);
+    public void OnRotation(RotationGestureDetector rotationDetector)
+    {
+        for(ImageView view : addedStickersList)
+        {
+            if(view.getId() == clickedId)
+            {
+                view.setRotation(rotationDetector.getAngle());
+            }
+        }
     }
+
+    @Override
+    public boolean onLongClick(View v)
+    {
+        return false;
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent motionEvent)
+    {
+        clickedId = v.getId();
+        for(ImageView view : addedStickersList)
+        {
+            if(view.getId() == v.getId())
+            {
+                switch (motionEvent.getAction())
+                {
+                    case (MotionEvent.ACTION_DOWN):
+                        lastX = motionEvent.getX();
+                        lastY = motionEvent.getY();
+
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        float dx = motionEvent.getX() - lastX;
+                        float dy = motionEvent.getY() - lastY;
+                        float finalX = view.getX() + dx;
+//                        float finalY = view.getY() + dy + view.getHeight();
+                        float finalY = view.getY() + dy;
+                        view.setX(finalX);
+                        view.setY(finalY);
+
+                        break;
+                }
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public class simpleOnScaleGestureListener extends ScaleGestureDetector.SimpleOnScaleGestureListener{
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
@@ -215,16 +308,18 @@ public class AddStickerOnImage extends AppCompatActivity implements RotationGest
             scaleFactor *= detector.getScaleFactor();
             scaleFactor = (scaleFactor < 1 ? 1 : scaleFactor); // prevent our view from becoming too small //
             scaleFactor = ((float)((int)(scaleFactor * 100))) / 100; // Change precision to help with jitter when user just rests their fingers //
-            addNewImage.setScaleX(scaleFactor);
-            addNewImage.setScaleY(scaleFactor);
 
-            /*
-            float size = addNewImage.getWidth();
-            float factor = detector.getScaleFactor();
-            float product = size*factor;
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams((int)product,(int)product);
-            addNewImage.setLayoutParams(layoutParams);
-            return true;*/
+
+            for(ImageView view : addedStickersList)
+            {
+                if(view.getId() == clickedId)
+                {
+                    view.setScaleX(scaleFactor);
+                    view.setScaleY(scaleFactor);
+                }
+            }
+
+
 
             return true;
         }
@@ -286,7 +381,7 @@ public class AddStickerOnImage extends AppCompatActivity implements RotationGest
         //image view
         sourceImageView = findViewById(R.id.sourceImageView);
         //textview
-        addNewImage = findViewById(R.id.addImageView);
+       // addNewImage = findViewById(R.id.addImageView);
 
 
 
@@ -307,7 +402,9 @@ public class AddStickerOnImage extends AppCompatActivity implements RotationGest
             progressDialog.dismiss();
         }
 
-        addNewImage.setImageBitmap(EditorActivity.selectedSticker);
+        //addNewImage.setImageBitmap(EditorActivity.selectedSticker);
+        addNewStickerView(EditorActivity.selectedSticker);
+
         //addTextView.setTextSize(textFontSize);
 
 
@@ -315,31 +412,31 @@ public class AddStickerOnImage extends AppCompatActivity implements RotationGest
 
 
 
-
-        addNewImage.setOnTouchListener(new View.OnTouchListener() {
-            float lastX = 0, lastY = 0;
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                switch (motionEvent.getAction()) {
-                    case (MotionEvent.ACTION_DOWN):
-                        lastX = motionEvent.getX();
-                        lastY = motionEvent.getY();
-
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-                        float dx = motionEvent.getX() - lastX;
-                        float dy = motionEvent.getY() - lastY;
-                        float finalX = view.getX() + dx;
-//                        float finalY = view.getY() + dy + view.getHeight();
-                        float finalY = view.getY() + dy;
-                        view.setX(finalX);
-                        view.setY(finalY);
-                        break;
-                }
-
-                return true;
-            }
-        });
+//
+//        addNewImage.setOnTouchListener(new View.OnTouchListener() {
+//            float lastX = 0, lastY = 0;
+//            @Override
+//            public boolean onTouch(View view, MotionEvent motionEvent) {
+//                switch (motionEvent.getAction()) {
+//                    case (MotionEvent.ACTION_DOWN):
+//                        lastX = motionEvent.getX();
+//                        lastY = motionEvent.getY();
+//
+//                        break;
+//                    case MotionEvent.ACTION_MOVE:
+//                        float dx = motionEvent.getX() - lastX;
+//                        float dy = motionEvent.getY() - lastY;
+//                        float finalX = view.getX() + dx;
+////                        float finalY = view.getY() + dy + view.getHeight();
+//                        float finalY = view.getY() + dy;
+//                        view.setX(finalX);
+//                        view.setY(finalY);
+//                        break;
+//                }
+//
+//                return true;
+//            }
+//        });
 
     }
 
@@ -373,7 +470,11 @@ public class AddStickerOnImage extends AppCompatActivity implements RotationGest
 
     private boolean setTextFinal()
     {
-        addNewImage.setOnTouchListener(null);
+        for(ImageView imageView : addedStickersList)
+        {
+            imageView.setOnTouchListener(null);
+        }
+
         boolean toBeReturn = false;
         workingLayout.buildDrawingCache();
         toBeReturn = saveFile(Bitmap.createBitmap(workingLayout.getDrawingCache()),"temp.jpg");
@@ -493,5 +594,496 @@ public class AddStickerOnImage extends AppCompatActivity implements RotationGest
             }
             return null;
         }
+    }
+    private void showStickerPopup()
+    {
+
+
+        dia.setContentView(R.layout.activity_sticker_popup_screen);
+        dia.setCancelable(true);
+        if(dia.getWindow() != null)
+        {
+            dia.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dia.getWindow().setLayout(RelativeLayout.LayoutParams.FILL_PARENT,screenHeight / 2);
+            Window window = dia.getWindow();
+            WindowManager.LayoutParams wlp = window.getAttributes();
+            wlp.gravity = Gravity.BOTTOM;
+            window.setAttributes(wlp);
+        }
+
+
+        ListView list_alert = (ListView) dia.findViewById(R.id.stickeList);
+        ListViewAdapter adapter = new ListViewAdapter(stickerList1,stickerList2,stickerList3,stickerList4,stickerList5);
+        list_alert.setAdapter(adapter);
+        setStickers(adapter);
+        dia.show();
+
+    }
+    public class ListViewAdapter extends BaseAdapter implements AdapterView.OnItemClickListener
+    {
+        ArrayList<Bitmap> stic1;
+        ArrayList<Bitmap> stic2;
+        ArrayList<Bitmap> stic3;
+        ArrayList<Bitmap> stic4;
+        ArrayList<Bitmap> stic5;
+
+
+        ListViewAdapter(ArrayList<Bitmap> stic1,ArrayList<Bitmap> stic2,ArrayList<Bitmap> stic3,ArrayList<Bitmap> stic4,ArrayList<Bitmap> stic5)
+        {
+            this.stic1 = stic1;
+            this.stic2 = stic2;
+            this.stic3 = stic3;
+            this.stic4 = stic4;
+            this.stic5 = stic5;
+        }
+        @Override
+        public int getCount()
+        {
+            return stic5.size();
+        }
+
+        @Override
+        public Object getItem(int position)
+        {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position)
+        {
+            return 0;
+        }
+
+        @Override
+        public View getView(final int position, View convertView, ViewGroup parent)
+        {
+            View view = getLayoutInflater().inflate(R.layout.stickerrow,null);
+            ImageView OneSticker = (ImageView) view.findViewById(R.id.OneSticker);
+            ImageView TwoSticker = (ImageView) view.findViewById(R.id.TwoSticker);
+            ImageView ThreeSticker = (ImageView) view.findViewById(R.id.ThreeSticker);
+            ImageView FourSticker = (ImageView) view.findViewById(R.id.FourSticker);
+            ImageView FiveSticker = (ImageView) view.findViewById(R.id.FiveSticker);
+
+
+/*
+            Glide.with(getApplicationContext()).load(getResizedBitmap(stic1.get(position),80)).into(OneSticker);
+            Glide.with(getApplicationContext()).load(getResizedBitmap(stic2.get(position),80)).into(TwoSticker);
+            Glide.with(getApplicationContext()).load(getResizedBitmap(stic3.get(position),80)).into(ThreeSticker);
+            Glide.with(getApplicationContext()).load(getResizedBitmap(stic4.get(position),80)).into(FourSticker);
+            Glide.with(getApplicationContext()).load(getResizedBitmap(stic5.get(position),80)).into(FiveSticker);
+*/
+
+            OneSticker.setImageBitmap(stic1.get(position));
+            TwoSticker.setImageBitmap(stic2.get(position));
+            ThreeSticker.setImageBitmap(stic3.get(position));
+            FourSticker.setImageBitmap(stic4.get(position));
+            FiveSticker.setImageBitmap(stic5.get(position));
+
+
+
+            Animation pulse = AnimationUtils.loadAnimation(AddStickerOnImage.this, R.anim.pulse2);
+            OneSticker.startAnimation(pulse);
+            TwoSticker.startAnimation(pulse);
+            ThreeSticker.startAnimation(pulse);
+            FourSticker.startAnimation(pulse);
+            FiveSticker.startAnimation(pulse);
+
+
+
+
+
+
+
+            OneSticker.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v)
+                {
+                    Bitmap x = getRealSticker((position * 5) + 1);
+                    addNewStickerView(x);
+                    dia.dismiss();
+                }
+            });
+            TwoSticker.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v)
+                {
+                    Bitmap x = getRealSticker((position * 5) + 2);
+                    addNewStickerView(x);
+                    dia.dismiss();
+                }
+            });
+            ThreeSticker.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v)
+                {
+                    Bitmap x = getRealSticker((position * 5) + 3);
+                    addNewStickerView(x);
+                    dia.dismiss();
+                }
+            });
+            FourSticker.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v)
+                {
+                    Bitmap x = getRealSticker((position * 5) + 4);
+                    addNewStickerView(x);
+                    dia.dismiss();
+                }
+            });
+            FiveSticker.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v)
+                {
+                    Bitmap x = getRealSticker((position * 5) + 5);
+                    addNewStickerView(x);
+                    dia.dismiss();
+                }
+            });
+
+            return view;
+        }
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+        {
+
+        }
+    }
+    public Bitmap getRealSticker(int position)
+    {
+        Bitmap b;
+
+        switch (position)
+        {
+            case 1 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji1);
+                break;
+            case 2 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji2);
+                break;
+            case 3 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji3);
+                break;
+            case 4 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji4);
+                break;
+            case 5 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji5);
+                break;
+            case 6 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji6);
+                break;
+            case 7 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji7);
+                break;
+            case 8 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji8);
+                break;
+            case 9 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji9);
+                break;
+            case 10 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji10);
+                break;
+            case 11 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji11);
+                break;
+            case 12 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji12);
+                break;
+            case 13 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji13);
+                break;
+            case 14 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji14);
+                break;
+            case 15 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji15);
+                break;
+            case 16 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji16);
+                break;
+            case 17 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji17);
+                break;
+            case 18 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji18);
+                break;
+            case 19 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji19);
+                break;
+            case 20 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji20);
+                break;
+            case 21 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji21);
+                break;
+            case 22 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji22);
+                break;
+            case 23 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji23);
+                break;
+            case 24 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji24);
+                break;
+            case 25 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji25);
+                break;
+            case 26 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji26);
+                break;
+            case 27 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji27);
+                break;
+            case 28 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji28);
+                break;
+            case 29 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji29);
+                break;
+            case 30 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji30);
+                break;
+            case 31 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji31);
+                break;
+            case 32 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji32);
+                break;
+            case 33 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji33);
+                break;
+            case 34 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji34);
+                break;
+            case 35 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji35);
+                break;
+            case 36 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji36);
+                break;
+            case 37 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji37);
+                break;
+            case 38 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji38);
+                break;
+            case 39 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji39);
+                break;
+            case 40 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji40);
+                break;
+            case 41 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji41);
+                break;
+            case 42 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji42);
+                break;
+            case 43 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji43);
+                break;
+            case 44 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji44);
+                break;
+            case 45 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji45);
+                break;
+            default:b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji1);
+                break;
+
+
+        }
+
+
+        return b;
+
+
+
+
+    }
+    private void setStickers(ListViewAdapter adapter)
+    {
+        removeStickers();
+        Bitmap b;
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji1);
+        b = methods.getResizedBitmap(b,80);
+        stickerList1.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji2);
+        b = methods.getResizedBitmap(b,80);
+        stickerList2.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji3);
+        b = methods.getResizedBitmap(b,80);
+        stickerList3.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji4);
+        b = methods.getResizedBitmap(b,80);
+        stickerList4.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji5);
+        b = methods.getResizedBitmap(b,80);
+        stickerList5.add(b);
+
+        adapter.notifyDataSetChanged();
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji6);
+        b = methods.getResizedBitmap(b,80);
+        stickerList1.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji7);
+        b = methods.getResizedBitmap(b,80);
+        stickerList2.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji8);
+        b = methods.getResizedBitmap(b,80);
+        stickerList3.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji9);
+        b = methods.getResizedBitmap(b,80);
+        stickerList4.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji10);
+        b = methods.getResizedBitmap(b,80);
+        stickerList5.add(b);
+
+        adapter.notifyDataSetChanged();
+
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji11);
+        b = methods.getResizedBitmap(b,80);
+        stickerList1.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji12);
+        b = methods.getResizedBitmap(b,80);
+        stickerList2.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji13);
+        b = methods.getResizedBitmap(b,80);
+        stickerList3.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji14);
+        b = methods.getResizedBitmap(b,80);
+        stickerList4.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji15);
+        b = methods.getResizedBitmap(b,80);
+        stickerList5.add(b);
+
+        adapter.notifyDataSetChanged();
+
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji16);
+        b = methods.getResizedBitmap(b,80);
+        stickerList1.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji17);
+        b = methods.getResizedBitmap(b,80);
+        stickerList2.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji18);
+        b = methods.getResizedBitmap(b,80);
+        stickerList3.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji19);
+        b = methods.getResizedBitmap(b,80);
+        stickerList4.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji20);
+        b = methods.getResizedBitmap(b,80);
+        stickerList5.add(b);
+
+        adapter.notifyDataSetChanged();
+
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji21);
+        b = methods.getResizedBitmap(b,80);
+        stickerList1.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji22);
+        b = methods.getResizedBitmap(b,80);
+        stickerList2.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji23);
+        b = methods.getResizedBitmap(b,80);
+        stickerList3.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji24);
+        b = methods.getResizedBitmap(b,80);
+        stickerList4.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji25);
+        b = methods.getResizedBitmap(b,80);
+        stickerList5.add(b);
+
+        adapter.notifyDataSetChanged();
+
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji26);
+        b = methods.getResizedBitmap(b,80);
+        stickerList1.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji27);
+        b = methods.getResizedBitmap(b,80);
+        stickerList2.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji28);
+        b = methods.getResizedBitmap(b,80);
+        stickerList3.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji29);
+        b = methods.getResizedBitmap(b,80);
+        stickerList4.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji30);
+        b = methods.getResizedBitmap(b,80);
+        stickerList5.add(b);
+
+        adapter.notifyDataSetChanged();
+
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji31);
+        b = methods.getResizedBitmap(b,80);
+        stickerList1.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji32);
+        b = methods.getResizedBitmap(b,80);
+        stickerList2.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji33);
+        b = methods.getResizedBitmap(b,80);
+        stickerList3.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji34);
+        b = methods.getResizedBitmap(b,80);
+        stickerList4.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji35);
+        b = methods.getResizedBitmap(b,80);
+        stickerList5.add(b);
+
+        adapter.notifyDataSetChanged();
+
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji36);
+        b = methods.getResizedBitmap(b,80);
+        stickerList1.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji37);
+        b = methods.getResizedBitmap(b,80);
+        stickerList2.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji38);
+        b = methods.getResizedBitmap(b,80);
+        stickerList3.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji39);
+        b = methods.getResizedBitmap(b,80);
+        stickerList4.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji40);
+        b = methods.getResizedBitmap(b,80);
+        stickerList5.add(b);
+
+        adapter.notifyDataSetChanged();
+
+
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji41);
+        b = methods.getResizedBitmap(b,80);
+        stickerList1.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji42);
+        b = methods.getResizedBitmap(b,80);
+        stickerList2.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji43);
+        b = methods.getResizedBitmap(b,80);
+        stickerList3.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji44);
+        b = methods.getResizedBitmap(b,80);
+        stickerList4.add(b);
+        b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji45);
+        b = methods.getResizedBitmap(b,80);
+        stickerList5.add(b);
+
+        adapter.notifyDataSetChanged();
+        b = null;
+
+    }
+    public void removeStickers()
+    {
+        stickerList1.clear();
+        stickerList2.clear();
+        stickerList3.clear();
+        stickerList4.clear();
+        stickerList5.clear();
+
+    }
+    public void addNewStickerView(Bitmap bitmap)
+    {
+        if(bitmap != null)
+        {
+            addedStickerCount++;
+            ImageView imageView = new ImageView(AddStickerOnImage.this);
+            imageView.setImageBitmap(bitmap);
+            imageView.setId(addedStickerCount);
+
+            imageView.setOnTouchListener(this);
+            imageView.setOnLongClickListener(this);
+
+            addedStickersList.add(imageView);
+
+
+            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(80,80);
+            layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+            imageView.setLayoutParams(layoutParams);
+
+
+            WindowManager wm = (WindowManager) getApplication().getSystemService(Context.WINDOW_SERVICE);
+            Display display = wm.getDefaultDisplay();
+            DisplayMetrics metrics = new DisplayMetrics();
+            display.getMetrics(metrics);
+            int width = metrics.widthPixels;
+            int height = metrics.heightPixels;
+
+            imageView.setX(width / 2 - 40);
+            imageView.setY(height / 2 - 80);
+            workingLayout.addView(imageView);
+
+            clickedId = addedStickerCount;
+
+        }
+    }
+    public void removeStickerView(View v)
+    {
+
+        for(int i = 0; i < addedStickersList.size(); i++)
+        {
+            ImageView view = addedStickersList.get(i);
+            if(clickedId == view.getId())
+            {
+                view.setVisibility(View.GONE);
+                addedStickersList.remove(i);
+                clickedId = -99;
+                break;
+            }
+        }
+
     }
 }

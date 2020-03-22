@@ -197,8 +197,7 @@ public class ConfirmPhoneNumber extends AppCompatActivity {
             {
 
                 final StorageReference sRef = storageReference.child("ProfilePictures/" + CountryCode + phone + "." + getFileExtension(filePath));
-
-
+                
 
                 //adding the file to reference
                 sRef.putFile(filePath)

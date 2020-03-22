@@ -963,38 +963,14 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
     private void addStickerOnImage()
     {
 
-
         Intent intent = new Intent(EditorActivity.this,AddStickerOnImage.class);
         Bundle bundle = new Bundle();
-       // bundle.putString(StickerOnPhoto.STICKER_IN_URI,MainActivity.CurrentWorkingFilePath.toString());
         bundle.putInt(AddStickerOnImage.STICKER_SIZE,1000);
         intent.putExtras(bundle);
         startActivityForResult(intent, AddStickerOnImage.STICKER_ON_IMAGE_REQUEST_CODE);
     }
     private void showStickerPopup()
     {
-
-
-
-        /*
-        if(stickerLayout.getVisibility() == View.GONE)
-        {
-            ListView stickerListView = findViewById(R.id.stickerListView);
-            ProgressBar progressBar = findViewById(R.id.progressBar);
-
-            stickerLayout.setVisibility(View.VISIBLE);
-            ListViewAdapter adapter = new ListViewAdapter(stickerList1,stickerList2,stickerList3,stickerList4,stickerList5);
-            stickerListView.setAdapter(adapter);
-            setStickers(adapter,progressBar);
-        }
-        else
-        {
-            stickerLayout.setVisibility(View.GONE);
-            removeStickers();
-        }*/
-
-
-
 
         dia.setContentView(R.layout.activity_sticker_popup_screen);
         dia.setCancelable(true);
