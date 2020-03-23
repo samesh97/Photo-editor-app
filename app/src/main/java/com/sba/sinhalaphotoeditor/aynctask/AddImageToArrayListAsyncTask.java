@@ -8,20 +8,25 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import com.glidebitmappool.GlideBitmapPool;
 import com.sba.sinhalaphotoeditor.CallBacks.OnAsyncTaskState;
+import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
+import com.sba.sinhalaphotoeditor.activities.AddStickerOnImage;
 import com.sba.sinhalaphotoeditor.activities.EditorActivity;
 import com.sba.sinhalaphotoeditor.activities.MainActivity;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class AddImageToArrayListAsyncTask extends AsyncTask<Void,Void,Void>
 {
-    private ProgressBar progressBar;
     private Bitmap imageToBeAdded;
     private OnAsyncTaskState listner;
 
-    public AddImageToArrayListAsyncTask(Bitmap imageToBeAdded, ProgressBar progressBar, OnAsyncTaskState listner)
+    public AddImageToArrayListAsyncTask(Bitmap imageToBeAdded, OnAsyncTaskState listner)
     {
-        this.progressBar = progressBar;
         this.imageToBeAdded = imageToBeAdded;
         this.listner = listner;
     }
@@ -30,21 +35,14 @@ public class AddImageToArrayListAsyncTask extends AsyncTask<Void,Void,Void>
     protected void onPreExecute()
     {
         super.onPreExecute();
-        if(progressBar != null)
-        {
-            progressBar.setVisibility(View.VISIBLE);
-        }
+
     }
 
     @Override
     protected void onPostExecute(Void aVoid)
     {
         super.onPostExecute(aVoid);
-        if(progressBar != null)
-        {
-            progressBar.setVisibility(View.GONE);
-            listner.startActivityForResult();
-        }
+        listner.startActivityForResult();
 
     }
 
@@ -56,13 +54,19 @@ public class AddImageToArrayListAsyncTask extends AsyncTask<Void,Void,Void>
             ImageList.getInstance().addBitmap(imageToBeAdded,true);
 
 
-            if (EditorActivity.isNeededToDelete) {
-                try {
+            if (EditorActivity.isNeededToDelete)
+            {
+                try
+                {
                     ImageList.getInstance().removeBitmap(ImageList.getInstance().getCurrentPosition() + 1,false);
                 }
                 catch (Exception e)
                 {
-                    Log.d("Error",e.getMessage());
+                    if(e.getMessage() != null)
+                    {
+                        Log.d("Error",e.getMessage());
+                    }
+
                 }
             }
 

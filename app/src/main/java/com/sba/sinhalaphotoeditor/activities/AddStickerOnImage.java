@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -36,15 +37,19 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 
+import com.bumptech.glide.Glide;
 import com.github.chuross.library.ExpandableLayout;
 import com.glidebitmappool.GlideBitmapPool;
+import com.sba.sinhalaphotoeditor.CallBacks.OnAsyncTaskState;
 import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.Config.RotationGestureDetector;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
+import com.sba.sinhalaphotoeditor.aynctask.AddImageToArrayListAsyncTask;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;
 
 import java.io.File;
@@ -60,26 +65,19 @@ import render.animations.Render;
 
 import static com.sba.sinhalaphotoeditor.activities.EditorActivity.screenHeight;
 
-public class AddStickerOnImage extends AppCompatActivity implements RotationGestureDetector.OnRotationGestureListener,View.OnTouchListener,View.OnLongClickListener {
+public class AddStickerOnImage extends AppCompatActivity
+        implements RotationGestureDetector.OnRotationGestureListener,
+        View.OnTouchListener,View.OnLongClickListener, OnAsyncTaskState {
 
 
-
-    public static String STICKER_SIZE = "textFontSize";
-    public static String STICKER_OUT_URI = "imageOutURI";
-    public static String STICKER_OUT_ERROR = "imageOutError";
 
     //public static Uri STICKER_ON_IMAGE_URI;
-
     public static int STICKER_ON_IMAGE_RESULT_OK_CODE = 210;
-    public static int STICKER_ON_IMAGE_RESULT_FAILED_CODE = -200;
     public static int STICKER_ON_IMAGE_REQUEST_CODE = 200;
-
-
 
     private Uri imageOutUri;
     private String saveDir="/tmp/";
-    //ImageView addNewImage;
-    private String errorAny = "";
+
     private ImageView sourceImageView;
     private ConstraintLayout workingLayout,baseLayout;
     private ScaleGestureDetector scaleGestureDetector;
@@ -101,7 +99,7 @@ public class AddStickerOnImage extends AppCompatActivity implements RotationGest
     private ArrayList<Bitmap> stickerList4 = new ArrayList<>();
     private ArrayList<Bitmap> stickerList5 = new ArrayList<>();
 
-    private int addedStickerCount = 0;
+
 
     private Methods methods;
 
@@ -109,11 +107,12 @@ public class AddStickerOnImage extends AppCompatActivity implements RotationGest
 
 
     private ArrayList<ImageView> addedStickersList = new ArrayList<>();
-    private int count = 0;
     private int clickedId = 1;
+    private int addedStickerCount = 0;
     float lastX = 0, lastY = 0;
 
     private Button addNewStickerButton;
+    private ProgressBar progress_bar;
 
     @Override
     protected void onPause() {
@@ -158,11 +157,14 @@ public class AddStickerOnImage extends AppCompatActivity implements RotationGest
 
 
         dia = new Dialog(this);
+        setBackgroundAsSelected();
 
+        progress_bar = findViewById(R.id.progress_bar);
         addNewStickerButton = findViewById(R.id.addNewStickerButton);
         addNewStickerButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 showStickerPopup();
             }
         });
@@ -184,7 +186,6 @@ public class AddStickerOnImage extends AppCompatActivity implements RotationGest
         scaleGestureDetector = new ScaleGestureDetector(AddStickerOnImage.this,new simpleOnScaleGestureListener());
         mRotationGestureDetector = new RotationGestureDetector(AddStickerOnImage.this);
         progressDialog = new ProgressDialog(AddStickerOnImage.this);
-        extractBundle();
         uiSetup();
 
         expandableLayout = (ExpandableLayout)findViewById(R.id.explandableLayout);
@@ -268,7 +269,9 @@ public class AddStickerOnImage extends AppCompatActivity implements RotationGest
     @Override
     public boolean onTouch(View v, MotionEvent motionEvent)
     {
+
         clickedId = v.getId();
+        setBackgroundAsSelected();
         for(ImageView view : addedStickersList)
         {
             if(view.getId() == v.getId())
@@ -297,6 +300,35 @@ public class AddStickerOnImage extends AppCompatActivity implements RotationGest
         }
 
         return false;
+    }
+
+    @Override
+    public void startActivityForResult()
+    {
+        progress_bar.setVisibility(View.GONE);
+        Intent intent = new Intent();
+        setResult(STICKER_ON_IMAGE_RESULT_OK_CODE,intent);
+        finish();
+
+
+
+        if(addedStickersList.size() > 0)
+        {
+            AsyncTask.execute(new Runnable()
+            {@Override
+            public void run()
+            {
+                //get Date and time
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd \nHH:mm:ss", Locale.getDefault());
+                String currentDateandTime = sdf.format(new Date());
+                helper.AddImage(helper.getBytes(ImageList.getInstance().getCurrentBitmap()),currentDateandTime);
+                ImageList.getInstance().deleteUndoRedoImages();
+
+                GlideBitmapPool.clearMemory();
+            }
+            });
+        }
+
     }
 
     public class simpleOnScaleGestureListener extends ScaleGestureDetector.SimpleOnScaleGestureListener{
@@ -333,19 +365,6 @@ public class AddStickerOnImage extends AppCompatActivity implements RotationGest
         mRotationGestureDetector.onTouchEvent(event);
         return super.onTouchEvent(event);
     }
-
-    private void extractBundle()
-    {   //extract the data from previous activity
-        Bundle bundle = getIntent().getExtras();
-        // imageInUri = Uri.parse(bundle.getString(IMAGE_IN_URI));
-//        if(bundle != null)
-//        {
-//            //IMAGE_ON_IMAGE_URI = Uri.parse((bundle.getString("IMAGE_ON_IMAGE_URI")));
-        //}
-
-
-    }
-
     private void uiSetup()
     {
         //show progress dialog
@@ -389,8 +408,13 @@ public class AddStickerOnImage extends AppCompatActivity implements RotationGest
 
 
 
-        sourceImageView.setImageBitmap(bitmapForImageView);
-        //Glide.with(getApplicationContext()).load(bitmapForImageView).into(sourceImageView);
+//        sourceImageView.setImageBitmap(bitmapForImageView);
+
+        Glide.with(getApplicationContext()).load(bitmapForImageView).into(sourceImageView);
+        Methods methods = new Methods(getApplicationContext());
+        Bitmap background = methods.getBlurBitmap(bitmapForImageView,getApplicationContext());
+        sourceImageView.setBackground(new BitmapDrawable(getResources(), background));
+
 
         Render render = new Render(AddStickerOnImage.this);
         render.setAnimation(Bounce.InUp(sourceImageView));
@@ -405,38 +429,6 @@ public class AddStickerOnImage extends AppCompatActivity implements RotationGest
         //addNewImage.setImageBitmap(EditorActivity.selectedSticker);
         addNewStickerView(EditorActivity.selectedSticker);
 
-        //addTextView.setTextSize(textFontSize);
-
-
-
-
-
-
-//
-//        addNewImage.setOnTouchListener(new View.OnTouchListener() {
-//            float lastX = 0, lastY = 0;
-//            @Override
-//            public boolean onTouch(View view, MotionEvent motionEvent) {
-//                switch (motionEvent.getAction()) {
-//                    case (MotionEvent.ACTION_DOWN):
-//                        lastX = motionEvent.getX();
-//                        lastY = motionEvent.getY();
-//
-//                        break;
-//                    case MotionEvent.ACTION_MOVE:
-//                        float dx = motionEvent.getX() - lastX;
-//                        float dy = motionEvent.getY() - lastY;
-//                        float finalX = view.getX() + dx;
-////                        float finalY = view.getY() + dy + view.getHeight();
-//                        float finalY = view.getY() + dy;
-//                        view.setX(finalX);
-//                        view.setY(finalY);
-//                        break;
-//                }
-//
-//                return true;
-//            }
-//        });
 
     }
 
@@ -455,8 +447,37 @@ public class AddStickerOnImage extends AppCompatActivity implements RotationGest
         }
         else if(item.getItemId() == R.id.setImage)
         {
+            if(setTextFinal())
+            {
+                progress_bar.setVisibility(View.VISIBLE);
 
-            new RunInBackground().execute();
+                try
+                {
+                    Bitmap  bitmap = null;
+                    bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageOutUri);
+                    bitmap = methods.CropBitmapTransparency(bitmap);
+
+                    AddImageToArrayListAsyncTask task;
+                    if(addedStickersList.size() > 0)
+                    {
+                        task = new AddImageToArrayListAsyncTask(bitmap,this);
+                    }
+                    else
+                    {
+                        task = new AddImageToArrayListAsyncTask(null,this);
+                    }
+
+                    task.execute();
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+
+            }
+
+
+            //new RunInBackground().execute();
             return  true;
         }
         else
@@ -470,9 +491,23 @@ public class AddStickerOnImage extends AppCompatActivity implements RotationGest
 
     private boolean setTextFinal()
     {
-        for(ImageView imageView : addedStickersList)
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                sourceImageView.setBackgroundColor(Color.TRANSPARENT);
+            }
+        });
+        for(final ImageView imageView : addedStickersList)
         {
             imageView.setOnTouchListener(null);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+
+                    imageView.setBackground(null);
+                }
+            });
+
         }
 
         boolean toBeReturn = false;
@@ -499,101 +534,12 @@ public class AddStickerOnImage extends AppCompatActivity implements RotationGest
             sourceImageBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
             result = true;
         } catch (Exception e) {
-            errorAny = e.getMessage();
+
             result =false;
             e.printStackTrace();
         }
         imageOutUri = Uri.fromFile(imageFile);
         return result;
-    }
-    public class RunInBackground extends AsyncTask<Void,Void,Void>
-    {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            progressDialog.setMessage("Loading..");
-            progressDialog.show();
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            progressDialog.dismiss();
-
-            AsyncTask.execute(new Runnable()
-            {@Override
-            public void run()
-            {
-                //get Date and time
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd \nHH:mm:ss", Locale.getDefault());
-                String currentDateandTime = sdf.format(new Date());
-                helper.AddImage(helper.getBytes(ImageList.getInstance().getCurrentBitmap()),currentDateandTime);
-                ImageList.getInstance().deleteUndoRedoImages();
-
-                GlideBitmapPool.clearMemory();
-            }
-            });
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids)
-        {
-
-
-            //set the text
-            boolean doneSetting = setTextFinal();
-            if(doneSetting)
-            {
-                Intent intent = new Intent();
-                intent.putExtra(STICKER_OUT_URI,imageOutUri.toString());
-                try {
-                    Bitmap  bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageOutUri);
-
-                    bitmap = methods.CropBitmapTransparency(bitmap);
-                    ImageList.getInstance().addBitmap(bitmap,true);
-                    if(EditorActivity.isNeededToDelete)
-                    {
-                        try
-                        {
-                            ImageList.getInstance().removeBitmap(ImageList.getInstance().getCurrentPosition() + 1,false);
-                        }
-                        catch (Exception e)
-                        {
-
-                        }
-                    }
-
-                    // MainActivity.CurrentWorkingFilePath = imageOutUri;
-                    // MainActivity.filePaths.add(imageOutUri);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                setResult(STICKER_ON_IMAGE_RESULT_OK_CODE,intent);
-                /*
-                if(progressDialog.isShowing())
-                {
-                    progressDialog.dismiss();
-                }*/
-                finish();
-
-            }
-            else
-            {
-                Intent intent = new Intent();
-                intent.putExtra(STICKER_OUT_ERROR,errorAny);
-                setResult(STICKER_ON_IMAGE_RESULT_FAILED_CODE,intent);
-                /*
-                if(progressDialog.isShowing())
-                {
-                    progressDialog.dismiss();
-                }*/
-                finish();
-
-            }
-            return null;
-        }
     }
     private void showStickerPopup()
     {
@@ -1068,6 +1014,8 @@ public class AddStickerOnImage extends AppCompatActivity implements RotationGest
 
             clickedId = addedStickerCount;
 
+            setBackgroundAsSelected();
+
         }
     }
     public void removeStickerView(View v)
@@ -1081,9 +1029,38 @@ public class AddStickerOnImage extends AppCompatActivity implements RotationGest
                 view.setVisibility(View.GONE);
                 addedStickersList.remove(i);
                 clickedId = -99;
+                setBackgroundAsSelected();
                 break;
             }
         }
+
+    }
+    public void setBackgroundAsSelected()
+    {
+        for(ImageView view : addedStickersList)
+        {
+            if(clickedId == view.getId())
+            {
+                view.setBackgroundResource(R.drawable.selected_background);
+            }
+            else
+            {
+                view.setBackground(null);
+            }
+        }
+    }
+    public void removeBackgroundAsSelected()
+    {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                for(ImageView view : addedStickersList)
+                {
+                    view.setBackground(null);
+                }
+            }
+        });
 
     }
 }

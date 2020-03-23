@@ -964,9 +964,6 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
     {
 
         Intent intent = new Intent(EditorActivity.this,AddStickerOnImage.class);
-        Bundle bundle = new Bundle();
-        bundle.putInt(AddStickerOnImage.STICKER_SIZE,1000);
-        intent.putExtras(bundle);
         startActivityForResult(intent, AddStickerOnImage.STICKER_ON_IMAGE_REQUEST_CODE);
     }
     private void showStickerPopup()

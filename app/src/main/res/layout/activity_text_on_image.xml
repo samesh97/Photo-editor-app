@@ -28,16 +28,16 @@
             app:layout_constraintTop_toTopOf="parent" />
 
 
-        <TextView
-            android:id="@+id/addTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:padding="20dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/sourceImageView"
-            app:layout_constraintStart_toStartOf="@+id/sourceImageView"
-            app:layout_constraintTop_toTopOf="@+id/sourceImageView" />
+        <!--<TextView-->
+            <!--android:id="@+id/addTextView"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:gravity="center"-->
+            <!--android:padding="20dp"-->
+            <!--app:layout_constraintBottom_toBottomOf="parent"-->
+            <!--app:layout_constraintEnd_toEndOf="@+id/sourceImageView"-->
+            <!--app:layout_constraintStart_toStartOf="@+id/sourceImageView"-->
+            <!--app:layout_constraintTop_toTopOf="@+id/sourceImageView" />-->
 
 
 
@@ -203,5 +203,26 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.github.chuross.library.ExpandableLayout>
+
+    <Button
+        android:id="@+id/addNewTextViewButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="Add Text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/removeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:onClick="removeStickerView"
+        android:text="Remove Text"
+        app:layout_constraintEnd_toStartOf="@+id/addNewTextViewButton"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

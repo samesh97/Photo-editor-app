@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
@@ -102,13 +103,14 @@ public class AddEffects extends AppCompatActivity implements OnBitmapChanged, On
             }
             else
             {
+                progress_bar.setVisibility(View.VISIBLE);
                 mInterstitialAd.loadAd(new AdRequest.Builder().build());
 
                 if(filterAdapter != null)
                 {
                     if(filterAdapter.returnPrevoiusPositin() != -99)
                     {
-                        AddImageToArrayListAsyncTask asyncTask = new AddImageToArrayListAsyncTask(currentEditingBitmap, progress_bar, this);
+                        AddImageToArrayListAsyncTask asyncTask = new AddImageToArrayListAsyncTask(currentEditingBitmap, this);
                         asyncTask.execute();
                     }
                     else
@@ -217,6 +219,7 @@ public class AddEffects extends AppCompatActivity implements OnBitmapChanged, On
     @Override
     public void startActivityForResult()
     {
+        progress_bar.setVisibility(View.GONE);
         Intent intent = new Intent();
         setResult(21,intent);
         finish();
