@@ -14,6 +14,7 @@ import android.media.ExifInterface;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
@@ -147,6 +148,21 @@ public class Methods
             file.delete();
             Log.d("image","deleted");
         }
+
+        return Uri.parse(path);
+    }
+    public Uri getImageUriWithoutDeleting(Bitmap inImage)
+    {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), inImage, "Title", null);
+
+
+        String realPath = getRealPathFromDocumentUri(Uri.parse(path));
+        Log.d("image",realPath);
+
+        final File file = new File(realPath);
+
 
         return Uri.parse(path);
     }
@@ -490,6 +506,29 @@ public class Methods
         toast.setView(view);
         toast.show();
 
+    }
+    public Bitmap getResizedBitmapWithURI(Context c, Uri uri, final int requiredSize)
+            throws FileNotFoundException
+    {
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inJustDecodeBounds = true;
+        BitmapFactory.decodeStream(c.getContentResolver().openInputStream(uri), null, o);
+
+        int width_tmp = o.outWidth
+                , height_tmp = o.outHeight;
+        int scale = 1;
+
+        while(true) {
+            if(width_tmp / 2 < requiredSize || height_tmp / 2 < requiredSize)
+                break;
+            width_tmp /= 2;
+            height_tmp /= 2;
+            scale *= 2;
+        }
+
+        BitmapFactory.Options o2 = new BitmapFactory.Options();
+        o2.inSampleSize = scale;
+        return BitmapFactory.decodeStream(c.getContentResolver().openInputStream(uri), null, o2);
     }
 
 }

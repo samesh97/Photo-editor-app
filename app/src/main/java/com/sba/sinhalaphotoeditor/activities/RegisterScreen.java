@@ -25,6 +25,7 @@ import com.google.firebase.auth.PhoneAuthProvider;
 import com.rilixtech.Country;
 import com.rilixtech.CountryCodePicker;
 import com.sba.sinhalaphotoeditor.Config.Constants;
+import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.R;
 
 import java.io.IOException;
@@ -43,6 +44,7 @@ public class RegisterScreen extends AppCompatActivity{
     private boolean isAlreadyVerified = false;
     private ProgressBar progress_bar;
     private TextView skipButton;
+    private Methods methods;
 
 
 
@@ -55,7 +57,9 @@ public class RegisterScreen extends AppCompatActivity{
             filePath = data.getData();
             try
             {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
+                Bitmap bitmap = methods.getResizedBitmapWithURI(getApplicationContext(),filePath,200);
+                filePath = methods.getImageUriWithoutDeleting(bitmap);
+                //Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
                 profilePicture.setImageBitmap(bitmap);
             }
             catch (IOException e)
@@ -72,6 +76,7 @@ public class RegisterScreen extends AppCompatActivity{
         setContentView(R.layout.activity_register_screen);
 
 
+        methods = new Methods(getApplicationContext());
         ccp = (CountryCodePicker) findViewById(R.id.ccp);
         progress_bar = findViewById(R.id.progress_bar);
         skipButton = findViewById(R.id.skip_button);

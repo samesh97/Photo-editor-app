@@ -847,8 +847,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         Intent intent = new Intent(EditorActivity.this, TextOnImageActivity.class);
         Bundle bundle = new Bundle();
        // bundle.putString(TextOnImageActivity.IMAGE_IN_URI,MainActivity.CurrentWorkingFilePath.toString()); //image uri
-        bundle.putString(TextOnImageActivity.TEXT_COLOR,"#FFFFFF");                 //initial color of the text
-        bundle.putFloat(TextOnImageActivity.TEXT_FONT_SIZE,30.0f);                  //initial text size
+        //initial text size
         bundle.putString(TextOnImageActivity.TEXT_TO_WRITE,text);                   //text to be add in the image
         intent.putExtras(bundle);
         startActivityForResult(intent, TextOnImageActivity.TEXT_ON_IMAGE_REQUEST_CODE); //start activity for the result

@@ -29,7 +29,7 @@ import com.sba.sinhalaphotoeditor.CallBacks.OnBitmapChanged;
 import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
-import com.sba.sinhalaphotoeditor.adapter.FilterAdapter;
+import com.sba.sinhalaphotoeditor.adapters.FilterAdapter;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;
 import com.zomato.photofilters.FilterPack;
 import com.zomato.photofilters.imageprocessors.Filter;
@@ -150,6 +150,9 @@ public class AddEffects extends AppCompatActivity implements OnBitmapChanged, On
         Glide.with(getApplicationContext()).load(currentEditingBitmap).into(userSelectedImage);
 
         filters = FilterPack.getFilterPack(AddEffects.this);
+
+
+
 
         filterRecyclerView = findViewById(R.id.filterRecyclerView);
         filterRecyclerView.setItemViewCacheSize(filters.size());

@@ -25,6 +25,11 @@ public class DatabaseHelper extends SQLiteOpenHelper
     private static final String COL_2 = "Image";
     private static final String COL_3 = "DateTime";
 
+
+    private static final String USER_TABLE_NAME = "users";
+    private static final String USER_TABLE_COL_1 = "id";
+    private static final String USER_TABLE_COL_2 = "image";
+
     public DatabaseHelper(@Nullable Context context)
     {
         super(context, DATABASE_NAME, null, 1);
@@ -34,6 +39,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
     public void onCreate(SQLiteDatabase db)
     {
         db.execSQL("CREATE TABLE " + TABLE_NAME + "(Id INTEGER PRIMARY KEY AUTOINCREMENT,Image BLOB NOT NULL,DateTime TEXT NOT NULL)");
+        db.execSQL("CREATE TABLE " + USER_TABLE_NAME + "(id INTEGER PRIMARY KEY AUTOINCREMENT,image BLOB NOT NULL)");
     }
     public void createDBAgain()
     {
@@ -56,6 +62,24 @@ public class DatabaseHelper extends SQLiteOpenHelper
         values.put(COL_3,date);
 
         long res = db.insert(TABLE_NAME,null,values);
+        if(res < 0)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+
+    }
+    public boolean AddUserProfilePicture(byte[] image)
+    {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(USER_TABLE_COL_2,image);
+
+        long res = db.insert(USER_TABLE_NAME,null,values);
         if(res < 0)
         {
             return false;

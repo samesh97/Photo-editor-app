@@ -1,17 +1,16 @@
-package com.sba.sinhalaphotoeditor.adapter;
+package com.sba.sinhalaphotoeditor.adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.sba.sinhalaphotoeditor.CallBacks.OnBitmapChanged;
-import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.R;
-import com.sba.sinhalaphotoeditor.activities.MainActivity;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;
 import com.zomato.photofilters.imageprocessors.Filter;
 
@@ -27,12 +26,14 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.FilterView
     private List<Filter> filters;
     private int previouPosition = -99;
     private OnBitmapChanged listner;
+    private Bitmap currentBitmap = null;
 
     public FilterAdapter(Context context, List<Filter> filters, OnBitmapChanged listner)
     {
         this.context = context;
         this.filters = filters;
         this.listner = listner;
+
     }
     @NonNull
     @Override
@@ -47,12 +48,16 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.FilterView
     {
         if(filters != null)
         {
-            Methods methods = new Methods(context);
-            final Bitmap currentBitmap = ImageList.getInstance().getCurrentBitmap().copy(ImageList.getInstance().getCurrentBitmap().getConfig(),true);
+            Bitmap icon = BitmapFactory.decodeResource(context.getResources(),
+                    R.drawable.sample_filter_pic);
 
-
-            final Bitmap smallBitmap = methods.getResizedBitmap(filters.get(position).processFilter(currentBitmap),100);
-            Glide.with(context).load(smallBitmap).into(holder.previewImage);
+            Bitmap bitmap = icon.copy(icon.getConfig(),true);
+            Glide.with(context).load(filters.get(position).processFilter(bitmap)).into(holder.previewImage);
+            String name= filters.get(position).getName();
+            if(name != null)
+            {
+                holder.filterName.setText(name);
+            }
 
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -61,6 +66,7 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.FilterView
 
                     if(previouPosition != position)
                     {
+                        currentBitmap = ImageList.getInstance().getCurrentBitmap().copy(ImageList.getInstance().getCurrentBitmap().getConfig(),true);
                         Bitmap largeBitmap = filters.get(position).processFilter(currentBitmap);
                         listner.bitmapChanged(largeBitmap);
                         previouPosition = position;
@@ -89,11 +95,13 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.FilterView
     {
 
         CircleImageView previewImage;
+        TextView filterName;
 
         public FilterViewHolder(@NonNull View itemView)
         {
             super(itemView);
             previewImage = itemView.findViewById(R.id.filter_preview);
+            filterName = itemView.findViewById(R.id.filter_name);
         }
     }
     public int returnPrevoiusPositin()

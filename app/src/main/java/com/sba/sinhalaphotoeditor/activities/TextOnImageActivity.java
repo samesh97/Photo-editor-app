@@ -20,10 +20,13 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -39,6 +42,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -51,12 +55,18 @@ import com.flask.colorpicker.builder.ColorPickerClickListener;
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
 import com.github.chuross.library.ExpandableLayout;
 import com.glidebitmappool.GlideBitmapPool;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.sba.sinhalaphotoeditor.CallBacks.OnAsyncTaskState;
+import com.sba.sinhalaphotoeditor.CallBacks.OnTextAttributesChangedListner;
 import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.Config.RotationGestureDetector;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
+import com.sba.sinhalaphotoeditor.adapters.ShadowColorAdapter;
+import com.sba.sinhalaphotoeditor.adapters.TextColorAdapter;
+import com.sba.sinhalaphotoeditor.adapters.TextFontAdapter;
 import com.sba.sinhalaphotoeditor.aynctask.AddImageToArrayListAsyncTask;
+import com.sba.sinhalaphotoeditor.model.TextViewPlus;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;
 
 import org.w3c.dom.Text;
@@ -70,6 +80,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import render.animations.Bounce;
 import render.animations.Render;
 
@@ -77,13 +89,11 @@ import static com.sba.sinhalaphotoeditor.activities.EditorActivity.screenHeight;
 
 public class TextOnImageActivity extends AppCompatActivity
         implements RotationGestureDetector.OnRotationGestureListener,
-     View.OnTouchListener,View.OnLongClickListener, OnAsyncTaskState
+     View.OnTouchListener,View.OnLongClickListener, OnAsyncTaskState, OnTextAttributesChangedListner
 {
 
 
     public static String TEXT_TO_WRITE = "sourceText";
-    public static String TEXT_FONT_SIZE = "textFontSize";
-    public static String TEXT_COLOR = "textColor";
     public static String IMAGE_OUT_URI = "imageOutURI";
     public static String IMAGE_OUT_ERROR = "imageOutError";
 
@@ -94,8 +104,7 @@ public class TextOnImageActivity extends AppCompatActivity
 
     private Uri imageOutUri;
     private String saveDir="/tmp/";
-    private String textToWrite = "",textColor="#ffffff";
-    private String errorAny = "";
+    private String textToWrite = "";
     private ImageView sourceImageView;
     private ConstraintLayout workingLayout,baseLayout;
     private ScaleGestureDetector scaleGestureDetector;
@@ -108,15 +117,14 @@ public class TextOnImageActivity extends AppCompatActivity
 
     private boolean isBorderCheckTrue = false;
     private boolean isGlowCheckTrue = false;
-    String selectedColorForGlowAndBorder = "#000000";
 
 
     DatabaseHelper helper = new DatabaseHelper(TextOnImageActivity.this);
 
 
-    private SeekBar opacitySeekBar;
-    private  SeekBar textShadowDirectionSeekBar;
-    private SeekBar textShadowUpDownDirectionSeekBar;
+//    private SeekBar opacitySeekBar;
+//    private  SeekBar textShadowDirectionSeekBar;
+//    private SeekBar textShadowUpDownDirectionSeekBar;
     private float opacityLevel = 1f;
 
 
@@ -130,7 +138,7 @@ public class TextOnImageActivity extends AppCompatActivity
 
     private int clickedId = 1;
     private int addedTextViewCount = 0;
-    private ArrayList<TextView> addedTextViews = new ArrayList<>();
+    private ArrayList<TextViewPlus> addedTextViews = new ArrayList<>();
     private float lastX = 0, lastY = 0;
 
     private Button addNewTextViewButton;
@@ -188,34 +196,39 @@ public class TextOnImageActivity extends AppCompatActivity
 
         expandIcon.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
+                openBottomSheet();
 
-                if(expandableLayout.isExpanded())
-                {
-                    expandableLayout.collapse();
-                    //expandIcon.setImageResource(R.drawable.slide_up_image);
-                    expandIcon.setBackground(getResources().getDrawable(R.drawable.top_rounded_background));
-                    expandableLayout.setBackgroundColor(Color.TRANSPARENT);
-                }
-                else
-                {
-                    expandIcon.setBackgroundColor(Color.TRANSPARENT);
-                    expandableLayout.setBackground(getResources().getDrawable(R.drawable.white_opacity_background));
-                    expandableLayout.expand();// expand with animation
-                    //expandIcon.setImageResource(R.drawable.slide_down_image);
-
-                }
+//                if(expandableLayout.isExpanded())
+//                {
+//                    expandableLayout.collapse();
+//                    //expandIcon.setImageResource(R.drawable.slide_up_image);
+//                    expandIcon.setBackground(getResources().getDrawable(R.drawable.top_rounded_background));
+//                    expandableLayout.setBackgroundColor(Color.TRANSPARENT);
+//                }
+//                else
+//                {
+//                    expandIcon.setBackgroundColor(Color.TRANSPARENT);
+//                    expandableLayout.setBackground(getResources().getDrawable(R.drawable.white_opacity_background));
+//                    expandableLayout.expand();// expand with animation
+//                    //expandIcon.setImageResource(R.drawable.slide_down_image);
+//
+//                }
 
 
 
             }
         });
 
-        addNewTextViewButton.setOnClickListener(new View.OnClickListener() {
+        addNewTextViewButton.setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View v) {
 
                 showPopup();
+
+
             }
         });
 
@@ -259,6 +272,160 @@ public class TextOnImageActivity extends AppCompatActivity
 
 
 
+    }
+
+    private void openBottomSheet()
+    {
+        BottomSheetDialog dialog = new BottomSheetDialog(TextOnImageActivity.this);
+
+        if(dialog.getWindow() != null)
+        {
+            dialog.getWindow().setDimAmount(0.0f);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        }
+
+        View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.layout_add_text_bottom_sheet,null,false);
+
+        RecyclerView colorRV = view.findViewById(R.id.color_recycler_view);
+        TextColorAdapter textColorAdapter = new TextColorAdapter(getApplicationContext(),TextOnImageActivity.this);
+        LinearLayoutManager textColorManger = new LinearLayoutManager(getApplicationContext());
+        textColorManger.setOrientation(RecyclerView.HORIZONTAL);
+        colorRV.setLayoutManager(textColorManger);
+        colorRV.setAdapter(textColorAdapter);
+
+        RecyclerView shadowColorRV = view.findViewById(R.id.shadow_color_recycler_view);
+        ShadowColorAdapter shadowColorAdapter = new ShadowColorAdapter(getApplicationContext(),TextOnImageActivity.this);
+        LinearLayoutManager shadowColorManager = new LinearLayoutManager(getApplicationContext());
+        shadowColorManager.setOrientation(RecyclerView.HORIZONTAL);
+        shadowColorRV.setLayoutManager(shadowColorManager);
+        shadowColorRV.setAdapter(shadowColorAdapter);
+
+
+        RecyclerView fontsRV = view.findViewById(R.id.font_recycler_view);
+        TextFontAdapter textFontAdapter = new TextFontAdapter(getApplicationContext(),"Sample",TextOnImageActivity.this);
+        LinearLayoutManager textFontManager = new LinearLayoutManager(getApplicationContext());
+        textFontManager.setOrientation(RecyclerView.HORIZONTAL);
+        fontsRV.setLayoutManager(textFontManager);
+        fontsRV.setAdapter(textFontAdapter);
+
+        EditText current_text = view.findViewById(R.id.current_text);
+        for(TextViewPlus view2 : addedTextViews)
+        {
+            if(view2.getTextView().getId() == clickedId)
+            {
+                current_text.setText(view2.getText());
+            }
+        }
+        current_text.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count)
+            {
+                for(TextViewPlus view : addedTextViews)
+                {
+                    if(view.getTextView().getId() == clickedId)
+                    {
+                        view.setText(s.toString());
+                    }
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+
+        SeekBar opacitySeekBar = view.findViewById(R.id.opacitySeekBar);
+        opacitySeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
+            {
+                float opacityLevel = (progress / 100.0f);
+                for(TextViewPlus view : addedTextViews)
+                {
+                    if(clickedId == view.getTextView().getId())
+                    {
+                        view.setTextOpacity(opacityLevel);
+                    }
+                }
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        SeekBar textShadowDirectionSeekBar = view.findViewById(R.id.textShadowDirectionSeekBar);
+        textShadowDirectionSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
+            {
+                for(TextViewPlus view : addedTextViews)
+                {
+                    if(clickedId == view.getTextView().getId())
+                    {
+
+                        previousShadowLevel = progress / 2 - 25;
+                        view.setShadowXDirection(previousShadowLevel);
+                    }
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        SeekBar textShadowUpDownDirectionSeekBar = view.findViewById(R.id.textShadowUpDownDirectionSeekBar);
+        textShadowUpDownDirectionSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
+            {
+                for(TextViewPlus view : addedTextViews)
+                {
+                    if(clickedId == view.getTextView().getId())
+                    {
+                        previousUpDownShadowLevel = (progress / 2) - 25;
+                        view.setShadowYDirection(previousUpDownShadowLevel);
+                    }
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+
+
+        dialog.setContentView(view,new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,400));
+
+        dialog.show();
     }
 
     private void setFonts()
@@ -319,11 +486,11 @@ public class TextOnImageActivity extends AppCompatActivity
     public void OnRotation(RotationGestureDetector rotationDetector) {
         //set the rotation of the text view
         float angle = rotationDetector.getAngle();
-        for(TextView textView : addedTextViews)
+        for(TextViewPlus textView : addedTextViews)
         {
-            if(clickedId == textView.getId())
+            if(clickedId == textView.getTextView().getId())
             {
-                textView.setRotation(angle);
+                textView.getTextView().setRotation(angle);
             }
         }
 
@@ -339,9 +506,9 @@ public class TextOnImageActivity extends AppCompatActivity
     {
         clickedId = v.getId();
         setBackgroundAsSelected();
-        for(TextView view : addedTextViews)
+        for(TextViewPlus view : addedTextViews)
         {
-            if(clickedId == view.getId())
+            if(clickedId == view.getTextView().getId())
             {
                 switch (motionEvent.getAction())
                 {
@@ -353,10 +520,10 @@ public class TextOnImageActivity extends AppCompatActivity
                             case MotionEvent.ACTION_MOVE:
                                 float dx = motionEvent.getX() - lastX;
                                 float dy = motionEvent.getY() - lastY;
-                                float finalX = view.getX() + dx;
-                                float finalY = view.getY() + dy;
-                                view.setX(finalX);
-                                view.setY(finalY);
+                                float finalX = view.getTextView().getX() + dx;
+                                float finalY = view.getTextView().getY() + dy;
+                                view.getTextView().setX(finalX);
+                                view.getTextView().setY(finalY);
                                 break;
                         }
 
@@ -392,19 +559,55 @@ public class TextOnImageActivity extends AppCompatActivity
 
     }
 
+    @Override
+    public void onTextColorChanged(int color)
+    {
+        for(TextViewPlus view : addedTextViews)
+        {
+            if(view.getTextView().getId() == clickedId)
+            {
+                view.setTextColor(color);
+            }
+        }
+    }
+
+    @Override
+    public void onTextShadowColorChanged(int color)
+    {
+        for(TextViewPlus view : addedTextViews)
+        {
+            if(view.getTextView().getId() == clickedId)
+            {
+                view.setShadowColor(color);
+            }
+        }
+    }
+
+    @Override
+    public void onTextFontChanged(Typeface typeFace)
+    {
+        for(TextViewPlus view : addedTextViews)
+        {
+            if(view.getTextView().getId() == clickedId)
+            {
+                view.setTypeface(typeFace);
+            }
+        }
+    }
+
     public class simpleOnScaleGestureListener extends ScaleGestureDetector.SimpleOnScaleGestureListener{
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
             //change the font size of the text on pinch
 
-            for(TextView view : addedTextViews)
+            for(TextViewPlus view : addedTextViews)
             {
-                if(clickedId == view.getId())
+                if(clickedId == view.getTextView().getId())
                 {
-                    float size = view.getTextSize();
+                    float size = view.getTextView().getTextSize();
                     float factor = detector.getScaleFactor();
                     float product = size*factor;
-                    view.setTextSize(TypedValue.COMPLEX_UNIT_PX, product);
+                    view.getTextView().setTextSize(TypedValue.COMPLEX_UNIT_PX, product);
                     size = view.getTextSize();
                 }
             }
@@ -452,165 +655,141 @@ public class TextOnImageActivity extends AppCompatActivity
 
 
 
-        opacitySeekBar = (SeekBar) findViewById(R.id.opacitySeekBar);
-        textShadowDirectionSeekBar = (SeekBar) findViewById(R.id.textShadowDirectionSeekBar);
-        textShadowUpDownDirectionSeekBar = findViewById(R.id.textShadowUpDownDirectionSeekBar);
-
-        opacitySeekBar.setProgress((int)opacityLevel * 100);
-        opacitySeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
-            {
-                opacityLevel = (progress / 100.0f);
-                for(TextView view : addedTextViews)
-                {
-                    if(clickedId == view.getId())
-                    {
-                        view.setAlpha(opacityLevel);
-                    }
-                }
-
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-
-        textShadowDirectionSeekBar.setProgress(50);
-
-        textShadowDirectionSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
-            {
-                if(previousShadowLevel < progress)
-                {
-                    for(TextView view : addedTextViews)
-                    {
-                        if(clickedId == view.getId())
-                        {
-                            view.setShadowLayer(2.5f, progress / 2 - 25, previousUpDownShadowLevel, Color.parseColor(selectedColorForGlowAndBorder));
-                            previousShadowLevel = progress / 2 - 25;
-                        }
-                    }
-
-                }
-                else
-                {
-                    for(TextView view : addedTextViews)
-                    {
-                        if (clickedId == view.getId())
-                        {
-                            view.setShadowLayer(2.5f, (progress / 2) - 25,previousUpDownShadowLevel , Color.parseColor(selectedColorForGlowAndBorder));
-                            previousShadowLevel = progress / 2 - 25;
-                        }
-                    }
-
-                }
-                if(progress <= 53 && progress >= 47)
-                {
-                    if(previousUpDownShadowLevel == 0)
-                    {
-                        for(TextView view : addedTextViews)
-                        {
-                            if(clickedId == view.getId())
-                            {
-                                view.setShadowLayer(0f,0,0,Color.parseColor(selectedColorForGlowAndBorder));
-                                textShadowDirectionSeekBar.setProgress(50);
-                                textShadowUpDownDirectionSeekBar.setProgress(50);
-                            }
-                        }
-
-                    }
-
-                    previousShadowLevel = 0;
-                }
-
-
-
-
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-
-
-        textShadowUpDownDirectionSeekBar.setProgress(50);
-        textShadowUpDownDirectionSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
-            {
-                if(previousUpDownShadowLevel < progress)
-                {
-                    for(TextView view : addedTextViews)
-                    {
-                        if(clickedId == view.getId())
-                        {
-                            view.setShadowLayer(2.5f, previousShadowLevel, (progress / 2) - 25, Color.parseColor(selectedColorForGlowAndBorder));
-                            previousUpDownShadowLevel = (progress / 2) - 25;
-                        }
-                    }
-
-                }
-                else
-                {
-                    for(TextView view : addedTextViews)
-                    {
-                        if(clickedId == view.getId())
-                        {
-                            view.setShadowLayer(2.5f, previousShadowLevel,(progress / 2) - 25 , Color.parseColor(selectedColorForGlowAndBorder));
-                            previousUpDownShadowLevel = (progress / 2) - 25;
-                        }
-
-                    }
-
-                }
-                if(progress <= 53 && progress >= 47)
-                {
-                    if(previousShadowLevel == 0)
-                    {
-                        for(TextView view : addedTextViews)
-                        {
-                            if(clickedId == view.getId())
-                            {
-                                view.setShadowLayer(0f,0,0,Color.parseColor(selectedColorForGlowAndBorder));
-                                textShadowDirectionSeekBar.setProgress(50);
-                                textShadowUpDownDirectionSeekBar.setProgress(50);
-                            }
-                        }
-
-                    }
-                    previousUpDownShadowLevel = 0;
-                }
-
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar)
-            {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar)
-            {
-
-            }
-        });
+//        opacitySeekBar = (SeekBar) findViewById(R.id.opacitySeekBar);
+//        textShadowDirectionSeekBar = (SeekBar) findViewById(R.id.textShadowDirectionSeekBar);
+//        textShadowUpDownDirectionSeekBar = findViewById(R.id.textShadowUpDownDirectionSeekBar);
+//
+//        opacitySeekBar.setProgress((int)opacityLevel * 100);
+//
+//
+//        textShadowDirectionSeekBar.setProgress(50);
+//
+//        textShadowDirectionSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+//            @Override
+//            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
+//            {
+//                if(previousShadowLevel < progress)
+//                {
+//                    for(TextViewPlus view : addedTextViews)
+//                    {
+//                        if(clickedId == view.getTextView().getId())
+//                        {
+//                            view.getTextView().setShadowLayer(2.5f, progress / 2 - 25, previousUpDownShadowLevel, view.getShadowColor());
+//                            previousShadowLevel = progress / 2 - 25;
+//                        }
+//                    }
+//
+//                }
+//                else
+//                {
+//                    for(TextViewPlus view : addedTextViews)
+//                    {
+//                        if (clickedId == view.getTextView().getId())
+//                        {
+//                            view.getTextView().setShadowLayer(2.5f, (progress / 2) - 25,previousUpDownShadowLevel , view.getShadowColor());
+//                            previousShadowLevel = progress / 2 - 25;
+//                        }
+//                    }
+//
+//                }
+//                if(progress <= 53 && progress >= 47)
+//                {
+//                    if(previousUpDownShadowLevel == 0)
+//                    {
+//                        for(TextViewPlus view : addedTextViews)
+//                        {
+//                            if(clickedId == view.getTextView().getId())
+//                            {
+//                                view.getTextView().setShadowLayer(0f,0,0,view.getShadowColor());
+//                                textShadowDirectionSeekBar.setProgress(50);
+//                                textShadowUpDownDirectionSeekBar.setProgress(50);
+//                            }
+//                        }
+//
+//                    }
+//
+//                    previousShadowLevel = 0;
+//                }
+//
+//
+//
+//
+//            }
+//
+//            @Override
+//            public void onStartTrackingTouch(SeekBar seekBar) {
+//
+//            }
+//
+//            @Override
+//            public void onStopTrackingTouch(SeekBar seekBar) {
+//
+//            }
+//        });
+//
+//
+//        textShadowUpDownDirectionSeekBar.setProgress(50);
+//        textShadowUpDownDirectionSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+//            @Override
+//            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
+//            {
+//                if(previousUpDownShadowLevel < progress)
+//                {
+//                    for(TextViewPlus view : addedTextViews)
+//                    {
+//                        if(clickedId == view.getTextView().getId())
+//                        {
+//                            view.getTextView().setShadowLayer(2.5f, previousShadowLevel, (progress / 2) - 25, view.getShadowColor());
+//                            previousUpDownShadowLevel = (progress / 2) - 25;
+//                        }
+//                    }
+//
+//                }
+//                else
+//                {
+//                    for(TextViewPlus view : addedTextViews)
+//                    {
+//                        if(clickedId == view.getTextView().getId())
+//                        {
+//                            view.getTextView().setShadowLayer(2.5f, previousShadowLevel,(progress / 2) - 25 , view.getShadowColor());
+//                            previousUpDownShadowLevel = (progress / 2) - 25;
+//                        }
+//
+//                    }
+//
+//                }
+//                if(progress <= 53 && progress >= 47)
+//                {
+//                    if(previousShadowLevel == 0)
+//                    {
+//                        for(TextViewPlus view : addedTextViews)
+//                        {
+//                            if(clickedId == view.getTextView().getId())
+//                            {
+//                                view.getTextView().setShadowLayer(0f,0,0,view.getShadowColor());
+//                                textShadowDirectionSeekBar.setProgress(50);
+//                                textShadowUpDownDirectionSeekBar.setProgress(50);
+//                            }
+//                        }
+//
+//                    }
+//                    previousUpDownShadowLevel = 0;
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onStartTrackingTouch(SeekBar seekBar)
+//            {
+//
+//            }
+//
+//            @Override
+//            public void onStopTrackingTouch(SeekBar seekBar)
+//            {
+//
+//            }
+//        });
 
 
 
@@ -713,16 +892,16 @@ public class TextOnImageActivity extends AppCompatActivity
         {
             ColorPickerDialogBuilder.with(TextOnImageActivity.this)
                     .setTitle("Choose Color")
-                    .initialColor(Color.parseColor(textColor))
+                    .initialColor(Color.WHITE)
                     .wheelType(ColorPickerView.WHEEL_TYPE.CIRCLE)
                     .density(20)
                     .setOnColorSelectedListener(new OnColorSelectedListener() {
                         @Override
                         public void onColorSelected(int i)
                         {
-                            for(TextView view : addedTextViews)
+                            for(TextViewPlus view : addedTextViews)
                             {
-                                if(clickedId == view.getId())
+                                if(clickedId == view.getTextView().getId())
                                 {
                                     view.setTextColor(i);
                                 }
@@ -734,9 +913,9 @@ public class TextOnImageActivity extends AppCompatActivity
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i, Integer[] integers)
                         {
-                            for(TextView view : addedTextViews)
+                            for(TextViewPlus view : addedTextViews)
                             {
-                                if(clickedId == view.getId())
+                                if(clickedId == view.getTextView().getId())
                                 {
                                     view.setTextColor(i);
                                 }
@@ -774,16 +953,16 @@ public class TextOnImageActivity extends AppCompatActivity
                 sourceImageView.setBackgroundColor(Color.TRANSPARENT);
             }
         });
-        for(final TextView view : addedTextViews)
+        for(final TextViewPlus view : addedTextViews)
         {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run()
                 {
-                    view.setBackground(null);
+                    view.getTextView().setBackground(null);
                 }
             });
-            view.setOnTouchListener(null);
+            view.getTextView().setOnTouchListener(null);
         }
 
         boolean toBeReturn = false;
@@ -811,7 +990,6 @@ public class TextOnImageActivity extends AppCompatActivity
             sourceImageBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
             result = true;
         } catch (Exception e) {
-            errorAny = e.getMessage();
             result =false;
             e.printStackTrace();
         }
@@ -868,14 +1046,20 @@ public class TextOnImageActivity extends AppCompatActivity
             {
                 ColorPickerDialogBuilder.with(TextOnImageActivity.this)
                         .setTitle("Choose Color")
-                        .initialColor(Color.parseColor(textColor))
+                        .initialColor(Color.WHITE)
                         .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
                         .density(20)
                         .setOnColorSelectedListener(new OnColorSelectedListener() {
                             @Override
                             public void onColorSelected(int i)
                             {
-                                selectedColorForGlowAndBorder = String.format("#%X", i);
+                                for(TextViewPlus view : addedTextViews)
+                                {
+                                    if(clickedId == view.getTextView().getId())
+                                    {
+                                        view.setShadowColor(i);
+                                    }
+                                }
                             }
                         })
                         .setPositiveButton("Ok", new ColorPickerClickListener()
@@ -883,20 +1067,26 @@ public class TextOnImageActivity extends AppCompatActivity
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i, Integer[] integers)
                             {
-                                selectedColorForGlowAndBorder = String.format("#%X", i);
+                                for(TextViewPlus view : addedTextViews)
+                                {
+                                    if(clickedId == view.getTextView().getId())
+                                    {
+                                        view.setShadowColor(i);
+                                    }
+                                }
                                 if(isGlowCheckTrue)
                                 {
-                                    for(TextView view : addedTextViews)
+                                    for(TextViewPlus view : addedTextViews)
                                     {
-                                        if(clickedId == view.getId())
+                                        if(clickedId == view.getTextView().getId())
                                         {
                                             if(previousShadowLevel != 0 || previousUpDownShadowLevel != 0)
                                             {
-                                                view.setShadowLayer(2.5f, previousShadowLevel, previousUpDownShadowLevel, Color.parseColor(selectedColorForGlowAndBorder));
+                                                view.getTextView().setShadowLayer(2.5f, previousShadowLevel, previousUpDownShadowLevel, view.getShadowColor());
                                             }
                                             else
                                             {
-                                                view.setShadowLayer(12, 0, 0, Color.parseColor(selectedColorForGlowAndBorder));
+                                                view.getTextView().setShadowLayer(12, 0, 0, view.getShadowColor());
                                             }
                                         }
                                     }
@@ -905,17 +1095,17 @@ public class TextOnImageActivity extends AppCompatActivity
                                 }
                                 else
                                 {
-                                    for(TextView view : addedTextViews)
+                                    for(TextViewPlus view : addedTextViews)
                                     {
-                                        if(clickedId == view.getId())
+                                        if(clickedId == view.getTextView().getId())
                                         {
                                             if(previousShadowLevel != 0 || previousUpDownShadowLevel != 0)
                                             {
-                                                view.setShadowLayer(2.5f, previousShadowLevel, previousUpDownShadowLevel, Color.parseColor(selectedColorForGlowAndBorder));
+                                                view.getTextView().setShadowLayer(2.5f, previousShadowLevel, previousUpDownShadowLevel,view.getShadowColor());
                                             }
                                             else
                                             {
-                                                view.setShadowLayer(2.5f, -1, 1, Color.parseColor(selectedColorForGlowAndBorder));
+                                                view.getTextView().setShadowLayer(2.5f, -1, 1, view.getShadowColor());
                                             }
                                         }
                                     }
@@ -940,23 +1130,15 @@ public class TextOnImageActivity extends AppCompatActivity
             {
                 if(isChecked)
                 {
-                    for(TextView view : addedTextViews)
+                    for(TextViewPlus view : addedTextViews)
                     {
-                        if(clickedId == view.getId())
+                        if(clickedId == view.getTextView().getId())
                         {
                             if(isGlowCheckTrue)
                             {
                                 isGlowOn.setChecked(false);
                             }
-                            if(selectedColorForGlowAndBorder != null)
-                            {
-                                view.setShadowLayer(2.5f, -1, 1, Color.parseColor(selectedColorForGlowAndBorder));
-                            }
-                            else
-                            {
-                                view.setShadowLayer(2.5f, -1, 1, Color.BLACK);
-                            }
-
+                            view.getTextView().setShadowLayer(2.5f, -1, 1, view.getShadowColor());
                             isBorderCheckTrue = true;
                         }
                     }
@@ -964,25 +1146,17 @@ public class TextOnImageActivity extends AppCompatActivity
                 }
                 else
                 {
-                    for(TextView view : addedTextViews)
+                    for(TextViewPlus view : addedTextViews)
                     {
-                        if(clickedId == view.getId())
+                        if(clickedId == view.getTextView().getId())
                         {
                             if(!isGlowCheckTrue)
                             {
-                                view.setShadowLayer(0, 0, 0, Color.BLACK);
+                                view.getTextView().setShadowLayer(0, 0, 0, Color.BLACK);
                             }
                             else
                             {
-                                if(selectedColorForGlowAndBorder != null)
-                                {
-                                    view.setShadowLayer(12, 0, 0, Color.parseColor(selectedColorForGlowAndBorder));
-                                }
-                                else
-                                {
-                                    view.setShadowLayer(12, 0, 0, Color.BLACK);
-                                }
-
+                                view.getTextView().setShadowLayer(12, 0, 0, view.getShadowColor());
                             }
 
                             isBorderCheckTrue = false;
@@ -999,22 +1173,18 @@ public class TextOnImageActivity extends AppCompatActivity
             {
                 if(isChecked)
                 {
-                    for(TextView view : addedTextViews)
+                    for(TextViewPlus view : addedTextViews)
                     {
-                        if(clickedId == view.getId())
+                        if(clickedId == view.getTextView().getId())
                         {
                             if(isBorderCheckTrue)
                             {
                                 isBorderOn.setChecked(false);
                             }
-                            if(selectedColorForGlowAndBorder != null)
-                            {
-                                view.setShadowLayer(12, 0, 0, Color.parseColor(selectedColorForGlowAndBorder));
-                            }
-                            else
-                            {
-                                view.setShadowLayer(12, 0, 0, Color.BLACK);
-                            }
+
+                            view.getTextView().setShadowLayer(12, 0, 0, view.getShadowColor());
+
+
 
                             isGlowCheckTrue = true;
                         }
@@ -1023,25 +1193,17 @@ public class TextOnImageActivity extends AppCompatActivity
                 }
                 else
                 {
-                    for(TextView view : addedTextViews)
+                    for(TextViewPlus view : addedTextViews)
                     {
-                        if(clickedId == view.getId())
+                        if(clickedId == view.getTextView().getId())
                         {
                             if(!isBorderCheckTrue)
                             {
-                                view.setShadowLayer(0, 0, 0, Color.BLACK);
+                                view.getTextView().setShadowLayer(0, 0, 0, Color.BLACK);
                             }
                             else
                             {
-                                if(selectedColorForGlowAndBorder != null)
-                                {
-                                    view.setShadowLayer(2.5f, -1, 1, Color.parseColor(selectedColorForGlowAndBorder));
-                                }
-                                else
-                                {
-                                    view.setShadowLayer(2.5f, -1, 1, Color.BLACK);
-                                }
-
+                                view.getTextView().setShadowLayer(2.5f, -1, 1, view.getShadowColor());
                             }
                         }
                     }
@@ -1090,9 +1252,9 @@ public class TextOnImageActivity extends AppCompatActivity
                 @Override
                 public void onClick(View v)
                 {
-                    for(TextView view : addedTextViews)
+                    for(TextViewPlus view : addedTextViews)
                     {
-                        if(clickedId == view.getId())
+                        if(clickedId == view.getTextView().getId())
                         {
                             selectedTypeFace = fonts.get(position);
                             view.setTypeface(fonts.get(position));
@@ -1155,31 +1317,24 @@ public class TextOnImageActivity extends AppCompatActivity
     {
         if(text != null && !text.trim().equals(""))
         {
-            addedTextViewCount++;
-            TextView textView = new TextView(TextOnImageActivity.this);
-            textView.setText(text);
-            textView.setId(addedTextViewCount);
-
-
-            textView.setTextSize(15);
-
             if(selectedTypeFace == null)
             {
                 selectedTypeFace = ResourcesCompat.getFont(this, R.font.gemunulibresemibold);
             }
-            textView.setTypeface(selectedTypeFace);
-            textView.setTextColor(Color.parseColor(textColor));
-            textView.setMaxLines(1);
+            addedTextViewCount++;
+            TextViewPlus textView = new TextViewPlus(TextOnImageActivity.this,addedTextViewCount,text,selectedTypeFace);
 
-            textView.setOnTouchListener(this);
-            textView.setOnLongClickListener(this);
+            textView.getTextView().setMaxLines(1);
+
+            textView.getTextView().setOnTouchListener(this);
+            textView.getTextView().setOnLongClickListener(this);
 
             addedTextViews.add(textView);
 
 
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
-            textView.setLayoutParams(layoutParams);
+            textView.getTextView().setLayoutParams(layoutParams);
 
 
             WindowManager wm = (WindowManager) getApplication().getSystemService(Context.WINDOW_SERVICE);
@@ -1189,9 +1344,9 @@ public class TextOnImageActivity extends AppCompatActivity
             int width = metrics.widthPixels;
             int height = metrics.heightPixels;
 
-            textView.setX(width / 2 - 40);
-            textView.setY(height / 2 - 80);
-            workingLayout.addView(textView);
+            textView.getTextView().setX(width / 2 - 40);
+            textView.getTextView().setY(height / 2 - 80);
+            workingLayout.addView(textView.getTextView());
 
             clickedId = addedTextViewCount;
 
@@ -1202,15 +1357,15 @@ public class TextOnImageActivity extends AppCompatActivity
     }
     public void setBackgroundAsSelected()
     {
-        for(TextView view : addedTextViews)
+        for(TextViewPlus view : addedTextViews)
         {
-            if(clickedId == view.getId())
+            if(clickedId == view.getTextView().getId())
             {
-                view.setBackgroundResource(R.drawable.selected_background);
+                view.getTextView().setBackgroundResource(R.drawable.selected_background);
             }
             else
             {
-                view.setBackground(null);
+                view.getTextView().setBackground(null);
             }
         }
     }
@@ -1263,10 +1418,10 @@ public class TextOnImageActivity extends AppCompatActivity
 
         for(int i = 0; i < addedTextViews.size(); i++)
         {
-            TextView view = addedTextViews.get(i);
-            if(clickedId == view.getId())
+            TextViewPlus view = addedTextViews.get(i);
+            if(clickedId == view.getTextView().getId())
             {
-                view.setVisibility(View.GONE);
+                view.getTextView().setVisibility(View.GONE);
                 addedTextViews.remove(i);
                 clickedId = -99;
                 setBackgroundAsSelected();

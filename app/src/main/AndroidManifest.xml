@@ -26,7 +26,7 @@
             </intent-filter>
 
         </activity>
-        <activity android:name=".activities.ConfirmPhoneNumber" />
+        <activity android:name=".activities.ConfirmPhoneNumber" android:theme="@style/NoActionBarAppTheme"/>
         <activity android:name=".activities.RegisterScreen" android:label="Register"
             android:theme="@style/NoActionBarAppTheme"/>
         <activity android:name=".keyboard.KeyBoardAc" />

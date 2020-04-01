@@ -1,4 +1,4 @@
-package com.sba.sinhalaphotoeditor.adapter;
+package com.sba.sinhalaphotoeditor.adapters;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -28,7 +28,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.activities.EditorActivity;
-import com.sba.sinhalaphotoeditor.activities.MainActivity;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;

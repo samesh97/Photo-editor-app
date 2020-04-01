@@ -41,8 +41,7 @@ public class ImageList
             object.bitmapList.add(bitmap);
             if(isImagePositionIncrease)
             {
-                increaseImagePosition();
-
+                setImagePosition(object.bitmapList.size() - 1);
             }
         }
         public void addBitmapToThisPosition(Bitmap bitmap,int position,boolean isImagePositionIncrease)
@@ -71,11 +70,11 @@ public class ImageList
         }
         private void increaseImagePosition()
         {
-            if(object.bitmapList.size() - 1 > object.imagePosition)
-            {
-                object.imagePosition++;
-            }
-
+            object.imagePosition++;
+        }
+        private void setImagePosition(int size)
+        {
+            object.imagePosition = size;
         }
         private void decreaseImagePosition()
         {
