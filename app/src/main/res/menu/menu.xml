@@ -4,15 +4,15 @@
 
 
 
-    <item android:id="@+id/setFont"
-        android:icon="@drawable/ic_font"
-        app:showAsAction="always"
-        android:title="Set1"/>
+    <!--<item android:id="@+id/setFont"-->
+        <!--android:icon="@drawable/ic_font"-->
+        <!--app:showAsAction="always"-->
+        <!--android:title="Set1"/>-->
 
-    <item android:id="@+id/setColor"
-        android:icon="@drawable/ic_colors"
-        app:showAsAction="always"
-        android:title="Set2"/>
+    <!--<item android:id="@+id/setColor"-->
+        <!--android:icon="@drawable/ic_colors"-->
+        <!--app:showAsAction="always"-->
+        <!--android:title="Set2"/>-->
 
 
     <item android:id="@+id/setTextButton"

@@ -18,6 +18,7 @@ import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -45,13 +46,11 @@ public class MyCustomGallery extends AppCompatActivity {
     public static final int IMAGE_PICK_RESULT_CODE = 235;
 
     private String activityString = null;
-    ArrayList<File> allImages = new ArrayList<>();
-
-    ArrayList<File> images = new ArrayList<>();
+    private static ArrayList<File> allImages = new ArrayList<>();
+    private ArrayList<File> images = new ArrayList<>();
 
     GridView gridView;
 
-    ProgressDialog dialog;
     GridViewAdapter adapter;
 
 
@@ -145,9 +144,6 @@ public class MyCustomGallery extends AppCompatActivity {
         pickedImage = (ImageView) findViewById(R.id.pickedImage);
         gridView = findViewById(R.id.gridView);
 
-        dialog = new ProgressDialog(MyCustomGallery.this);
-        dialog.setTitle("Loading Images..");
-        dialog.setMessage("This may take a while depending on number of images you have in gallery");
 
 
 
@@ -173,8 +169,17 @@ public class MyCustomGallery extends AppCompatActivity {
             this.images = images;
         }
         @Override
-        public int getCount() {
-            return images.size();
+        public int getCount()
+        {
+            if(images.size() % 2 == 0)
+            {
+                return images.size() / 2;
+            }
+            else
+            {
+                return (images.size() / 2) + 1;
+            }
+
         }
 
         @Override
@@ -197,27 +202,60 @@ public class MyCustomGallery extends AppCompatActivity {
                 convertView = getLayoutInflater().inflate(R.layout.custom_gallery_row, null, false);
                 holder = new ViewHolder();
                 holder.imgView = (ImageView)convertView.findViewById(R.id.image);
+                holder.imgView2 = (ImageView)convertView.findViewById(R.id.image2);
                 convertView.setTag(holder);
             }
             else
             {
                 holder = (ViewHolder) convertView.getTag();
             }
-            Glide.with(getApplicationContext()).load(images.get(position)).into(holder.imgView);
+            if(images.size() > position * 2)
+            {
+                Glide.with(getApplicationContext()).load(images.get(position * 2)).into(holder.imgView);
+            }
+            if(images.size() > position + 1)
+            {
+                Glide.with(getApplicationContext()).load(images.get(position + 1)).into(holder.imgView2);
+            }
+
 
             holder.imgView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v)
                 {
-                    if(getBitmap(images.get(position).toString()) != null)
+                    if(getBitmap(images.get(position * 2).toString()) != null)
                     {
-                        Glide.with(getApplicationContext()).load(images.get(position)).into(pickedImage);
-                        selectedBitmap = getBitmap(images.get(position).toString());
+                        Glide.with(getApplicationContext()).load(images.get(position * 2)).into(pickedImage);
+                        selectedBitmap = getBitmap(images.get(position * 2).toString());
+
+                        selectedBitmap = ExifUtil.rotateBitmap(images.get(position * 2).toString(), selectedBitmap);
 
 
 
 
-                        selectedBitmap = ExifUtil.rotateBitmap(images.get(position).toString(), selectedBitmap);
+
+
+                        Bitmap bluredImage = getBlurBitmap(selectedBitmap.copy(selectedBitmap.getConfig(),true),getApplicationContext());
+                        //Bitmap bluredImage = new BlurUtils().blur(MyCustomGallery.this,selectedBitmap.copy(selectedBitmap.getConfig(),true), 100);
+                        BitmapDrawable ob = new BitmapDrawable(getResources(), bluredImage);
+
+                        pickedImage.setBackground(ob);
+                        bluredImage = null;
+                    }
+
+                }
+            });
+
+            holder.imgView2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v)
+                {
+                    if(getBitmap(images.get(position + 1).toString()) != null)
+                    {
+                        Glide.with(getApplicationContext()).load(images.get(position + 1)).into(pickedImage);
+                        selectedBitmap = getBitmap(images.get(position + 1).toString());
+
+                        selectedBitmap = ExifUtil.rotateBitmap(images.get(position + 1).toString(), selectedBitmap);
 
 
 
@@ -237,6 +275,7 @@ public class MyCustomGallery extends AppCompatActivity {
 
 
 
+
             //View view = getLayoutInflater().inflate(R.layout.custom_gallery_row,null);
             //ImageView imageView = view.findViewById(R.id.image);
             //Glide.with(getApplicationContext()).load(images.get(position)).into(imageView);
@@ -245,6 +284,7 @@ public class MyCustomGallery extends AppCompatActivity {
         public class ViewHolder
         {
             private ImageView imgView;
+            private ImageView imgView2;
         }
     }
     public void getAllImages(Activity activity)
@@ -264,10 +304,14 @@ public class MyCustomGallery extends AppCompatActivity {
         uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 
         String[] projection = { MediaStore.MediaColumns.DATA,
-                MediaStore.Images.Media.DISPLAY_NAME };
+                MediaStore.Images.Media.DISPLAY_NAME,
+                MediaStore.Images.Media.DATE_MODIFIED
+        };
+
+        Log.d("CheckGallery",projection.toString());
 
         cursor = activity.getContentResolver().query(uri, projection, null,
-                null, null);
+                null, "date_modified DESC");
 
         column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
 
@@ -328,10 +372,11 @@ public class MyCustomGallery extends AppCompatActivity {
                         @Override
                         public void run()
                         {
-                            if(images.size() % 6 == 0)
-                            {
-                                adapter.notifyDataSetChanged();
-                            }
+                            adapter.notifyDataSetChanged();
+//                            if(images.size() % 6 == 0)
+//                            {
+//                                adapter.notifyDataSetChanged();
+//                            }
 
                         }
                     });
@@ -442,7 +487,6 @@ public class MyCustomGallery extends AppCompatActivity {
         @Override
         protected void onPreExecute()
         {
-            dialog.show();
             super.onPreExecute();
         }
 
@@ -451,7 +495,6 @@ public class MyCustomGallery extends AppCompatActivity {
             super.onPostExecute(aVoid);
 
 
-            dialog.dismiss();
             if(!setData.isCancelled())
             {
                 setData.cancel(true);

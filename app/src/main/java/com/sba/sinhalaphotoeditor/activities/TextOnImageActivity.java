@@ -200,23 +200,6 @@ public class TextOnImageActivity extends AppCompatActivity
             {
                 openBottomSheet();
 
-//                if(expandableLayout.isExpanded())
-//                {
-//                    expandableLayout.collapse();
-//                    //expandIcon.setImageResource(R.drawable.slide_up_image);
-//                    expandIcon.setBackground(getResources().getDrawable(R.drawable.top_rounded_background));
-//                    expandableLayout.setBackgroundColor(Color.TRANSPARENT);
-//                }
-//                else
-//                {
-//                    expandIcon.setBackgroundColor(Color.TRANSPARENT);
-//                    expandableLayout.setBackground(getResources().getDrawable(R.drawable.white_opacity_background));
-//                    expandableLayout.expand();// expand with animation
-//                    //expandIcon.setImageResource(R.drawable.slide_down_image);
-//
-//                }
-
-
 
             }
         });
@@ -227,8 +210,6 @@ public class TextOnImageActivity extends AppCompatActivity
             public void onClick(View v) {
 
                 showPopup();
-
-
             }
         });
 
@@ -277,7 +258,6 @@ public class TextOnImageActivity extends AppCompatActivity
     private void openBottomSheet()
     {
         BottomSheetDialog dialog = new BottomSheetDialog(TextOnImageActivity.this);
-
         if(dialog.getWindow() != null)
         {
             dialog.getWindow().setDimAmount(0.0f);
@@ -847,7 +827,8 @@ public class TextOnImageActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         if(item.getItemId() == android.R.id.home)
         {
             onBackPressed();
@@ -888,59 +869,10 @@ public class TextOnImageActivity extends AppCompatActivity
 
             return false;
         }
-        else if(item.getItemId() == R.id.setColor)
-        {
-            ColorPickerDialogBuilder.with(TextOnImageActivity.this)
-                    .setTitle("Choose Color")
-                    .initialColor(Color.WHITE)
-                    .wheelType(ColorPickerView.WHEEL_TYPE.CIRCLE)
-                    .density(20)
-                    .setOnColorSelectedListener(new OnColorSelectedListener() {
-                        @Override
-                        public void onColorSelected(int i)
-                        {
-                            for(TextViewPlus view : addedTextViews)
-                            {
-                                if(clickedId == view.getTextView().getId())
-                                {
-                                    view.setTextColor(i);
-                                }
-                            }
-
-                        }
-                    })
-                    .setPositiveButton("Ok", new ColorPickerClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i, Integer[] integers)
-                        {
-                            for(TextViewPlus view : addedTextViews)
-                            {
-                                if(clickedId == view.getTextView().getId())
-                                {
-                                    view.setTextColor(i);
-                                }
-                            }
-
-                        }
-                    })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-
-                        }
-                    }).build().show();
-            return true;
-        }
-        else if(item.getItemId() == R.id.setFont)
-        {
-            showAlert();
-        }
         else
         {
             return super.onOptionsItemSelected(item);
         }
-
-        return true;
 
     }
 

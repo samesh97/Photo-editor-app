@@ -40,8 +40,9 @@ public class ShadowColorAdapter extends RecyclerView.Adapter<ShadowColorAdapter.
     {
         if(colorList != null && colorList.size() > position)
         {
-            holder.color_lay.setClipToOutline(true);
+
             holder.color_lay.setBackgroundColor(colorList.get(position));
+            holder.color_lay.setClipToOutline(true);
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
