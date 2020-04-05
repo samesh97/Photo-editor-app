@@ -42,18 +42,13 @@ public class MyCustomGallery extends AppCompatActivity {
 
     private ImageView pickedImage;
     public static Bitmap selectedBitmap = null;
-
     public static final int IMAGE_PICK_RESULT_CODE = 235;
-
     private String activityString = null;
     private static ArrayList<File> allImages = new ArrayList<>();
     private ArrayList<File> images = new ArrayList<>();
 
     GridView gridView;
-
     GridViewAdapter adapter;
-
-
     SetData setData;
 
 
@@ -87,9 +82,6 @@ public class MyCustomGallery extends AppCompatActivity {
         {
             if(selectedBitmap != null)
             {
-
-                if(activityString.equals("MainActivity"))
-                {
                     Intent intent = new Intent();
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                     setResult(IMAGE_PICK_RESULT_CODE,intent);
@@ -102,22 +94,6 @@ public class MyCustomGallery extends AppCompatActivity {
                         }
 
                     }
-                }
-                else if(activityString.equals("EditorActivity"))
-                {
-                    Intent intent = new Intent();
-                    setResult(IMAGE_PICK_RESULT_CODE,intent);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    finish();
-                    if(setData != null)
-                    {
-                        if(!setData.isCancelled())
-                        {
-                            setData.cancel(true);
-                        }
-
-                    }
-                }
 
             }
             else
@@ -138,13 +114,9 @@ public class MyCustomGallery extends AppCompatActivity {
         setContentView(R.layout.activity_my_custom_gallery);
 
 
-        Intent intent = getIntent();
-        activityString = intent.getStringExtra("Activity");
 
         pickedImage = (ImageView) findViewById(R.id.pickedImage);
         gridView = findViewById(R.id.gridView);
-
-
 
 
 
@@ -152,8 +124,6 @@ public class MyCustomGallery extends AppCompatActivity {
         gridView.setAdapter(adapter);
         setData = new SetData();
         setData.execute();
-
-
 
 
 
@@ -267,7 +237,6 @@ public class MyCustomGallery extends AppCompatActivity {
                         BitmapDrawable ob = new BitmapDrawable(getResources(), bluredImage);
 
                         pickedImage.setBackground(ob);
-                        bluredImage = null;
                     }
 
                 }
@@ -290,7 +259,6 @@ public class MyCustomGallery extends AppCompatActivity {
     public void getAllImages(Activity activity)
     {
 
-        //Remove older images to avoid copying same image twice
 
         allImages.clear();
         Uri uri;
@@ -308,7 +276,6 @@ public class MyCustomGallery extends AppCompatActivity {
                 MediaStore.Images.Media.DATE_MODIFIED
         };
 
-        Log.d("CheckGallery",projection.toString());
 
         cursor = activity.getContentResolver().query(uri, projection, null,
                 null, "date_modified DESC");
@@ -373,11 +340,6 @@ public class MyCustomGallery extends AppCompatActivity {
                         public void run()
                         {
                             adapter.notifyDataSetChanged();
-//                            if(images.size() % 6 == 0)
-//                            {
-//                                adapter.notifyDataSetChanged();
-//                            }
-
                         }
                     });
                 }

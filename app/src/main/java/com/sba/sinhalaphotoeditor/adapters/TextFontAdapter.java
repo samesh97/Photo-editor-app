@@ -5,12 +5,15 @@ import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sba.sinhalaphotoeditor.CallBacks.OnTextAttributesChangedListner;
 import com.sba.sinhalaphotoeditor.R;
+import com.sba.sinhalaphotoeditor.model.TextViewPlus;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
@@ -22,12 +25,17 @@ public class TextFontAdapter extends RecyclerView.Adapter<TextFontAdapter.MyView
     private ArrayList<Typeface> fonts = new ArrayList<>();
     private String text;
     private OnTextAttributesChangedListner listner;
+    private HashMap<Integer, ImageView> viewList;
+    private TextViewPlus selectedTextView;
 
-    public TextFontAdapter(Context context, String text, OnTextAttributesChangedListner listner)
+    public TextFontAdapter(Context context, String text, TextViewPlus selectedTextView, OnTextAttributesChangedListner listner)
     {
         this.context = context;
         this.text = text;
         this.listner = listner;
+        this.selectedTextView = selectedTextView;
+        fonts = new ArrayList<>();
+        viewList = new HashMap<Integer, ImageView>();
         setFonts();
     }
     @NonNull
@@ -43,14 +51,52 @@ public class TextFontAdapter extends RecyclerView.Adapter<TextFontAdapter.MyView
     {
         if(fonts != null && fonts.size() > position)
         {
+            viewList.put(position,holder.is_selected);
             holder.fontText.setText(text);
             holder.fontText.setTypeface(fonts.get(position));
+
+            if(selectedTextView != null)
+            {
+                if(selectedTextView.getTypeface() == fonts.get(position))
+                {
+                    ImageView view  = viewList.get(position);
+                    if(view != null)
+                    {
+                        view.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
                     listner.onTextFontChanged(fonts.get(position));
+
+                    ArrayList<Integer> keyList = new ArrayList<>(viewList.keySet());
+                    for(int i = 0; i < keyList.size(); i++)
+                    {
+                        if (position == keyList.get(i))
+                        {
+                            if (viewList.get(keyList.get(i)) != null)
+                            {
+                                ImageView view = viewList.get(keyList.get(i));
+                                if (view != null)
+                                {
+                                    view.setVisibility(View.VISIBLE);
+                                }
+
+                            }
+                        }
+                        else
+                        {
+                            ImageView view = viewList.get(keyList.get(i));
+                            if (view != null)
+                            {
+                                view.setVisibility(View.GONE);
+                            }
+                        }
+                    }
                 }
             });
         }
@@ -65,10 +111,12 @@ public class TextFontAdapter extends RecyclerView.Adapter<TextFontAdapter.MyView
     public class MyViewHolder extends RecyclerView.ViewHolder
     {
         TextView fontText;
+        ImageView is_selected;
         private MyViewHolder(@NonNull View itemView)
         {
             super(itemView);
             fontText = itemView.findViewById(R.id.fontText);
+            is_selected = itemView.findViewById(R.id.is_selected);
         }
     }
     private void setFonts()
@@ -106,6 +154,21 @@ public class TextFontAdapter extends RecyclerView.Adapter<TextFontAdapter.MyView
         fonts.add(typeface);
         typeface = ResourcesCompat.getFont(context, R.font.postnobillscolombobold);
         fonts.add(typeface);
+
+        if(selectedTextView != null)
+        {
+
+            for(int i = 0; i < fonts.size(); i++)
+            {
+                if(fonts.get(i) == selectedTextView.getTypeface())
+                {
+                    fonts.remove(i);
+                    fonts.add(0,selectedTextView.getTypeface());
+                    notifyDataSetChanged();
+                    break;
+                }
+            }
+        }
 
     }
 }

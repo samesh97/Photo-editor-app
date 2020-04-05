@@ -2,6 +2,8 @@ package com.sba.sinhalaphotoeditor.adapters;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,22 +11,30 @@ import android.widget.ImageView;
 
 import com.sba.sinhalaphotoeditor.CallBacks.OnTextAttributesChangedListner;
 import com.sba.sinhalaphotoeditor.R;
+import com.sba.sinhalaphotoeditor.model.TextViewPlus;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ShadowColorAdapter extends RecyclerView.Adapter<ShadowColorAdapter.MyViewHolder>
 {
     private Context context;
     private ArrayList<Integer> colorList;
     private OnTextAttributesChangedListner listner;
+    private HashMap<Integer, ImageView> viewList;
+    private TextViewPlus selectedTextView;
 
-    public ShadowColorAdapter(Context context, OnTextAttributesChangedListner listner)
+    public ShadowColorAdapter(Context context,TextViewPlus selectedTextView, OnTextAttributesChangedListner listner)
     {
         this.context = context;
         this.listner = listner;
+        this.selectedTextView = selectedTextView;
+        viewList = new HashMap<Integer, ImageView>();
+        colorList = new ArrayList<>();
         setColorsList();
     }
     @NonNull
@@ -41,14 +51,57 @@ public class ShadowColorAdapter extends RecyclerView.Adapter<ShadowColorAdapter.
         if(colorList != null && colorList.size() > position)
         {
 
-            holder.color_lay.setBackgroundColor(colorList.get(position));
+            viewList.put(position,holder.is_selected);
+            ColorDrawable colorDrawable = new ColorDrawable(colorList.get(position));
+            holder.color_lay.setImageDrawable(colorDrawable);
             holder.color_lay.setClipToOutline(true);
+
+
+            if(selectedTextView != null)
+            {
+                if(selectedTextView.getShadowColor() == colorList.get(position))
+                {
+                    ImageView view  = viewList.get(position);
+                    if(view != null)
+                    {
+                        view.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
+                public void onClick(View v)
+                {
 
                     listner.onTextShadowColorChanged(colorList.get(position));
+
+                    ArrayList<Integer> keyList = new ArrayList<>(viewList.keySet());
+                    for(int i = 0; i < keyList.size(); i++)
+                    {
+                        if(position == keyList.get(i))
+                        {
+                            if (viewList.get(keyList.get(i)) != null)
+                            {
+                                ImageView view = viewList.get(keyList.get(i));
+                                if (view != null)
+                                {
+                                    view.setVisibility(View.VISIBLE);
+                                }
+
+                            }
+                        }
+                        else
+                        {
+                             ImageView view = viewList.get(keyList.get(i));
+                             if(view != null)
+                             {
+                                 view.setVisibility(View.GONE);
+                             }
+                        }
+                    }
+
+
                 }
             });
         }
@@ -62,20 +115,17 @@ public class ShadowColorAdapter extends RecyclerView.Adapter<ShadowColorAdapter.
 
     public class MyViewHolder extends RecyclerView.ViewHolder
     {
-        ImageView color_lay;
+        CircleImageView color_lay;
+        ImageView is_selected;
         private MyViewHolder(@NonNull View itemView)
         {
             super(itemView);
             color_lay = itemView.findViewById(R.id.color_lay);
+            is_selected = itemView.findViewById(R.id.is_selected);
         }
     }
     private void setColorsList()
     {
-        if(colorList == null)
-        {
-            colorList = new ArrayList<>();
-        }
-
         colorList.add(Color.BLACK);
         colorList.add(Color.WHITE);
         colorList.add(Color.GRAY);
@@ -87,6 +137,22 @@ public class ShadowColorAdapter extends RecyclerView.Adapter<ShadowColorAdapter.
         colorList.add(Color.YELLOW);
         colorList.add(Color.CYAN);
         colorList.add(Color.MAGENTA);
+
+        if(selectedTextView != null)
+        {
+
+            for(int i = 0; i < colorList.size(); i++)
+            {
+                if(colorList.get(i) == selectedTextView.getShadowColor())
+                {
+                    colorList.remove(i);
+                    colorList.add(0,selectedTextView.getShadowColor());
+                    notifyDataSetChanged();
+                    break;
+                }
+            }
+        }
+
 
     }
 }

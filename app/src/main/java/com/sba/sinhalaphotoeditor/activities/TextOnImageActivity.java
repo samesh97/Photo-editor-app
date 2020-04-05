@@ -12,6 +12,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
@@ -47,6 +48,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.flask.colorpicker.ColorPickerView;
@@ -144,6 +146,8 @@ public class TextOnImageActivity extends AppCompatActivity
     private Button addNewTextViewButton;
     private Typeface selectedTypeFace = null;
 
+    private TextViewPlus clickedTextView = null;
+
 
 
     @Override
@@ -198,7 +202,9 @@ public class TextOnImageActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                openBottomSheet();
+
+                animateExpandableLayout();
+                showBottomSheet();
 
 
             }
@@ -210,6 +216,7 @@ public class TextOnImageActivity extends AppCompatActivity
             public void onClick(View v) {
 
                 showPopup();
+
             }
         });
 
@@ -237,8 +244,6 @@ public class TextOnImageActivity extends AppCompatActivity
         }
 
 
-        setFonts();
-
 
 
         progressDialog = new ProgressDialog(TextOnImageActivity.this);
@@ -255,47 +260,79 @@ public class TextOnImageActivity extends AppCompatActivity
 
     }
 
-    private void openBottomSheet()
+    private void animateExpandableLayout()
     {
-        BottomSheetDialog dialog = new BottomSheetDialog(TextOnImageActivity.this);
+        if(expandableLayout != null)
+        {
+            expandableLayout.animate().setDuration(500).translationYBy(0).translationY(200).start();
+        }
+    }
+    private void undoAnimateExpandableLayout()
+    {
+        if(expandableLayout != null)
+        {
+            expandableLayout.animate().setDuration(500).translationYBy(200).translationY(0).start();
+        }
+    }
+
+    private void showBottomSheet()
+    {
+        BottomSheetDialog dialog = new BottomSheetDialog(TextOnImageActivity.this,R.style.CustomBottomSheetDialogTheme);
+
+        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog)
+            {
+                undoAnimateExpandableLayout();
+            }
+        });
         if(dialog.getWindow() != null)
         {
             dialog.getWindow().setDimAmount(0.0f);
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         }
 
         View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.layout_add_text_bottom_sheet,null,false);
-
-        RecyclerView colorRV = view.findViewById(R.id.color_recycler_view);
-        TextColorAdapter textColorAdapter = new TextColorAdapter(getApplicationContext(),TextOnImageActivity.this);
-        LinearLayoutManager textColorManger = new LinearLayoutManager(getApplicationContext());
-        textColorManger.setOrientation(RecyclerView.HORIZONTAL);
-        colorRV.setLayoutManager(textColorManger);
-        colorRV.setAdapter(textColorAdapter);
-
-        RecyclerView shadowColorRV = view.findViewById(R.id.shadow_color_recycler_view);
-        ShadowColorAdapter shadowColorAdapter = new ShadowColorAdapter(getApplicationContext(),TextOnImageActivity.this);
-        LinearLayoutManager shadowColorManager = new LinearLayoutManager(getApplicationContext());
-        shadowColorManager.setOrientation(RecyclerView.HORIZONTAL);
-        shadowColorRV.setLayoutManager(shadowColorManager);
-        shadowColorRV.setAdapter(shadowColorAdapter);
-
-
-        RecyclerView fontsRV = view.findViewById(R.id.font_recycler_view);
-        TextFontAdapter textFontAdapter = new TextFontAdapter(getApplicationContext(),"Sample",TextOnImageActivity.this);
-        LinearLayoutManager textFontManager = new LinearLayoutManager(getApplicationContext());
-        textFontManager.setOrientation(RecyclerView.HORIZONTAL);
-        fontsRV.setLayoutManager(textFontManager);
-        fontsRV.setAdapter(textFontAdapter);
-
-        EditText current_text = view.findViewById(R.id.current_text);
+        clickedTextView = null;
+        final EditText current_text = view.findViewById(R.id.current_text);
         for(TextViewPlus view2 : addedTextViews)
         {
             if(view2.getTextView().getId() == clickedId)
             {
+                clickedTextView = view2;
                 current_text.setText(view2.getText());
             }
         }
+
+
+
+        RecyclerView colorRV = view.findViewById(R.id.color_recycler_view);
+        TextColorAdapter textColorAdapter = new TextColorAdapter(getApplicationContext(),clickedTextView,TextOnImageActivity.this);
+        LinearLayoutManager textColorManger = new LinearLayoutManager(getApplicationContext());
+        textColorManger.setOrientation(RecyclerView.HORIZONTAL);
+        colorRV.setItemViewCacheSize(100);
+        colorRV.setLayoutManager(textColorManger);
+        colorRV.setAdapter(textColorAdapter);
+
+        RecyclerView shadowColorRV = view.findViewById(R.id.shadow_color_recycler_view);
+        ShadowColorAdapter shadowColorAdapter = new ShadowColorAdapter(getApplicationContext(),clickedTextView,TextOnImageActivity.this);
+        LinearLayoutManager shadowColorManager = new LinearLayoutManager(getApplicationContext());
+        shadowColorManager.setOrientation(RecyclerView.HORIZONTAL);
+        shadowColorRV.setItemViewCacheSize(100);
+        shadowColorRV.setLayoutManager(shadowColorManager);
+        shadowColorRV.setAdapter(shadowColorAdapter);
+
+
+        final RecyclerView fontsRV = view.findViewById(R.id.font_recycler_view);
+        TextFontAdapter textFontAdapter = new TextFontAdapter(getApplicationContext(),"මහරගම",clickedTextView,TextOnImageActivity.this);
+        LinearLayoutManager textFontManager = new LinearLayoutManager(getApplicationContext());
+        textFontManager.setOrientation(RecyclerView.HORIZONTAL);
+        fontsRV.setItemViewCacheSize(100);
+        fontsRV.setLayoutManager(textFontManager);
+        fontsRV.setAdapter(textFontAdapter);
+
+
+
+
         current_text.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -305,35 +342,40 @@ public class TextOnImageActivity extends AppCompatActivity
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count)
             {
-                for(TextViewPlus view : addedTextViews)
+                if(clickedTextView != null)
                 {
-                    if(view.getTextView().getId() == clickedId)
-                    {
-                        view.setText(s.toString());
-                    }
+                    clickedTextView.setText(s.toString());
                 }
             }
 
             @Override
-            public void afterTextChanged(Editable s) {
+            public void afterTextChanged(Editable s)
+            {
 
             }
         });
 
 
         SeekBar opacitySeekBar = view.findViewById(R.id.opacitySeekBar);
+        opacitySeekBar.getProgressDrawable().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN);
+        if(clickedTextView != null)
+        {
+            opacitySeekBar.setProgress((int)clickedTextView.getTextOpacity());
+        }
+        else
+        {
+            opacitySeekBar.setProgress(100);
+        }
+
         opacitySeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
             {
-                float opacityLevel = (progress / 100.0f);
-                for(TextViewPlus view : addedTextViews)
+                if(clickedTextView != null)
                 {
-                    if(clickedId == view.getTextView().getId())
-                    {
-                        view.setTextOpacity(opacityLevel);
-                    }
+                    clickedTextView.setTextOpacity(progress);
                 }
+
 
             }
 
@@ -349,18 +391,22 @@ public class TextOnImageActivity extends AppCompatActivity
         });
 
         SeekBar textShadowDirectionSeekBar = view.findViewById(R.id.textShadowDirectionSeekBar);
+        textShadowDirectionSeekBar.getProgressDrawable().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN);
+        if(clickedTextView != null)
+        {
+            textShadowDirectionSeekBar.setProgress((int)clickedTextView.getShadowXDirection());
+        }
+        else
+        {
+            textShadowDirectionSeekBar.setProgress(50);
+        }
         textShadowDirectionSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
             {
-                for(TextViewPlus view : addedTextViews)
+                if(clickedTextView != null)
                 {
-                    if(clickedId == view.getTextView().getId())
-                    {
-
-                        previousShadowLevel = progress / 2 - 25;
-                        view.setShadowXDirection(previousShadowLevel);
-                    }
+                    clickedTextView.setShadowXDirection(progress);
                 }
             }
 
@@ -376,17 +422,22 @@ public class TextOnImageActivity extends AppCompatActivity
         });
 
         SeekBar textShadowUpDownDirectionSeekBar = view.findViewById(R.id.textShadowUpDownDirectionSeekBar);
+        textShadowUpDownDirectionSeekBar.getProgressDrawable().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN);
+        if(clickedTextView != null)
+        {
+            textShadowUpDownDirectionSeekBar.setProgress((int)clickedTextView.getShadowYDirection());
+        }
+        else
+        {
+            textShadowUpDownDirectionSeekBar.setProgress(50);
+        }
         textShadowUpDownDirectionSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
             {
-                for(TextViewPlus view : addedTextViews)
+                if(clickedTextView != null)
                 {
-                    if(clickedId == view.getTextView().getId())
-                    {
-                        previousUpDownShadowLevel = (progress / 2) - 25;
-                        view.setShadowYDirection(previousUpDownShadowLevel);
-                    }
+                    clickedTextView.setShadowYDirection(progress);
                 }
             }
 
@@ -406,60 +457,6 @@ public class TextOnImageActivity extends AppCompatActivity
         dialog.setContentView(view,new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,400));
 
         dialog.show();
-    }
-
-    private void setFonts()
-    {
-        Typeface typeface;
-        typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.iskpota);
-        font.add(typeface);
-        typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.kaputaunicode);
-        font.add(typeface);
-        typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.dinaminauniweb);
-        font.add(typeface);
-        typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.sarasaviunicode);
-        font.add(typeface);
-
-        typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.fmmalithiuw46);
-        font.add(typeface);
-
-        typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.hodipotha3);
-        font.add(typeface);
-
-        //typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.lklug);
-        //font.add(typeface);
-
-        typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.puskolapotha2010);
-        font.add(typeface);
-
-
-
-        typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.nyh);
-        font.add(typeface);
-
-        typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.warna);
-        font.add(typeface);
-
-        typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.winnie);
-        font.add(typeface);
-
-        typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.winnie1);
-        font.add(typeface);
-
-        typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.sulakna);
-        font.add(typeface);
-
-        typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.gemunulibrebold);
-        font.add(typeface);
-
-        typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.gemunulibrextrabold);
-        font.add(typeface);
-
-        typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.gemunulibresemibold);
-        font.add(typeface);
-
-        typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.postnobillscolombobold);
-        font.add(typeface);
     }
 
     @Override

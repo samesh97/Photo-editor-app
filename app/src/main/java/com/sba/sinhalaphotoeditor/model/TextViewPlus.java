@@ -10,8 +10,8 @@ public class TextViewPlus
     private Context context;
     private TextView textView;
     private int id;
-    private int textColor = Color.WHITE;
-    private int shadowColor = Color.BLACK;
+    private int textColor;
+    private int shadowColor;
     private String text;
     private int textSize = 18;
     private Typeface typeface;
@@ -27,10 +27,12 @@ public class TextViewPlus
         this.text = text;
         this.typeface = typeface;
         this.id = id;
-        shadowYDirection = 0;
-        shadowXDirection = 0;
+        shadowYDirection = 50;
+        shadowXDirection = 50;
         shadowRadius = 2.5f;
-        textOpacity = 1f;
+        textOpacity = 100;
+        textColor = Color.WHITE;
+        shadowColor = Color.BLACK;
 
         setTextViewAttributes();
     }
@@ -62,7 +64,7 @@ public class TextViewPlus
     public void setShadowColor(int shadowColor)
     {
         this.shadowColor = shadowColor;
-        textView.setShadowLayer(getShadowRadius(),getShadowXDirection(),getShadowYDirection(),getShadowColor());
+        setupShadowLayer();
     }
 
     public String getText()
@@ -96,14 +98,15 @@ public class TextViewPlus
         this.textView.setTypeface(typeface);
     }
 
-    public float getShadowYDirection() {
+    public float getShadowYDirection()
+    {
         return shadowYDirection;
     }
 
     public void setShadowYDirection(float shadowYDirection)
     {
         this.shadowYDirection = shadowYDirection;
-        textView.setShadowLayer(getShadowRadius(),getShadowXDirection(),getShadowYDirection(),getShadowColor());
+        setupShadowLayer();
     }
 
     public float getShadowXDirection() {
@@ -113,7 +116,7 @@ public class TextViewPlus
     public void setShadowXDirection(float shadowXDirection)
     {
         this.shadowXDirection = shadowXDirection;
-        textView.setShadowLayer(getShadowRadius(),getShadowXDirection(),getShadowYDirection(),getShadowColor());
+        setupShadowLayer();
     }
 
     public float getShadowRadius() {
@@ -133,7 +136,17 @@ public class TextViewPlus
     public void setTextOpacity(float textOpacity)
     {
         this.textOpacity = textOpacity;
-        textView.setAlpha(textOpacity);
+        float opacityLevel = (getTextOpacity() / 100.0f);
+        textView.setAlpha(opacityLevel);
+    }
+    private void setupShadowLayer()
+    {
+        float finalY =(getShadowXDirection() / 2) - 25;
+        float finalX =(getShadowYDirection() / 2) - 25;
+        textView.setShadowLayer(getShadowRadius(),finalX,finalY,getShadowColor());
     }
 
+    public int getTextColor() {
+        return textColor;
+    }
 }
