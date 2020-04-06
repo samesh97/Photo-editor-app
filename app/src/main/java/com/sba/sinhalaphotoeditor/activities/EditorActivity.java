@@ -69,7 +69,6 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
     private ImageView addText,addImage,addSticker,addCrop,addBlur;
     private static final int PICK_IMAGE_REQUEST = 234;
     public static boolean isNeededToDelete = false;
-
     static int imageWidth,imageHeight;
 
     private ImageView addEffect;
@@ -303,11 +302,6 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
 
 
 
-            }
-            else if(resultCode == TextOnImageActivity.TEXT_ON_IMAGE_RESULT_FAILED_CODE)
-            {
-                String errorInfo = data.getStringExtra(TextOnImageActivity.IMAGE_OUT_ERROR);
-                Log.d("MainActivity", "onActivityResult: "+errorInfo);
             }
 
         }

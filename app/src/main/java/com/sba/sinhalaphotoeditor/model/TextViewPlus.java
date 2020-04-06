@@ -33,7 +33,6 @@ public class TextViewPlus
         textOpacity = 100;
         textColor = Color.WHITE;
         shadowColor = Color.BLACK;
-
         setTextViewAttributes();
     }
 
