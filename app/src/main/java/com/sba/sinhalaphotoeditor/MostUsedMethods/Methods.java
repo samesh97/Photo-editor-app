@@ -1,5 +1,6 @@
 package com.sba.sinhalaphotoeditor.MostUsedMethods;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -29,15 +30,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.sba.sinhalaphotoeditor.Config.ExifUtil;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -508,7 +513,7 @@ public class Methods
         toast.show();
 
     }
-    public Bitmap getResizedBitmapWithURI(Context c, Uri uri, final int requiredSize)
+    public static Bitmap getResizedBitmapWithURI(Context c, Uri uri, final int requiredSize)
             throws FileNotFoundException
     {
         BitmapFactory.Options o = new BitmapFactory.Options();
@@ -560,5 +565,105 @@ public class Methods
         return bmOut;
 
     }
+    public static ArrayList<File> getAllImages(Activity activity)
+    {
 
+        ArrayList<File> images = new ArrayList<>();
+
+        Uri uri;
+        Cursor cursor;
+        int column_index_data, column_index_folder_name;
+
+        String absolutePathOfImage = null, imageName;
+
+        //get all images from external storage
+
+        uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+
+        String[] projection = { MediaStore.MediaColumns.DATA,
+                MediaStore.Images.Media.DISPLAY_NAME,
+                MediaStore.Images.Media.DATE_MODIFIED
+        };
+
+
+        cursor = activity.getContentResolver().query(uri, projection, null,
+                null, "date_modified DESC");
+
+        column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+
+        column_index_folder_name = cursor
+                .getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME);
+
+
+
+        while (cursor.moveToNext())
+        {
+            absolutePathOfImage = cursor.getString(column_index_data);
+
+            imageName = cursor.getString(column_index_folder_name);
+
+            if(absolutePathOfImage != null && !absolutePathOfImage.equals(""))
+            {
+                if(getBitmap(new File(absolutePathOfImage).toString()) != null)
+                {
+                    images.add(new File(absolutePathOfImage));
+                }
+
+            }
+
+
+        }
+
+        // Get all Internal storage images
+        uri = android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI;
+
+        cursor = activity.getContentResolver().query(uri, projection, null,
+                null, "date_modified DESC");
+
+        column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+
+        column_index_folder_name = cursor
+                .getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME);
+
+        while (cursor.moveToNext())
+        {
+
+
+            absolutePathOfImage = cursor.getString(column_index_data);
+
+            imageName = cursor.getString(column_index_folder_name);
+
+            if(absolutePathOfImage != null && !absolutePathOfImage.equals(""))
+            {
+                if(getBitmap(new File(absolutePathOfImage).toString()) != null)
+                {
+
+                    images.add(new File(absolutePathOfImage));
+                }
+            }
+        }
+
+
+        cursor.close();
+        return images;
+    }
+    public static Bitmap getBitmap(String path)
+    {
+        Bitmap bitmap = null;
+
+        try {
+
+            File f = new File(path);
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+
+            bitmap = BitmapFactory.decodeStream(new FileInputStream(f), null, options);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return bitmap;
+    }
 }

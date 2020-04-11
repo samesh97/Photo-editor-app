@@ -3,6 +3,7 @@ package com.sba.sinhalaphotoeditor.activities;
 import androidx.appcompat.app.AppCompatActivity;
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -10,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
@@ -29,6 +31,8 @@ import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.R;
 
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 public class RegisterScreen extends AppCompatActivity{
@@ -45,6 +49,9 @@ public class RegisterScreen extends AppCompatActivity{
     private ProgressBar progress_bar;
     private TextView skipButton;
     private Methods methods;
+    private long startedTime;
+    private Timer timer;
+
 
 
 
@@ -52,19 +59,19 @@ public class RegisterScreen extends AppCompatActivity{
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null)
+
+        if(requestCode == PICK_IMAGE_REQUEST)
         {
-            filePath = data.getData();
-            try
+            if(MyCustomGallery.selectedBitmap != null)
             {
-                Bitmap bitmap = methods.getResizedBitmapWithURI(getApplicationContext(),filePath,200);
-                filePath = methods.getImageUriWithoutDeleting(bitmap);
-                //Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
+                Bitmap bitmap = methods.getResizedBitmap(MyCustomGallery.selectedBitmap,200);
                 profilePicture.setImageBitmap(bitmap);
+                filePath = methods.getImageUriWithoutDeleting(bitmap);
+
             }
-            catch (IOException e)
+            else
             {
-                e.printStackTrace();
+                Methods.showCustomToast(RegisterScreen.this,"No Image Selected");
             }
         }
     }
@@ -74,6 +81,7 @@ public class RegisterScreen extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_screen);
+
 
 
         methods = new Methods(getApplicationContext());
@@ -110,7 +118,7 @@ public class RegisterScreen extends AppCompatActivity{
             @Override
             public void onClick(View v)
             {
-                showFileChooser();
+                openCustomGallery();
             }
         });
 
@@ -127,12 +135,9 @@ public class RegisterScreen extends AppCompatActivity{
                 if(!fullName.getText().toString().equals("") && filePath != null && !phone.getText().toString().equals(""))
                 {
 
-                    //startActivity(intent);
                     next.setVisibility(View.GONE);
                     progress_bar.setVisibility(View.VISIBLE);
                     sendVerificationCode(phone.getText().toString());
-
-
 
                 }
                 else if(filePath == null && (!fullName.getText().toString().equals("")  && !phone.getText().toString().equals("")))
@@ -146,13 +151,13 @@ public class RegisterScreen extends AppCompatActivity{
             }
         });
     }
-    private void showFileChooser()
+
+    private void openCustomGallery()
     {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+        Intent intent = new Intent(RegisterScreen.this,MyCustomGallery.class);
+        startActivityForResult(intent,PICK_IMAGE_REQUEST);
     }
+
     public String getFileExtension(Uri uri)
     {
         ContentResolver cR = getContentResolver();
@@ -161,11 +166,34 @@ public class RegisterScreen extends AppCompatActivity{
     }
     private void sendVerificationCode(String no)
     {
+        startedTime = System.currentTimeMillis();
+        startCounting();
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
                 Countrycode + Integer.parseInt(no),
                 60,
                 TimeUnit.SECONDS,
                 TaskExecutors.MAIN_THREAD,mCallbacks);
+
+    }
+
+    private void startCounting()
+    {
+        if(timer == null)
+        {
+            timer = new Timer();
+        }
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                long nowTime = System.currentTimeMillis();
+                int seconds = (int) ((nowTime - startedTime) / 1000);
+                if(seconds >= 12)
+                {
+                    mCallbacks.onVerificationFailed(null);
+                    timer.cancel();
+                }
+            }
+        }, 0, 1000);
 
     }
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
@@ -197,10 +225,20 @@ public class RegisterScreen extends AppCompatActivity{
         @Override
         public void onVerificationFailed(FirebaseException e)
         {
-            Toast.makeText(RegisterScreen.this, e.getMessage(), Toast.LENGTH_LONG).show();
-            next.setText("Retry");
-            next.setVisibility(View.VISIBLE);
-            progress_bar.setVisibility(View.GONE);
+            if(e != null)
+            {
+                Toast.makeText(RegisterScreen.this, e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run()
+                {
+                    next.setText("Retry");
+                    next.setVisibility(View.VISIBLE);
+                    progress_bar.setVisibility(View.GONE);
+                }
+            });
+
         }
 
         @Override

@@ -836,46 +836,32 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
 
     private void addTextOnImage(String text)
     {
-
-        //pass the data to add it in image
         Intent intent = new Intent(EditorActivity.this, TextOnImageActivity.class);
         Bundle bundle = new Bundle();
-       // bundle.putString(TextOnImageActivity.IMAGE_IN_URI,MainActivity.CurrentWorkingFilePath.toString()); //image uri
-        //initial text size
-        bundle.putString(TextOnImageActivity.TEXT_TO_WRITE,text);                   //text to be add in the image
+        bundle.putString(TextOnImageActivity.TEXT_TO_WRITE,text);
         intent.putExtras(bundle);
-        startActivityForResult(intent, TextOnImageActivity.TEXT_ON_IMAGE_REQUEST_CODE); //start activity for the result
+        startActivityForResult(intent, TextOnImageActivity.TEXT_ON_IMAGE_REQUEST_CODE);
+
     }
     private void addImageOnImage(Uri uri)
     {
-
         Intent intent = new Intent(EditorActivity.this,PhotoOnPhotoActivity.class);
         Bundle bundle = new Bundle();
-//        bundle.putString(PhotoOnPhoto.IMAGE_IN_URI,MainActivity.CurrentWorkingFilePath.toString());
         bundle.putString("IMAGE_ON_IMAGE_URI",uri.toString());
-       // bundle.putInt(PhotoOnPhoto.IMAGE_SIZE,1000);
         intent.putExtras(bundle);
         startActivityForResult(intent, PhotoOnPhotoActivity.IMAGE_ON_IMAGE_REQUEST_CODE);
     }
     public void showPopup()
     {
-
         final Dialog dialog = new Dialog(this);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-
         View view = getLayoutInflater().inflate(R.layout.activity_popup_screen,null);
         dialog.setContentView(view);
-
         dialog.getWindow().setLayout(RelativeLayout.LayoutParams.FILL_PARENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
-
 
         final EditText editText = (EditText) view.findViewById(R.id.updateText);
         Button button1 = (Button) view.findViewById(R.id.update);
-
-
-
-
 
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -894,74 +880,24 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
             }
         });
 
-
-
         dialog.show();
 
-
-        /*
-        final AlertDialog dialogBuilder = new AlertDialog.Builder(this,R.style.DialogSlideAnim).create();
-        //dialogBuilder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-
-        dialogBuilder.getWindow().setLayout(RelativeLayout.LayoutParams.MATCH_PARENT,screenHeight / 2);
-
-        Window window = dialogBuilder.getWindow();
-        WindowManager.LayoutParams wlp = window.getAttributes();
-
-        wlp.gravity = Gravity.BOTTOM;
-        //wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-        window.setAttributes(wlp);
-
-
-        LayoutInflater inflater = this.getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.activity_popup_screen, null);
-
-        final EditText editText = (EditText) dialogView.findViewById(R.id.updateText);
-        Button button1 = (Button) dialogView.findViewById(R.id.update);
-
-        button1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view)
-            {
-
-                if(editText.getText().toString().equals(""))
-                {
-                    Toast.makeText(EditorActivity.this, "Enter a text", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                dialogBuilder.dismiss();
-                addTextOnImage(editText.getText().toString());
-            }
-        });
-
-        dialogBuilder.setView(dialogView);
-        dialogBuilder.show();*/
 
     }
     private void showFileChooser()
     {
-        /*
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);*/
-
 
         Intent intent = new Intent(EditorActivity.this, MyCustomGallery.class);
         intent.putExtra("Activity","EditorActivity");
-        //startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
         startActivityForResult(intent,PICK_IMAGE_REQUEST);
     }
     private void addStickerOnImage()
     {
-
         Intent intent = new Intent(EditorActivity.this,AddStickerOnImage.class);
         startActivityForResult(intent, AddStickerOnImage.STICKER_ON_IMAGE_REQUEST_CODE);
     }
     private void showStickerPopup()
     {
-
         dia.setContentView(R.layout.activity_sticker_popup_screen);
         dia.setCancelable(true);
         if(dia.getWindow() != null)
@@ -975,9 +911,6 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         }
 
 
-
-
-
         ListView list_alert = (ListView) dia.findViewById(R.id.stickeList);
         ListViewAdapter adapter = new ListViewAdapter(stickerList1,stickerList2,stickerList3,stickerList4,stickerList5);
         list_alert.setAdapter(adapter);
@@ -989,7 +922,6 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onClick(View v)
     {
-
 
         if(v == addBlur)
         {
@@ -1155,20 +1087,11 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
             ImageView FiveSticker = (ImageView) view.findViewById(R.id.FiveSticker);
 
 
-/*
-            Glide.with(getApplicationContext()).load(getResizedBitmap(stic1.get(position),80)).into(OneSticker);
-            Glide.with(getApplicationContext()).load(getResizedBitmap(stic2.get(position),80)).into(TwoSticker);
-            Glide.with(getApplicationContext()).load(getResizedBitmap(stic3.get(position),80)).into(ThreeSticker);
-            Glide.with(getApplicationContext()).load(getResizedBitmap(stic4.get(position),80)).into(FourSticker);
-            Glide.with(getApplicationContext()).load(getResizedBitmap(stic5.get(position),80)).into(FiveSticker);
-*/
-
             OneSticker.setImageBitmap(stic1.get(position));
             TwoSticker.setImageBitmap(stic2.get(position));
             ThreeSticker.setImageBitmap(stic3.get(position));
             FourSticker.setImageBitmap(stic4.get(position));
             FiveSticker.setImageBitmap(stic5.get(position));
-
 
 
             Animation pulse = AnimationUtils.loadAnimation(EditorActivity.this, R.anim.pulse2);
@@ -1177,11 +1100,6 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
             ThreeSticker.startAnimation(pulse);
             FourSticker.startAnimation(pulse);
             FiveSticker.startAnimation(pulse);
-
-
-
-
-
 
 
             OneSticker.setOnClickListener(new View.OnClickListener() {

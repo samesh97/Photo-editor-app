@@ -36,11 +36,13 @@
         <activity android:name=".activities.AddStickerOnImage" />
         <activity android:name=".activities.PhotoOnPhotoActivity" />
         <activity
+            android:theme="@style/NoActionBarAppTheme"
             android:name=".activities.MyCustomGallery"
             android:label="Pick Image"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activities.TextOnImageActivity"
+            android:theme="@style/NoActionBarAppTheme"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activities.drawOnBitmap.DrawOnBitmapActivity"

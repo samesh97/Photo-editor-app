@@ -1,7 +1,12 @@
 package com.sba.sinhalaphotoeditor.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.animation.Animator;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -13,49 +18,52 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.sba.sinhalaphotoeditor.Config.ExifUtil;
 import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.R;
+import com.sba.sinhalaphotoeditor.adapters.GridViewAdapter;
+import com.sba.sinhalaphotoeditor.model.GalleryImage;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 
 public class MyCustomGallery extends AppCompatActivity {
 
 
-    private ImageView pickedImage;
     public static Bitmap selectedBitmap = null;
     public static final int IMAGE_PICK_RESULT_CODE = 235;
-    private String activityString = null;
-    private static ArrayList<File> allImages = new ArrayList<>();
-    private ArrayList<File> images = new ArrayList<>();
-
-    GridView gridView;
-    GridViewAdapter adapter;
-    SetData setData;
-
-
-
-
-
-
+    private ArrayList<GalleryImage> allImages = new ArrayList<>();
+    private ArrayList<GalleryImage> showingImages = new ArrayList<>();
+    private int pagination = 1;
+    private RecyclerView gridView;
+    private GridViewAdapter adapter;
+    private SetData setData;
+    private boolean isStillShowing = false;
 
 
     @Override
@@ -68,45 +76,6 @@ public class MyCustomGallery extends AppCompatActivity {
         super.onDestroy();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
-        getMenuInflater().inflate(R.menu.photo_on_photo_menu,menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        if(item.getItemId() == R.id.setImage)
-        {
-            if(selectedBitmap != null)
-            {
-                    Intent intent = new Intent();
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    setResult(IMAGE_PICK_RESULT_CODE,intent);
-                    finish();
-                    if(setData != null)
-                    {
-                        if(!setData.isCancelled())
-                        {
-                            setData.cancel(true);
-                        }
-
-                    }
-
-            }
-            else
-            {
-
-                Methods.showCustomToast(MyCustomGallery.this,getResources().getString(R.string.select_an_image_first_text));
-
-                //Toast.makeText(this, "Please select an image first", Toast.LENGTH_SHORT).show();
-            }
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,153 +83,65 @@ public class MyCustomGallery extends AppCompatActivity {
         setContentView(R.layout.activity_my_custom_gallery);
 
 
-
-        pickedImage = (ImageView) findViewById(R.id.pickedImage);
         gridView = findViewById(R.id.gridView);
-
-
-
-        adapter = new GridViewAdapter(images);
+        LinearLayoutManager manager = new LinearLayoutManager(MyCustomGallery.this);
+        gridView.setLayoutManager(manager);
+        adapter = new GridViewAdapter(MyCustomGallery.this,showingImages);
         gridView.setAdapter(adapter);
         setData = new SetData();
         setData.execute();
 
 
-
-
-
-    }
-    public class GridViewAdapter extends BaseAdapter
-    {
-        ArrayList<File> images;
-
-        public GridViewAdapter(ArrayList<File> images)
-        {
-            this.images = images;
-        }
-        @Override
-        public int getCount()
-        {
-            if(images.size() % 2 == 0)
+        gridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState)
             {
-                return images.size() / 2;
-            }
-            else
-            {
-                return (images.size() / 2) + 1;
-            }
+                super.onScrollStateChanged(recyclerView, newState);
 
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return null;
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return 0;
-        }
-
-        @Override
-        public View getView(final int position, View convertView, ViewGroup parent)
-        {
-            ViewHolder holder;
-
-            if (convertView == null)
-            {
-                convertView = getLayoutInflater().inflate(R.layout.custom_gallery_row, null, false);
-                holder = new ViewHolder();
-                holder.imgView = (ImageView)convertView.findViewById(R.id.image);
-                holder.imgView2 = (ImageView)convertView.findViewById(R.id.image2);
-                convertView.setTag(holder);
-            }
-            else
-            {
-                holder = (ViewHolder) convertView.getTag();
-            }
-            if(images.size() > position * 2)
-            {
-                Glide.with(getApplicationContext()).load(images.get(position * 2)).into(holder.imgView);
-            }
-            if(images.size() > position + 1)
-            {
-                Glide.with(getApplicationContext()).load(images.get(position + 1)).into(holder.imgView2);
-            }
-
-
-            holder.imgView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v)
+                if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE)
                 {
-                    if(getBitmap(images.get(position * 2).toString()) != null)
-                    {
-                        Glide.with(getApplicationContext()).load(images.get(position * 2)).into(pickedImage);
-                        selectedBitmap = getBitmap(images.get(position * 2).toString());
-
-                        selectedBitmap = ExifUtil.rotateBitmap(images.get(position * 2).toString(), selectedBitmap);
-
-
-
-
-
-
-                        Bitmap bluredImage = getBlurBitmap(selectedBitmap.copy(selectedBitmap.getConfig(),true),getApplicationContext());
-                        //Bitmap bluredImage = new BlurUtils().blur(MyCustomGallery.this,selectedBitmap.copy(selectedBitmap.getConfig(),true), 100);
-                        BitmapDrawable ob = new BitmapDrawable(getResources(), bluredImage);
-
-                        pickedImage.setBackground(ob);
-                        bluredImage = null;
-                    }
+                    Log.d("position","end");
+                    pagination++;
+                    setShowingImageList(pagination);
 
                 }
-            });
+            }
 
-            holder.imgView2.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v)
-                {
-                    if(getBitmap(images.get(position + 1).toString()) != null)
-                    {
-                        Glide.with(getApplicationContext()).load(images.get(position + 1)).into(pickedImage);
-                        selectedBitmap = getBitmap(images.get(position + 1).toString());
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+            }
+        });
 
-                        selectedBitmap = ExifUtil.rotateBitmap(images.get(position + 1).toString(), selectedBitmap);
+//        gridView.setOnScrollListener(new AbsListView.OnScrollListener() {
+//            @Override
+//            public void onScrollStateChanged(AbsListView view, int scrollState)
+//            {
+//
+//            }
+//
+//            @Override
+//            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
+//            {
+//                int last = view.getLastVisiblePosition();
+//                if(((last * 2) / 10) == pagination)
+//                {
+//                    Log.d("lastPos","" + ((last * 2) / 10) + " " + pagination + " " + showingImages.size() + " " + allImages.size());
+//                    pagination++;
+//                    setShowingImageList(pagination);
+//
+//                }
+//
+//            }
+//        });
 
-
-
-
-
-
-                        Bitmap bluredImage = getBlurBitmap(selectedBitmap.copy(selectedBitmap.getConfig(),true),getApplicationContext());
-                        //Bitmap bluredImage = new BlurUtils().blur(MyCustomGallery.this,selectedBitmap.copy(selectedBitmap.getConfig(),true), 100);
-                        BitmapDrawable ob = new BitmapDrawable(getResources(), bluredImage);
-
-                        pickedImage.setBackground(ob);
-                    }
-
-                }
-            });
-
-
-
-
-            //View view = getLayoutInflater().inflate(R.layout.custom_gallery_row,null);
-            //ImageView imageView = view.findViewById(R.id.image);
-            //Glide.with(getApplicationContext()).load(images.get(position)).into(imageView);
-            return convertView;
-        }
-        public class ViewHolder
-        {
-            private ImageView imgView;
-            private ImageView imgView2;
-        }
     }
     public void getAllImages(Activity activity)
     {
 
-
         allImages.clear();
+        showingImages.clear();
+
         Uri uri;
         Cursor cursor;
         int column_index_data, column_index_folder_name;
@@ -300,48 +181,46 @@ public class MyCustomGallery extends AppCompatActivity {
             {
                 if(getBitmap(new File(absolutePathOfImage).toString()) != null)
                 {
-                    //allImages.add(new File(absolutePathOfImage));
+                    GalleryImage imgObj = new GalleryImage(new File(absolutePathOfImage));
 
-                    images.add(new File(absolutePathOfImage));
 
-                    if(images.size() == 1)
+                    if(allImages.size() == 0)
                     {
 
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run()
-                                    {
-
-                                        Glide.with(getApplicationContext()).load(images.get(0)).into(pickedImage);
-                                        selectedBitmap = getBitmap(images.get(0).toString());
-
-                                        selectedBitmap = ExifUtil.rotateBitmap(images.get(0).toString(), selectedBitmap);
-
-
-                                        Bitmap bluredImage = getBlurBitmap(selectedBitmap.copy(selectedBitmap.getConfig(),true),getApplicationContext());
-                                        //Bitmap bluredImage = new BlurUtils().blur(MyCustomGallery.this,selectedBitmap.copy(selectedBitmap.getConfig(),true), 100);
-                                        BitmapDrawable ob = new BitmapDrawable(getResources(), bluredImage);
-
-                                        pickedImage.setBackground(ob);
-                                        bluredImage = null;
-                                    }
-                                });
+                        imgObj.setSelected(true);
+                        allImages.add(imgObj);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run()
+                            {
+                                selectedBitmap = getBitmap(allImages.get(0).getFile().toString());
+                                selectedBitmap = ExifUtil.rotateBitmap(allImages.get(0).getFile().toString(), selectedBitmap);
+                            }
+                        });
+                    }
+                    else
+                    {
+                        imgObj.setSelected(false);
+                        allImages.add(imgObj);
+                    }
 
 
-
-
+                    if(showingImages.size() <= 10)
+                    {
+                        showingImages.add(imgObj);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run()
+                            {
+                                adapter.notifyDataSetChanged();
+                            }
+                        });
                     }
 
 
 
 
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run()
-                        {
-                            adapter.notifyDataSetChanged();
-                        }
-                    });
+
                 }
 
             }
@@ -354,7 +233,7 @@ public class MyCustomGallery extends AppCompatActivity {
         uri = android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI;
 
         cursor = activity.getContentResolver().query(uri, projection, null,
-                null, null);
+                null, "date_modified DESC");
 
         column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
 
@@ -376,48 +255,39 @@ public class MyCustomGallery extends AppCompatActivity {
             {
                 if(getBitmap(new File(absolutePathOfImage).toString()) != null)
                 {
+                    GalleryImage imgObj = new GalleryImage(new File(absolutePathOfImage));
 
-                    images.add(new File(absolutePathOfImage));
-
-                    if(images.size() == 1)
+                    if(allImages.size() == 0)
                     {
+                        imgObj.setSelected(true);
+                        allImages.add(imgObj);
 
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run()
                             {
-
-                                Glide.with(getApplicationContext()).load(images.get(0)).into(pickedImage);
-                                selectedBitmap = getBitmap(images.get(0).toString());
-
-                                selectedBitmap = ExifUtil.rotateBitmap(images.get(0).toString(), selectedBitmap);
-
-
-                                Bitmap bluredImage = getBlurBitmap(selectedBitmap.copy(selectedBitmap.getConfig(),true),getApplicationContext());
-                               // Bitmap bluredImage = new BlurUtils().blur(MyCustomGallery.this,selectedBitmap.copy(selectedBitmap.getConfig(),true), 100);
-                                BitmapDrawable ob = new BitmapDrawable(getResources(), bluredImage);
-
-                                pickedImage.setBackground(ob);
-                                bluredImage = null;
+                                selectedBitmap = getBitmap(allImages.get(0).getFile().toString());
+                                selectedBitmap = ExifUtil.rotateBitmap(allImages.get(0).getFile().toString(), selectedBitmap);
                             }
                         });
-
-
-
-
+                    }
+                    else
+                    {
+                        imgObj.setSelected(false);
+                        allImages.add(imgObj);
                     }
 
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-
-                            if(images.size() % 6 == 0)
+                    if(showingImages.size() <= 10)
+                    {
+                        showingImages.add(imgObj);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run()
                             {
                                 adapter.notifyDataSetChanged();
                             }
-                        }
-                    });
+                        });
+                    }
                 }
             }
         }
@@ -476,23 +346,99 @@ public class MyCustomGallery extends AppCompatActivity {
             return null;
         }
     }
-    public Bitmap getBlurBitmap(Bitmap image, Context context)
+    public void setShowingImageList(int pagination)
     {
-        final float BITMAP_SCALE = 0.01f;
-        final float BLUR_RADIUS = 25f;
-        int width = Math.round(image.getWidth() * BITMAP_SCALE);
-        int height = Math.round(image.getHeight() * BITMAP_SCALE);
-        Bitmap inputBitmap = Bitmap.createScaledBitmap(image, width, height, false);
-        Bitmap outputBitmap = Bitmap.createBitmap(inputBitmap);
-        RenderScript rs = RenderScript.create(context);
-        ScriptIntrinsicBlur theIntrinsic = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs));
-        Allocation tmpIn = Allocation.createFromBitmap(rs, inputBitmap);
-        Allocation tmpOut = Allocation.createFromBitmap(rs, outputBitmap);
-        theIntrinsic.setRadius(BLUR_RADIUS);
-        theIntrinsic.setInput(tmpIn);
-        theIntrinsic.forEach(tmpOut);
-        tmpOut.copyTo(outputBitmap);
-        return outputBitmap;
-    }
+            int start = (pagination * 10) - 10;
+            int end = (pagination * 10) - 1;
+            int count = 1;
 
+            if(allImages.size() > end && start >= 0)
+            {
+                for(int i = start; i <= end; i++)
+                {
+                    count++;
+                    showingImages.add(allImages.get(i));
+                    if(count == 10)
+                    {
+                        Log.d("positions", "List Items " + (showingImages.size()) + " And Pagination " + pagination + " " + allImages.size());
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                adapter.notifyDataSetChanged();
+                            }
+                        });
+                    }
+                }
+            }
+            else
+            {
+                this.pagination--;
+            }
+
+
+    }
+    public void showSelectView(File file)
+    {
+        if(!isStillShowing)
+        {
+            isStillShowing = true;
+            final ConstraintLayout select_image_layout = findViewById(R.id.select_image_layout);
+            CircleImageView picture = findViewById(R.id.picture);
+            Button select_btn = findViewById(R.id.select_btn);
+
+            final Bitmap bitmap;
+            try
+            {
+                bitmap = Methods.getResizedBitmapWithURI(getApplicationContext(),Uri.fromFile(file),10);
+                if(bitmap != null)
+                {
+                    Glide.with(MyCustomGallery.this)
+                            .load(file).into(picture);
+                }
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+
+            select_btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v)
+                {
+                    if(selectedBitmap != null)
+                    {
+                        Intent intent = new Intent();
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        setResult(IMAGE_PICK_RESULT_CODE,intent);
+                        finish();
+                        if(setData != null)
+                        {
+                            if(!setData.isCancelled())
+                            {
+                                setData.cancel(true);
+                            }
+
+                        }
+
+                    }
+                    else
+                    {
+                        Methods.showCustomToast(MyCustomGallery.this,getResources().getString(R.string.select_an_image_first_text));
+                    }
+                }
+            });
+            select_image_layout.setVisibility(View.VISIBLE);
+            select_image_layout.animate().setDuration(250).translationYBy(200).translationY(0).start();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run()
+                {
+                    isStillShowing = false;
+                    select_image_layout.animate().setDuration(500).translationYBy(0).translationY(200).start();
+                }
+            },2000);
+
+        }
+
+    }
 }

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:focusable="true"
     android:focusableInTouchMode="true"
-    android:background="@drawable/white_opacity"
+    android:background="@drawable/white_opacity_background"
     android:layout_height="300dp">
 
     <androidx.core.widget.NestedScrollView
