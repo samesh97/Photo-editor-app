@@ -7,18 +7,38 @@
     tools:context=".activities.drawOnBitmap.DrawOnBitmapActivity">
 
 
-    <ImageView
-        android:id="@+id/userSelectedImage"
+    <com.sba.sinhalaphotoeditor.activities.drawOnBitmap.PaintView
+        android:id="@+id/paintView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:adjustViewBounds="true"
-        android:scaleType="centerInside"
-        app:layout_constraintBottom_toBottomOf="@+id/swipeRefreshLayout"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/eraser"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.35"/>
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/eraser"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Eraser"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/pensil"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pensil"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/eraser" />
+
+    <Button
+        android:id="@+id/save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/pensil" />
 
 
 

@@ -1,5 +1,6 @@
 package com.sba.sinhalaphotoeditor.activities;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -12,11 +13,10 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
+
 
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.Menu;
@@ -33,10 +33,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+
 
 
 import com.bumptech.glide.Glide;
@@ -50,8 +49,9 @@ import com.google.android.gms.ads.initialization.OnInitializationCompleteListene
 import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
+import com.sba.sinhalaphotoeditor.activities.drawOnBitmap.DrawOnBitmapActivity;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;
-import com.theartofdev.edmodo.cropper.CropImage;
+import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
 import java.io.IOException;
@@ -65,6 +65,7 @@ import static com.sba.sinhalaphotoeditor.activities.MyCustomGallery.selectedBitm
 
 public class EditorActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private static final int DRAW_ON_BITMAP_REQUEST_CODE = 500;
     private ImageView userSelectedImage;
     private ImageView addText,addImage,addSticker,addCrop,addBlur;
     private static final int PICK_IMAGE_REQUEST = 234;
@@ -358,7 +359,12 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
 
                 CropType = "PhotoOnPhotoCrop";
 
-                CropImage.activity(imgUri).start(EditorActivity.this);
+                UCrop.of(imgUri,Uri.fromFile(new File(getCacheDir(),"SinhalaPhotoEditors")))
+//                        .withAspectRatio(16, 9)
+                        .useSourceImageAspectRatio()
+                        .withMaxResultSize(1500, 1500)
+                        .withOptions(getCropOptions())
+                        .start(EditorActivity.this);
 
 
 
@@ -397,16 +403,15 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
 
             }
         }
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE)
+        if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP)
         {
             if(CropType.equals("NormalCrop"))
             {
                 addCrop.setEnabled(true);
 
-                CropImage.ActivityResult result = CropImage.getActivityResult(data);
-                if (resultCode == RESULT_OK)
-                {
-                    Uri resultUri = result.getUri();
+//                CropImage.ActivityResult result = CropImage.getActivityResult(data);
+
+                    Uri resultUri = UCrop.getOutput(data);
                     Bitmap bitmap = null;
                     try
                     {
@@ -486,28 +491,12 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
                     {
                         e.printStackTrace();
                     }
-                }
-
-
 
             }
-            else if(CropType.equals("PhotoOnPhotoCrop")) {
-                CropImage.ActivityResult result2 = CropImage.getActivityResult(data);
-
-                if (resultCode == RESULT_OK)
-                {
-                    Uri resultUri = result2.getUri();
-                    addImageOnImage(resultUri);
-                }
-                else
-                {
-                    Methods.showCustomToast(EditorActivity.this,getString(R.string.something_went_wrong_text));
-                    //Toast.makeText(this, "Something went wrong!", Toast.LENGTH_SHORT).show();
-                }
-            }
-            else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE)
+            else if(CropType.equals("PhotoOnPhotoCrop"))
             {
-                //Exception error = result.getError();
+                    Uri resultUri = UCrop.getOutput(data);
+                    addImageOnImage(resultUri);
             }
         }
         if(requestCode == 10  && resultCode == 11)
@@ -523,6 +512,11 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
             methods.setImageViewScaleType(userSelectedImage);
             Glide.with(getApplicationContext()).load(ImageList.getInstance().getCurrentBitmap()).into(userSelectedImage);
 
+        }
+        if(requestCode == DRAW_ON_BITMAP_REQUEST_CODE && resultCode == Activity.RESULT_OK)
+        {
+            methods.setImageViewScaleType(userSelectedImage);
+            Glide.with(getApplicationContext()).load(ImageList.getInstance().getCurrentBitmap()).into(userSelectedImage);
         }
     }
 
@@ -600,7 +594,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         addEffect = (ImageView) findViewById(R.id.addEffect);
         addBlur = (ImageView) findViewById(R.id.addBlur);
        // stickerLayout = findViewById(R.id.stickerLayout);
-        //ImageView drawOnBitmap = (ImageView) findViewById(R.id.drawOnBitmap);
+        ImageView drawImage = (ImageView) findViewById(R.id.drawImage);
 
 
         addBlur.setOnClickListener(this);
@@ -620,15 +614,16 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
 
         }
 
-/*
 
-        drawOnBitmap.setOnClickListener(new View.OnClickListener() {
+
+        drawImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
-                startActivity(new Intent(getApplicationContext(), DrawOnBitmapActivity.class));
+                Intent intent = new Intent(getApplicationContext(), DrawOnBitmapActivity.class);
+                startActivityForResult(intent,DRAW_ON_BITMAP_REQUEST_CODE);
             }
-        });*/
+        });
 
 
 
@@ -1005,9 +1000,23 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
                 CropType = "NormalCrop";
                 render.setAnimation(Attention.Bounce(addCrop));
                 render.start();
-                addCrop.setEnabled(false);
+                //addCrop.setEnabled(false);
                 final Uri uri = methods.getImageUri(ImageList.getInstance().getCurrentBitmap(),false);
-                CropImage.activity(uri).start(EditorActivity.this);
+//                CropImage.activity(uri).start(EditorActivity.this);
+
+
+
+
+
+
+                UCrop.of(uri,Uri.fromFile(new File(getCacheDir(),"SinhalaPhotoEditor")))
+//                        .withAspectRatio(16, 9)
+                        .useSourceImageAspectRatio()
+                        .withMaxResultSize(1500, 1500)
+                        .withOptions(getCropOptions())
+                        .start(EditorActivity.this);
+
+
 
 
                 new Handler().postDelayed(new Runnable() {
@@ -1270,6 +1279,18 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
 
 
 
+    }
+    private UCrop.Options getCropOptions()
+    {
+        UCrop.Options options = new UCrop.Options();
+        options.setStatusBarColor(getResources().getColor(R.color.material_dark_blue));
+        options.setToolbarColor(getResources().getColor(R.color.material_dark_blue));
+        options.setToolbarTitle("Crop");
+        options.setCompressionFormat(Bitmap.CompressFormat.PNG);
+        options.setLogoColor(Color.WHITE);
+        options.setToolbarWidgetColor(Color.WHITE);
+
+        return options;
     }
 
 }

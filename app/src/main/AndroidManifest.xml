@@ -85,10 +85,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/NoActionBarAppTheme">
         </activity>
+
         <activity
-            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/NoActionBarAppTheme"/>
+
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"

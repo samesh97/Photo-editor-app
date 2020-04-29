@@ -316,6 +316,7 @@ public class MyCustomGallery extends AppCompatActivity {
     }
     public class SetData extends AsyncTask<Void,Void,Void>
     {
+
         @Override
         protected void onPreExecute()
         {
@@ -374,8 +375,6 @@ public class MyCustomGallery extends AppCompatActivity {
             {
                 this.pagination--;
             }
-
-
     }
     public void showSelectView(File file)
     {

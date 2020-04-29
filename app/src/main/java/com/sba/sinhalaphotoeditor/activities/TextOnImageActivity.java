@@ -99,7 +99,6 @@ public class TextOnImageActivity extends AppCompatActivity
     public static int TEXT_ON_IMAGE_RESULT_OK_CODE = 1;
     public static int TEXT_ON_IMAGE_REQUEST_CODE = 4;
 
-
     private Uri imageOutUri;
     private String saveDir="/tmp/";
     private String textToWrite = "";
@@ -107,24 +106,16 @@ public class TextOnImageActivity extends AppCompatActivity
     private ConstraintLayout workingLayout,baseLayout;
     private ScaleGestureDetector scaleGestureDetector;
     private RotationGestureDetector mRotationGestureDetector;
-
-
-
     private DatabaseHelper helper;
-
-
-
     private ExpandableLayout expandableLayout;
     private ImageView expandIcon;
-
-
     private int clickedId = 1;
     private int addedTextViewCount = 0;
     private ArrayList<TextViewPlus> addedTextViews = new ArrayList<>();
     private float lastX = 0, lastY = 0;
     private Typeface selectedTypeFace = null;
     private TextViewPlus clickedTextView = null;
-
+    private ImageView doneImage;
 
 
     @Override
@@ -144,13 +135,15 @@ public class TextOnImageActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_text_on_image);
 
 
         helper = new DatabaseHelper(TextOnImageActivity.this);
-        Button addNewTextViewButton = findViewById(R.id.addNewTextViewButton);
+        doneImage = findViewById(R.id.img_done);
+        ImageView addNewTextViewButton = findViewById(R.id.img_add_text);
         expandableLayout = (ExpandableLayout)findViewById(R.id.explandableLayout);
         expandIcon = findViewById(R.id.expandIcon);
 
@@ -161,6 +154,37 @@ public class TextOnImageActivity extends AppCompatActivity
             {
                 animateExpandableLayout();
                 showBottomSheet();
+            }
+        });
+
+        doneImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                if(createFinalBitmap())
+                {
+                    try
+                    {
+                        Bitmap  bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageOutUri);
+                        bitmap = CropBitmapTransparency(bitmap);
+
+                        AddImageToArrayListAsyncTask task;
+                        if(addedTextViews.size() > 0)
+                        {
+                            task = new AddImageToArrayListAsyncTask(bitmap,TextOnImageActivity.this);
+                        }
+                        else
+                        {
+                            task = new AddImageToArrayListAsyncTask(null,TextOnImageActivity.this);
+                        }
+                        task.execute();
+                        
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
             }
         });
 
@@ -229,6 +253,7 @@ public class TextOnImageActivity extends AppCompatActivity
     @Override
     public boolean onTouch(View v, MotionEvent motionEvent)
     {
+
         clickedId = v.getId();
         setBackgroundAsSelected();
         for(TextViewPlus view : addedTextViews)
@@ -238,22 +263,22 @@ public class TextOnImageActivity extends AppCompatActivity
                 switch (motionEvent.getAction())
                 {
                     case (MotionEvent.ACTION_DOWN):
-                                lastX = motionEvent.getX();
-                                lastY = motionEvent.getY();
 
+                          lastX = motionEvent.getX();
+                          lastY = motionEvent.getY();
+                          break;
+
+                    case MotionEvent.ACTION_MOVE:
+
+                          float dx = motionEvent.getX() - lastX;
+                          float dy = motionEvent.getY() - lastY;
+                          float finalX = view.getTextView().getX() + dx;
+                          float finalY = view.getTextView().getY() + dy;
+                          view.getTextView().setX(finalX);
+                          view.getTextView().setY(finalY);
                                 break;
-                            case MotionEvent.ACTION_MOVE:
-                                float dx = motionEvent.getX() - lastX;
-                                float dy = motionEvent.getY() - lastY;
-                                float finalX = view.getTextView().getX() + dx;
-                                float finalY = view.getTextView().getY() + dy;
-                                view.getTextView().setX(finalX);
-                                view.getTextView().setY(finalY);
-                                break;
-                        }
-
-                        return true;
-
+                }
+                return true;
             }
         }
         return false;
@@ -336,9 +361,6 @@ public class TextOnImageActivity extends AppCompatActivity
                     size = view.getTextSize();
                 }
             }
-
-
-
             return true;
         }
     }
@@ -357,125 +379,34 @@ public class TextOnImageActivity extends AppCompatActivity
         if(bundle != null)
         {
             textToWrite = bundle.getString(TEXT_TO_WRITE);
-
         }
-
     }
 
     private void uiSetup()
     {
-
-        //setup action bar
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle("Add Text");
-        }
-
-
-        //get the image bitmap
-        //Bitmap bitmapForImageView = MediaStore.Images.Media.getBitmap(this.getContentResolver(),MainActivity.CurrentWorkingFilePath);
         Bitmap bitmapForImageView = ImageList.getInstance().getCurrentBitmap().copy(ImageList.getInstance().getCurrentBitmap().getConfig(), true);
 
-
-        //create the layouts
-        //base layout
         baseLayout = (ConstraintLayout) findViewById(R.id.baseLayout);
-        //working layout
         workingLayout = (ConstraintLayout) findViewById(R.id.workingLayout);
         sourceImageView = (ImageView) findViewById(R.id.sourceImageView);
-
-
-        //textview
-
-
-
-
-        //sourceImageView.setImageBitmap(bitmapForImageView);
 
         Glide.with(getApplicationContext()).load(bitmapForImageView).into(sourceImageView);
         Methods methods = new Methods(getApplicationContext());
         Bitmap background = methods.getBlurBitmap(bitmapForImageView,getApplicationContext());
         sourceImageView.setBackground(new BitmapDrawable(getResources(), background));
 
-
         Render render = new Render(TextOnImageActivity.this);
         render.setAnimation(Bounce.InUp(sourceImageView));
         render.start();
 
         workingLayout.setDrawingCacheEnabled(true);
-
-
-
-
-
-
-
-
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item)
+    private boolean createFinalBitmap()
     {
-        if(item.getItemId() == android.R.id.home)
-        {
-            onBackPressed();
-            return true;
-        }
-        else if(item.getItemId() == R.id.setTextButton)
-        {
-            if(setTextFinal())
-            {
-                try
-                {
-
-                    Bitmap  bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageOutUri);
-                    bitmap = CropBitmapTransparency(bitmap);
-
-                    AddImageToArrayListAsyncTask task;
-                    if(addedTextViews.size() > 0)
-                    {
-                        task = new AddImageToArrayListAsyncTask(bitmap,this);
-                    }
-                    else
-                    {
-                        task = new AddImageToArrayListAsyncTask(null,this);
-                    }
-                    task.execute();
-
-                    return true;
-
-
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-            }
-
-
-
-            return false;
-        }
-        else
-        {
-            return super.onOptionsItemSelected(item);
-        }
-
-    }
-
-    private boolean setTextFinal()
-    {
-
         runOnUiThread(new Runnable() {
             @Override
-            public void run() {
+            public void run()
+            {
                 sourceImageView.setBackgroundColor(Color.TRANSPARENT);
             }
         });
@@ -496,10 +427,8 @@ public class TextOnImageActivity extends AppCompatActivity
         toBeReturn = saveFile(Bitmap.createBitmap(workingLayout.getDrawingCache()),"temp.jpg");
         return toBeReturn;
     }
-
     private boolean saveFile(Bitmap sourceImageBitmap,String fileName)
     {
-
         boolean result = false;
         String path = getApplicationInfo().dataDir + saveDir;
         File pathFile = new File(path);
@@ -625,9 +554,6 @@ public class TextOnImageActivity extends AppCompatActivity
         Button button1 = (Button) view.findViewById(R.id.update);
 
 
-
-
-
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
@@ -642,11 +568,7 @@ public class TextOnImageActivity extends AppCompatActivity
                 addNewTextView(textToWrite);
             }
         });
-
-
-
         dialog.show();
-
 
     }
     public void removeStickerView(View v)
@@ -842,8 +764,6 @@ public class TextOnImageActivity extends AppCompatActivity
 
             }
         });
-
-
 
         dialog.setContentView(view,new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,400));
 
