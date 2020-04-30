@@ -65,7 +65,7 @@ import static com.sba.sinhalaphotoeditor.activities.MyCustomGallery.selectedBitm
 
 public class EditorActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private static final int DRAW_ON_BITMAP_REQUEST_CODE = 500;
+    public static final int DRAW_ON_BITMAP_REQUEST_CODE = 500;
     private ImageView userSelectedImage;
     private ImageView addText,addImage,addSticker,addCrop,addBlur;
     private static final int PICK_IMAGE_REQUEST = 234;
@@ -100,7 +100,6 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
     private Methods methods;
     private InterstitialAd mInterstitialAd;
 
-    //private ConstraintLayout stickerLayout;
 
 
     @Override
@@ -201,8 +200,6 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
 
 
                 Methods.showCustomToast(EditorActivity.this,getResources().getString(R.string.you_reach_end_text));
-
-                //Toast.makeText(this, "You reached to the Original Photo", Toast.LENGTH_LONG).show();
             }
         }
         if(item.getItemId() == R.id.saveImage)
@@ -322,18 +319,12 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
                     MainActivity.bitmap = ImageList.getInstance().getCurrentBitmap();
                     for(int i = (ImageList.getInstance().getCurrentPosition() + 1); i < ImageList.getInstance().getImageListSize(); i++)
                     {
-
-                        //Methods.showCustomToast(EditorActivity.this,getString(R.string.deleted_text) + i);
                         ImageList.getInstance().removeBitmap(i,false);
                     }
 
                 }
 
 
-
-                //Uri resultImageUri = Uri.parse(data.getStringExtra(PhotoOnPhoto.IMAGE_OUT_URI));
-                //MainActivity.CurrentWorkingFilePath = MainActivity.filePaths.get(MainActivity.imagePosition);
-                //userSelectedImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
                 methods.setImageViewScaleType(userSelectedImage);
                 Glide.with(getApplicationContext()).load(ImageList.getInstance().getCurrentBitmap()).into(userSelectedImage);
 

@@ -35,6 +35,11 @@ public class TextViewPlus
         shadowColor = Color.BLACK;
         setTextViewAttributes();
     }
+    public TextViewPlus(Context context)
+    {
+        this.context = context;
+        textView = new TextView(context);
+    }
 
     private void setTextViewAttributes()
     {

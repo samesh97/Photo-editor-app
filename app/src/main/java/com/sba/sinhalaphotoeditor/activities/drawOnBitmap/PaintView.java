@@ -53,7 +53,7 @@ public class PaintView extends View
         mPaint.setStrokeJoin(Paint.Join.ROUND);
         mPaint.setStrokeWidth(sizeBrush);
     }
-    private float toPx(int sizeBrush)
+    private float brushSizeToPx()
     {
         return sizeBrush*(getResources().getDisplayMetrics().density);
     }
@@ -67,20 +67,13 @@ public class PaintView extends View
         options.inMutable = true;
         userBitmap = resize(userBitmap,w,h);
 
-        btmBackground = Bitmap.createBitmap(userBitmap.getWidth(),userBitmap.getHeight(),Bitmap.Config.ARGB_8888);
-        btmView = Bitmap.createBitmap(userBitmap.getWidth(),userBitmap.getHeight(),Bitmap.Config.ARGB_8888);
+        btmBackground = Bitmap.createBitmap(w,h,Bitmap.Config.ARGB_8888);
+        btmView = Bitmap.createBitmap(w,h,Bitmap.Config.ARGB_8888);
         mCanvas = new Canvas(btmView);
     }
     public void setUserBitmap(Bitmap bitmap)
     {
         userBitmap = bitmap.copy(bitmap.getConfig(),true);
-//        userBitmap = resize(userBitmap,getWidth(),getHeight());
-//        userBitmap = bitmap;
-
-
-//        btmBackground = Bitmap.createBitmap(userBitmap.getWidth(),userBitmap.getHeight(),Bitmap.Config.ARGB_8888);
-//        btmView = Bitmap.createBitmap(userBitmap.getWidth(),userBitmap.getHeight(),Bitmap.Config.ARGB_8888);
-//        mCanvas = new Canvas(btmView);
         invalidate();
     }
 
@@ -89,9 +82,9 @@ public class PaintView extends View
         super.onDraw(canvas);
 
         canvas.drawColor(colorBackground);
-        canvas.drawBitmap(userBitmap,(getWidth() - btmView.getWidth()) / 2 ,(getHeight() - btmView.getHeight()) / 2,null);
-        canvas.drawBitmap(btmBackground,(getWidth() - btmView.getWidth()) / 2 ,(getHeight() - btmView.getHeight()) / 2,null);
-        canvas.drawBitmap(btmView,(getWidth() - btmView.getWidth()) / 2 ,(getHeight() - btmView.getHeight()) / 2,null);
+        canvas.drawBitmap(userBitmap,(getWidth() - userBitmap.getWidth()) / 2 ,(getHeight() - userBitmap.getHeight()) / 2,null);
+        canvas.drawBitmap(btmBackground,0,0,null);
+        canvas.drawBitmap(btmView,0,0,null);
 
     }
     public void setColorBackground(int color)
@@ -164,6 +157,41 @@ public class PaintView extends View
         float y = event.getY();
 
 
+        if(y + (brushSizeToPx() / 2) <= ((getHeight() / 2) + userBitmap.getHeight() / 2)&& y  - (brushSizeToPx() / 2) >= ((getHeight() / 2) - userBitmap.getHeight() / 2))
+        {
+            //y is inside
+        }
+        else
+        {
+            if(y > ((getHeight() / 2) + userBitmap.getHeight() / 2))
+            {
+                y = ((getHeight() / 2) + userBitmap.getHeight() / 2) - (brushSizeToPx() / 2);
+            }
+            else
+            {
+                y = ((getHeight() / 2) - userBitmap.getHeight() / 2) + (brushSizeToPx() / 2);
+            }
+
+        }
+        if(x   + (brushSizeToPx() / 2) <= ((getWidth() / 2) + userBitmap.getWidth() / 2) && x  - (brushSizeToPx() / 2) >= ((getWidth()/ 2) - userBitmap.getWidth() / 2))
+        {
+            //x is inside
+        }
+        else
+        {
+            if(x >  ((getWidth() / 2) + userBitmap.getWidth() / 2))
+            {
+                x =  ((getWidth() / 2) + userBitmap.getWidth() / 2) - (brushSizeToPx() / 2);;
+            }
+            else
+            {
+                x = ((getWidth() / 2) - userBitmap.getWidth() / 2) +  (brushSizeToPx() / 2);
+            }
+
+        }
+
+
+
         switch (event.getAction())
         {
             case MotionEvent.ACTION_DOWN:
@@ -195,7 +223,7 @@ public class PaintView extends View
 
         if(dx >= DEFERENECE_SPACE || dy >= DEFERENECE_SPACE)
         {
-            mPath.quadTo(x,y,(x+mX) / 2,(y + mY) / 2 );
+            mPath.quadTo(x ,y,(x+mX) / 2,(y + mY) / 2 );
             mY = y;
             mX = x;
 
@@ -208,12 +236,10 @@ public class PaintView extends View
 
     private void touchStart(float x, float y)
     {
+
         mPath.moveTo(x,y);
         mX = x;
         mY = y;
-
-
-
 
     }
     public Bitmap getBitmap()
