@@ -54,6 +54,7 @@ public class DrawOnBitmapActivity extends AppCompatActivity implements OnTextAtt
     private ExpandableLayout explandableLayout;
     TextViewPlus textViewPlus;
     private int preProgress = 12;
+    private int opacityLevel = 100;
     private boolean isBrushSelected = true;
     private ImageView brush;
     private ImageView eraser;
@@ -124,16 +125,56 @@ public class DrawOnBitmapActivity extends AppCompatActivity implements OnTextAtt
         TextColorAdapter adapter = new TextColorAdapter(getApplicationContext(),textViewPlus,this);
         color_recycler_view.setAdapter(adapter);
 
-        SeekBar brush_size_seekbar = view.findViewById(R.id.brush_size_seekbar);
+        final SeekBar brush_size_seekbar = view.findViewById(R.id.brush_size_seekbar);
         brush_size_seekbar.getProgressDrawable().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN);
         brush_size_seekbar.setProgress(preProgress);
 
+        final SeekBar opacity_seekbar = view.findViewById(R.id.opacity_seekbar);
+        opacity_seekbar.getProgressDrawable().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN);
+        opacity_seekbar.setProgress(opacityLevel);
+
         brush_size_seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
+            {
+                if(progress >= 5)
+                {
+                    preProgress = progress;
+                    paintView.setSizeBrush(progress);
+                }
+                else
+                {
+                    brush_size_seekbar.setProgress(5);
+                }
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        opacity_seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
-                preProgress = progress;
-                paintView.setSizeBrush(progress);
+                if(progress >= 10)
+                {
+                    opacityLevel = progress;
+                    int opacity = ((int)(opacityLevel * 2.5f));
+                    paintView.setOpacity(opacity);
+                }
+                else
+                {
+                    opacity_seekbar.setProgress(10);
+                }
+
             }
 
             @Override

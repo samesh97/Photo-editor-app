@@ -16,19 +16,23 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.SplashScreen"
+        <activity android:name=".activities.BeautyActivity"></activity>
+        <activity
+            android:name=".activities.SplashScreen"
             android:theme="@style/NoActionBarAppTheme">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
-        <activity android:name=".activities.ConfirmPhoneNumber" android:theme="@style/NoActionBarAppTheme"/>
-        <activity android:name=".activities.RegisterScreen" android:label="Register"
-            android:theme="@style/NoActionBarAppTheme"/>
+        <activity
+            android:name=".activities.ConfirmPhoneNumber"
+            android:theme="@style/NoActionBarAppTheme" />
+        <activity
+            android:name=".activities.RegisterScreen"
+            android:label="Register"
+            android:theme="@style/NoActionBarAppTheme" />
         <activity android:name=".keyboard.KeyBoardAc" />
         <activity
             android:name=".activities.NotificationView"
@@ -36,18 +40,18 @@
         <activity android:name=".activities.AddStickerOnImage" />
         <activity android:name=".activities.PhotoOnPhotoActivity" />
         <activity
-            android:theme="@style/NoActionBarAppTheme"
             android:name=".activities.MyCustomGallery"
             android:label="Pick Image"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/NoActionBarAppTheme" />
         <activity
             android:name=".activities.TextOnImageActivity"
-            android:theme="@style/NoActionBarAppTheme"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/NoActionBarAppTheme" />
         <activity
             android:name=".activities.drawOnBitmap.DrawOnBitmapActivity"
-            android:theme="@style/NoActionBarAppTheme"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/NoActionBarAppTheme" />
         <activity
             android:name=".activities.WelcomeScreen"
             android:screenOrientation="portrait"
@@ -84,14 +88,11 @@
             android:name=".activities.MainActivity"
             android:label="Editor"
             android:screenOrientation="portrait"
-            android:theme="@style/NoActionBarAppTheme">
-        </activity>
-
+            android:theme="@style/NoActionBarAppTheme"></activity>
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/NoActionBarAppTheme"/>
-
+            android:theme="@style/NoActionBarAppTheme" />
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"

@@ -33,42 +33,7 @@
         app:layout_constraintBottom_toTopOf="@+id/guideline20"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
-    <!--
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/stickerLayout"
-        android:layout_width="match_parent"
-        android:layout_height="350dp"
-        android:layout_marginBottom="60dp"
-        android:visibility="gone"
-        android:background="@android:color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <ListView
-            android:id="@+id/stickerListView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingTop="20dp"
-            android:paddingBottom="20dp"
-            android:scrollbars="none"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/stickerListView"
-            app:layout_constraintStart_toStartOf="@+id/stickerListView"
-            app:layout_constraintTop_toTopOf="@+id/stickerListView" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>-->
+    
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -79,18 +44,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline20">
 
-<!--
-        <HorizontalScrollView
-            android:id="@+id/swipeRefreshLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/material_dark_blue"
-            android:orientation="horizontal"
-            android:scrollbars="none"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">-->
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -235,20 +188,7 @@
                 app:layout_constraintTop_toTopOf="@+id/top"
                 app:layout_constraintVertical_bias="0.466" />
 
-            <!--
 
-            <ImageView
-                android:id="@+id/addBlur"
-                android:layout_width="@dimen/activity_editor_image_width_height"
-                android:layout_height="@dimen/activity_editor_image_width_height"
-                android:layout_marginStart="@dimen/activity_editor_margin_12"
-                android:layout_marginEnd="@dimen/activity_editor_margin_12"
-                android:src="@drawable/addblur"
-                app:layout_constraintBottom_toBottomOf="@id/addCrop"
-                app:layout_constraintEnd_toEndOf="@id/drawOnBitmap"
-                app:layout_constraintStart_toEndOf="@+id/addCrop"
-                app:layout_constraintTop_toTopOf="@id/addCrop"
-                app:layout_constraintVertical_bias="0.466" />-->
 
 
             <ImageView
@@ -267,7 +207,7 @@
                 android:id="@+id/drawImage"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:src="@drawable/addfromimages"
+                android:src="@drawable/draw_on_image_icon"
                 app:layout_constraintBottom_toTopOf="@+id/bottom"
                 app:layout_constraintEnd_toStartOf="@+id/middle7"
                 app:layout_constraintStart_toStartOf="@+id/middle8"
@@ -277,7 +217,6 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-        <!--</HorizontalScrollView>-->
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.Guideline

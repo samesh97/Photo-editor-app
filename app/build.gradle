@@ -70,8 +70,6 @@ dependencies {
     implementation 'com.github.chuross:expandable-layout:1.0.5'
 
 
-
-
     implementation 'de.hdodenhof:circleimageview:3.0.1'
     implementation 'com.google.firebase:firebase-auth:19.2.0'
     implementation 'com.github.GoodieBag:Pinview:v1.3'
