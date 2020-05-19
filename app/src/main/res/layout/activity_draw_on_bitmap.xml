@@ -6,6 +6,17 @@
     android:layout_height="match_parent"
     tools:context=".activities.drawOnBitmap.DrawOnBitmapActivity">
 
+
+    <com.sba.sinhalaphotoeditor.activities.drawOnBitmap.PaintView
+        android:id="@+id/paintView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/explandableLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -38,6 +49,10 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+
+
+
+
             <ImageView
                 android:id="@+id/img_done"
                 android:layout_width="35dp"
@@ -52,17 +67,6 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.appcompat.widget.Toolbar>
-
-
-    <com.sba.sinhalaphotoeditor.activities.drawOnBitmap.PaintView
-        android:id="@+id/paintView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/explandableLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
     <com.github.chuross.library.ExpandableLayout
         android:id="@+id/explandableLayout"
@@ -94,6 +98,18 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.github.chuross.library.ExpandableLayout>
+
+    <Switch
+        android:id="@+id/isZooming"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:checked="false"
+        android:thumbTint="@color/colorPrimary"
+        android:trackTint="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/paintView"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <ProgressBar
         android:id="@+id/loading"

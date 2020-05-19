@@ -1,6 +1,7 @@
 package com.sba.sinhalaphotoeditor.activities.drawOnBitmap;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,15 +21,19 @@ import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -36,6 +41,7 @@ import com.github.chuross.library.ExpandableLayout;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.sba.sinhalaphotoeditor.CallBacks.OnAsyncTaskState;
 import com.sba.sinhalaphotoeditor.CallBacks.OnTextAttributesChangedListner;
+import com.sba.sinhalaphotoeditor.activities.AddStickerOnImage;
 import com.sba.sinhalaphotoeditor.activities.MainActivity;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.activities.TextOnImageActivity;
@@ -45,6 +51,9 @@ import com.sba.sinhalaphotoeditor.adapters.TextFontAdapter;
 import com.sba.sinhalaphotoeditor.aynctask.AddImageToArrayListAsyncTask;
 import com.sba.sinhalaphotoeditor.model.TextViewPlus;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static com.sba.sinhalaphotoeditor.activities.EditorActivity.DRAW_ON_BITMAP_REQUEST_CODE;
 
@@ -61,6 +70,14 @@ public class DrawOnBitmapActivity extends AppCompatActivity implements OnTextAtt
     private ImageView img_done;
     private ProgressBar loading;
 
+    private float scaleFactor,prevScale = 0f;
+    private float focusX,focusY = 0f;
+    private ScaleGestureDetector scaleGestureDetector;
+    private Switch isZooming;
+    private boolean userNeedToZoom = false;
+
+    private boolean isZoomIn = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,7 +90,7 @@ public class DrawOnBitmapActivity extends AppCompatActivity implements OnTextAtt
         img_done = findViewById(R.id.img_done);
         paintView = findViewById(R.id.paintView);
         explandableLayout = findViewById(R.id.explandableLayout);
-        paintView.setUserBitmap(ImageList.getInstance().getCurrentBitmap());
+        paintView.setUserBitmap(DrawOnBitmapActivity.this,ImageList.getInstance().getCurrentBitmap());
 
         explandableLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,6 +115,45 @@ public class DrawOnBitmapActivity extends AppCompatActivity implements OnTextAtt
             }
         });
 
+        isZooming = findViewById(R.id.isZooming);
+
+        isZooming.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                userNeedToZoom = isChecked;
+            }
+        });
+
+        scaleGestureDetector = new ScaleGestureDetector(DrawOnBitmapActivity.this,new simpleOnScaleGestureListener());
+
+
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run()
+            {
+                if(userNeedToZoom && scaleFactor > 0)
+                {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+//                            paintView.setScaleX(scaleFactor);
+//                            paintView.setScaleY(scaleFactor);
+
+                            paintView.animate().scaleY(scaleFactor).scaleX(scaleFactor).start();
+                            //paintView.animate().scaleXBy(scaleFactor).scaleYBy(scaleFactor).setDuration(0).start();
+                            if(focusX > 0 && focusY > 0)
+                            {
+                                paintView.animate().translationX(focusX).translationY(focusY).start();
+                            }
+                        }
+                    });
+
+                }
+
+            }
+        }, 0, 500);
 
 
     }
@@ -277,5 +333,53 @@ public class DrawOnBitmapActivity extends AppCompatActivity implements OnTextAtt
         setResult(Activity.RESULT_OK);
         finish();
         loading.setVisibility(View.GONE);
+    }
+    public class simpleOnScaleGestureListener extends ScaleGestureDetector.SimpleOnScaleGestureListener{
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            //change the font size of the text on pinch
+
+            detector.setQuickScaleEnabled(true);
+
+            scaleFactor *= (detector.getScaleFactor());
+            scaleFactor = (scaleFactor < 1 ? 1 : scaleFactor); // prevent our view from becoming too small //
+            scaleFactor = ((float)((int)(scaleFactor * 100))) / 100; // Change precision to help with jitter when user just rests their fingers //
+
+
+            //focusX = detector.getFocusX();
+            //focusY = detector.getFocusY();
+            return true;
+        }
+    }
+    public void setMotionEvent(final MotionEvent event)
+    {
+        isZoomIn = true;
+        //focusX = event.getX();
+        //focusY = event.getY();
+        scaleGestureDetector.onTouchEvent(event);
+    }
+    public void setFocusXAndY(float x, float y)
+    {
+//        focusX = x;
+//        focusY = y;
+//
+//        Log.d("TouchPos","X=" + x);
+//        Log.d("TouchPos","Y=" + y);
+//
+//        int[] location = new int[2];
+//        paintView.getLocationOnScreen(location);
+//        int dx = location[0];
+//        int dy = location[1];
+//
+//        Log.d("TouchPos","DX=" + dx);
+//        Log.d("TouchPos","DY=" + dy);
+    }
+    public boolean getUserWantToZoomOrDrawState()
+    {
+        return userNeedToZoom;
+    }
+    public void zoomOver(boolean zoomState,MotionEvent event)
+    {
+        isZoomIn = zoomState;
     }
 }

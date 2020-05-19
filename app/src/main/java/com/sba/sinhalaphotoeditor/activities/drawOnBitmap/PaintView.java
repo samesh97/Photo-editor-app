@@ -13,6 +13,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
@@ -21,6 +22,7 @@ import androidx.annotation.Nullable;
 import com.sba.sinhalaphotoeditor.R;
 
 import java.util.ArrayList;
+import java.util.logging.Handler;
 
 public class PaintView extends View
 {
@@ -36,6 +38,7 @@ public class PaintView extends View
     private int drwingColor = Color.RED;
 
     private ArrayList<Bitmap> listAction = new ArrayList<>();
+    private Context context;
 
     public PaintView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -74,8 +77,9 @@ public class PaintView extends View
         btmView = Bitmap.createBitmap(userBitmap.getWidth(),userBitmap.getHeight(),Bitmap.Config.ARGB_8888);
         mCanvas = new Canvas(btmView);
     }
-    public void setUserBitmap(Bitmap bitmap)
+    public void setUserBitmap(Context context,Bitmap bitmap)
     {
+        this.context = context;
         userBitmap = bitmap.copy(bitmap.getConfig(),true);
         invalidate();
     }
@@ -215,6 +219,20 @@ public class PaintView extends View
 //
 //        }
 
+        if(event.getPointerCount() == 2)
+        {
+            if(context != null && context instanceof DrawOnBitmapActivity)
+            {
+                if(((DrawOnBitmapActivity)context).getUserWantToZoomOrDrawState())
+                {
+                    ((DrawOnBitmapActivity)context).setMotionEvent(event);
+                }
+
+            }
+        }
+
+
+
 
 
         switch (event.getAction())
@@ -223,11 +241,41 @@ public class PaintView extends View
                 touchStart(x,y);
                 break;
             case MotionEvent.ACTION_MOVE:
-                touchMove(x,y);
+                if(event.getPointerCount() == 1)
+                {
+                    if(context != null && context instanceof DrawOnBitmapActivity)
+                    {
+                        if(!((DrawOnBitmapActivity)context).getUserWantToZoomOrDrawState())
+                        {
+                            touchMove(x,y);
+                        }
+                    }
+
+                }
                 break;
             case MotionEvent.ACTION_UP:
+                if(context != null && context instanceof DrawOnBitmapActivity)
+                {
+                    if(((DrawOnBitmapActivity)context).getUserWantToZoomOrDrawState())
+                    {
+                        ((DrawOnBitmapActivity)context).zoomOver(true,event);
+                    }
+
+                }
+                if(event.getPointerCount() == 1)
+                {
+                    if(context != null && context instanceof DrawOnBitmapActivity)
+                    {
+                        if(((DrawOnBitmapActivity)context).getUserWantToZoomOrDrawState())
+                        {
+                            ((DrawOnBitmapActivity)context).setFocusXAndY(x ,y);
+                        }
+
+                    }
+                }
                 touchUp();
                 break;
+
 
         }
 

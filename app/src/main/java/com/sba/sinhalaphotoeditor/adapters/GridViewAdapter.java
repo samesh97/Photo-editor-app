@@ -40,6 +40,10 @@ public class GridViewAdapter extends RecyclerView.Adapter<GridViewAdapter.MyView
         this.context = context;
         this.images = images;
     }
+    public void setContext(Context context)
+    {
+        this.context = context;
+    }
 
     @NonNull
     @Override

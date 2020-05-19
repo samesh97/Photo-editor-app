@@ -33,6 +33,8 @@ public class BeautyView extends View
     public BeautyView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
 
+
+
         init();
     }
 

@@ -19,6 +19,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.PersistableBundle;
 import android.provider.MediaStore;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
@@ -48,6 +49,7 @@ import com.sba.sinhalaphotoeditor.model.GalleryImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -58,22 +60,26 @@ public class MyCustomGallery extends AppCompatActivity {
     public static Bitmap selectedBitmap = null;
     public static final int IMAGE_PICK_RESULT_CODE = 235;
     private ArrayList<GalleryImage> allImages = new ArrayList<>();
-    private ArrayList<GalleryImage> showingImages = new ArrayList<>();
-    private int pagination = 1;
+    private static ArrayList<GalleryImage> showingImages;
+    private static int pagination = 1;
     private RecyclerView gridView;
-    private GridViewAdapter adapter;
+    private static GridViewAdapter adapter;
     private SetData setData;
     private boolean isStillShowing = false;
+    private LinearLayoutManager manager;
+    private static int lastScrolledPosition = 0;
+
 
 
     @Override
     protected void onDestroy()
     {
-        if(!setData.isCancelled())
+        if(setData != null && !setData.isCancelled())
         {
             setData.cancel(true);
         }
         super.onDestroy();
+
     }
 
 
@@ -84,12 +90,28 @@ public class MyCustomGallery extends AppCompatActivity {
 
 
         gridView = findViewById(R.id.gridView);
-        LinearLayoutManager manager = new LinearLayoutManager(MyCustomGallery.this);
-        gridView.setLayoutManager(manager);
-        adapter = new GridViewAdapter(MyCustomGallery.this,showingImages);
-        gridView.setAdapter(adapter);
+        manager = new LinearLayoutManager(MyCustomGallery.this);
+
+        if(adapter == null)
+        {
+            showingImages = new ArrayList<>();
+            gridView.setLayoutManager(manager);
+            adapter = new GridViewAdapter(MyCustomGallery.this,showingImages);
+            gridView.setAdapter(adapter);
+
+        }
+        else
+        {
+            adapter.setContext(this);
+            gridView.setAdapter(adapter);
+            gridView.setLayoutManager(manager);
+
+            gridView.scrollToPosition(lastScrolledPosition);
+        }
+
         setData = new SetData();
         setData.execute();
+
 
 
         gridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -100,11 +122,12 @@ public class MyCustomGallery extends AppCompatActivity {
 
                 if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE)
                 {
-                    Log.d("position","end");
                     pagination++;
                     setShowingImageList(pagination);
-
                 }
+
+                lastScrolledPosition =   manager.findFirstVisibleItemPosition();;
+
             }
 
             @Override
@@ -113,34 +136,12 @@ public class MyCustomGallery extends AppCompatActivity {
             }
         });
 
-//        gridView.setOnScrollListener(new AbsListView.OnScrollListener() {
-//            @Override
-//            public void onScrollStateChanged(AbsListView view, int scrollState)
-//            {
-//
-//            }
-//
-//            @Override
-//            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
-//            {
-//                int last = view.getLastVisiblePosition();
-//                if(((last * 2) / 10) == pagination)
-//                {
-//                    Log.d("lastPos","" + ((last * 2) / 10) + " " + pagination + " " + showingImages.size() + " " + allImages.size());
-//                    pagination++;
-//                    setShowingImageList(pagination);
-//
-//                }
-//
-//            }
-//        });
 
     }
     public void getAllImages(Activity activity)
     {
 
         allImages.clear();
-        showingImages.clear();
 
         Uri uri;
         Cursor cursor;
@@ -358,10 +359,16 @@ public class MyCustomGallery extends AppCompatActivity {
                 for(int i = start; i <= end; i++)
                 {
                     count++;
-                    showingImages.add(allImages.get(i));
+
+                    if(!showingImages.contains(allImages.get(i)))
+                    {
+                        showingImages.add(allImages.get(i));
+                    }
+
+
+
                     if(count == 10)
                     {
-                        Log.d("positions", "List Items " + (showingImages.size()) + " And Pagination " + pagination + " " + allImages.size());
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
