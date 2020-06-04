@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#018577</color>
-    <color name="colorPrimaryDark">#018577</color>
-    <color name="colorAccent">#018577</color>
-    <color name="red">#018577</color>
-    <color name="color_pink">#018577</color>
-    <color name="color_gray">#018577</color>
-    <color name="color_blue">#018577</color>
-    <color name="material_dark_blue">#114f5e</color>
+    <color name="colorPrimary">#6459cf</color>
+    <color name="colorPrimaryDark">#6459cf</color>
+    <color name="colorAccent">#6459cf</color>
+    <color name="red">#6459cf</color>
+    <color name="color_pink">#6459cf</color>
+    <color name="color_gray">#F1F1F1</color>
+    <color name="color_blue">#6459cf</color>
+    <color name="material_dark_blue">#6459cf</color>
+    <color name="darkAsh">#b8b3e3</color>
 
 </resources>

@@ -3,6 +3,7 @@ package com.sba.sinhalaphotoeditor.activities;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -70,7 +71,6 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
     private ImageView addText,addImage,addSticker,addCrop,addBlur;
     private static final int PICK_IMAGE_REQUEST = 234;
     public static boolean isNeededToDelete = false;
-    static int imageWidth,imageHeight;
 
     private ImageView addEffect;
 
@@ -618,23 +618,6 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
 
 
 
-
-        try
-        {
-            imageWidth = ImageList.getInstance().getCurrentBitmap().getWidth();
-            imageHeight = ImageList.getInstance().getCurrentBitmap().getHeight();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-
-
-
-
-
-
-
         addText.setOnClickListener(this);
         addImage.setOnClickListener(this);
         addSticker.setOnClickListener(this);
@@ -998,9 +981,16 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
 
 
 
+                ContextWrapper cw = new ContextWrapper(getApplicationContext());
+                File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+                String path = "cropImage" + ".PNG";
+                File file = new File(directory, path);
+                if(file.exists())
+                {
+                    file.delete();
+                }
 
-
-                UCrop.of(uri,Uri.fromFile(new File(getCacheDir(),"SinhalaPhotoEditor")))
+                UCrop.of(uri,Uri.fromFile(file))
 //                        .withAspectRatio(16, 9)
                         .useSourceImageAspectRatio()
                         .withMaxResultSize(1500, 1500)

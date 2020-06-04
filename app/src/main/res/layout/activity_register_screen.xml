@@ -30,8 +30,6 @@
         android:layout_marginTop="76dp"
         android:layout_marginEnd="81dp"
         android:src="@drawable/sampleprofilepic"
-        app:civ_border_color="#FFFFFF"
-        app:civ_border_width="3dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -44,12 +42,11 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="24dp"
-        android:alpha="0.6"
-        android:background="@drawable/opaciy"
+        android:background="@drawable/round_bg_dark_ash"
         android:hint="Name"
         android:paddingLeft="10dp"
-        android:paddingTop="12dp"
-        android:paddingRight="10dp"
+        android:paddingTop="15dp"
+        android:paddingRight="15dp"
         android:paddingBottom="12dp"
         android:textColor="@android:color/white"
         android:textColorHint="@android:color/white"
@@ -58,62 +55,6 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profilePicture" />
-
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/rel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="24dp"
-        android:background="@drawable/opaciy"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fullName">
-
-        <com.rilixtech.CountryCodePicker
-            android:id="@+id/ccp"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:alpha="0.6"
-            android:gravity="center"
-            android:paddingLeft="10dp"
-            android:paddingTop="12dp"
-            android:paddingRight="10dp"
-            app:ccp_textColor="@android:color/white"
-            android:paddingBottom="14dp"
-            app:ccp_defaultNameCode="LK"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <EditText
-            android:id="@+id/phoneNumber"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_alignTop="@+id/ccp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:alpha="0.6"
-            android:background="@android:color/transparent"
-            android:hint="780000000"
-            android:inputType="number"
-            android:paddingLeft="10dp"
-            android:paddingTop="12dp"
-            android:paddingRight="10dp"
-            android:paddingBottom="12dp"
-            android:textColor="@android:color/white"
-            android:textColorHint="@android:color/white"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/ccp"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     <!--<EditText-->
@@ -140,11 +81,79 @@
         <!--app:layout_constraintTop_toBottomOf="@+id/rel" />-->
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/rel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/round_bg_dark_ash"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fullName">
+
+        <com.rilixtech.CountryCodePicker
+            android:id="@+id/ccp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:alpha="1"
+            android:gravity="center"
+            android:paddingLeft="10dp"
+            android:paddingTop="12dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="14dp"
+            app:ccp_defaultNameCode="LK"
+            app:ccp_textColor="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/phoneNumber"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_alignTop="@+id/ccp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginEnd="8dp"
+            android:alpha="1"
+            android:background="@android:color/transparent"
+            android:hint="780000000"
+            android:inputType="number"
+            android:paddingLeft="10dp"
+            android:paddingTop="12dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="12dp"
+            android:textColor="@android:color/white"
+            android:textColorHint="@android:color/white"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/constraintLayout5"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout5"
+            android:layout_width="2dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/round_bg_ash"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/ccp"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:layout_marginStart="24dp"
-        android:background="@drawable/opaciy"
+        android:background="@drawable/round_bg_ash"
         android:layout_marginTop="16dp"
+        android:onClick="onNextClicked"
         android:layout_marginEnd="24dp"
         app:layout_constraintEnd_toEndOf="@+id/rel"
         app:layout_constraintStart_toStartOf="@+id/rel"
@@ -157,10 +166,12 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            android:background="@drawable/opaciy"
-            android:text="Next"
-            android:textColor="#ffffff"
+            android:text="@string/next_text"
+            android:textColor="@color/colorPrimary"
+            android:fontFamily="@font/bindumathi"
             android:textSize="18sp"
+            android:onClick="onNextClicked"
+            android:background="@null"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

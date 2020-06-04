@@ -47,6 +47,7 @@ public class Constants
     public static final String USER_PROFILE_LINK_KEY = "SihalaProfilePicLink";
     public static final String USER_PHONE_KEY = "SihalaUserPhoneNumber";
     public static final String USER_ID_KEY = "SihalaUserId";
+    public static final String USER_IMAGE_LOCAL_PATH = "SinhalaUserProfilePicLocalPath";
 
     //User registration
     public static boolean isRegistrationSkipped = false;

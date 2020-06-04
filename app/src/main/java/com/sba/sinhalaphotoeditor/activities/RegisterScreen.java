@@ -5,8 +5,11 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -30,6 +33,7 @@ import com.sba.sinhalaphotoeditor.Config.Constants;
 import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.R;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -50,7 +54,7 @@ public class RegisterScreen extends AppCompatActivity{
     private TextView skipButton;
     private Methods methods;
     private long startedTime;
-    private Timer timer;
+
 
 
 
@@ -64,9 +68,18 @@ public class RegisterScreen extends AppCompatActivity{
         {
             if(MyCustomGallery.selectedBitmap != null)
             {
-                Bitmap bitmap = methods.getResizedBitmap(MyCustomGallery.selectedBitmap,200);
+                Bitmap bitmap =  Methods.getResizedProfilePic(getApplicationContext(),MyCustomGallery.selectedBitmap,200);
                 profilePicture.setImageBitmap(bitmap);
-                filePath = methods.getImageUriWithoutDeleting(bitmap);
+                profilePicture.setBorderWidth(4);
+                profilePicture.setBorderColor(Color.WHITE);
+
+
+                ContextWrapper cw = new ContextWrapper(getApplicationContext());
+                File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+                File file = null;
+                String path = "userProfilePicResized" + ".PNG";
+                file = new File(directory, path);
+                filePath = Uri.fromFile(file);
 
             }
             else
@@ -127,29 +140,6 @@ public class RegisterScreen extends AppCompatActivity{
         phone = (EditText) findViewById(R.id.phoneNumber);
         next = (Button) findViewById(R.id.loginButton);
 
-
-        next.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                if(!fullName.getText().toString().equals("") && filePath != null && !phone.getText().toString().equals(""))
-                {
-
-                    next.setVisibility(View.GONE);
-                    progress_bar.setVisibility(View.VISIBLE);
-                    sendVerificationCode(phone.getText().toString());
-
-                }
-                else if(filePath == null && (!fullName.getText().toString().equals("")  && !phone.getText().toString().equals("")))
-                {
-                    Toast.makeText(RegisterScreen.this, "Please Select an Image for Your Profile Picture!", Toast.LENGTH_SHORT).show();
-                }
-                else if(fullName.getText().toString().equals("") || phone.getText().toString().equals(""))
-                {
-                    Toast.makeText(RegisterScreen.this, "Please Fill out the Required Fields!", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
     }
 
     private void openCustomGallery()
@@ -178,10 +168,8 @@ public class RegisterScreen extends AppCompatActivity{
 
     private void startCounting()
     {
-        if(timer == null)
-        {
-            timer = new Timer();
-        }
+        final Timer timer = new Timer();
+
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -190,7 +178,6 @@ public class RegisterScreen extends AppCompatActivity{
                 if(seconds >= 12)
                 {
                     mCallbacks.onVerificationFailed(null);
-                    timer.cancel();
                 }
             }
         }, 0, 1000);
@@ -289,6 +276,25 @@ public class RegisterScreen extends AppCompatActivity{
         Intent intent = new Intent(RegisterScreen.this,MainActivity.class);
         startActivity(intent);
         finish();
+    }
+    public void onNextClicked(View view)
+    {
+        if(!fullName.getText().toString().equals("") && filePath != null && !phone.getText().toString().equals(""))
+        {
+
+            next.setVisibility(View.GONE);
+            progress_bar.setVisibility(View.VISIBLE);
+            sendVerificationCode(phone.getText().toString());
+
+        }
+        else if(filePath == null && (!fullName.getText().toString().equals("")  && !phone.getText().toString().equals("")))
+        {
+            Methods.showCustomToast(RegisterScreen.this,"Please Select an Image for Your Profile Picture!");
+        }
+        else if(fullName.getText().toString().equals("") || phone.getText().toString().equals(""))
+        {
+            Methods.showCustomToast(RegisterScreen.this, "Please Fill out the Required Fields!");
+        }
     }
 }
 

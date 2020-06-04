@@ -32,13 +32,13 @@ public class DatabaseHelper extends SQLiteOpenHelper
 
     public DatabaseHelper(@Nullable Context context)
     {
-        super(context, DATABASE_NAME, null, 1);
+        super(context, DATABASE_NAME, null, 2);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db)
     {
-        db.execSQL("CREATE TABLE " + TABLE_NAME + "(Id INTEGER PRIMARY KEY AUTOINCREMENT,Image BLOB NOT NULL,DateTime TEXT NOT NULL)");
+        db.execSQL("CREATE TABLE " + TABLE_NAME + "(Id INTEGER PRIMARY KEY AUTOINCREMENT,Image BLOB,DateTime TEXT NOT NULL)");
         db.execSQL("CREATE TABLE " + USER_TABLE_NAME + "(id INTEGER PRIMARY KEY AUTOINCREMENT,image BLOB NOT NULL)");
     }
     public void createDBAgain()
@@ -51,7 +51,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
     {
-
+        db.execSQL("DROP TABLE " + TABLE_NAME);
     }
     public boolean AddImage(byte[] image,String date)
     {

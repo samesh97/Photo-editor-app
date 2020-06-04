@@ -1,397 +1,572 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_blue"
+    android:background="@android:color/white"
     tools:context=".activities.MainActivity">
 
 
+    <!--        <androidx.constraintlayout.widget.ConstraintLayout-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="match_parent"-->
+    <!--            android:background="@drawable/gradient_blue"-->
+    <!--            tools:context=".activities.MainActivity">-->
+
+    <!--            <androidx.constraintlayout.widget.Guideline-->
+    <!--                android:id="@+id/guideline1"-->
+    <!--                android:layout_width="wrap_content"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:orientation="vertical"-->
+    <!--                app:layout_constraintGuide_percent="0.04" />-->
+
+    <!--            <androidx.constraintlayout.widget.Guideline-->
+    <!--                android:id="@+id/guideline2"-->
+    <!--                android:layout_width="wrap_content"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:orientation="vertical"-->
+    <!--                app:layout_constraintGuide_percent="0.96" />-->
+
+    <!--            <androidx.constraintlayout.widget.Guideline-->
+    <!--                android:id="@+id/guideline12"-->
+    <!--                android:layout_width="wrap_content"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:orientation="vertical"-->
+    <!--                app:layout_constraintGuide_percent="0.42" />-->
+
+    <!--            <androidx.constraintlayout.widget.Guideline-->
+    <!--                android:id="@+id/guideline13"-->
+    <!--                android:layout_width="wrap_content"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:orientation="vertical"-->
+    <!--                app:layout_constraintGuide_percent="0.58" />-->
+
+    <!--            <androidx.constraintlayout.widget.Guideline-->
+    <!--                android:id="@+id/guideline14"-->
+    <!--                android:layout_width="wrap_content"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:orientation="vertical"-->
+    <!--                app:layout_constraintGuide_percent="0.61" />-->
+
+    <!--            <androidx.constraintlayout.widget.Guideline-->
+    <!--                android:id="@+id/guideline3"-->
+    <!--                android:layout_width="wrap_content"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:orientation="horizontal"-->
+    <!--                app:layout_constraintGuide_percent="0.8" />-->
+
+    <!--            <androidx.constraintlayout.widget.Guideline-->
+    <!--                android:id="@+id/guideline4"-->
+    <!--                android:layout_width="wrap_content"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:orientation="horizontal"-->
+    <!--                app:layout_constraintGuide_percent="0.35" />-->
+
+    <!--            <androidx.constraintlayout.widget.Guideline-->
+    <!--                android:id="@+id/guideline5"-->
+    <!--                android:layout_width="wrap_content"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:orientation="horizontal"-->
+    <!--                app:layout_constraintGuide_percent="0.5" />-->
+
+    <!--            <androidx.constraintlayout.widget.Guideline-->
+    <!--                android:id="@+id/guideline6"-->
+    <!--                android:layout_width="wrap_content"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:orientation="horizontal"-->
+    <!--                app:layout_constraintGuide_percent="0.65" />-->
+
+    <!--            <androidx.constraintlayout.widget.Guideline-->
+    <!--                android:id="@+id/guideline7"-->
+    <!--                android:layout_width="wrap_content"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:orientation="horizontal"-->
+    <!--                app:layout_constraintGuide_percent="0.16" />-->
+
+    <!--            <androidx.constraintlayout.widget.Guideline-->
+    <!--                android:id="@+id/guideline8"-->
+    <!--                android:layout_width="wrap_content"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:orientation="horizontal"-->
+    <!--                app:layout_constraintGuide_percent="0.25" />-->
+
+
+    <!--            <ImageView-->
+    <!--                android:id="@+id/topGreenPannel"-->
+    <!--                android:layout_width="match_parent"-->
+    <!--                android:layout_height="150dp"-->
+    <!--                android:scaleType="fitXY"-->
+    <!--                android:src="@drawable/samplewalpaper"-->
+    <!--                app:layout_constraintEnd_toEndOf="parent"-->
+    <!--                app:layout_constraintStart_toStartOf="parent"-->
+    <!--                app:layout_constraintTop_toTopOf="parent" />-->
+
+
+    <!--            <de.hdodenhof.circleimageview.CircleImageView-->
+    <!--                android:id="@+id/profilePic"-->
+    <!--                android:layout_width="50dp"-->
+    <!--                android:layout_height="50dp"-->
+    <!--                android:layout_marginTop="8dp"-->
+    <!--                android:layout_marginEnd="14dp"-->
+    <!--                android:src="@drawable/sampleprofilepic"-->
+    <!--                app:civ_border_color="#FFFFFF"-->
+    <!--                app:civ_border_width="2dp"-->
+    <!--                app:layout_constraintEnd_toStartOf="@+id/guideline2"-->
+    <!--                app:layout_constraintTop_toBottomOf="@+id/constraintLayout3" />-->
+
+
+    <!--            <androidx.constraintlayout.widget.ConstraintLayout-->
+    <!--                android:id="@+id/constraintLayout3"-->
+    <!--                android:layout_width="0dp"-->
+    <!--                android:layout_height="@dimen/language_picker_layout_height"-->
+    <!--                android:layout_marginTop="8dp"-->
+    <!--                android:background="@drawable/custom_drop_shadow_drawable"-->
+    <!--                app:layout_constraintEnd_toStartOf="@+id/guideline2"-->
+    <!--                app:layout_constraintStart_toStartOf="@+id/guideline14"-->
+    <!--                app:layout_constraintTop_toTopOf="parent">-->
+
+    <!--                <Spinner-->
+    <!--                    android:id="@+id/languagePicker"-->
+    <!--                    style="@style/spinner_style"-->
+    <!--                    android:layout_width="0dp"-->
+    <!--                    android:layout_height="0dp"-->
+    <!--                    android:layout_marginStart="8dp"-->
+    <!--                    android:layout_marginTop="2dp"-->
+    <!--                    android:layout_marginEnd="6dp"-->
+    <!--                    android:layout_marginBottom="2dp"-->
+    <!--                    android:drawSelectorOnTop="true"-->
+    <!--                    android:entries="@array/select_language"-->
+    <!--                    android:spinnerMode="dropdown"-->
+    <!--                    app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--                    app:layout_constraintEnd_toEndOf="parent"-->
+    <!--                    app:layout_constraintStart_toStartOf="parent"-->
+    <!--                    app:layout_constraintTop_toTopOf="parent" />-->
+
+
+    <!--            </androidx.constraintlayout.widget.ConstraintLayout>-->
+
+    <!--            &lt;!&ndash;-->
+
+    <!--            <ImageView-->
+    <!--                android:id="@+id/settings_icon"-->
+    <!--                android:layout_width="25dp"-->
+    <!--                android:layout_height="25dp"-->
+    <!--                android:layout_marginTop="4dp"-->
+    <!--                android:layout_marginEnd="10dp"-->
+    <!--                android:src="@drawable/settings_icon"-->
+    <!--                app:layout_constraintEnd_toEndOf="@+id/constraintLayout3"-->
+    <!--                app:layout_constraintTop_toBottomOf="@+id/constraintLayout3" />&ndash;&gt;-->
+
+
+    <!--            <ImageView-->
+    <!--                android:id="@+id/bottomWhitePannel"-->
+    <!--                android:layout_width="match_parent"-->
+    <!--                android:layout_height="match_parent"-->
+    <!--                android:layout_marginTop="@dimen/white_panel_margin"-->
+    <!--                app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--                app:layout_constraintEnd_toEndOf="parent"-->
+    <!--                app:layout_constraintStart_toStartOf="parent"-->
+    <!--                app:layout_constraintTop_toBottomOf="@+id/topGreenPannel" />-->
+
+    <!--            <ImageView-->
+    <!--                android:id="@+id/roundImage"-->
+    <!--                android:layout_width="0dp"-->
+    <!--                android:layout_height="0dp"-->
+    <!--                android:src="@drawable/greenlogo"-->
+    <!--                app:layout_constraintBottom_toTopOf="@+id/guideline8"-->
+    <!--                app:layout_constraintEnd_toStartOf="@+id/guideline13"-->
+    <!--                app:layout_constraintStart_toStartOf="@+id/guideline12"-->
+    <!--                app:layout_constraintTop_toTopOf="@+id/guideline7" />-->
+
+
+    <!--            <TextView-->
+    <!--                android:id="@+id/selectPictureText"-->
+    <!--                android:layout_width="0dp"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:layout_marginTop="16dp"-->
+    <!--                android:layout_marginBottom="25dp"-->
+    <!--                android:fontFamily="@font/gemunulibrebold"-->
+    <!--                android:gravity="center"-->
+    <!--                android:text="@string/select_an_image_text"-->
+    <!--                android:textColor="#FFFFFF"-->
+    <!--                android:textSize="30sp"-->
+    <!--                android:textStyle="bold"-->
+    <!--                android:typeface="sans"-->
+    <!--                app:layout_constraintBottom_toTopOf="@+id/guideline4"-->
+    <!--                app:layout_constraintEnd_toStartOf="@+id/guideline2"-->
+    <!--                app:layout_constraintStart_toStartOf="@+id/guideline1"-->
+    <!--                app:layout_constraintTop_toBottomOf="@+id/roundImage" />-->
+
+
+    <!--            <androidx.constraintlayout.widget.ConstraintLayout-->
+    <!--                android:id="@+id/pickImageFromGallery"-->
+    <!--                android:layout_width="0dp"-->
+    <!--                android:layout_height="0dp"-->
+    <!--                android:background="@drawable/custom_drop_shadow_drawable"-->
+    <!--                android:onClick="showFileChooser"-->
+    <!--                app:layout_constraintBottom_toTopOf="@+id/guideline5"-->
+    <!--                app:layout_constraintEnd_toStartOf="@+id/guideline2"-->
+    <!--                app:layout_constraintHorizontal_bias="0.0"-->
+    <!--                app:layout_constraintStart_toStartOf="@+id/guideline1"-->
+    <!--                app:layout_constraintTop_toTopOf="@+id/guideline4">-->
+
+    <!--                <androidx.constraintlayout.widget.Guideline-->
+    <!--                    android:id="@+id/guideline9"-->
+    <!--                    android:layout_width="wrap_content"-->
+    <!--                    android:layout_height="wrap_content"-->
+    <!--                    android:orientation="vertical"-->
+    <!--                    app:layout_constraintGuide_percent="0.26" />-->
+
+    <!--                <ImageView-->
+    <!--                    android:id="@+id/imageView"-->
+    <!--                    android:layout_width="0dp"-->
+    <!--                    android:layout_height="0dp"-->
+    <!--                    android:layout_marginStart="20dp"-->
+    <!--                    android:layout_marginTop="22dp"-->
+    <!--                    android:layout_marginEnd="20dp"-->
+    <!--                    android:layout_marginBottom="22dp"-->
+    <!--                    android:onClick="showFileChooser"-->
+    <!--                    android:src="@drawable/addimage"-->
+    <!--                    app:layout_constraintBottom_toBottomOf="@+id/pickImageFromGallery"-->
+    <!--                    app:layout_constraintEnd_toStartOf="@+id/guideline9"-->
+    <!--                    app:layout_constraintStart_toStartOf="@+id/pickImageFromGallery"-->
+    <!--                    app:layout_constraintTop_toTopOf="@+id/pickImageFromGallery" />-->
+
+
+    <!--                <TextView-->
+    <!--                    android:id="@+id/fromGalery"-->
+    <!--                    android:layout_width="wrap_content"-->
+    <!--                    android:layout_height="wrap_content"-->
+    <!--                    android:fontFamily="@font/gemunulibrebold"-->
+    <!--                    android:gravity="center"-->
+    <!--                    android:onClick="showFileChooser"-->
+    <!--                    android:text="@string/select_from_galery_text"-->
+    <!--                    android:textColor="#018577"-->
+    <!--                    android:textSize="23sp"-->
+    <!--                    android:textStyle="bold"-->
+    <!--                    android:typeface="sans"-->
+    <!--                    app:layout_constraintBottom_toBottomOf="@+id/pickImageFromGallery"-->
+    <!--                    app:layout_constraintStart_toStartOf="@+id/guideline9"-->
+    <!--                    app:layout_constraintTop_toTopOf="@+id/pickImageFromGallery" />-->
+
+
+    <!--            </androidx.constraintlayout.widget.ConstraintLayout>-->
+
+
+    <!--            <androidx.constraintlayout.widget.ConstraintLayout-->
+    <!--                android:id="@+id/createImageFromLibrary"-->
+    <!--                android:layout_width="0dp"-->
+    <!--                android:layout_height="0dp"-->
+    <!--                android:background="@drawable/custom_drop_shadow_drawable"-->
+    <!--                app:layout_constraintBottom_toTopOf="@+id/guideline6"-->
+    <!--                app:layout_constraintEnd_toStartOf="@+id/guideline2"-->
+    <!--                app:layout_constraintHorizontal_bias="1.0"-->
+    <!--                app:layout_constraintStart_toStartOf="@+id/guideline1"-->
+    <!--                app:layout_constraintTop_toTopOf="@+id/guideline5">-->
+
+
+    <!--                <androidx.constraintlayout.widget.Guideline-->
+    <!--                    android:id="@+id/guideline10"-->
+    <!--                    android:layout_width="wrap_content"-->
+    <!--                    android:layout_height="wrap_content"-->
+    <!--                    android:orientation="vertical"-->
+    <!--                    app:layout_constraintGuide_percent="0.26" />-->
+
+    <!--                <ImageView-->
+    <!--                    android:id="@+id/createBitmap"-->
+    <!--                    android:layout_width="0dp"-->
+    <!--                    android:layout_height="0dp"-->
+    <!--                    android:layout_marginStart="20dp"-->
+    <!--                    android:layout_marginTop="22dp"-->
+    <!--                    android:layout_marginEnd="20dp"-->
+    <!--                    android:layout_marginBottom="22dp"-->
+    <!--                    android:src="@drawable/createbitmap"-->
+    <!--                    app:layout_constraintBottom_toBottomOf="@+id/createImageFromLibrary"-->
+    <!--                    app:layout_constraintEnd_toStartOf="@+id/guideline10"-->
+    <!--                    app:layout_constraintStart_toStartOf="@+id/createImageFromLibrary"-->
+    <!--                    app:layout_constraintTop_toTopOf="@+id/createImageFromLibrary" />-->
+
+    <!--                <TextView-->
+    <!--                    android:id="@+id/createOne"-->
+    <!--                    android:layout_width="wrap_content"-->
+    <!--                    android:layout_height="wrap_content"-->
+    <!--                    android:fontFamily="@font/gemunulibrebold"-->
+    <!--                    android:gravity="center"-->
+    <!--                    android:text="@string/create_a_background_text"-->
+    <!--                    android:textColor="#018577"-->
+    <!--                    android:textSize="23sp"-->
+    <!--                    android:textStyle="bold"-->
+    <!--                    android:typeface="sans"-->
+    <!--                    app:layout_constraintBottom_toBottomOf="@+id/createBitmap"-->
+    <!--                    app:layout_constraintStart_toStartOf="@+id/guideline10"-->
+    <!--                    app:layout_constraintTop_toTopOf="@+id/createBitmap" />-->
+
+
+    <!--            </androidx.constraintlayout.widget.ConstraintLayout>-->
+
+
+    <!--            <androidx.constraintlayout.widget.ConstraintLayout-->
+    <!--                android:id="@+id/pickImageFromDb"-->
+    <!--                android:layout_width="0dp"-->
+    <!--                android:layout_height="0dp"-->
+    <!--                android:background="@drawable/custom_drop_shadow_drawable"-->
+    <!--                app:layout_constraintBottom_toTopOf="@+id/guideline3"-->
+    <!--                app:layout_constraintEnd_toStartOf="@+id/guideline2"-->
+    <!--                app:layout_constraintHorizontal_bias="1.0"-->
+    <!--                app:layout_constraintStart_toStartOf="@+id/guideline1"-->
+    <!--                app:layout_constraintTop_toBottomOf="@+id/createImageFromLibrary">-->
+
+
+    <!--                <androidx.constraintlayout.widget.Guideline-->
+    <!--                    android:id="@+id/guideline11"-->
+    <!--                    android:layout_width="wrap_content"-->
+    <!--                    android:layout_height="wrap_content"-->
+    <!--                    android:orientation="vertical"-->
+    <!--                    app:layout_constraintGuide_percent="0.26" />-->
+
+    <!--                <ImageView-->
+    <!--                    android:id="@+id/usePreviousBitmap"-->
+    <!--                    android:layout_width="0dp"-->
+    <!--                    android:layout_height="0dp"-->
+    <!--                    android:layout_marginStart="20dp"-->
+    <!--                    android:layout_marginTop="22dp"-->
+    <!--                    android:layout_marginEnd="20dp"-->
+    <!--                    android:layout_marginBottom="22dp"-->
+    <!--                    android:src="@drawable/addfromimages"-->
+    <!--                    app:layout_constraintBottom_toBottomOf="@+id/pickImageFromDb"-->
+    <!--                    app:layout_constraintEnd_toStartOf="@+id/guideline11"-->
+    <!--                    app:layout_constraintStart_toStartOf="@+id/pickImageFromDb"-->
+    <!--                    app:layout_constraintTop_toTopOf="@+id/pickImageFromDb" />-->
+
+
+    <!--                <TextView-->
+    <!--                    android:id="@+id/useOne"-->
+    <!--                    android:layout_width="wrap_content"-->
+    <!--                    android:layout_height="wrap_content"-->
+    <!--                    android:fontFamily="@font/gemunulibrebold"-->
+    <!--                    android:gravity="center"-->
+    <!--                    android:text="@string/select_a_background_text"-->
+    <!--                    android:textColor="#018577"-->
+    <!--                    android:textSize="23sp"-->
+    <!--                    android:textStyle="bold"-->
+    <!--                    android:typeface="sans"-->
+    <!--                    app:layout_constraintBottom_toBottomOf="@+id/usePreviousBitmap"-->
+    <!--                    app:layout_constraintStart_toStartOf="@+id/guideline11"-->
+    <!--                    app:layout_constraintTop_toTopOf="@+id/usePreviousBitmap" />-->
+
+
+    <!--            </androidx.constraintlayout.widget.ConstraintLayout>-->
+
+
+    <!--        </androidx.constraintlayout.widget.ConstraintLayout>-->
+
+
+    <!--        &lt;!&ndash;</androidx.core.widget.NestedScrollView>&ndash;&gt;-->
+
+    <!--        <ImageView-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="100dp"-->
+    <!--            android:scaleType="centerCrop"-->
+    <!--            android:src="@drawable/grass"-->
+    <!--            android:alpha="0.7"-->
+    <!--            app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--            app:layout_constraintEnd_toEndOf="parent"-->
+    <!--            app:layout_constraintStart_toStartOf="parent" />-->
+
+
+    <!--        <TextView-->
+    <!--            android:id="@+id/verionName"-->
+    <!--            android:layout_width="wrap_content"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_marginBottom="4dp"-->
+    <!--            android:fontFamily="@font/gemunulibrebold"-->
+    <!--            android:gravity="center"-->
+    <!--            android:text="Version 1.1.7"-->
+    <!--            android:textColor="#FFFFFF"-->
+    <!--            android:textSize="18sp"-->
+    <!--            android:textStyle="bold"-->
+    <!--            android:typeface="sans"-->
+    <!--            app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--            app:layout_constraintEnd_toEndOf="parent"-->
+    <!--            app:layout_constraintStart_toStartOf="parent" />-->
+
+
+
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout3"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/gradient_blue"
-        tools:context=".activities.MainActivity">
+        android:layout_height="0dp"
+        android:background="@color/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="@+id/ImageList"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.04" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.96" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline12"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.42" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.25" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline13"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.58" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline14"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.61" />
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profilePic"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="24dp"
+        android:src="@drawable/sampleprofilepic"
+        app:layout_constraintBottom_toTopOf="@+id/guideline2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.8" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.35" />
+    <TextView
+        android:id="@+id/textView13"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="Recent"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/guideline2"
+        app:layout_constraintStart_toStartOf="parent" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.5" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/ImageList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/guideline3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline2" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.65" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout4"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:background="@drawable/bottom_curve_background"
+        app:layout_constraintBottom_toTopOf="@+id/guideline3" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline7"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.16" />
+    <!--    android:background="@drawable/bottom_curve_background"-->
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline8"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.25" />
 
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.5" />
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/pickImageFromGallery"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:onClick="showFileChooser"
+        android:background="@drawable/right_side_corner_round_blue_background"
+        app:layout_constraintEnd_toStartOf="@+id/guideline4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline3">
 
 
         <ImageView
-            android:id="@+id/topGreenPannel"
+            android:id="@+id/imageView"
+            android:layout_width="70dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:onClick="showFileChooser"
+            android:src="@drawable/gallery_image"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/fromGalery"
+            app:layout_constraintTop_toBottomOf="@+id/fromGalery"
+            app:layout_constraintVertical_bias="0.666" />
+
+        <TextView
+            android:id="@+id/fromGalery"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:scaleType="fitXY"
-            android:src="@drawable/samplewalpaper"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/bindumathi"
+            android:text="@string/select_from_galery_text"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:typeface="sans"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/createImageFromLibrary"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/left_side_corner_round_blue_background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline4"
+        app:layout_constraintTop_toBottomOf="@+id/pickImageFromGallery">
+
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="50dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            android:src="@drawable/create_image_icon"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/createOne"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/createOne"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="4dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/bindumathi"
+            android:gravity="end"
+            android:text="@string/create_a_background_text"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:typeface="sans"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/profilePic"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="14dp"
-            android:src="@drawable/sampleprofilepic"
-            app:civ_border_color="#FFFFFF"
-            app:civ_border_width="2dp"
-            app:layout_constraintEnd_toStartOf="@+id/guideline2"
-            app:layout_constraintTop_toBottomOf="@+id/constraintLayout3" />
-
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constraintLayout3"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/language_picker_layout_height"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/custom_drop_shadow_drawable"
-            app:layout_constraintEnd_toStartOf="@+id/guideline2"
-            app:layout_constraintStart_toStartOf="@+id/guideline14"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <Spinner
-                android:id="@+id/languagePicker"
-                style="@style/spinner_style"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="2dp"
-                android:layout_marginEnd="6dp"
-                android:layout_marginBottom="2dp"
-                android:drawSelectorOnTop="true"
-                android:entries="@array/select_language"
-                android:spinnerMode="dropdown"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <!--
-
-        <ImageView
-            android:id="@+id/settings_icon"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="10dp"
-            android:src="@drawable/settings_icon"
-            app:layout_constraintEnd_toEndOf="@+id/constraintLayout3"
-            app:layout_constraintTop_toBottomOf="@+id/constraintLayout3" />-->
-
-
-        <ImageView
-            android:id="@+id/bottomWhitePannel"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/white_panel_margin"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/topGreenPannel" />
-
-        <ImageView
-            android:id="@+id/roundImage"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:src="@drawable/greenlogo"
-            app:layout_constraintBottom_toTopOf="@+id/guideline8"
-            app:layout_constraintEnd_toStartOf="@+id/guideline13"
-            app:layout_constraintStart_toStartOf="@+id/guideline12"
-            app:layout_constraintTop_toTopOf="@+id/guideline7" />
-
-
-        <TextView
-            android:id="@+id/selectPictureText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="25dp"
-            android:fontFamily="@font/gemunulibrebold"
-            android:gravity="center"
-            android:text="@string/select_an_image_text"
-            android:textColor="#FFFFFF"
-            android:textSize="30sp"
-            android:textStyle="bold"
-            android:typeface="sans"
-            app:layout_constraintBottom_toTopOf="@+id/guideline4"
-            app:layout_constraintEnd_toStartOf="@+id/guideline2"
-            app:layout_constraintStart_toStartOf="@+id/guideline1"
-            app:layout_constraintTop_toBottomOf="@+id/roundImage" />
-
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/pickImageFromGallery"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@drawable/custom_drop_shadow_drawable"
-            android:onClick="showFileChooser"
-            app:layout_constraintBottom_toTopOf="@+id/guideline5"
-            app:layout_constraintEnd_toStartOf="@+id/guideline2"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/guideline1"
-            app:layout_constraintTop_toTopOf="@+id/guideline4">
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline9"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.26" />
-
-            <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="22dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="22dp"
-                android:onClick="showFileChooser"
-                android:src="@drawable/addimage"
-                app:layout_constraintBottom_toBottomOf="@+id/pickImageFromGallery"
-                app:layout_constraintEnd_toStartOf="@+id/guideline9"
-                app:layout_constraintStart_toStartOf="@+id/pickImageFromGallery"
-                app:layout_constraintTop_toTopOf="@+id/pickImageFromGallery" />
-
-
-            <TextView
-                android:id="@+id/fromGalery"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/gemunulibrebold"
-                android:gravity="center"
-                android:onClick="showFileChooser"
-                android:text="@string/select_from_galery_text"
-                android:textColor="#018577"
-                android:textSize="23sp"
-                android:textStyle="bold"
-                android:typeface="sans"
-                app:layout_constraintBottom_toBottomOf="@+id/pickImageFromGallery"
-                app:layout_constraintStart_toStartOf="@+id/guideline9"
-                app:layout_constraintTop_toTopOf="@+id/pickImageFromGallery" />
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/createImageFromLibrary"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@drawable/custom_drop_shadow_drawable"
-            app:layout_constraintBottom_toTopOf="@+id/guideline6"
-            app:layout_constraintEnd_toStartOf="@+id/guideline2"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="@+id/guideline1"
-            app:layout_constraintTop_toTopOf="@+id/guideline5">
-
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline10"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.26" />
-
-            <ImageView
-                android:id="@+id/createBitmap"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="22dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="22dp"
-                android:src="@drawable/createbitmap"
-                app:layout_constraintBottom_toBottomOf="@+id/createImageFromLibrary"
-                app:layout_constraintEnd_toStartOf="@+id/guideline10"
-                app:layout_constraintStart_toStartOf="@+id/createImageFromLibrary"
-                app:layout_constraintTop_toTopOf="@+id/createImageFromLibrary" />
-
-            <TextView
-                android:id="@+id/createOne"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/gemunulibrebold"
-                android:gravity="center"
-                android:text="@string/create_a_background_text"
-                android:textColor="#018577"
-                android:textSize="23sp"
-                android:textStyle="bold"
-                android:typeface="sans"
-                app:layout_constraintBottom_toBottomOf="@+id/createBitmap"
-                app:layout_constraintStart_toStartOf="@+id/guideline10"
-                app:layout_constraintTop_toTopOf="@+id/createBitmap" />
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/pickImageFromDb"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@drawable/custom_drop_shadow_drawable"
-            app:layout_constraintBottom_toTopOf="@+id/guideline3"
-            app:layout_constraintEnd_toStartOf="@+id/guideline2"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="@+id/guideline1"
-            app:layout_constraintTop_toBottomOf="@+id/createImageFromLibrary">
-
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline11"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.26" />
-
-            <ImageView
-                android:id="@+id/usePreviousBitmap"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="22dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="22dp"
-                android:src="@drawable/addfromimages"
-                app:layout_constraintBottom_toBottomOf="@+id/pickImageFromDb"
-                app:layout_constraintEnd_toStartOf="@+id/guideline11"
-                app:layout_constraintStart_toStartOf="@+id/pickImageFromDb"
-                app:layout_constraintTop_toTopOf="@+id/pickImageFromDb" />
-
-
-            <TextView
-                android:id="@+id/useOne"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/gemunulibrebold"
-                android:gravity="center"
-                android:text="@string/select_a_background_text"
-                android:textColor="#018577"
-                android:textSize="23sp"
-                android:textStyle="bold"
-                android:typeface="sans"
-                app:layout_constraintBottom_toBottomOf="@+id/usePreviousBitmap"
-                app:layout_constraintStart_toStartOf="@+id/guideline11"
-                app:layout_constraintTop_toTopOf="@+id/usePreviousBitmap" />
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-    <!--</androidx.core.widget.NestedScrollView>-->
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/grass"
-        android:alpha="0.7"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-
-    <TextView
-        android:id="@+id/verionName"
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:fontFamily="@font/gemunulibrebold"
-        android:gravity="center"
-        android:text="Version 1.1.7"
-        android:textColor="#FFFFFF"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:typeface="sans"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
 </androidx.constraintlayout.widget.ConstraintLayout>

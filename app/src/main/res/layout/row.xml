@@ -3,19 +3,22 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:background="@drawable/custom_drop_shadow_drawable"
-    android:layout_height="wrap_content">
+    android:layout_width="wrap_content"
+    android:padding="5dp"
+    android:layout_height="match_parent">
 
-    <ImageView
+
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/image"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="@dimen/row_margin_8"
-        android:layout_marginTop="@dimen/row_margin_8"
-        android:layout_marginBottom="@dimen/row_margin_8"
+        android:layout_width="80dp"
+        android:layout_height="match_parent"
         android:scaleType="centerCrop"
+        android:padding="5dp"
+        app:civ_border_width="1dp"
+        app:civ_border_color="@color/color_gray"
+        android:background="@drawable/round_bg_transparent"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -24,6 +27,7 @@
         android:layout_width="45dp"
         android:layout_height="45dp"
         android:layout_marginEnd="@dimen/row_image_margin_16"
+        android:visibility="gone"
         android:src="@drawable/delete"
         app:layout_constraintBottom_toBottomOf="@+id/image"
         app:layout_constraintEnd_toEndOf="parent"
@@ -36,6 +40,7 @@
         android:layout_marginStart="85dp"
         android:layout_marginEnd="70dp"
         android:text="Date"
+        android:visibility="gone"
         android:textColor="@android:color/black"
         android:textSize="17sp"
         android:fontFamily="@font/gemunulibrebold"

@@ -300,7 +300,10 @@ public class AdjustImage extends AppCompatActivity {
                     //get Date and time
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd \nHH:mm:ss", Locale.getDefault());
                     String currentDateandTime = sdf.format(new Date());
-                    if(helper.AddImage(helper.getBytes(ImageList.getInstance().getCurrentBitmap()),currentDateandTime))
+
+                    String path = Methods.saveToInternalStorage(getApplicationContext(),ImageList.getInstance().getCurrentBitmap(),currentDateandTime);
+
+                    if(helper.AddImage(null,path))
                     {
                         bitmap = null;
                     }

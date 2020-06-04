@@ -234,7 +234,10 @@ public class AddEffects extends AppCompatActivity implements OnBitmapChanged, On
             //get Date and time
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd \nHH:mm:ss", Locale.getDefault());
             String currentDateandTime = sdf.format(new Date());
-            helper.AddImage(helper.getBytes(ImageList.getInstance().getCurrentBitmap()),currentDateandTime);
+
+            String path = Methods.saveToInternalStorage(getApplicationContext(),ImageList.getInstance().getCurrentBitmap(),currentDateandTime);
+
+            helper.AddImage(null,path);
 
             ImageList.getInstance().deleteUndoRedoImages();
 

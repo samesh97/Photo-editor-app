@@ -2,6 +2,7 @@ package com.sba.sinhalaphotoeditor.MostUsedMethods;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,16 +14,17 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,7 +32,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sba.sinhalaphotoeditor.Config.ExifUtil;
+
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;
 
@@ -42,10 +44,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 
 public class Methods
 {
@@ -663,6 +665,111 @@ public class Methods
             e.printStackTrace();
             return null;
         }
+
+        return bitmap;
+    }
+    public static String saveToInternalStorage(Context context,Bitmap bitmapImage,String name){
+
+        ContextWrapper cw = new ContextWrapper(context);
+        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+        File file = null;
+        Random rn = new Random();
+        int randomValue = rn.nextInt(10000000) + 1;
+        String path = null;
+
+        //user profile image save
+        if(name.equals("userProfilePicResized"))
+        {
+            path = "userProfilePicResized" + ".PNG";
+            file = new File(directory, path);
+        }
+        else if(name.equals("")) //save profilePic
+        {
+            path = "profilePic" + ".PNG";
+            file = new File(directory, path);
+        }
+        else
+        {
+            path = "Temp"  + randomValue + ".PNG";
+            file = new File(directory, path);
+        }
+
+        if(file.exists())
+        {
+            file.delete();
+        }
+
+        FileOutputStream fos = null;
+        try
+        {
+            fos = new FileOutputStream(file);
+            bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.flush();
+            fos.close();
+        }
+        catch (java.io.IOException e)
+        {
+            e.printStackTrace();
+        }
+
+
+        return path;
+    }
+    public static float getDeviceWidthInDP(Context context)
+    {
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
+        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+
+        return dpWidth;
+    }
+    public static float getDeviceHeightInDP(Context context)
+    {
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
+        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+
+        return dpHeight;
+    }
+    public static Bitmap getResizedProfilePic(Context context,Bitmap image, int maxSize)
+    {
+
+        int width = image.getWidth();
+        int height = image.getHeight();
+
+        float bitmapRatio = (float)width / (float) height;
+        if (bitmapRatio > 1) {
+            width = maxSize;
+            height = (int) (width / bitmapRatio);
+        } else {
+            height = maxSize;
+            width = (int) (height * bitmapRatio);
+        }
+        Bitmap bitmap =  Bitmap.createScaledBitmap(image, width, height, true);
+        String path = saveToInternalStorage(context,bitmap,"userProfilePicResized");
+
+
+        Bitmap newBitmap = getImageFromInternalStorage(context,path);
+        return newBitmap;
+    }
+    public static Bitmap getImageFromInternalStorage(Context context,String name)
+    {
+        //get image from private storage
+        ContextWrapper cw = new ContextWrapper(context);
+        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+        File file = new File(directory, name);
+        Drawable d = Drawable.createFromPath(file.toString());
+        return drawableToBitmap(d);
+    }
+    public static Bitmap drawableToBitmap (Drawable drawable) {
+        if (drawable instanceof BitmapDrawable) {
+            return ((BitmapDrawable)drawable).getBitmap();
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
 
         return bitmap;
     }

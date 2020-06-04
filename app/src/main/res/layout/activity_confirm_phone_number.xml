@@ -11,7 +11,10 @@
         android:id="@+id/pinview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="35dp"
+        android:layout_marginEnd="32dp"
+        android:background="@drawable/round_bg_dark_ash"
         app:cursorVisible="false"
         app:forceKeyboard="true"
         app:hint="0"
@@ -21,47 +24,62 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView"
         app:password="false"
-        app:pinBackground="@android:color/white"
+        app:pinBackground="@android:color/transparent"
         app:pinHeight="40dp"
-        app:splitWidth="10dp"
         app:pinLength="6"
         app:pinWidth="35dp"
+        app:splitWidth="10dp"
         tools:ignore="MissingConstraints" />
 
     <Button
         android:id="@+id/varify"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginLeft="32dp"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginRight="32dp"
-        android:paddingRight="45dp"
+        android:background="@drawable/round_bg_ash"
         android:paddingLeft="45dp"
-        android:text="Varify"
-        android:background="@drawable/opaciy"
-        android:textColor="@android:color/white"
+        android:paddingRight="45dp"
+        android:text="Verify"
+        android:textColor="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/pinview"
         tools:ignore="MissingConstraints" />
 
+
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="130dp"
-        android:layout_marginLeft="130dp"
-        android:layout_marginTop="107dp"
-        android:layout_marginEnd="132dp"
-        android:layout_marginRight="132dp"
-        android:text="Enter Code"
+        android:layout_marginTop="8dp"
         android:gravity="center"
+        android:text="Enter Code"
         android:textColor="@android:color/white"
         android:textSize="17sp"
+        app:layout_constraintEnd_toEndOf="@+id/profilePicture"
+        app:layout_constraintHorizontal_bias="0.429"
+        app:layout_constraintStart_toStartOf="@+id/profilePicture"
+        app:layout_constraintTop_toBottomOf="@+id/profilePicture" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profilePicture"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginStart="80dp"
+        android:layout_marginEnd="81dp"
+        android:src="@drawable/sampleprofilepic"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/guideline5" />
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.17" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

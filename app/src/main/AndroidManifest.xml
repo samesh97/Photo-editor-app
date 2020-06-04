@@ -20,15 +20,17 @@
         <activity
             android:name=".activities.SplashScreen"
             android:theme="@style/NoActionBarAppTheme">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
         <activity
             android:name=".activities.ConfirmPhoneNumber"
-            android:theme="@style/NoActionBarAppTheme" />
+            android:theme="@style/NoActionBarAppTheme" >
+        </activity>
         <activity
             android:name=".activities.RegisterScreen"
             android:label="Register"
@@ -75,7 +77,8 @@
         <activity
             android:name=".activities.CreateABackgroundActivity"
             android:label="Create Image"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/NoActionBarAppTheme"/>
         <activity
             android:name=".activities.ImageSavingActivity"
             android:label="Final Step"

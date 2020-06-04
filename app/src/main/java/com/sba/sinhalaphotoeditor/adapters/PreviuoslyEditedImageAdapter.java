@@ -8,10 +8,12 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -36,6 +39,8 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class PreviuoslyEditedImageAdapter extends RecyclerView.Adapter<PreviuoslyEditedImageAdapter.MyViewHolder>
 {
@@ -78,13 +83,20 @@ public class PreviuoslyEditedImageAdapter extends RecyclerView.Adapter<Previuosl
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder,final int position)
     {
-        //holder.image.setImageBitmap(images.get(position));
+
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
+        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+
+        int percent = (int) (dpHeight / 4);
+        holder.image.setLayoutParams(new ConstraintLayout.LayoutParams(percent, ViewGroup.LayoutParams.MATCH_PARENT));
         Glide.with(context).load(images.get(position)).into(holder.image);
-        holder.date.setText(dates.get(position));
+        if(dates != null && dates.size() > position)
+        {
+            holder.date.setText(dates.get(position));
+        }
 
-
-
-
+        Log.d("adapterSize","" + images.size());
 
         holder.delete.setOnClickListener(new View.OnClickListener()
         {
@@ -107,21 +119,11 @@ public class PreviuoslyEditedImageAdapter extends RecyclerView.Adapter<Previuosl
 
 
                             Methods.showCustomToast(context,context.getResources().getString(R.string.removed_text));
-
-
-
-
-                            //Toast.makeText(context, "Removed", Toast.LENGTH_SHORT).show();
-
-
                             notifyDataSetChanged();
                         }
                         else
                         {
-
                             Methods.showCustomToast(context,context.getString(R.string.something_went_wrong_text));
-
-                            //Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show();
                         }
 
                     }
@@ -146,7 +148,7 @@ public class PreviuoslyEditedImageAdapter extends RecyclerView.Adapter<Previuosl
 
     public class MyViewHolder extends RecyclerView.ViewHolder
     {
-        ImageView image;
+        CircleImageView image;
         TextView date;
         ImageView delete;
 
@@ -211,15 +213,6 @@ public class PreviuoslyEditedImageAdapter extends RecyclerView.Adapter<Previuosl
                     display.getMetrics(metrics);
 
 
-
-                    //selectedImage = getResizedBitmap(selectedImage,1500);
-
-                    //selectedImage = decodeSampledBitmapFromResource(getRealPathFromDocumentUri(UsePreviouslyEditedImageActivity.this,getImageUri(UsePreviouslyEditedImageActivity.this,selectedImage)),metrics.widthPixels,metrics.heightPixels);
-                   // MainActivity.filePaths.add(getImageUri(context,selectedImage));
-
-
-
-
                     ImageList.getInstance().addBitmap(selectedImage,false);
 
                     context.startActivity(new Intent(context,EditorActivity.class));
@@ -238,94 +231,5 @@ public class PreviuoslyEditedImageAdapter extends RecyclerView.Adapter<Previuosl
         }
 
     }
-    public Bitmap getResizedBitmap(Bitmap image, int maxSize)
-    {
 
-        int width = image.getWidth();
-        int height = image.getHeight();
-
-        float bitmapRatio = (float)width / (float) height;
-        if (bitmapRatio > 1) {
-            width = maxSize;
-            height = (int) (width / bitmapRatio);
-        } else {
-            height = maxSize;
-            width = (int) (height * bitmapRatio);
-        }
-        return Bitmap.createScaledBitmap(image, width, height, true);
-    }
-    static Bitmap decodeSampledBitmapFromResource(String path,int reqWidth,
-                                                  int reqHeight) {
-        // First decode with inJustDecodeBounds=true to check dimensions
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(path, options);
-        // Calculate inSampleSize
-        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-        // Decode bitmap with inSampleSize set
-        options.inJustDecodeBounds = false;
-        return BitmapFactory.decodeFile(path,options);
-    }
-    //Given the bitmap size and View size calculate a subsampling size (powers of 2)
-    static int calculateInSampleSize( BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        int inSampleSize = 1;   //Default subsampling size
-        // See if image raw height and width is bigger than that of required view
-        if (options.outHeight > reqHeight || options.outWidth > reqWidth) {
-            //bigger
-            final int halfHeight = options.outHeight / 2;
-            final int halfWidth = options.outWidth / 2;
-            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-            // height and width larger than the requested height and width.
-            while ((halfHeight / inSampleSize) > reqHeight
-                    && (halfWidth / inSampleSize) > reqWidth) {
-                inSampleSize *= 2;
-            }
-        }
-        return inSampleSize;
-    }
-    public Uri getImageUri(Context inContext, Bitmap inImage)
-    {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-
-/*
-        String realPath = getRealPathFromDocumentUri(getApplicationContext(),Uri.parse(path));
-        Log.d("image",realPath);
-
-        File file = new File(realPath);
-        if(file.exists())
-        {
-            file.delete();
-            Log.d("image","deleted");
-        }*/
-
-        return Uri.parse(path);
-    }
-    public static String getRealPathFromDocumentUri(Context context, Uri uri){
-        String filePath = "";
-
-        Pattern p = Pattern.compile("(\\d+)$");
-        Matcher m = p.matcher(uri.toString());
-        if (!m.find()) {
-            //Log.e(ImageConverter.class.getSimpleName(), "ID for requested image not found: " + uri.toString());
-            return filePath;
-        }
-        String imgId = m.group();
-
-        String[] column = { MediaStore.Images.Media.DATA };
-        String sel = MediaStore.Images.Media._ID + "=?";
-
-        Cursor cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                column, sel, new String[]{ imgId }, null);
-
-        int columnIndex = cursor.getColumnIndex(column[0]);
-
-        if (cursor.moveToFirst()) {
-            filePath = cursor.getString(columnIndex);
-        }
-        cursor.close();
-
-        return filePath;
-    }
 }

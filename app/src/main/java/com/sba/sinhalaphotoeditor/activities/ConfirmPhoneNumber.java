@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -31,6 +32,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.firebase.SihalaUser;
 
@@ -49,6 +51,8 @@ import android.widget.Toast;
 
 import java.util.concurrent.TimeUnit;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class ConfirmPhoneNumber extends AppCompatActivity {
 
     private Button varify;
@@ -64,6 +68,7 @@ public class ConfirmPhoneNumber extends AppCompatActivity {
     private ProgressDialog pd;
     private TextView textView;
     private String CountryCode;
+    private CircleImageView profilePicture;
 
 
     @Override
@@ -74,6 +79,7 @@ public class ConfirmPhoneNumber extends AppCompatActivity {
         pin = (Pinview) findViewById(R.id.pinview);
         textView = (TextView) findViewById(R.id.textView);
         varify = (Button) findViewById(R.id.varify);
+        profilePicture = findViewById(R.id.profilePicture);
 
 
         mAuth = FirebaseAuth.getInstance();
@@ -103,9 +109,18 @@ public class ConfirmPhoneNumber extends AppCompatActivity {
 
 
 
-        textView.setText("Enter the code We've sent \nto " + CountryCode + phone);
+        if(CountryCode != null && phone != null)
+        {
+            textView.setText("Enter the code We've sent \nto " + CountryCode + phone);
+        }
+        if(uri != null)
+        {
+            filePath = Uri.parse(uri);
+            profilePicture.setImageURI(filePath);
+            profilePicture.setBorderWidth(4);
+            profilePicture.setBorderColor(Color.WHITE);
 
-        filePath = Uri.parse(uri);
+        }
 
 
         pin.setPinViewEventListener(new Pinview.PinViewEventListener() {
@@ -137,7 +152,7 @@ public class ConfirmPhoneNumber extends AppCompatActivity {
                 }
                 else
                 {
-                    Toast.makeText(ConfirmPhoneNumber.this, "Please Enter the Valid Code", Toast.LENGTH_SHORT).show();
+                    Methods.showCustomToast(ConfirmPhoneNumber.this, "Please Enter the Valid Code");
                 }
 
 
@@ -249,11 +264,11 @@ public class ConfirmPhoneNumber extends AppCompatActivity {
                                                     startActivity(intent);
 
 
-                                                    Toast.makeText(ConfirmPhoneNumber.this,"Successfully Registered!",Toast.LENGTH_SHORT).show();
+                                                    Methods.showCustomToast(ConfirmPhoneNumber.this,"Successfully Registered!");
                                                 }
                                                 else
                                                 {
-                                                    Toast.makeText(ConfirmPhoneNumber.this,"Failed to Register, Check Your Connection!",Toast.LENGTH_SHORT).show();
+                                                    Methods.showCustomToast(ConfirmPhoneNumber.this,"Failed to Register, Check Your Connection!");
                                                 }
                                                 pd.dismiss();
                                             }
@@ -307,6 +322,11 @@ public class ConfirmPhoneNumber extends AppCompatActivity {
     {
         ContentResolver cR = getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
-        return mime.getExtensionFromMimeType(cR.getType(uri));
+        String re =  mime.getExtensionFromMimeType(cR.getType(uri));
+        if(re == null)
+        {
+            return "PNG";
+        }
+        return re;
     }
 }

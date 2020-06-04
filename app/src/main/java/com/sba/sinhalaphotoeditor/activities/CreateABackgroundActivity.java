@@ -38,14 +38,16 @@ import com.sba.sinhalaphotoeditor.singleton.ImageList;
 
 public class CreateABackgroundActivity extends AppCompatActivity {
 
-    ImageView userCreatedImage;
-    Button create;
-    EditText width,height;
-    int color = -99;
-    Bitmap createdBitmap = null;
-    ImageView pickColor;
-    Button useImage;
-    Boolean isImageCreating = false;
+    private ImageView userCreatedImage;
+    private Button create;
+    private EditText width,height;
+    private static int color = Color.parseColor("#2dcb70");;
+    private static int widthValue = 1000;
+    private static int heightValue = 1000;
+    private Bitmap createdBitmap = null;
+    private ImageView pickColor;
+    private Button useImage;
+    private Boolean isImageCreating = false;
 
     private InterstitialAd mInterstitialAd;
 
@@ -91,7 +93,7 @@ public class CreateABackgroundActivity extends AppCompatActivity {
         Display display = wm.getDefaultDisplay();
         DisplayMetrics metrics = new DisplayMetrics();
         display.getMetrics(metrics);
-        int widtha = metrics.widthPixels;
+        final int widtha = metrics.widthPixels;
 
 
 
@@ -103,9 +105,6 @@ public class CreateABackgroundActivity extends AppCompatActivity {
         useImage = (Button) findViewById(R.id.useImage);
 
 
-        ImageView topGreenPannel;
-        topGreenPannel = findViewById(R.id.topGreenPannel);
-        Glide.with(getApplicationContext()).load(R.drawable.samplewalpaper).into(topGreenPannel);
 
 
         userCreatedImage.setMaxWidth(widtha);
@@ -125,9 +124,6 @@ public class CreateABackgroundActivity extends AppCompatActivity {
                     }
                     else
                     {
-                        EditorActivity.imageWidth = Integer.parseInt(width.getText().toString());
-                        EditorActivity.imageHeight = Integer.parseInt(height.getText().toString());
-
 
                         ImageList.getInstance().clearImageList();
                         ImageList.getInstance().addBitmap(createdBitmap,false);
@@ -160,49 +156,44 @@ public class CreateABackgroundActivity extends AppCompatActivity {
                 if(width.getText().toString().equals(""))
                 {
                     Methods.showCustomToast(CreateABackgroundActivity.this,getResources().getString(R.string.enter_valid_width));
-                    //Toast.makeText(CreateABackgroundActivity.this, "Enter a valid width", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if(height.getText().toString().equals(""))
                 {
                     Methods.showCustomToast(CreateABackgroundActivity.this,getResources().getString(R.string.enter_valid_height));
-                    //Toast.makeText(CreateABackgroundActivity.this, "Enter a valid height", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if(color == -99)
                 {
                     Methods.showCustomToast(CreateABackgroundActivity.this,getResources().getString(R.string.pick_color_text));
-                    //Toast.makeText(CreateABackgroundActivity.this, "Pick a color", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if(Integer.parseInt(width.getText().toString()) > 1000)
                 {
                     Methods.showCustomToast(CreateABackgroundActivity.this,getResources().getString(R.string.width_exceed_text));
-                    //Toast.makeText(CreateABackgroundActivity.this, "You can only create of maximum width of 1000", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if(Integer.parseInt(height.getText().toString()) > 1000)
                 {
                     Methods.showCustomToast(CreateABackgroundActivity.this,getResources().getString(R.string.height_exceed_text));
-                    //Toast.makeText(CreateABackgroundActivity.this, "You can only create of maximum height of 1000", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if(Integer.parseInt(width.getText().toString()) < 400)
                 {
                     Methods.showCustomToast(CreateABackgroundActivity.this,getResources().getString(R.string.width_is_low_text));
-                    //Toast.makeText(CreateABackgroundActivity.this, "You can only create of minimum width of 400", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if(Integer.parseInt(height.getText().toString()) < 400)
                 {
                     Methods.showCustomToast(CreateABackgroundActivity.this,getResources().getString(R.string.height_is_low_text2));
-                    //Toast.makeText(CreateABackgroundActivity.this, "You can only create of minimum height of 400", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
 
                 String hex = "#" + Integer.toHexString(color);
-                createdBitmap = createImage(Integer.parseInt(width.getText().toString()),Integer.parseInt(height.getText().toString()),hex);
+                widthValue = Integer.parseInt(width.getText().toString());
+                heightValue = Integer.parseInt(height.getText().toString());
+                createdBitmap = createImage(widthValue,heightValue,hex);
                 userCreatedImage.setImageBitmap(createdBitmap);
 
 
@@ -210,10 +201,10 @@ public class CreateABackgroundActivity extends AppCompatActivity {
         });
 
 
-        width.setText("1000");
-        height.setText("1000");
-        color = Color.parseColor("#2dcb70");
-        createdBitmap = createImage(1000,1000,"#2dcb70");
+        width.setText(String.valueOf(widthValue));
+        height.setText(String.valueOf(heightValue));
+        String hex = "#" + Integer.toHexString(color);
+        createdBitmap = createImage(widthValue,heightValue,hex);
         userCreatedImage.setImageBitmap(createdBitmap);
 
 
@@ -233,9 +224,13 @@ public class CreateABackgroundActivity extends AppCompatActivity {
     }
     public void chooseColor()
     {
+
+        String hex = "#" + Integer.toHexString(color);
+
+
         ColorPickerDialogBuilder.with(CreateABackgroundActivity.this)
                 .setTitle("Choose Color")
-                .initialColor(Color.parseColor("#2dcb70"))
+                .initialColor(Color.parseColor(hex))
                 .wheelType(ColorPickerView.WHEEL_TYPE.CIRCLE)
                 .density(20)
                 .setOnColorSelectedListener(new OnColorSelectedListener() {
@@ -245,7 +240,7 @@ public class CreateABackgroundActivity extends AppCompatActivity {
                         color = i;
                     }
                 })
-                .setPositiveButton("Ok", new ColorPickerClickListener() {
+                .setPositiveButton("Pick", new ColorPickerClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i, Integer[] integers)
                     {

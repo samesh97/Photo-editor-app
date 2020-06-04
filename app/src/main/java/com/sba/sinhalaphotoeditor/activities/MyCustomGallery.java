@@ -61,7 +61,6 @@ public class MyCustomGallery extends AppCompatActivity {
     public static final int IMAGE_PICK_RESULT_CODE = 235;
     private ArrayList<GalleryImage> allImages = new ArrayList<>();
     private static ArrayList<GalleryImage> showingImages;
-    private static int pagination = 1;
     private RecyclerView gridView;
     private static GridViewAdapter adapter;
     private SetData setData;
@@ -122,8 +121,7 @@ public class MyCustomGallery extends AppCompatActivity {
 
                 if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE)
                 {
-                    pagination++;
-                    setShowingImageList(pagination);
+                    setShowingImageList();
                 }
 
                 lastScrolledPosition =   manager.findFirstVisibleItemPosition();;
@@ -348,26 +346,16 @@ public class MyCustomGallery extends AppCompatActivity {
             return null;
         }
     }
-    public void setShowingImageList(int pagination)
+    public void setShowingImageList()
     {
-            int start = (pagination * 10) - 10;
-            int end = (pagination * 10) - 1;
-            int count = 1;
-
-            if(allImages.size() > end && start >= 0)
+            for(int i = 0; i < 10; i++)
             {
-                for(int i = start; i <= end; i++)
+                if(allImages != null && allImages.size() > 0)
                 {
-                    count++;
+                    showingImages.add(allImages.get(0));
+                    allImages.remove(0);
 
-                    if(!showingImages.contains(allImages.get(i)))
-                    {
-                        showingImages.add(allImages.get(i));
-                    }
-
-
-
-                    if(count == 10)
+                    if(i % 2 == 1)
                     {
                         runOnUiThread(new Runnable() {
                             @Override
@@ -377,10 +365,6 @@ public class MyCustomGallery extends AppCompatActivity {
                         });
                     }
                 }
-            }
-            else
-            {
-                this.pagination--;
             }
     }
     public void showSelectView(File file)

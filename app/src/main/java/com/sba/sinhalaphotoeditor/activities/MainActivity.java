@@ -4,15 +4,20 @@ import android.Manifest;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.AnimatedVectorDrawable;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -26,6 +31,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import android.os.Bundle;
@@ -38,6 +46,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -59,11 +68,17 @@ import com.sba.sinhalaphotoeditor.BuildConfig;
 import com.sba.sinhalaphotoeditor.Config.Constants;
 import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.R;
+import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
+import com.sba.sinhalaphotoeditor.adapters.PreviuoslyEditedImageAdapter;
 import com.sba.sinhalaphotoeditor.firebase.AppData;
 import com.sba.sinhalaphotoeditor.firebase.SihalaUser;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;
 
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -126,6 +141,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
 
+    //previosly edited images
+
+    PreviuoslyEditedImageAdapter adapter;
+    RecyclerView recentImageRecyclerview;
+    ArrayList<Bitmap> images = new ArrayList<>();
+    ArrayList<Integer> ids = new ArrayList<>();
+    ArrayList<String> dates = new ArrayList<>();
+    DatabaseHelper helper = new DatabaseHelper(MainActivity.this);
+
+
+
     @Override
     public void onBackPressed()
     {
@@ -163,14 +189,110 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        initViews();
+        imageList = ImageList.getInstance();
+        dialog = new ProgressDialog(MainActivity.this);
+//        initViews();
         initProfilePicture();
         methods = new Methods(getApplicationContext());
 
-        setTextViewFontAndSize();
+//        setTextViewFontAndSize();
         setAppLanguage();
 
 
+
+        recentImageRecyclerview = (RecyclerView) findViewById(R.id.ImageList);
+        LinearLayoutManager manager = new LinearLayoutManager(this);
+        manager.setOrientation(RecyclerView.HORIZONTAL);
+        recentImageRecyclerview.setLayoutManager(manager);
+        adapter = new PreviuoslyEditedImageAdapter(this,images,ids,dates);
+        recentImageRecyclerview.setAdapter(adapter);
+
+
+        createImageFromLibrary = (ConstraintLayout) findViewById(R.id.createImageFromLibrary);
+        createImageFromLibrary.setOnClickListener(this);
+        pickImageFromGallery = (ConstraintLayout) findViewById(R.id.pickImageFromGallery);
+
+
+
+        TranslateAnimation animation2 = new TranslateAnimation(-1000,0,0, 0);
+        animation2.setDuration(500); // duartion in ms
+        animation2.setFillAfter(true);
+        pickImageFromGallery.startAnimation(animation2);
+        createImageFromLibrary.setVisibility(View.GONE);
+        animation2.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animat)
+            {
+
+                createImageFromLibrary.setVisibility(View.VISIBLE);
+                TranslateAnimation animation = new TranslateAnimation(1000,0,0, 0);
+                animation.setDuration(300); // duartion in ms
+                animation.setFillAfter(true);
+                createImageFromLibrary.startAnimation(animation);
+
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+
+        getRecentImages();
+
+
+
+    }
+    public void getRecentImages()
+    {
+
+
+        try {
+            Cursor cursor = helper.GetAllImages();
+            //cursor.moveToFirst();
+            while(cursor.moveToNext())
+            {
+                ids.add(cursor.getInt(0));
+
+
+                images.add(Methods.getImageFromInternalStorage(getApplicationContext(),cursor.getString(2)));
+                dates.add(cursor.getString(2));
+
+                adapter.notifyDataSetChanged();
+            }
+            if(cursor.getCount() == 0)
+            {
+                //if there is no recent images avaiable
+                Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.emoji18);
+                images.add(bitmap);
+                bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.emoji44);
+                images.add(bitmap);
+                bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.emoji21);
+                images.add(bitmap);
+                adapter.notifyDataSetChanged();
+            }
+        }
+        catch (Exception e)
+        {
+            Methods.showCustomToast(MainActivity.this,getResources().getString(R.string.we_will_fix_it_soon_text));
+            Log.d("Erroe",e.getMessage());
+
+        }
+    }
+
+
+    public static InputStream bitmapToInputStream(Bitmap bitmap) {
+        int size = bitmap.getHeight() * bitmap.getRowBytes();
+        ByteBuffer buffer = ByteBuffer.allocate(size);
+        bitmap.copyPixelsToBuffer(buffer);
+        return new ByteArrayInputStream(buffer.array());
     }
 
     private void initProfilePicture()
@@ -180,116 +302,121 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if(currentUser != null)
         {
-            if(currentUser.getUserProfilePic() != null)
+            if(currentUser.getUserProfilePic() != null && currentUser.getLocalImagePath() != null)
             {
+                Bitmap bitmap = Methods.getImageFromInternalStorage(getApplicationContext(),currentUser.getLocalImagePath());
+
                 Glide.with(MainActivity.this)
-                        .load(currentUser.getUserProfilePic())
+                        .load(bitmap)
                         .error(R.drawable.sampleprofilepic)
                         .placeholder(R.drawable.sampleprofilepic)
                         .into(profilePic);
+
+                profilePic.setBorderColor(Color.WHITE);
+                profilePic.setBorderWidth(4);
             }
         }
     }
 
-    private void initViews()
-    {
-        createBitmap = (ImageView) findViewById(R.id.createBitmap);
-        createImageFromLibrary = (ConstraintLayout) findViewById(R.id.createImageFromLibrary);
-        pickImageFromDb = (ConstraintLayout) findViewById(R.id.pickImageFromDb);
-        pickImageFromGallery = (ConstraintLayout) findViewById(R.id.pickImageFromGallery);
-        imageView = (ImageView) findViewById(R.id.imageView);
-        roundImage = (ImageView) findViewById(R.id.roundImage);
-        selectPictureText = findViewById(R.id.selectPictureText);
-        languagePicker = findViewById(R.id.languagePicker);
-        verionName = findViewById(R.id.verionName);
-        topGreenPannel = findViewById(R.id.topGreenPannel);
-        createOne = (TextView) findViewById(R.id.createOne);
-        useOne = (TextView) findViewById(R.id.useOne);
-        fromGalery = (TextView) findViewById(R.id.fromGalery);
-        usePreviousBitmap = (ImageView) findViewById(R.id.usePreviousBitmap);
-
-
-
-        imageList = ImageList.getInstance();
-
-
-        dialog = new ProgressDialog(MainActivity.this);
-
-
-        Glide.with(getApplicationContext()).load(R.drawable.samplewalpaper).into(topGreenPannel);
-        verionName.setText("Version " + BuildConfig.VERSION_NAME);
-//        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#018577")));
-
-
-        Runtime rt = Runtime.getRuntime();
-        int maxMemory = (int)rt.freeMemory();
-        GlideBitmapPool.initialize(maxMemory);
-        GlideBitmapPool.clearMemory();
-
-
-        //pickImageFromGallery.animate().alpha(0.0f).setDuration(0).translationY(2000);
-
-
-        Animation top = AnimationUtils.loadAnimation(MainActivity.this, R.anim.bottomtotop);
-        Animation bottom = AnimationUtils.loadAnimation(MainActivity.this, R.anim.toptobottom);
-        pickImageFromGallery.startAnimation(top);
-        createImageFromLibrary.startAnimation(top);
-        pickImageFromDb.startAnimation(top);
-        roundImage.startAnimation(bottom);
-        //languagePicker.startAnimation(bottom);
-        selectPictureText.startAnimation(bottom);
-
-
-
-
-
-
-
-
-        Animation pulse = AnimationUtils.loadAnimation(this, R.anim.pulse);
-        imageView.startAnimation(pulse);
-
-
-        useOne.setOnClickListener(this);
-        pickImageFromDb.setOnClickListener(this);
-        createImageFromLibrary.setOnClickListener(this);
-        createOne.setOnClickListener(this);
-        createBitmap.setOnClickListener(this);
-        usePreviousBitmap.setOnClickListener(this);
-
-
-        createBitmap.startAnimation(pulse);
-        usePreviousBitmap.startAnimation(pulse);
-
-
-
-        configLanguagePicker();
-
-
-
-
-
-
-        database = FirebaseDatabase.getInstance();
-        reference = database.getReference().child(FIREBASE_APP_INFO_REFERENCE);
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run()
-            {
-                checkForTheCurrentVersion();
-            }
-        },1500);
-
-
-
-
-        configPushNotification();
-
-
-
-
-    }
+//    private void initViews()
+//    {
+//        createBitmap = (ImageView) findViewById(R.id.createBitmap);
+//        createImageFromLibrary = (ConstraintLayout) findViewById(R.id.createImageFromLibrary);
+//        pickImageFromDb = (ConstraintLayout) findViewById(R.id.pickImageFromDb);
+//        pickImageFromGallery = (ConstraintLayout) findViewById(R.id.pickImageFromGallery);
+//        imageView = (ImageView) findViewById(R.id.imageView);
+//        roundImage = (ImageView) findViewById(R.id.roundImage);
+//        selectPictureText = findViewById(R.id.selectPictureText);
+//        languagePicker = findViewById(R.id.languagePicker);
+//        verionName = findViewById(R.id.verionName);
+//        topGreenPannel = findViewById(R.id.topGreenPannel);
+//        createOne = (TextView) findViewById(R.id.createOne);
+//        useOne = (TextView) findViewById(R.id.useOne);
+//        fromGalery = (TextView) findViewById(R.id.fromGalery);
+//        usePreviousBitmap = (ImageView) findViewById(R.id.usePreviousBitmap);
+//
+//
+//
+//        imageList = ImageList.getInstance();
+//
+//
+//        dialog = new ProgressDialog(MainActivity.this);
+//
+//
+//        Glide.with(getApplicationContext()).load(R.drawable.samplewalpaper).into(topGreenPannel);
+//        verionName.setText("Version " + BuildConfig.VERSION_NAME);
+////        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#018577")));
+//
+//
+//        Runtime rt = Runtime.getRuntime();
+//        int maxMemory = (int)rt.freeMemory();
+//        GlideBitmapPool.initialize(maxMemory);
+//        GlideBitmapPool.clearMemory();
+//
+//
+//        //pickImageFromGallery.animate().alpha(0.0f).setDuration(0).translationY(2000);
+//
+//
+//        Animation top = AnimationUtils.loadAnimation(MainActivity.this, R.anim.bottomtotop);
+//        Animation bottom = AnimationUtils.loadAnimation(MainActivity.this, R.anim.toptobottom);
+//        pickImageFromGallery.startAnimation(top);
+//        createImageFromLibrary.startAnimation(top);
+//        pickImageFromDb.startAnimation(top);
+//        roundImage.startAnimation(bottom);
+//        //languagePicker.startAnimation(bottom);
+//        selectPictureText.startAnimation(bottom);
+//
+//
+//
+//
+//
+//
+//
+//
+//        Animation pulse = AnimationUtils.loadAnimation(this, R.anim.pulse);
+//        imageView.startAnimation(pulse);
+//
+//
+//        useOne.setOnClickListener(this);
+//        pickImageFromDb.setOnClickListener(this);
+//        createImageFromLibrary.setOnClickListener(this);
+//        createOne.setOnClickListener(this);
+//        createBitmap.setOnClickListener(this);
+//        usePreviousBitmap.setOnClickListener(this);
+//
+//
+//        createBitmap.startAnimation(pulse);
+//        usePreviousBitmap.startAnimation(pulse);
+//
+//
+//
+//        configLanguagePicker();
+//
+//
+//
+//
+//
+//
+//        database = FirebaseDatabase.getInstance();
+//        reference = database.getReference().child(FIREBASE_APP_INFO_REFERENCE);
+//
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run()
+//            {
+//                checkForTheCurrentVersion();
+//            }
+//        },1500);
+//
+//
+//
+//
+//        configPushNotification();
+//
+//
+//
+//
+//    }
 
     private void configPushNotification()
     {
@@ -563,70 +690,70 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         finish();
 
     }
-    public void setTextViewFontAndSize()
-    {
-
-        TextView selectPictureText = findViewById(R.id.selectPictureText);
-        TextView fromGalery = findViewById(R.id.fromGalery);
-        TextView createOne = findViewById(R.id.createOne);
-        TextView useOne = findViewById(R.id.useOne);
-
-        Typeface typeface;
-
-        SharedPreferences pref = getApplicationContext().getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
-        int pos = pref.getInt(LANGUAGE_POSITION_KEY,-99);
-        if(pos != 99)
-        {
-            switch (pos)
-            {
-                case 1 :
-
-
-                    typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.gemunulibresemibold);
-                    selectPictureText.setTypeface(typeface);
-                    fromGalery.setTypeface(typeface);
-                    createOne.setTypeface(typeface);
-                    useOne.setTypeface(typeface);
-                    break;
-                case 2 :
-
-                    typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.englishfont);
-                    selectPictureText.setTypeface(typeface);
-
-
-                    fromGalery.setTypeface(typeface);
-
-
-                    createOne.setTypeface(typeface);
-
-
-
-
-                    useOne.setTypeface(typeface);
-
-
-                    break;
-                case 3:
-
-
-                    typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.tamilfont);
-
-
-                    selectPictureText.setTypeface(typeface);
-                    selectPictureText.setTextSize(20);
-
-                    fromGalery.setTypeface(typeface);
-                    fromGalery.setTextSize(14);
-
-                    createOne.setTypeface(typeface);
-                    createOne.setTextSize(14);
-
-                    useOne.setTypeface(typeface);
-                    useOne.setTextSize(14);
-                    break;
-            }
-        }
-    }
+//    public void setTextViewFontAndSize()
+//    {
+//
+//        TextView selectPictureText = findViewById(R.id.selectPictureText);
+//        TextView fromGalery = findViewById(R.id.fromGalery);
+//        TextView createOne = findViewById(R.id.createOne);
+//        TextView useOne = findViewById(R.id.useOne);
+//
+//        Typeface typeface;
+//
+//        SharedPreferences pref = getApplicationContext().getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+//        int pos = pref.getInt(LANGUAGE_POSITION_KEY,-99);
+//        if(pos != 99)
+//        {
+//            switch (pos)
+//            {
+//                case 1 :
+//
+//
+//                    typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.gemunulibresemibold);
+//                    selectPictureText.setTypeface(typeface);
+//                    fromGalery.setTypeface(typeface);
+//                    createOne.setTypeface(typeface);
+//                    useOne.setTypeface(typeface);
+//                    break;
+//                case 2 :
+//
+//                    typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.englishfont);
+//                    selectPictureText.setTypeface(typeface);
+//
+//
+//                    fromGalery.setTypeface(typeface);
+//
+//
+//                    createOne.setTypeface(typeface);
+//
+//
+//
+//
+//                    useOne.setTypeface(typeface);
+//
+//
+//                    break;
+//                case 3:
+//
+//
+//                    typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.tamilfont);
+//
+//
+//                    selectPictureText.setTypeface(typeface);
+//                    selectPictureText.setTextSize(20);
+//
+//                    fromGalery.setTypeface(typeface);
+//                    fromGalery.setTextSize(14);
+//
+//                    createOne.setTypeface(typeface);
+//                    createOne.setTextSize(14);
+//
+//                    useOne.setTypeface(typeface);
+//                    useOne.setTextSize(14);
+//                    break;
+//            }
+//        }
+//    }
 
     @Override
     public void onClick(View v)
