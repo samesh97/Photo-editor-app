@@ -45,6 +45,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -82,6 +83,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
+import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import render.animations.Bounce;
@@ -117,6 +119,8 @@ public class TextOnImageActivity extends AppCompatActivity
     private TextViewPlus clickedTextView = null;
     private ImageView doneImage;
 
+    private ProgressBar progress_bar;
+
 
     @Override
     public void onBackPressed()
@@ -130,6 +134,7 @@ public class TextOnImageActivity extends AppCompatActivity
         else
         {
             super.onBackPressed();
+            overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
         }
 
     }
@@ -146,12 +151,16 @@ public class TextOnImageActivity extends AppCompatActivity
         ImageView addNewTextViewButton = findViewById(R.id.img_add_text);
         expandableLayout = (ExpandableLayout)findViewById(R.id.explandableLayout);
         expandIcon = findViewById(R.id.expandIcon);
+        progress_bar = findViewById(R.id.progress_bar);
+
+
 
 
         expandIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
+                expandIcon.setEnabled(false);
                 animateExpandableLayout();
                 showBottomSheet();
             }
@@ -161,6 +170,7 @@ public class TextOnImageActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
+                progress_bar.setVisibility(View.VISIBLE);
                 if(createFinalBitmap())
                 {
                     try
@@ -287,6 +297,7 @@ public class TextOnImageActivity extends AppCompatActivity
     @Override
     public void startActivityForResult()
     {
+        progress_bar.setVisibility(View.GONE);
         Intent intent = new Intent();
         setResult(TEXT_ON_IMAGE_RESULT_OK_CODE,intent);
         finish();
@@ -593,16 +604,17 @@ public class TextOnImageActivity extends AppCompatActivity
     private void showBottomSheet()
     {
         BottomSheetDialog dialog = new BottomSheetDialog(TextOnImageActivity.this,R.style.CustomBottomSheetDialogTheme);
-
         dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog)
             {
                 undoAnimateExpandableLayout();
+                expandIcon.setEnabled(true);
             }
         });
         if(dialog.getWindow() != null)
         {
+            dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
             dialog.getWindow().setDimAmount(0.0f);
         }
 
@@ -767,9 +779,10 @@ public class TextOnImageActivity extends AppCompatActivity
             }
         });
 
-        dialog.setContentView(view,new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,400));
-
+        int deviceHeight = (int) Methods.getDeviceHeightInPX(getApplicationContext());
+        dialog.setContentView(view,new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,deviceHeight / 2));
         dialog.show();
+
     }
 
 }

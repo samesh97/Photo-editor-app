@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -13,11 +12,8 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.graphics.drawable.AnimatedVectorDrawable;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -30,7 +26,6 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -45,7 +40,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -56,7 +50,6 @@ import android.widget.TextView;
 
 
 import com.bumptech.glide.Glide;
-import com.glidebitmappool.GlideBitmapPool;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
@@ -70,13 +63,12 @@ import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
 import com.sba.sinhalaphotoeditor.adapters.PreviuoslyEditedImageAdapter;
-import com.sba.sinhalaphotoeditor.firebase.AppData;
-import com.sba.sinhalaphotoeditor.firebase.SihalaUser;
+import com.sba.sinhalaphotoeditor.model.AppData;
+import com.sba.sinhalaphotoeditor.model.SihalaUser;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;
 
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -246,6 +238,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
         getRecentImages();
+        configPushNotification();
+        checkForTheCurrentVersion();
 
 
 
@@ -439,6 +433,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     intent1.putExtra(FIREBASE_PAYLOAD_TITLE_TEXT,title);
                     intent1.putExtra(FIREBASE_PAYLOAD_MESSAGE_TEXT,message);
                     startActivity(intent1);
+                    overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
 
                 }
             }
@@ -562,6 +557,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         intent.putExtra(ACTIVITY_EXTRA_KEY,"MainActivity");
         //startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
         startActivityForResult(intent,PICK_IMAGE_REQUEST);
+        overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
 
 
     }
@@ -671,6 +667,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //refresh.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(refresh);
         finish();
+        overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
     }
     public void setLocaleOnStart(String lang)
     {
@@ -688,6 +685,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //refresh.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(refresh);
         finish();
+        overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
 
     }
 //    public void setTextViewFontAndSize()
@@ -774,11 +772,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if(isPermissonGranted() && isPermissonGranted2())
                 {
                     startActivity(new Intent(MainActivity.this, UsePreviouslyEditedImageActivity.class));
+                    overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
                 }
             }
             else
             {
                 startActivity(new Intent(MainActivity.this,UsePreviouslyEditedImageActivity.class));
+                overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
             }
         }
         else if(v == pickImageFromDb)
@@ -802,6 +802,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     else
                     {
                         startActivity(new Intent(MainActivity.this,UsePreviouslyEditedImageActivity.class));
+                        overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
                     }
 
         }
@@ -821,11 +822,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if(isPermissonGranted() && isPermissonGranted2())
                 {
                     startActivity(new Intent(getApplicationContext(), CreateABackgroundActivity.class));
+                    overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
                 }
             }
             else
             {
                 startActivity(new Intent(getApplicationContext(),CreateABackgroundActivity.class));
+                overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
             }
 
         }
@@ -888,6 +891,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 {
                     imageList.addBitmapToThisPosition(bitmap,0,false);
                     startActivity(new Intent(getApplicationContext(), EditorActivity.class));
+                    overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
                     dialog.dismiss();
                 }
             },2500);
@@ -1005,6 +1009,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     intent.setData(Uri.parse(APP_MARKET_LINK));
                     startActivity(intent);
 
+
                     popdialog.dismiss();
                 }
             });
@@ -1061,6 +1066,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         {
             startActivity(new Intent(MainActivity.this, WelcomeScreen.class));
             finish();
+            overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
         }
         else
         {
@@ -1072,6 +1078,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 {
                     startActivity(new Intent(MainActivity.this, RegisterScreen.class));
                     finish();
+                    overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
                 }
 
             }
@@ -1089,6 +1096,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
 
         }
+    }
+    public void startActivityForRecentEdits()
+    {
+        startActivity(new Intent(getApplicationContext(),EditorActivity.class));
+        overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
     }
 
 }

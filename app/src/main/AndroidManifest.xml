@@ -51,7 +51,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/NoActionBarAppTheme" />
         <activity
-            android:name=".activities.drawOnBitmap.DrawOnBitmapActivity"
+            android:name=".activities.DrawOnBitmapActivity"
             android:screenOrientation="portrait"
             android:theme="@style/NoActionBarAppTheme" />
         <activity
@@ -59,7 +59,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/NoActionBarAppTheme" />
         <activity
-            android:name=".activities.walkthrough.WalkThroughActivity"
+            android:name=".activities.WalkThroughActivity"
             android:screenOrientation="portrait"
             android:theme="@style/NoActionBarAppTheme" />
         <activity

@@ -1,4 +1,4 @@
-package com.sba.sinhalaphotoeditor.activities.walkthrough;
+package com.sba.sinhalaphotoeditor.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
@@ -12,9 +12,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import com.sba.sinhalaphotoeditor.activities.MainActivity;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.activities.RegisterScreen;
+import com.sba.sinhalaphotoeditor.adapters.WalkthroughPagerAdapter;
 
 import java.util.ArrayList;
 
@@ -25,7 +25,7 @@ import static com.sba.sinhalaphotoeditor.Config.Constants.SHARED_PREF_NAME;
 public class WalkThroughActivity extends AppCompatActivity {
 
     ViewPager viewPager;
-    ViewPagerAdapter viewPagerAdapter;
+    WalkthroughPagerAdapter walkthroughPagerAdapter;
 
     ArrayList<Drawable> image1 = new ArrayList<android.graphics.drawable.Drawable>();
     ArrayList<Drawable> image2 = new ArrayList<Drawable>();
@@ -123,8 +123,8 @@ public class WalkThroughActivity extends AppCompatActivity {
 
         previous.setVisibility(View.GONE);
         viewPager = findViewById(R.id.viewPager);
-        viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(),image1,image2,image3,titles,description,topImages);
-        viewPager.setAdapter(viewPagerAdapter);
+        walkthroughPagerAdapter = new WalkthroughPagerAdapter(getSupportFragmentManager(),image1,image2,image3,titles,description,topImages);
+        viewPager.setAdapter(walkthroughPagerAdapter);
 
 
         next.setOnClickListener(new View.OnClickListener() {

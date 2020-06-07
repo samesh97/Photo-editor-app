@@ -50,7 +50,6 @@ import com.google.android.gms.ads.initialization.OnInitializationCompleteListene
 import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
-import com.sba.sinhalaphotoeditor.activities.drawOnBitmap.DrawOnBitmapActivity;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;
 import com.yalantis.ucrop.UCrop;
 
@@ -145,6 +144,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                     finish();
+                    overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
                 }
             });
 
@@ -163,6 +163,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         else
         {
             super.onBackPressed();
+            overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
         }
 
     }
@@ -216,12 +217,12 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
                 {
 
                     startActivity(new Intent(getApplicationContext(), ImageSavingActivity.class));
+                    overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
 
                 }
                 else
                 {
                     Methods.showCustomToast(EditorActivity.this,getResources().getString(R.string.something_went_wrong_text));
-                    //Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -613,6 +614,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
             {
                 Intent intent = new Intent(getApplicationContext(), DrawOnBitmapActivity.class);
                 startActivityForResult(intent,DRAW_ON_BITMAP_REQUEST_CODE);
+                overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
             }
         });
 
@@ -810,6 +812,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         bundle.putString(TextOnImageActivity.TEXT_TO_WRITE,text);
         intent.putExtras(bundle);
         startActivityForResult(intent, TextOnImageActivity.TEXT_ON_IMAGE_REQUEST_CODE);
+        overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
 
     }
     private void addImageOnImage(Uri uri)
@@ -819,6 +822,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         bundle.putString("IMAGE_ON_IMAGE_URI",uri.toString());
         intent.putExtras(bundle);
         startActivityForResult(intent, PhotoOnPhotoActivity.IMAGE_ON_IMAGE_REQUEST_CODE);
+        overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
     }
     public void showPopup()
     {
@@ -859,11 +863,13 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         Intent intent = new Intent(EditorActivity.this, MyCustomGallery.class);
         intent.putExtra("Activity","EditorActivity");
         startActivityForResult(intent,PICK_IMAGE_REQUEST);
+        overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
     }
     private void addStickerOnImage()
     {
         Intent intent = new Intent(EditorActivity.this,AddStickerOnImage.class);
         startActivityForResult(intent, AddStickerOnImage.STICKER_ON_IMAGE_REQUEST_CODE);
+        overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
     }
     private void showStickerPopup()
     {
@@ -900,6 +906,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
                         render.setAnimation(Attention.Bounce(addBlur));
                         render.start();
                         startActivityForResult(new Intent(getApplicationContext(), AdjustImage.class),10);
+                        overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
                     }
                     else
                     {
@@ -917,6 +924,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
                         render.setAnimation(Attention.Bounce(addEffect));
                         render.start();
                         startActivityForResult(new Intent(getApplicationContext(), AddEffects.class),20);
+                        overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
                     }
                     else
                     {

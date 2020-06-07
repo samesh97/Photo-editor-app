@@ -1,10 +1,9 @@
-package com.sba.sinhalaphotoeditor.firebase;
+package com.sba.sinhalaphotoeditor.model;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

@@ -1,4 +1,4 @@
-package com.sba.sinhalaphotoeditor.firebase;
+package com.sba.sinhalaphotoeditor.model;
 
 import java.io.Serializable;
 

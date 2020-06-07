@@ -30,9 +30,12 @@ public class DatabaseHelper extends SQLiteOpenHelper
     private static final String USER_TABLE_COL_1 = "id";
     private static final String USER_TABLE_COL_2 = "image";
 
+
+    private static final int DATABASE_VERSION = 3;
+
     public DatabaseHelper(@Nullable Context context)
     {
-        super(context, DATABASE_NAME, null, 2);
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
@@ -41,10 +44,9 @@ public class DatabaseHelper extends SQLiteOpenHelper
         db.execSQL("CREATE TABLE " + TABLE_NAME + "(Id INTEGER PRIMARY KEY AUTOINCREMENT,Image BLOB,DateTime TEXT NOT NULL)");
         db.execSQL("CREATE TABLE " + USER_TABLE_NAME + "(id INTEGER PRIMARY KEY AUTOINCREMENT,image BLOB NOT NULL)");
     }
-    public void createDBAgain()
+    public void createTableAgain(SQLiteDatabase db)
     {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("CREATE TABLE " + TABLE_NAME + "(Id INTEGER PRIMARY KEY AUTOINCREMENT,Image BLOB NOT NULL,DateTime TEXT NOT NULL)");
+        db.execSQL("CREATE TABLE " + TABLE_NAME + "(Id INTEGER PRIMARY KEY AUTOINCREMENT,Image BLOB,DateTime TEXT NOT NULL)");
     }
 
 
@@ -52,6 +54,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
     {
         db.execSQL("DROP TABLE " + TABLE_NAME);
+        createTableAgain(db);
     }
     public boolean AddImage(byte[] image,String date)
     {

@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,8 +32,14 @@ import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
 import com.sba.sinhalaphotoeditor.adapters.FilterAdapter;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;
+import com.warkiz.tickseekbar.OnSeekChangeListener;
+import com.warkiz.tickseekbar.SeekParams;
+import com.warkiz.tickseekbar.TickSeekBar;
 import com.zomato.photofilters.FilterPack;
 import com.zomato.photofilters.imageprocessors.Filter;
+import com.zomato.photofilters.imageprocessors.subfilters.BrightnessSubFilter;
+import com.zomato.photofilters.imageprocessors.subfilters.SaturationSubfilter;
+import com.zomato.photofilters.imageprocessors.subfilters.VignetteSubfilter;
 
 
 import java.text.SimpleDateFormat;
@@ -40,6 +47,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import render.animations.*;
@@ -64,6 +72,15 @@ public class AddEffects extends AppCompatActivity implements OnBitmapChanged, On
     private Methods methods;
     private ProgressBar progress_bar;
 
+    private ConstraintLayout subFiltersLayout;
+    private ImageView expandIcon;
+
+    private Filter currentlyUsedFilter = null;
+    private TickSeekBar listener,listener2,listener3;
+    private Bitmap subFilterBitmap = null;
+
+    private boolean isAnEffectAdded = false;
+
 
     @Override
     protected void onDestroy()
@@ -82,7 +99,9 @@ public class AddEffects extends AppCompatActivity implements OnBitmapChanged, On
         else
         {
             super.onBackPressed();
+            overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
         }
+
 
     }
 
@@ -108,9 +127,19 @@ public class AddEffects extends AppCompatActivity implements OnBitmapChanged, On
 
                 if(filterAdapter != null)
                 {
-                    if(filterAdapter.returnPrevoiusPositin() != -99)
+                    if(isAnEffectAdded)
                     {
-                        AddImageToArrayListAsyncTask asyncTask = new AddImageToArrayListAsyncTask(currentEditingBitmap, this);
+                        AddImageToArrayListAsyncTask asyncTask;
+
+                        if(subFilterBitmap != null)
+                        {
+                            asyncTask = new AddImageToArrayListAsyncTask(subFilterBitmap, this);
+                        }
+                        else
+                        {
+                            asyncTask = new AddImageToArrayListAsyncTask(currentEditingBitmap, this);
+                        }
+
                         asyncTask.execute();
                     }
                     else
@@ -176,11 +205,6 @@ public class AddEffects extends AppCompatActivity implements OnBitmapChanged, On
 
 
 
-        if(getSupportActionBar() != null)
-        {
-            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#114f5e")));
-        }
-
 
         GlideBitmapPool.clearMemory();
 
@@ -203,6 +227,21 @@ public class AddEffects extends AppCompatActivity implements OnBitmapChanged, On
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
 
+        expandIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                if(subFiltersLayout.getVisibility() == View.GONE)
+                {
+                    subFiltersLayout.setVisibility(View.VISIBLE);
+                }
+                else if(subFiltersLayout.getVisibility() == View.VISIBLE)
+                {
+                    subFiltersLayout.setVisibility(View.GONE);
+                }
+            }
+        });
+
 
 
     }
@@ -210,13 +249,110 @@ public class AddEffects extends AppCompatActivity implements OnBitmapChanged, On
     {
         userSelectedImage =  findViewById(R.id.userSelectedImage);
         progress_bar = findViewById(R.id.progress_bar);
+        subFiltersLayout = findViewById(R.id.subFiltersLayout);
+        expandIcon = findViewById(R.id.expandIcon);
+        listener = findViewById(R.id.listener);
+        listener2 = findViewById(R.id.listener2);
+        listener3 = findViewById(R.id.listener3);
+
+        listener.setOnSeekChangeListener(new OnSeekChangeListener() {
+            @Override
+            public void onSeeking(SeekParams seekParams) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(TickSeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(TickSeekBar seekBar)
+            {
+                addSubFilter();
+            }
+        });
+        listener2.setOnSeekChangeListener(new OnSeekChangeListener() {
+            @Override
+            public void onSeeking(SeekParams seekParams) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(TickSeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(TickSeekBar seekBar) {
+
+                addSubFilter();
+            }
+        });
+        listener3.setOnSeekChangeListener(new OnSeekChangeListener() {
+            @Override
+            public void onSeeking(SeekParams seekParams) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(TickSeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(TickSeekBar seekBar) {
+
+                addSubFilter();
+            }
+        });
+    }
+
+    private void addSubFilter()
+    {
+
+
+        float brightnessValue = listener.getProgress();
+        float vignettetValue = listener2.getProgress();
+        float saturationValue = listener3.getProgress();
+
+        //saturation 1 is for default image colors
+        if(saturationValue < 1)
+        {
+            saturationValue = 1;
+        }
+
+
+        subFilterBitmap = currentEditingBitmap.copy(currentEditingBitmap.getConfig(),true);
+
+        Filter filter = new Filter();
+
+        filter.addSubFilter(new BrightnessSubFilter((int) brightnessValue));
+        filter.addSubFilter(new VignetteSubfilter(getApplicationContext(), (int) vignettetValue));
+        filter.addSubFilter(new SaturationSubfilter(saturationValue));
+        subFilterBitmap = filter.processFilter(subFilterBitmap);
+
+
+
+        Glide.with(getApplicationContext()).load(subFilterBitmap).into(userSelectedImage);
+        isAnEffectAdded = true;
+
     }
 
     @Override
-    public void bitmapChanged(Bitmap bitmap)
+    public void bitmapChanged(Bitmap bitmap,Filter filter)
     {
+
+        listener.setProgress(0);
+        listener2.setProgress(0);
+        listener3.setProgress(0);
+        subFilterBitmap = null;
+        isAnEffectAdded = true;
+
+
         currentEditingBitmap = bitmap;
         Glide.with(getApplicationContext()).load(currentEditingBitmap).into(userSelectedImage);
+        currentlyUsedFilter = filter;
     }
 
     @Override

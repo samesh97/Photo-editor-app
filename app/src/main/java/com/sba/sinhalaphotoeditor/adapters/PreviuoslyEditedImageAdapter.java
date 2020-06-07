@@ -33,6 +33,7 @@ import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.activities.EditorActivity;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
+import com.sba.sinhalaphotoeditor.activities.MainActivity;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;
 
 import java.io.ByteArrayOutputStream;
@@ -215,7 +216,10 @@ public class PreviuoslyEditedImageAdapter extends RecyclerView.Adapter<Previuosl
 
                     ImageList.getInstance().addBitmap(selectedImage,false);
 
-                    context.startActivity(new Intent(context,EditorActivity.class));
+                   if(context instanceof MainActivity)
+                   {
+                       ((MainActivity)context).startActivityForRecentEdits();
+                   }
                 }
             }
 

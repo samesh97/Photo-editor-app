@@ -52,7 +52,6 @@ public class SplashScreen extends AppCompatActivity
 
         if(intent != null && intent.hasExtra(FIREBASE_PAYLOAD_TITLE_TEXT) && intent.hasExtra(FIREBASE_PAYLOAD_MESSAGE_TEXT))
         {
-            Log.d("intentResult","SplashnotNUll");
             newIntent = new Intent(SplashScreen.this,NotificationView.class);
 
             if(intent.getExtras() != null)
@@ -63,8 +62,6 @@ public class SplashScreen extends AppCompatActivity
 
                 if(message != null && title != null && !message.equals("") && !title.equals("") && !message.trim().equals("") && !title.trim().equals(""))
                 {
-
-
                     newIntent.putExtra(FIREBASE_PAYLOAD_TITLE_TEXT,title);
                     newIntent.putExtra(FIREBASE_PAYLOAD_MESSAGE_TEXT,message);
                 }
@@ -103,6 +100,7 @@ public class SplashScreen extends AppCompatActivity
                 Intent intent = configIntentForPushNotitfication();
                 startActivity(intent);
                 finish();
+                overridePendingTransition(R.anim.activity_start_animation,R.anim.activity_exit_animation);
             }
 
             @Override

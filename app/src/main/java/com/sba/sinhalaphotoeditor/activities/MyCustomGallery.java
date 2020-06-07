@@ -81,6 +81,11 @@ public class MyCustomGallery extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -401,6 +406,7 @@ public class MyCustomGallery extends AppCompatActivity {
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         setResult(IMAGE_PICK_RESULT_CODE,intent);
                         finish();
+                        overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
                         if(setData != null)
                         {
                             if(!setData.isCancelled())

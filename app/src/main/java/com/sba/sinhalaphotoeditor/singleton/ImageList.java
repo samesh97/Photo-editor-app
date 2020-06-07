@@ -93,6 +93,7 @@ public class ImageList
             }
             else
             {
+                if(object.bitmapList.size() > 0)
                 bitmap = object.bitmapList.get(object.bitmapList.size() - 1);
             }
             return bitmap;

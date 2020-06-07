@@ -1,4 +1,4 @@
-package com.sba.sinhalaphotoeditor.activities.walkthrough;
+package com.sba.sinhalaphotoeditor.adapters;
 
 import android.graphics.drawable.Drawable;
 
@@ -7,9 +7,11 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
+import com.sba.sinhalaphotoeditor.fragments.WalkthroughPagerFragment;
+
 import java.util.ArrayList;
 
-public class ViewPagerAdapter extends FragmentStatePagerAdapter
+public class WalkthroughPagerAdapter extends FragmentStatePagerAdapter
 {
 
     private ArrayList<Drawable> image1 = new ArrayList<android.graphics.drawable.Drawable>();
@@ -21,7 +23,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter
     private ArrayList<Drawable> topImages = new ArrayList<Drawable>();
 
 
-    public ViewPagerAdapter(@NonNull FragmentManager fm,ArrayList<Drawable> image1,ArrayList<Drawable> image2,ArrayList<Drawable> image3,ArrayList<String> titles,ArrayList<String> description,ArrayList<Drawable> topImages)
+    public WalkthroughPagerAdapter(@NonNull FragmentManager fm, ArrayList<Drawable> image1, ArrayList<Drawable> image2, ArrayList<Drawable> image3, ArrayList<String> titles, ArrayList<String> description, ArrayList<Drawable> topImages)
     {
         super(fm);
         this.image1 = image1;
@@ -70,7 +72,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter
             im3 = null;
         }
 
-        ViewPagerFragment fragment = new ViewPagerFragment(im1,im2,im3,titles.get(position),description.get(position),topImages.get(position));
+        WalkthroughPagerFragment fragment = new WalkthroughPagerFragment(im1,im2,im3,titles.get(position),description.get(position),topImages.get(position));
         return fragment;
     }
 

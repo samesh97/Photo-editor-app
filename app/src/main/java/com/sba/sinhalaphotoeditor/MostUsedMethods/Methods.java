@@ -209,6 +209,9 @@ public class Methods
     }
     public Bitmap changeBitmapContrastBrightness(Bitmap bmp, float contrast, float brightness)
     {
+        //contrast 0 to 10, 1 is default
+        //brightness -255 to 255 default 0
+
         ColorMatrix cm = new ColorMatrix(new float[]
                 {
                         contrast, 0, 0, 0, brightness,
@@ -730,6 +733,11 @@ public class Methods
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
 
         return dpHeight;
+    }
+    public static float getDeviceHeightInPX(Context context)
+    {
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        return displayMetrics.heightPixels;
     }
     public static Bitmap getResizedProfilePic(Context context,Bitmap image, int maxSize)
     {

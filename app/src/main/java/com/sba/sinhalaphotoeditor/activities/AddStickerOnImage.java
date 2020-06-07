@@ -145,6 +145,7 @@ public class AddStickerOnImage extends AppCompatActivity
         else
         {
             super.onBackPressed();
+            overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
         }
 
     }

@@ -97,6 +97,19 @@
             app:layout_constraintTop_toTopOf="parent" />
 
 
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginBottom="50dp"
+            android:visibility="gone"
+            tools:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/sourceImageView"
+            app:layout_constraintEnd_toEndOf="@+id/sourceImageView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
         <!--<TextView-->
         <!--android:id="@+id/addTextView"-->
         <!--android:layout_width="wrap_content"-->

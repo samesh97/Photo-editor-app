@@ -52,7 +52,6 @@ dependencies {
 
     implementation 'info.androidhive:imagefilters:1.0.7'
 
-
     implementation 'com.amitshekhar.android:glide-bitmap-pool:0.0.1'
 
     implementation 'com.github.gayanvoice:android-view-animations-java:1.0.2'
@@ -66,14 +65,16 @@ dependencies {
 
     implementation 'com.android.support:recyclerview-v7:29.0.0'
 
-
     implementation 'com.github.chuross:expandable-layout:1.0.5'
 
-
     implementation 'de.hdodenhof:circleimageview:3.0.1'
+
     implementation 'com.google.firebase:firebase-auth:19.2.0'
+
     implementation 'com.github.GoodieBag:Pinview:v1.3'
+
     implementation 'com.google.firebase:firebase-storage:19.1.1'
+
     implementation 'com.github.joielechong:countrycodepicker:2.3.0'
 
     implementation 'com.google.android.material:material:1.1.0'

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/material_dark_blue"
+    android:background="@color/color_gray"
     tools:context=".activities.AddEffects">
 
     <ImageView
@@ -58,6 +58,143 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/adView">
+
+        <ImageView
+            android:id="@+id/expandIcon"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:background="@drawable/top_rounded_background"
+            android:src="@drawable/iphone_swipe_up"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/subFiltersLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:background="@color/colorPrimary"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/expandIcon"
+            app:layout_constraintVertical_bias="0.0" >
+
+
+            <TextView
+                android:id="@+id/textView20"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/gemunulibrebold"
+                android:text="Brightness"
+                android:textColor="@android:color/white"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <com.warkiz.tickseekbar.TickSeekBar
+                android:id="@+id/listener"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="@dimen/adjust_image_margin_32"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/textView20"
+                app:layout_constraintTop_toBottomOf="@+id/textView20"
+                app:tsb_max="100"
+                app:tsb_show_tick_marks_type="none"
+                app:tsb_thumb_color="#FFFFFF"
+                app:tsb_thumb_size="@dimen/adjust_image_thumb_size_20"
+                app:tsb_ticks_count="1"
+                app:tsb_track_background_color="#FFFFFF"
+                app:tsb_track_background_size="@dimen/adjust_image_tick_size"
+                app:tsb_track_progress_color="#FFFFFF"
+                app:tsb_track_progress_size="3dp" />
+
+
+            <TextView
+                android:id="@+id/textView21"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/gemunulibrebold"
+                android:text="Vignette"
+                android:textColor="@android:color/white"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/listener"
+                app:layout_constraintTop_toBottomOf="@+id/listener" />
+
+            <com.warkiz.tickseekbar.TickSeekBar
+                android:id="@+id/listener2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toEndOf="@+id/listener"
+                app:layout_constraintStart_toStartOf="@+id/textView21"
+                app:layout_constraintTop_toBottomOf="@+id/textView21"
+                app:tsb_max="255"
+                app:tsb_show_tick_marks_type="none"
+                app:tsb_thumb_color="#FFFFFF"
+                app:tsb_thumb_size="@dimen/adjust_image_thumb_size_20"
+                app:tsb_ticks_count="1"
+                app:tsb_track_background_color="#FFFFFF"
+                app:tsb_track_background_size="9dp"
+                app:tsb_track_progress_color="#FFFFFF"
+                app:tsb_track_progress_size="3dp" />
+
+
+            <TextView
+                android:id="@+id/textView22"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/gemunulibrebold"
+                android:text="Saturation"
+                android:textColor="@android:color/white"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/listener2"
+                app:layout_constraintTop_toBottomOf="@+id/listener2" />
+
+            <com.warkiz.tickseekbar.TickSeekBar
+                android:id="@+id/listener3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/listener2"
+                app:layout_constraintHorizontal_bias="0.25"
+                app:layout_constraintStart_toStartOf="@+id/textView22"
+                app:layout_constraintTop_toBottomOf="@+id/textView22"
+                app:tsb_max="10"
+                app:tsb_show_tick_marks_type="none"
+                app:tsb_thumb_color="#FFFFFF"
+                app:tsb_thumb_size="@dimen/adjust_image_thumb_size_20"
+                app:tsb_ticks_count="1"
+                app:tsb_track_background_color="#FFFFFF"
+                app:tsb_track_background_size="9dp"
+                app:tsb_track_progress_color="#FFFFFF"
+                app:tsb_track_progress_size="3dp" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 

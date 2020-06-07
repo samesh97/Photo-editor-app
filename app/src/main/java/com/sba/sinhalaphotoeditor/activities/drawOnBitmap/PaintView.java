@@ -10,19 +10,16 @@ import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
 
 
-import com.sba.sinhalaphotoeditor.R;
+import com.sba.sinhalaphotoeditor.activities.DrawOnBitmapActivity;
 
 import java.util.ArrayList;
-import java.util.logging.Handler;
 
 public class PaintView extends View
 {

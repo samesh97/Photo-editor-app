@@ -276,6 +276,7 @@ public class RegisterScreen extends AppCompatActivity{
         Intent intent = new Intent(RegisterScreen.this,MainActivity.class);
         startActivity(intent);
         finish();
+        overridePendingTransition(R.anim.activity_start_animation,R.anim.activity_exit_animation);
     }
     public void onNextClicked(View view)
     {

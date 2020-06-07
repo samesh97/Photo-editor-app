@@ -62,6 +62,7 @@ public class CreateABackgroundActivity extends AppCompatActivity {
         else
         {
             super.onBackPressed();
+            overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
         }
 
     }
@@ -131,6 +132,7 @@ public class CreateABackgroundActivity extends AppCompatActivity {
 
                         startActivity(new Intent(getApplicationContext(), EditorActivity.class));
                         finish();
+                        overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
                     }
 
 

@@ -74,7 +74,7 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.FilterView
                     {
                         currentBitmap = ImageList.getInstance().getCurrentBitmap().copy(ImageList.getInstance().getCurrentBitmap().getConfig(),true);
                         Bitmap largeBitmap = filters.get(position).processFilter(currentBitmap);
-                        listner.bitmapChanged(largeBitmap);
+                        listner.bitmapChanged(largeBitmap,filters.get(position));
                         previousPosition = position;
 
 

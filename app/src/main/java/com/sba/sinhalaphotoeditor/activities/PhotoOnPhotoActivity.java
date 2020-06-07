@@ -110,6 +110,7 @@ public class PhotoOnPhotoActivity extends AppCompatActivity implements RotationG
         else
         {
             super.onBackPressed();
+            overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
         }
 
     }

@@ -1,61 +1,40 @@
-package com.sba.sinhalaphotoeditor.activities.drawOnBitmap;
+package com.sba.sinhalaphotoeditor.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.PorterDuff;
-import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.Handler;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.Switch;
-import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.github.chuross.library.ExpandableLayout;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.sba.sinhalaphotoeditor.CallBacks.OnAsyncTaskState;
 import com.sba.sinhalaphotoeditor.CallBacks.OnTextAttributesChangedListner;
-import com.sba.sinhalaphotoeditor.activities.AddStickerOnImage;
-import com.sba.sinhalaphotoeditor.activities.MainActivity;
 import com.sba.sinhalaphotoeditor.R;
-import com.sba.sinhalaphotoeditor.activities.TextOnImageActivity;
-import com.sba.sinhalaphotoeditor.adapters.ShadowColorAdapter;
+import com.sba.sinhalaphotoeditor.activities.drawOnBitmap.PaintView;
 import com.sba.sinhalaphotoeditor.adapters.TextColorAdapter;
-import com.sba.sinhalaphotoeditor.adapters.TextFontAdapter;
 import com.sba.sinhalaphotoeditor.aynctask.AddImageToArrayListAsyncTask;
 import com.sba.sinhalaphotoeditor.model.TextViewPlus;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;
 
 import java.util.Timer;
 import java.util.TimerTask;
-
-import static com.sba.sinhalaphotoeditor.activities.EditorActivity.DRAW_ON_BITMAP_REQUEST_CODE;
 
 public class DrawOnBitmapActivity extends AppCompatActivity implements OnTextAttributesChangedListner, OnAsyncTaskState {
 
@@ -77,6 +56,13 @@ public class DrawOnBitmapActivity extends AppCompatActivity implements OnTextAtt
     private boolean userNeedToZoom = false;
 
     private boolean isZoomIn = true;
+
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
