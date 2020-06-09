@@ -752,6 +752,11 @@ public class Methods
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         return displayMetrics.heightPixels;
     }
+    public static float getDeviceWidthInPX(Context context)
+    {
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        return displayMetrics.widthPixels;
+    }
     public static Bitmap getResizedProfilePic(Context context,Bitmap image, int maxSize)
     {
 

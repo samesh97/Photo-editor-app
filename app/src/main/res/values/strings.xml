@@ -42,9 +42,9 @@
     <string name="desc2">මෙහි තිබෙන button එක භාවිතා කර ඔබට වචන type කර photo එක මතට එක් කරගත හැක. එය පින්තූරයට add කරගැනීමෙන් පසුව එහි වර්ණය සහ text එකේ font එක වෙනස්කරගත හැක. එම අවස්තාවේදීම text එකට shadow එකක් හෝ glow එකක් ලබාදිය හැකි අතර ලබාදුන් glow එකේ වර්ණයද වෙනස් කරගත හැක.</string>
 
 
-    <string name="are_you_sure_want_to_exit_text">ඉවත් වීමකද ඔබ සකසාගෙන ඇති සියලුම පිංතූර මැකෙන අතර මෙය නැවත ලබාගත නොහැක. තවමත් ඔබට ඉවත් වීමට අවශ්‍යද?</string>
-    <string name="yes_text">අවශයයි</string>
-    <string name="no_text">අවශ්‍ය නැත</string>
+    <string name="are_you_sure_want_to_exit_text">ඉවත් වීමකද ඔබ සකසාගෙන ඇති සියලුම පිංතූර මැකෙන අතර මෙය නැවත ලබාගත නොහැක\nnතවමත් ඔබට ඉවත් වීමට අවශ්‍යද?</string>
+    <string name="yes_text">අවශ්‍යයි</string>
+    <string name="no_text">නැත</string>
     <string name="warning_text">අවවාදයයි!</string>
 
 

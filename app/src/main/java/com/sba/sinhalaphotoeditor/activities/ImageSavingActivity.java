@@ -164,14 +164,20 @@ public class ImageSavingActivity extends AppCompatActivity {
     private void showDialog()
     {
         final Dialog dialog = new Dialog(ImageSavingActivity.this);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        if(dialog.getWindow() != null)
+        {
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            // dialog.getWindow().setDimAmount(0.4f);
+            float deviceWidth = Methods.getDeviceWidthInPX(getApplicationContext());
+            int finalWidth = (int) (deviceWidth - (deviceWidth / 8));
+            dialog.getWindow().setLayout(finalWidth,RelativeLayout.LayoutParams.WRAP_CONTENT);
+        }
 
 
         View view = getLayoutInflater().inflate(R.layout.exit_dialog_layout,null);
 
         dialog.setContentView(view);
 
-        dialog.getWindow().setLayout(RelativeLayout.LayoutParams.FILL_PARENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
 
         TextView message = view.findViewById(R.id.textView8);
 
@@ -180,8 +186,13 @@ public class ImageSavingActivity extends AppCompatActivity {
         TextView title = view.findViewById(R.id.textView7);
 
 
-        ImageView icon = view.findViewById(R.id.imageView4);
-        icon.setImageResource(R.drawable.ic_star_half);
+        ImageView imageView6 = view.findViewById(R.id.imageView6);
+        imageView6.setImageDrawable(getDrawable(R.drawable.download_image_cartoon));
+
+
+
+       // ImageView icon = view.findViewById(R.id.imageView4);
+       // icon.setImageResource(R.drawable.ic_star_half);
 
 
         title.setText(getResources().getString(R.string.rate_app_text));

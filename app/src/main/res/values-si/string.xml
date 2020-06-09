@@ -45,9 +45,9 @@
 
 
 
-    <string name="are_you_sure_want_to_exit_text">ඉවත් වීමකදි ඔබ සකසාගෙන ඇති සියලුම පිංතූර මැකෙන අතර මෙය නැවත ලබාගත නොහැක. තවමත් ඔබට ඉවත් වීමට අවශ්‍යද?</string>
-    <string name="yes_text">අවශයයි</string>
-    <string name="no_text">අවශ්‍ය නැත</string>
+    <string name="are_you_sure_want_to_exit_text">ඉවත් වීමකදි ඔබ සකසාගෙන ඇති සියලුම පිංතූර මැකෙන අතර මෙය නැවත ලබාගත නොහැක.\nතවමත් ඔබට ඉවත් වීමට අවශ්‍යද?</string>
+    <string name="yes_text">අවශ්‍යයි</string>
+    <string name="no_text">නැත</string>
     <string name="warning_text">අවවාදයයි!</string>
 
     <string name="rate_app_text">ඇප් එක Rate කරන්න</string>
@@ -56,7 +56,7 @@
     <string name="cannot_text">එපා</string>
 
     <string name="app_exit_text">ඉවත්වීම</string>
-    <string name="exit_app_confirmation_text">ඔබට ඉවත් වීමට අවශයමද?</string>
+    <string name="exit_app_confirmation_text">ඔබට ඉවත් වීමට අවශ්‍යමද?</string>
     <string name="exit_app_yes_text">ඔව්</string>
     <string name="exit_app_no_text">නෑ</string>
 

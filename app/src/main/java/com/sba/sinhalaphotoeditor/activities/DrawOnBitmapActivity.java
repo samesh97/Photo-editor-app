@@ -16,6 +16,7 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -26,6 +27,7 @@ import com.github.chuross.library.ExpandableLayout;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.sba.sinhalaphotoeditor.CallBacks.OnAsyncTaskState;
 import com.sba.sinhalaphotoeditor.CallBacks.OnTextAttributesChangedListner;
+import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.activities.drawOnBitmap.PaintView;
 import com.sba.sinhalaphotoeditor.adapters.TextColorAdapter;
@@ -155,6 +157,7 @@ public class DrawOnBitmapActivity extends AppCompatActivity implements OnTextAtt
         });
         if(dialog.getWindow() != null)
         {
+            dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
             dialog.getWindow().setDimAmount(0.0f);
         }
 
@@ -268,7 +271,8 @@ public class DrawOnBitmapActivity extends AppCompatActivity implements OnTextAtt
 
 
 
-        dialog.setContentView(view,new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,400));
+        int deviceHeight = (int) Methods.getDeviceHeightInPX(getApplicationContext());
+        dialog.setContentView(view,new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,deviceHeight / 2));
         dialog.show();
     }
     private void animateExpandableLayout()

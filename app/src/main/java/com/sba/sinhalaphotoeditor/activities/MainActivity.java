@@ -590,6 +590,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(dialog.getWindow() != null)
         {
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            // dialog.getWindow().setDimAmount(0.4f);
+            float deviceWidth = Methods.getDeviceWidthInPX(getApplicationContext());
+            int finalWidth = (int) (deviceWidth - (deviceWidth / 8));
+            dialog.getWindow().setLayout(finalWidth,RelativeLayout.LayoutParams.WRAP_CONTENT);
         }
 
 
@@ -604,7 +608,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         DisplayMetrics metrics = new DisplayMetrics();
         display.getMetrics(metrics);
 
-        dialog.getWindow().setLayout(RelativeLayout.LayoutParams.FILL_PARENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
+        ImageView imageView6 = view.findViewById(R.id.imageView6);
+        imageView6.setImageDrawable(getDrawable(R.drawable.exit_editing_cartoon));
+        imageView6.setScaleType(ImageView.ScaleType.CENTER);
+
+
 
         TextView message = view.findViewById(R.id.textView8);
 

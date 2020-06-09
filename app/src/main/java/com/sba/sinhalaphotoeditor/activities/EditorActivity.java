@@ -106,59 +106,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
     {
         if(ImageList.getInstance().getImageListSize() > 1)
         {
-
-
-            final Dialog dialog = new Dialog(this);
-            if(dialog.getWindow() != null)
-            {
-                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            }
-
-
-
-            View view = getLayoutInflater().inflate(R.layout.exit_dialog_layout,null);
-
-            dialog.setContentView(view);
-
-            dialog.getWindow().setLayout(RelativeLayout.LayoutParams.FILL_PARENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
-
-            TextView message = view.findViewById(R.id.textView8);
-
-            message.setText(getResources().getString(R.string.are_you_sure_want_to_exit_text));
-
-            TextView title = view.findViewById(R.id.textView7);
-
-
-            title.setText(getResources().getString(R.string.warning_text));
-
-            Button yes = view.findViewById(R.id.yesButton);
-            Button no = view.findViewById(R.id.noButton);
-
-            yes.setText(getResources().getString(R.string.yes_text));
-            no.setText(getResources().getString(R.string.no_text));
-            yes.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v)
-                {
-                    Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                    finish();
-                    overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
-                }
-            });
-
-
-            no.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v)
-                {
-                    dialog.dismiss();
-                }
-            });
-            dialog.show();
-
-
+            showConfirmationDialogToExit();
         }
         else
         {
@@ -1280,6 +1228,63 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         options.setToolbarWidgetColor(Color.WHITE);
 
         return options;
+    }
+    private void showConfirmationDialogToExit()
+    {
+        final Dialog dialog = new Dialog(this);
+        if(dialog.getWindow() != null)
+        {
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+           // dialog.getWindow().setDimAmount(0.4f);
+            float deviceWidth = Methods.getDeviceWidthInPX(getApplicationContext());
+            int finalWidth = (int) (deviceWidth - (deviceWidth / 8));
+            dialog.getWindow().setLayout(finalWidth,RelativeLayout.LayoutParams.WRAP_CONTENT);
+        }
+
+
+
+        View view = getLayoutInflater().inflate(R.layout.exit_dialog_layout,null);
+        dialog.setContentView(view);
+
+
+
+
+        ImageView imageView6 = view.findViewById(R.id.imageView6);
+        imageView6.setImageDrawable(getDrawable(R.drawable.exit_editing_cartoon));
+        imageView6.setScaleType(ImageView.ScaleType.CENTER);
+
+
+        TextView message = view.findViewById(R.id.textView8);
+        message.setText(getResources().getString(R.string.are_you_sure_want_to_exit_text));
+        TextView title = view.findViewById(R.id.textView7);
+
+        title.setText(getResources().getString(R.string.warning_text));
+        Button yes = view.findViewById(R.id.yesButton);
+        Button no = view.findViewById(R.id.noButton);
+
+        yes.setText(getResources().getString(R.string.yes_text));
+        no.setText(getResources().getString(R.string.no_text));
+        yes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+                overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
+            }
+        });
+
+
+        no.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 
 }
