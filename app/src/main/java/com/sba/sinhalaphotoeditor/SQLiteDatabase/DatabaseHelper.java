@@ -11,7 +11,10 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
+
 import java.io.ByteArrayOutputStream;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Stack;
 
@@ -32,10 +35,12 @@ public class DatabaseHelper extends SQLiteOpenHelper
 
 
     private static final int DATABASE_VERSION = 3;
+    private Context context;
 
     public DatabaseHelper(@Nullable Context context)
     {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.context = context;
     }
 
     @Override
@@ -157,6 +162,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
                     break;
                 }
                 deleteImage(cursor.getInt(0));
+                Methods.deleteFileFromInternalStorage(context,cursor.getString(2));
             }
 
         }

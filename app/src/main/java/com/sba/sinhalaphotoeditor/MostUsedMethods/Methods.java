@@ -718,6 +718,19 @@ public class Methods
 
         return path;
     }
+    public static void deleteFileFromInternalStorage(Context context,String name){
+
+        ContextWrapper cw = new ContextWrapper(context);
+        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+        File file = new File(directory, name);
+
+        if(file.exists())
+        {
+            file.delete();
+            Log.d("Deleted","FileDeleted " + name);
+        }
+
+    }
     public static float getDeviceWidthInDP(Context context)
     {
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();

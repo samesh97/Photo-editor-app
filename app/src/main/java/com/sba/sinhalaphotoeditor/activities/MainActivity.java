@@ -181,6 +181,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //delete unnecessary recent images from database
+        helper.deleteUnnessaryImages();
+
         imageList = ImageList.getInstance();
         dialog = new ProgressDialog(MainActivity.this);
 //        initViews();
