@@ -98,8 +98,17 @@ public class AddEffects extends AppCompatActivity implements OnBitmapChanged, On
         }
         else
         {
-            super.onBackPressed();
-            overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
+
+            if(subFiltersLayout.getVisibility() == View.VISIBLE)
+            {
+                subFiltersLayout.setVisibility(View.GONE);
+            }
+            else
+            {
+                super.onBackPressed();
+                overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
+            }
+
         }
 
 
@@ -206,13 +215,7 @@ public class AddEffects extends AppCompatActivity implements OnBitmapChanged, On
 
 
 
-        GlideBitmapPool.clearMemory();
-
-
-        Runtime rt = Runtime.getRuntime();
-        int maxMemory = (int)rt.freeMemory();
-        GlideBitmapPool.initialize(maxMemory);
-        GlideBitmapPool.clearMemory();
+        Methods.freeUpMemory();
 
         render = new Render(AddEffects.this);
 

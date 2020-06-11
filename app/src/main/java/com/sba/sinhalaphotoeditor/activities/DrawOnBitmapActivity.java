@@ -71,6 +71,8 @@ public class DrawOnBitmapActivity extends AppCompatActivity implements OnTextAtt
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_draw_on_bitmap);
 
+        Methods.freeUpMemory();
+
         textViewPlus = new TextViewPlus(DrawOnBitmapActivity.this);
         textViewPlus.setTextColor(Color.RED);
 

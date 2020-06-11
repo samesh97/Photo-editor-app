@@ -66,6 +66,8 @@ public class ConfirmPhoneNumber extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confirm_phone_number);
 
+        Methods.freeUpMemory();
+
         pin = (Pinview) findViewById(R.id.pinview);
         textView = (TextView) findViewById(R.id.textView);
         varify = (Button) findViewById(R.id.varify);

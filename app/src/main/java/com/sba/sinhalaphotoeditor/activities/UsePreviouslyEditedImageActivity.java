@@ -125,13 +125,13 @@ public class UsePreviouslyEditedImageActivity extends AppCompatActivity {
         int maxMemory = (int)rt.freeMemory();
         GlideBitmapPool.initialize(maxMemory);
         GlideBitmapPool.clearMemory();
-
+        GlideBitmapPool.clearMemory();
 
         helper.deleteUnnessaryImages();
 
         pdLoading = new ProgressDialog(UsePreviouslyEditedImageActivity.this);
 
-        GlideBitmapPool.clearMemory();
+
 
         //overridePendingTransition(R.anim.slidein, R.anim.slideout);
 

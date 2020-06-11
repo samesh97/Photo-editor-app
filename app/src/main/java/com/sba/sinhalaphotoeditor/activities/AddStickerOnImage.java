@@ -172,10 +172,7 @@ public class AddStickerOnImage extends AppCompatActivity
 
         methods = new Methods(getApplicationContext());
 
-        Runtime rt = Runtime.getRuntime();
-        int maxMemory = (int)rt.freeMemory();
-        GlideBitmapPool.initialize(maxMemory);
-        GlideBitmapPool.clearMemory();
+        Methods.freeUpMemory();
 
         if(getActionBar() != null && getSupportActionBar() != null)
         {

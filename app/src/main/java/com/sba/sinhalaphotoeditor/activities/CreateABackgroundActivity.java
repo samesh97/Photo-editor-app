@@ -84,17 +84,10 @@ public class CreateABackgroundActivity extends AppCompatActivity {
         mInterstitialAd.loadAd(new AdRequest.Builder().build());
 
 
-        Runtime rt = Runtime.getRuntime();
-        int maxMemory = (int)rt.freeMemory();
-        GlideBitmapPool.initialize(maxMemory);
-        GlideBitmapPool.clearMemory();
+        Methods.freeUpMemory();
 
 
-        WindowManager wm = (WindowManager) getApplication().getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        DisplayMetrics metrics = new DisplayMetrics();
-        display.getMetrics(metrics);
-        final int widtha = metrics.widthPixels;
+
 
 
 
@@ -108,7 +101,6 @@ public class CreateABackgroundActivity extends AppCompatActivity {
 
 
 
-        userCreatedImage.setMaxWidth(widtha);
 
         useImage.setOnClickListener(new View.OnClickListener() {
             @Override

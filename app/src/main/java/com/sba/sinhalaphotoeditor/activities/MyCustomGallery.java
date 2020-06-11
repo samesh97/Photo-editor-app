@@ -60,13 +60,16 @@ public class MyCustomGallery extends AppCompatActivity {
     public static Bitmap selectedBitmap = null;
     public static final int IMAGE_PICK_RESULT_CODE = 235;
     private ArrayList<GalleryImage> allImages = new ArrayList<>();
+
     private static ArrayList<GalleryImage> showingImages;
+
     private RecyclerView gridView;
     private static GridViewAdapter adapter;
     private SetData setData;
     private boolean isStillShowing = false;
     private LinearLayoutManager manager;
     private static int lastScrolledPosition = 0;
+
 
 
 
@@ -87,10 +90,12 @@ public class MyCustomGallery extends AppCompatActivity {
         overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_custom_gallery);
+
 
 
         gridView = findViewById(R.id.gridView);
@@ -129,7 +134,7 @@ public class MyCustomGallery extends AppCompatActivity {
                     setShowingImageList();
                 }
 
-                lastScrolledPosition =   manager.findFirstVisibleItemPosition();;
+                lastScrolledPosition =   manager.findFirstCompletelyVisibleItemPosition();
 
             }
 
@@ -141,7 +146,7 @@ public class MyCustomGallery extends AppCompatActivity {
 
 
     }
-    public void getAllImages(Activity activity)
+    public void getAllImages(Context activity)
     {
 
         allImages.clear();
@@ -187,43 +192,25 @@ public class MyCustomGallery extends AppCompatActivity {
                 {
                     GalleryImage imgObj = new GalleryImage(new File(absolutePathOfImage));
 
-
-                    if(allImages.size() == 0)
-                    {
-
-                        imgObj.setSelected(true);
-                        allImages.add(imgObj);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run()
-                            {
-                                selectedBitmap = getBitmap(allImages.get(0).getFile().toString());
-                                selectedBitmap = ExifUtil.rotateBitmap(allImages.get(0).getFile().toString(), selectedBitmap);
-                            }
-                        });
-                    }
-                    else
-                    {
-                        imgObj.setSelected(false);
-                        allImages.add(imgObj);
-                    }
+                    allImages.add(imgObj);
 
 
-                    if(showingImages.size() <= 10)
-                    {
-                        showingImages.add(imgObj);
-                        runOnUiThread(new Runnable() {
+
+
+                   if(showingImages.size() <= 11)
+                   {
+
+                       showingImages.add(allImages.get(0));
+                       allImages.remove(0);
+
+                       runOnUiThread(new Runnable() {
                             @Override
                             public void run()
                             {
                                 adapter.notifyDataSetChanged();
                             }
                         });
-                    }
-
-
-
-
+                   }
 
                 }
 
@@ -261,29 +248,15 @@ public class MyCustomGallery extends AppCompatActivity {
                 {
                     GalleryImage imgObj = new GalleryImage(new File(absolutePathOfImage));
 
-                    if(allImages.size() == 0)
-                    {
-                        imgObj.setSelected(true);
-                        allImages.add(imgObj);
 
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run()
-                            {
-                                selectedBitmap = getBitmap(allImages.get(0).getFile().toString());
-                                selectedBitmap = ExifUtil.rotateBitmap(allImages.get(0).getFile().toString(), selectedBitmap);
-                            }
-                        });
-                    }
-                    else
-                    {
-                        imgObj.setSelected(false);
-                        allImages.add(imgObj);
-                    }
+                    allImages.add(imgObj);
 
-                    if(showingImages.size() <= 10)
+                    if(showingImages.size() <= 11)
                     {
-                        showingImages.add(imgObj);
+
+                        showingImages.add(allImages.get(0));
+                        allImages.remove(0);
+
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run()
@@ -301,6 +274,7 @@ public class MyCustomGallery extends AppCompatActivity {
     }
     public Bitmap getBitmap(String path)
     {
+
         Bitmap bitmap = null;
 
         try {
@@ -345,7 +319,7 @@ public class MyCustomGallery extends AppCompatActivity {
         {
             if(!this.isCancelled())
             {
-                getAllImages(MyCustomGallery.this);
+                getAllImages(getApplicationContext());
             }
 
             return null;
@@ -353,24 +327,24 @@ public class MyCustomGallery extends AppCompatActivity {
     }
     public void setShowingImageList()
     {
-            for(int i = 0; i < 10; i++)
-            {
-                if(allImages != null && allImages.size() > 0)
-                {
-                    showingImages.add(allImages.get(0));
-                    allImages.remove(0);
 
-                    if(i % 2 == 1)
-                    {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                adapter.notifyDataSetChanged();
-                            }
-                        });
-                    }
-                }
+        Log.d("ImageListSizes","MainList = " + allImages.size() + " ShowingList = " + showingImages.size());
+
+        for(int i = 0; i < 10; i++)
+        {
+            if(allImages != null && allImages.size() > 0)
+            {
+                showingImages.add(allImages.get(0));
+                allImages.remove(0);
+                adapter.notifyDataSetChanged();
             }
+
+            //when the last position reaches
+            if(i == 9)
+            {
+                adapter.notifyItemInserted(adapter.getItemCount() + (allImages.size() / 3));
+            }
+        }
     }
     public void showSelectView(File file)
     {

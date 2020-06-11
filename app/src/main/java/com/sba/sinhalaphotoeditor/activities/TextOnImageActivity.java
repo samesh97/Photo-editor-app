@@ -206,11 +206,6 @@ public class TextOnImageActivity extends AppCompatActivity
         });
 
 
-        Runtime rt = Runtime.getRuntime();
-        int maxMemory = (int)rt.freeMemory();
-        GlideBitmapPool.initialize(maxMemory);
-        GlideBitmapPool.clearMemory();
-
 
         if(getSupportActionBar() != null)
         {

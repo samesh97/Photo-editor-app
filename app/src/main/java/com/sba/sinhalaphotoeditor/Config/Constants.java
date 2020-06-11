@@ -31,6 +31,7 @@ public class Constants
     //Activity
 
     public static final String ACTIVITY_EXTRA_KEY = "Activity";
+    public static final String NUMBER_OF_IMAGES_WAS_ADDED = "numberOfImagesWasThere";
 
     //firebase
 

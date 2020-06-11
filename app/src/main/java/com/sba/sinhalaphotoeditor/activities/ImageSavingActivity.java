@@ -33,19 +33,19 @@ import render.animations.Render;
 
 public class ImageSavingActivity extends AppCompatActivity {
 
-    ImageView saveFinalImage;
-    ImageView userSavingImage;
-    ImageView shareFinalImage;
+    private ImageView saveFinalImage;
+    private ImageView userSavingImage;
+    private ImageView shareFinalImage;
 
 
-    ImageView shareImageView;
-    TextView fromGalery;
+    private ImageView shareImageView;
+    private TextView fromGalery;
 
-    Render render;
+    private Render render;
 
-    ImageView downloadImageView;
+    private ImageView downloadImageView;
 
-    TextView downloadImageText;
+    private TextView downloadImageText;
 
     private Methods methods;
 
@@ -66,10 +66,7 @@ public class ImageSavingActivity extends AppCompatActivity {
 
 
 
-        Runtime rt = Runtime.getRuntime();
-        int maxMemory = (int)rt.freeMemory();
-        GlideBitmapPool.initialize(maxMemory);
-        GlideBitmapPool.clearMemory();
+
 
         render = new Render(ImageSavingActivity.this);
 

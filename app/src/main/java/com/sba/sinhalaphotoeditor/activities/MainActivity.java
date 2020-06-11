@@ -86,6 +86,7 @@ import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_KEY;
 import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_POSITION_KEY;
 import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_SINHALA;
 import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_TAMIL;
+import static com.sba.sinhalaphotoeditor.Config.Constants.NUMBER_OF_IMAGES_WAS_ADDED;
 import static com.sba.sinhalaphotoeditor.Config.Constants.SHARED_PREF_NAME;
 import static com.sba.sinhalaphotoeditor.activities.MyCustomGallery.IMAGE_PICK_RESULT_CODE;
 import static com.sba.sinhalaphotoeditor.activities.MyCustomGallery.selectedBitmap;
@@ -263,6 +264,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 dates.add(cursor.getString(2));
 
                 adapter.notifyDataSetChanged();
+
+                //free up memory
+                Methods.freeUpMemory();
+
+
             }
             if(cursor.getCount() == 0)
             {
@@ -275,6 +281,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 images.add(bitmap);
                 adapter.notifyDataSetChanged();
             }
+
+
+            cursor.close();
         }
         catch (Exception e)
         {

@@ -125,11 +125,6 @@ public class PhotoOnPhotoActivity extends AppCompatActivity implements RotationG
 
         methods = new Methods(getApplicationContext());
 
-        Runtime rt = Runtime.getRuntime();
-        int maxMemory = (int)rt.freeMemory();
-        GlideBitmapPool.initialize(maxMemory);
-        GlideBitmapPool.clearMemory();
-
         if(getActionBar() != null && getSupportActionBar() != null)
         {
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#114f5e")));

@@ -149,9 +149,11 @@ public class DatabaseHelper extends SQLiteOpenHelper
     }
     public void deleteUnnessaryImages()
     {
-        if(getNumberOfRows() > 10)
+        int recentImageMaxSize = 5;
+
+        if(getNumberOfRows() > recentImageMaxSize)
         {
-            int numberOfItemsNeedToDeleted = getNumberOfRows() - 10;
+            int numberOfItemsNeedToDeleted = getNumberOfRows() - recentImageMaxSize;
             Cursor cursor = GetAllImagesASC();
 
             while (cursor.moveToNext())

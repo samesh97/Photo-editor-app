@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.activities.RegisterScreen;
 import com.sba.sinhalaphotoeditor.adapters.WalkthroughPagerAdapter;
@@ -43,6 +44,8 @@ public class WalkThroughActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_walk_through);
+
+        Methods.freeUpMemory();
 
         setTextViewFontAndSize();
 

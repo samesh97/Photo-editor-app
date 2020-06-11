@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.sba.sinhalaphotoeditor.Config.ExifUtil;
+import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.activities.MyCustomGallery;
 import com.sba.sinhalaphotoeditor.model.GalleryImage;
@@ -34,6 +35,10 @@ public class GridViewAdapter extends RecyclerView.Adapter<GridViewAdapter.MyView
 {
     private Context context;
     private ArrayList<GalleryImage> images;
+    private int numberOfImagesInARow = 3;
+
+
+
 
     public GridViewAdapter(Context context, ArrayList<GalleryImage> images)
     {
@@ -58,77 +63,75 @@ public class GridViewAdapter extends RecyclerView.Adapter<GridViewAdapter.MyView
     {
 
 
-        if(images.size() > position * 2)
+        if(images.size() > (position * numberOfImagesInARow) && images.get(position * numberOfImagesInARow).getFile() != null)
         {
-            Glide.with(context).load(images.get(position * 2).getFile()).into(holder.imgView);
+                Glide.with(context)
+                    .load(images.get(position * numberOfImagesInARow).getFile())
+                    .placeholder(R.drawable.loading_image_placeholder)
+                    .error(R.drawable.loading_image_placeholder)
+                    .into(holder.imgView);
+
+            holder.imgView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    showSelectView(images.get(position * numberOfImagesInARow).getFile());
+                }
+            });
         }
-        if(images.size() > position + 1)
+        if(images.size() > ((position * numberOfImagesInARow) + 1) && images.get(((position * numberOfImagesInARow) + 1)).getFile() != null)
         {
-            Glide.with(context).load(images.get(position + 1).getFile()).into(holder.imgView2);
+            Glide.with(context)
+                    .load(images.get(((position * numberOfImagesInARow) + 1)).getFile())
+                    .placeholder(R.drawable.loading_image_placeholder)
+                    .error(R.drawable.loading_image_placeholder)
+                    .into(holder.imgView2);
+
+            holder.imgView2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    showSelectView(images.get(((position * numberOfImagesInARow) + 1)).getFile());
+                }
+            });
         }
+        if(images.size() > ((position * numberOfImagesInARow) + 2) && images.get(((position * numberOfImagesInARow) + 2)).getFile() != null)
+        {
+            Glide.with(context)
+                    .load(images.get(((position * numberOfImagesInARow) + 2)).getFile())
+                    .placeholder(R.drawable.loading_image_placeholder)
+                    .error(R.drawable.loading_image_placeholder)
+                    .into(holder.imgView3);
 
+            holder.imgView3.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
-        holder.imgView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                if(getBitmap(images.get(position * 2).getFile().toString()) != null)
-                {
-                    selectedBitmap = getBitmap(images.get(position * 2).getFile().toString());
-                    selectedBitmap = ExifUtil.rotateBitmap(images.get(position * 2).getFile().toString(), selectedBitmap);
-
-                    showSelectView(images.get(position * 2).getFile());
-
+                    showSelectView(images.get(((position * numberOfImagesInARow) + 2)).getFile());
                 }
-
-            }
-        });
-
-        holder.imgView2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                if(getBitmap(images.get(position + 1).getFile().toString()) != null)
-                {
-
-                    selectedBitmap = getBitmap(images.get(position + 1).getFile().toString());
-                    selectedBitmap = ExifUtil.rotateBitmap(images.get(position + 1).getFile().toString(), selectedBitmap);
-
-                    showSelectView(images.get(position + 1).getFile());
-                }
-
-
-            }
-        });
-
+            });
+        }
 
     }
 
     @Override
     public int getItemCount()
     {
-        if(images.size() % 2 == 0)
-        {
-            return images.size() / 2;
-        }
-        else
-        {
-            return (images.size() / 2) + 1;
-        }
+        return (images.size() / numberOfImagesInARow) + (images.size() % numberOfImagesInARow);
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder
     {
         private ImageView imgView;
         private ImageView imgView2;
-        private ImageView is_selected_image1;
-        private ImageView is_selected_image2;
+        private ImageView imgView3;
 
         public MyViewHolder(@NonNull View itemView)
         {
             super(itemView);
             imgView = itemView.findViewById(R.id.image);
             imgView2 = itemView.findViewById(R.id.image2);
+            imgView3 = itemView.findViewById(R.id.image3);
         }
     }
     private void showSelectView(File file)
@@ -136,6 +139,8 @@ public class GridViewAdapter extends RecyclerView.Adapter<GridViewAdapter.MyView
        if(context instanceof MyCustomGallery)
        {
            ((MyCustomGallery)context).showSelectView(file);
+           MyCustomGallery.selectedBitmap = Methods.getBitmap(file.getAbsolutePath());
+
        }
     }
 }

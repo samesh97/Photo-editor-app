@@ -60,6 +60,7 @@ import java.util.ArrayList;
 import render.animations.Render;
 import render.animations.*;
 
+import static com.sba.sinhalaphotoeditor.Config.Constants.NUMBER_OF_IMAGES_WAS_ADDED;
 import static com.sba.sinhalaphotoeditor.activities.MyCustomGallery.IMAGE_PICK_RESULT_CODE;
 import static com.sba.sinhalaphotoeditor.activities.MyCustomGallery.selectedBitmap;
 
@@ -482,11 +483,6 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
 
 
         methods = new Methods(getApplicationContext());
-
-        Runtime rt = Runtime.getRuntime();
-        int maxMemory = (int)rt.freeMemory();
-        GlideBitmapPool.initialize(maxMemory);
-        GlideBitmapPool.clearMemory();
 
 
        MobileAds.initialize(this, new OnInitializationCompleteListener() {
@@ -1269,6 +1265,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
             public void onClick(View v)
             {
                 Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                intent.putExtra(NUMBER_OF_IMAGES_WAS_ADDED,(ImageList.getInstance().getImageListSize() - 1));
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 finish();

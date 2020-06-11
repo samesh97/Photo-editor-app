@@ -75,7 +75,7 @@
             android:layout_height="50dp"
             android:layout_marginStart="16dp"
             app:civ_border_width="1dp"
-            app:civ_border_color="@color/red"
+            app:civ_border_color="@color/color_gray"
             android:scaleType="centerCrop"
             tools:src="@drawable/sampleprofilepic"
             app:layout_constraintBottom_toBottomOf="parent"

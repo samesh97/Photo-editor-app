@@ -28,6 +28,8 @@ public class SplashScreen extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
+        Methods.freeUpMemory();
+
         helper = new DatabaseHelper(getApplicationContext());
         helper.deleteUnnessaryImages();
 

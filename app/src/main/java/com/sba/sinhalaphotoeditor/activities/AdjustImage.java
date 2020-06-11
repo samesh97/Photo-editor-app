@@ -141,10 +141,7 @@ public class AdjustImage extends AppCompatActivity {
 
 
 
-        Runtime rt = Runtime.getRuntime();
-        int maxMemory = (int)rt.freeMemory();
-        GlideBitmapPool.initialize(maxMemory);
-        GlideBitmapPool.clearMemory();
+        Methods.freeUpMemory();
 
         methods = new Methods(getApplicationContext());
         render = new Render(AdjustImage.this);

@@ -3,6 +3,7 @@ package com.sba.sinhalaphotoeditor.singleton;
 import android.graphics.Bitmap;
 
 import com.glidebitmappool.GlideBitmapPool;
+import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.activities.MainActivity;
 
 import java.util.ArrayList;
@@ -20,6 +21,9 @@ public class ImageList
         {
             object = new ImageListModel();
         }
+
+        //free up memory
+        Methods.freeUpMemory();
 
         return object;
     }

@@ -18,6 +18,7 @@ import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.renderscript.Allocation;
@@ -33,6 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.glidebitmappool.GlideBitmapPool;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;
 
@@ -798,5 +800,23 @@ public class Methods
         drawable.draw(canvas);
 
         return bitmap;
+    }
+    public static void freeUpMemory()
+    {
+        AsyncTask asyncTask = new AsyncTask() {
+            @Override
+            protected Object doInBackground(Object[] objects)
+            {
+                Runtime rt = Runtime.getRuntime();
+                int maxMemory = (int)rt.freeMemory();
+                GlideBitmapPool.initialize(maxMemory);
+                GlideBitmapPool.clearMemory();
+                GlideBitmapPool.clearMemory();
+                return null;
+            }
+        };
+
+        asyncTask.execute();
+
     }
 }

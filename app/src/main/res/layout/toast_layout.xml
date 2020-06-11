@@ -17,7 +17,7 @@
         android:layout_marginEnd="4dp"
         android:layout_marginBottom="4dp"
         android:gravity="center"
-        android:fontFamily="@font/gemunulibrebold"
+        android:fontFamily="@font/bindumathi"
         android:textSize="18sp"
         android:paddingRight="15dp"
         android:paddingLeft="15dp"
