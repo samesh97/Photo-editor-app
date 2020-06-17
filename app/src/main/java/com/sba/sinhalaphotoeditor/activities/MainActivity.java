@@ -96,13 +96,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private static final int PICK_IMAGE_REQUEST = 234;
     public static Bitmap bitmap;
-//    public static int imagePosition = 0;
 
     private boolean isExit = false;
     private static boolean isFirstTime = true;
 
 
-//    public static ArrayList<Bitmap> images = new ArrayList<>();
     private ProgressDialog dialog;
     private Spinner languagePicker;
     private Methods methods;
@@ -559,18 +557,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
     private void showFileChooser()
     {
-        /*
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);*/
 
         Intent intent = new Intent(MainActivity.this, MyCustomGallery.class);
         intent.putExtra(ACTIVITY_EXTRA_KEY,"MainActivity");
-        //startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
         startActivityForResult(intent,PICK_IMAGE_REQUEST);
         overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
-
 
     }
     public boolean isPermissonGranted()
@@ -854,7 +845,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
     }
-
     public class startActivity extends AsyncTask<Void,Void,Void> {
 
         @Override
@@ -926,22 +916,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         dialog.show();
         dialog.setCancelable(false);
 
-        WindowManager.LayoutParams lp = dialog.getWindow().getAttributes();
-        lp.dimAmount = 0.6f; // Dim level. 0.0 - no dim, 1.0 - completely opaque
-        dialog.getWindow().setAttributes(lp);
+        if(dialog.getWindow() != null)
+        {
+            WindowManager.LayoutParams lp = dialog.getWindow().getAttributes();
+            lp.dimAmount = 0.6f; // Dim level. 0.0 - no dim, 1.0 - completely opaque
+            dialog.getWindow().setAttributes(lp);
 
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        View view = getLayoutInflater().inflate(R.layout.custom_progress_dialog, null);
-        dialog.setContentView(view);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            View view = getLayoutInflater().inflate(R.layout.custom_progress_dialog, null);
+            dialog.setContentView(view);
 
-        animation = view.findViewById(R.id.animation);
+            animation = view.findViewById(R.id.animation);
 
-        Drawable d = animation.getDrawable();
-        if (d instanceof AnimatedVectorDrawable) {
+            Drawable d = animation.getDrawable();
+            if (d instanceof AnimatedVectorDrawable) {
 
-            animations = (AnimatedVectorDrawable) d;
-            animations.start();
+                animations = (AnimatedVectorDrawable) d;
+                animations.start();
+            }
         }
+
     }
     public void checkForTheCurrentVersion()
     {

@@ -108,8 +108,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
     public Cursor GetAllImagesASC()
     {
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME + " ORDER BY " + COL_1 + " ASC",null);
-        return cursor;
+        return db.rawQuery("SELECT * FROM " + TABLE_NAME + " ORDER BY " + COL_1 + " ASC",null);
     }
     public byte[] getBytes(Bitmap bitmap)
     {
@@ -145,7 +144,9 @@ public class DatabaseHelper extends SQLiteOpenHelper
     {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME,null);
-        return cursor.getCount();
+        int value =  cursor.getCount();
+        cursor.close();
+        return value;
     }
     public void deleteUnnessaryImages()
     {
@@ -166,6 +167,8 @@ public class DatabaseHelper extends SQLiteOpenHelper
                 deleteImage(cursor.getInt(0));
                 Methods.deleteFileFromInternalStorage(context,cursor.getString(2));
             }
+
+            cursor.close();
 
         }
 

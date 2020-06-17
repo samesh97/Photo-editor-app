@@ -203,7 +203,7 @@ public class ImageSavingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                methods.SaveImage(ImageList.getInstance().getCurrentBitmap());
+                methods.SaveImage(ImageList.getInstance().getCurrentBitmap(),getContentResolver());
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id="+"com.sba.sinhalaphotoeditor")));
             }
         });
@@ -213,7 +213,7 @@ public class ImageSavingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                methods.SaveImage(ImageList.getInstance().getCurrentBitmap());
+                methods.SaveImage(ImageList.getInstance().getCurrentBitmap(),getContentResolver());
                 dialog.dismiss();
             }
         });

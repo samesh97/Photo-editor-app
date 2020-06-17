@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
+import com.sba.sinhalaphotoeditor.aynctask.GalleryImageHandler;
 
 import static com.sba.sinhalaphotoeditor.Config.Constants.FIREBASE_PAYLOAD_MESSAGE_TEXT;
 import static com.sba.sinhalaphotoeditor.Config.Constants.FIREBASE_PAYLOAD_TITLE_TEXT;
@@ -33,6 +34,9 @@ public class SplashScreen extends AppCompatActivity
         helper = new DatabaseHelper(getApplicationContext());
         helper.deleteUnnessaryImages();
 
+        final GalleryImageHandler galleryImageHandler = new GalleryImageHandler(getContentResolver(),null);
+        galleryImageHandler.execute();
+
         final ImageView splash_logo = findViewById(R.id.splash_logo);
         animateViewUpFromBottom(splash_logo);
         new Handler().postDelayed(new Runnable() {
@@ -40,6 +44,7 @@ public class SplashScreen extends AppCompatActivity
             public void run()
             {
                 animateViewUpFromMiddle(splash_logo);
+                galleryImageHandler.cancel(true);
 
             }
         },1500);

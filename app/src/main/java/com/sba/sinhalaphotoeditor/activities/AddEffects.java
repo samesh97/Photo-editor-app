@@ -66,7 +66,6 @@ public class AddEffects extends AppCompatActivity implements OnBitmapChanged, On
     private AdView mAdView;
     private DatabaseHelper helper = new DatabaseHelper(AddEffects.this);
     private List<Filter> filters;
-    private Render render;
     private FilterAdapter filterAdapter;
     private RecyclerView filterRecyclerView;
     private Methods methods;
@@ -217,7 +216,6 @@ public class AddEffects extends AppCompatActivity implements OnBitmapChanged, On
 
         Methods.freeUpMemory();
 
-        render = new Render(AddEffects.this);
 
 
 
@@ -329,7 +327,6 @@ public class AddEffects extends AppCompatActivity implements OnBitmapChanged, On
         subFilterBitmap = currentEditingBitmap.copy(currentEditingBitmap.getConfig(),true);
 
         Filter filter = new Filter();
-
         filter.addSubFilter(new BrightnessSubFilter((int) brightnessValue));
         filter.addSubFilter(new VignetteSubfilter(getApplicationContext(), (int) vignettetValue));
         filter.addSubFilter(new SaturationSubfilter(saturationValue));

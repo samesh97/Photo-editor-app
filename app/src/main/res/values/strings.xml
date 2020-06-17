@@ -77,6 +77,7 @@
     <string name="removed_text">Removed</string>
     <string name="saved_to_gallery_text">Saved to gallery</string>
     <string name="text_skip">Skip</string>
+    <string name="scroll_to_where_you_left_off">කලින් හිටපු තැනට යමු</string>
 
 
     <string-array name="select_language">

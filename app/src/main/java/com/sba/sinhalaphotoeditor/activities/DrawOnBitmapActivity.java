@@ -58,7 +58,18 @@ public class DrawOnBitmapActivity extends AppCompatActivity implements OnTextAtt
     private boolean userNeedToZoom = false;
 
     private boolean isZoomIn = true;
+    private Timer timer;
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if(timer != null)
+        {
+            timer.cancel();
+        }
+    }
 
     @Override
     public void onBackPressed() {
@@ -118,7 +129,7 @@ public class DrawOnBitmapActivity extends AppCompatActivity implements OnTextAtt
         scaleGestureDetector = new ScaleGestureDetector(DrawOnBitmapActivity.this,new simpleOnScaleGestureListener());
 
 
-        Timer timer = new Timer();
+        timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run()

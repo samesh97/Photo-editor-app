@@ -80,6 +80,9 @@ dependencies {
     implementation 'com.google.android.material:material:1.1.0'
 
 
+    //memory leaks
+    //debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.4'
+
 
 
 

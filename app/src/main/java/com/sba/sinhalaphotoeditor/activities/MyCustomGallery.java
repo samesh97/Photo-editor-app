@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.animation.Animator;
 import android.app.Activity;
@@ -19,6 +20,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.PersistableBundle;
 import android.provider.MediaStore;
 import android.renderscript.Allocation;
@@ -31,27 +33,38 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.sba.sinhalaphotoeditor.CallBacks.OnAFileAddedListner;
+import com.sba.sinhalaphotoeditor.CallBacks.OnItemClickListner;
 import com.sba.sinhalaphotoeditor.Config.ExifUtil;
 import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.adapters.GridViewAdapter;
+import com.sba.sinhalaphotoeditor.aynctask.GalleryImageHandler;
 import com.sba.sinhalaphotoeditor.model.GalleryImage;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static com.sba.sinhalaphotoeditor.adapters.GridViewAdapter.numberOfImagesInARow;
 
 
 public class MyCustomGallery extends AppCompatActivity {
@@ -59,28 +72,37 @@ public class MyCustomGallery extends AppCompatActivity {
 
     public static Bitmap selectedBitmap = null;
     public static final int IMAGE_PICK_RESULT_CODE = 235;
-    private ArrayList<GalleryImage> allImages = new ArrayList<>();
 
-    private static ArrayList<GalleryImage> showingImages;
+
 
     private RecyclerView gridView;
-    private static GridViewAdapter adapter;
-    private SetData setData;
-    private boolean isStillShowing = false;
+    private GridViewAdapter adapter;
     private LinearLayoutManager manager;
+    private SwipeRefreshLayout swipe_layout;
+    private GalleryImageHandler galleryImageHandler;
+    private ArrayList<GalleryImage> showingImages;
+    private int imageLimit = 18;
+    private int maxImagesPerScroll = 18;
     private static int lastScrolledPosition = 0;
-
-
-
+    private static int lastShowingListCount = 0;
+    private boolean isStillShowing = false;
+    private static int prevOffset = 0;
+    private  Timer timer;
 
     @Override
     protected void onDestroy()
     {
-        if(setData != null && !setData.isCancelled())
-        {
-            setData.cancel(true);
-        }
         super.onDestroy();
+        lastScrolledPosition =   manager.findFirstVisibleItemPosition();
+        lastShowingListCount = showingImages.size();
+        View firstItemView = manager.findViewByPosition(lastScrolledPosition);
+        if(firstItemView != null)
+        prevOffset = firstItemView.getTop();
+
+        if(timer != null)
+        {
+            timer.cancel();
+        }
 
     }
 
@@ -90,36 +112,60 @@ public class MyCustomGallery extends AppCompatActivity {
         overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_custom_gallery);
 
 
-
+        swipe_layout = findViewById(R.id.swipe_layout);
         gridView = findViewById(R.id.gridView);
-        manager = new LinearLayoutManager(MyCustomGallery.this);
+        manager = new LinearLayoutManager(getApplicationContext());
+        showingImages = new ArrayList<>();
 
-        if(adapter == null)
+
+        final GridViewAdapter adapter = new GridViewAdapter(getApplicationContext(), showingImages, new OnItemClickListner() {
+            @Override
+            public void onClicked(File file)
+            {
+                showSelectView(file);
+            }
+        });
+        gridView.setLayoutManager(manager);
+        gridView.setAdapter(adapter);
+
+        galleryImageHandler = new GalleryImageHandler(getContentResolver(), new OnAFileAddedListner() {
+            @Override
+            public void fileAdded(GalleryImage image)
+            {
+
+            }
+
+            @Override
+            public void notifyAdapter()
+            {
+                try
+                {
+                    adapter.notifyDataSetChanged();
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+
+        galleryImageHandler.execute();
+
+        if(lastShowingListCount == 0)
         {
-            showingImages = new ArrayList<>();
-            gridView.setLayoutManager(manager);
-            adapter = new GridViewAdapter(MyCustomGallery.this,showingImages);
-            gridView.setAdapter(adapter);
-
+            galleryImageHandler.getList(showingImages,imageLimit);
         }
         else
         {
-            adapter.setContext(this);
-            gridView.setAdapter(adapter);
-            gridView.setLayoutManager(manager);
-
-            gridView.scrollToPosition(lastScrolledPosition);
+            galleryImageHandler.getList(showingImages,lastShowingListCount);
         }
-
-        setData = new SetData();
-        setData.execute();
 
 
 
@@ -131,219 +177,121 @@ public class MyCustomGallery extends AppCompatActivity {
 
                 if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE)
                 {
-                    setShowingImageList();
+                   galleryImageHandler.getList(showingImages,maxImagesPerScroll);
                 }
-
-                lastScrolledPosition =   manager.findFirstCompletelyVisibleItemPosition();
-
             }
 
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
+
             }
         });
 
 
-    }
-    public void getAllImages(Context activity)
-    {
-
-        allImages.clear();
-
-        Uri uri;
-        Cursor cursor;
-        int column_index_data, column_index_folder_name;
-
-        String absolutePathOfImage = null, imageName;
-
-        //get all images from external storage
-
-        uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-
-        String[] projection = { MediaStore.MediaColumns.DATA,
-                MediaStore.Images.Media.DISPLAY_NAME,
-                MediaStore.Images.Media.DATE_MODIFIED
-        };
 
 
-        cursor = activity.getContentResolver().query(uri, projection, null,
-                null, "date_modified DESC");
-
-        column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
-
-        column_index_folder_name = cursor
-                .getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME);
-
-        while (cursor.moveToNext())
-        {
-
-            if(setData.isCancelled())
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run()
             {
-                break;
-            }
-            absolutePathOfImage = cursor.getString(column_index_data);
-
-            imageName = cursor.getString(column_index_folder_name);
-
-            if(absolutePathOfImage != null && !absolutePathOfImage.equals(""))
-            {
-                if(getBitmap(new File(absolutePathOfImage).toString()) != null)
+                if(prevOffset > 0 || lastScrolledPosition > 0)
                 {
-                    GalleryImage imgObj = new GalleryImage(new File(absolutePathOfImage));
-
-                    allImages.add(imgObj);
-
-
-
-
-                   if(showingImages.size() <= 11)
-                   {
-
-                       showingImages.add(allImages.get(0));
-                       allImages.remove(0);
-
-                       runOnUiThread(new Runnable() {
-                            @Override
-                            public void run()
-                            {
-                                adapter.notifyDataSetChanged();
-                            }
-                        });
-                   }
-
-                }
-
-            }
-
-
-        }
-
-        // Get all Internal storage images
-
-        uri = android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI;
-
-        cursor = activity.getContentResolver().query(uri, projection, null,
-                null, "date_modified DESC");
-
-        column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
-
-        column_index_folder_name = cursor
-                .getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME);
-
-        while (cursor.moveToNext())
-        {
-            if(setData.isCancelled())
-            {
-                break;
-            }
-
-            absolutePathOfImage = cursor.getString(column_index_data);
-
-            imageName = cursor.getString(column_index_folder_name);
-
-            if(absolutePathOfImage != null && !absolutePathOfImage.equals(""))
-            {
-                if(getBitmap(new File(absolutePathOfImage).toString()) != null)
-                {
-                    GalleryImage imgObj = new GalleryImage(new File(absolutePathOfImage));
-
-
-                    allImages.add(imgObj);
-
-                    if(showingImages.size() <= 11)
+                    if(showingImages.size() >= lastShowingListCount)
                     {
+                        final Button button = findViewById(R.id.scrollToPos);
 
-                        showingImages.add(allImages.get(0));
-                        allImages.remove(0);
-
-                        runOnUiThread(new Runnable() {
+                        TranslateAnimation animation = new TranslateAnimation(0,0,2000, 0);
+                        animation.setDuration(500);
+                        animation.setFillAfter(true);
+                        animation.setAnimationListener(new Animation.AnimationListener() {
                             @Override
-                            public void run()
+                            public void onAnimationStart(Animation animation)
                             {
-                                adapter.notifyDataSetChanged();
+                                button.setVisibility(View.VISIBLE);
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animation animation)
+                            {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animation animation) {
+
                             }
                         });
+
+                        button.startAnimation(animation);
+
+                        button.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v)
+                            {
+                                manager.scrollToPositionWithOffset(lastScrolledPosition,prevOffset);
+                            }
+                        });
+
+
+                        Handler handler = new Handler(Looper.getMainLooper());
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                TranslateAnimation animation = new TranslateAnimation(0,0,0, 2000);
+                                animation.setDuration(500);
+                                animation.setFillAfter(true);
+                                animation.setAnimationListener(new Animation.AnimationListener() {
+                                    @Override
+                                    public void onAnimationStart(Animation animation)
+                                    {
+                                        button.setVisibility(View.GONE);
+                                    }
+
+                                    @Override
+                                    public void onAnimationEnd(Animation animation)
+                                    {
+
+                                    }
+
+                                    @Override
+                                    public void onAnimationRepeat(Animation animation) {
+
+                                    }
+                                });
+
+                                button.startAnimation(animation);
+                            }
+                        }, 4000 );
+                        timer.cancel();
+
                     }
                 }
+                else
+                {
+                    timer.cancel();
+                }
+
             }
-        }
+        }, 0, 100);
 
 
-        cursor.close();
     }
     public Bitmap getBitmap(String path)
     {
-
-        Bitmap bitmap = null;
-
-        try {
-
+        try
+        {
             File f = new File(path);
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            return BitmapFactory.decodeStream(new FileInputStream(f), null, options);
 
-            bitmap = BitmapFactory.decodeStream(new FileInputStream(f), null, options);
-
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             e.printStackTrace();
             return null;
-        }
-
-        return bitmap;
-    }
-    public class SetData extends AsyncTask<Void,Void,Void>
-    {
-
-        @Override
-        protected void onPreExecute()
-        {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-
-            if(!setData.isCancelled())
-            {
-                setData.cancel(true);
-            }
-            adapter.notifyDataSetChanged();
-
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids)
-        {
-            if(!this.isCancelled())
-            {
-                getAllImages(getApplicationContext());
-            }
-
-            return null;
-        }
-    }
-    public void setShowingImageList()
-    {
-
-        Log.d("ImageListSizes","MainList = " + allImages.size() + " ShowingList = " + showingImages.size());
-
-        for(int i = 0; i < 10; i++)
-        {
-            if(allImages != null && allImages.size() > 0)
-            {
-                showingImages.add(allImages.get(0));
-                allImages.remove(0);
-                adapter.notifyDataSetChanged();
-            }
-
-            //when the last position reaches
-            if(i == 9)
-            {
-                adapter.notifyItemInserted(adapter.getItemCount() + (allImages.size() / 3));
-            }
         }
     }
     public void showSelectView(File file)
@@ -381,14 +329,6 @@ public class MyCustomGallery extends AppCompatActivity {
                         setResult(IMAGE_PICK_RESULT_CODE,intent);
                         finish();
                         overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
-                        if(setData != null)
-                        {
-                            if(!setData.isCancelled())
-                            {
-                                setData.cancel(true);
-                            }
-
-                        }
 
                     }
                     else

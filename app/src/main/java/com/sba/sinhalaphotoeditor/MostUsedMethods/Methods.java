@@ -1,6 +1,7 @@
 package com.sba.sinhalaphotoeditor.MostUsedMethods;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.database.Cursor;
@@ -36,6 +37,7 @@ import android.widget.Toast;
 
 import com.glidebitmappool.GlideBitmapPool;
 import com.sba.sinhalaphotoeditor.R;
+import com.sba.sinhalaphotoeditor.aynctask.GalleryImageHandler;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;
 
 import java.io.ByteArrayOutputStream;
@@ -286,12 +288,12 @@ public class Methods
         canvas.drawBitmap(bitmap, middleX - bitmap.getWidth() / 2, middleY - bitmap.getHeight() / 2, new Paint(Paint.FILTER_BITMAP_FLAG));
         return scaledBitmap;
     }
-    public void SaveImage(Bitmap finalBitmap)
+    public void SaveImage(Bitmap finalBitmap, ContentResolver resolver)
     {
 
         String root = Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES).toString();
-        File myDir = new File(root + "/SinhalaPhotoEditor");
+        File myDir = new File(root + "/SihalaPhotoEditor");
         myDir.mkdirs();
         Random generator = new Random();
 
@@ -327,6 +329,12 @@ public class Methods
 
                     }
                 });
+
+        GalleryImageHandler handler = new GalleryImageHandler(resolver,null);
+        handler.setListEmpty();
+        handler.execute();
+
+
     }
     public Bitmap decodeSampledBitmapFromResource(String path,int reqWidth,
                                                   int reqHeight) {

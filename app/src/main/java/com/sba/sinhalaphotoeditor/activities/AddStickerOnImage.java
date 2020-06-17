@@ -174,10 +174,6 @@ public class AddStickerOnImage extends AppCompatActivity
 
         Methods.freeUpMemory();
 
-        if(getActionBar() != null && getSupportActionBar() != null)
-        {
-            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#114f5e")));
-        }
 
 
         //setup the scale detection and rotation detection for the textview
@@ -392,7 +388,7 @@ public class AddStickerOnImage extends AppCompatActivity
         display.getMetrics(metrics);
 
         int width = metrics.widthPixels;
-        int height = methods.scaleImageKeepAspectRatio(bitmapForImageView,width);
+
 
 
         //create the layouts
@@ -405,13 +401,6 @@ public class AddStickerOnImage extends AppCompatActivity
         //textview
        // addNewImage = findViewById(R.id.addImageView);
 
-
-
-
-
-
-
-//        sourceImageView.setImageBitmap(bitmapForImageView);
 
         Glide.with(getApplicationContext()).load(bitmapForImageView).into(sourceImageView);
         Methods methods = new Methods(getApplicationContext());
@@ -429,7 +418,7 @@ public class AddStickerOnImage extends AppCompatActivity
             progressDialog.dismiss();
         }
 
-        //addNewImage.setImageBitmap(EditorActivity.selectedSticker);
+
         addNewStickerView(EditorActivity.selectedSticker);
 
 
@@ -700,111 +689,56 @@ public class AddStickerOnImage extends AppCompatActivity
     }
     public Bitmap getRealSticker(int position)
     {
-        Bitmap b;
 
         switch (position)
         {
-            case 1 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji1);
-                break;
-            case 2 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji2);
-                break;
-            case 3 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji3);
-                break;
-            case 4 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji4);
-                break;
-            case 5 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji5);
-                break;
-            case 6 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji6);
-                break;
-            case 7 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji7);
-                break;
-            case 8 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji8);
-                break;
-            case 9 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji9);
-                break;
-            case 10 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji10);
-                break;
-            case 11 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji11);
-                break;
-            case 12 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji12);
-                break;
-            case 13 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji13);
-                break;
-            case 14 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji14);
-                break;
-            case 15 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji15);
-                break;
-            case 16 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji16);
-                break;
-            case 17 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji17);
-                break;
-            case 18 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji18);
-                break;
-            case 19 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji19);
-                break;
-            case 20 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji20);
-                break;
-            case 21 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji21);
-                break;
-            case 22 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji22);
-                break;
-            case 23 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji23);
-                break;
-            case 24 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji24);
-                break;
-            case 25 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji25);
-                break;
-            case 26 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji26);
-                break;
-            case 27 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji27);
-                break;
-            case 28 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji28);
-                break;
-            case 29 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji29);
-                break;
-            case 30 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji30);
-                break;
-            case 31 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji31);
-                break;
-            case 32 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji32);
-                break;
-            case 33 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji33);
-                break;
-            case 34 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji34);
-                break;
-            case 35 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji35);
-                break;
-            case 36 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji36);
-                break;
-            case 37 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji37);
-                break;
-            case 38 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji38);
-                break;
-            case 39 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji39);
-                break;
-            case 40 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji40);
-                break;
-            case 41 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji41);
-                break;
-            case 42 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji42);
-                break;
-            case 43 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji43);
-                break;
-            case 44 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji44);
-                break;
-            case 45 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji45);
-                break;
-            default:b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji1);
-                break;
-
+            case 2  : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji2);
+            case 3  : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji3);
+            case 4  : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji4);
+            case 5  : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji5);
+            case 6  : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji6);
+            case 7  : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji7);
+            case 8  : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji8);
+            case 9  : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji9);
+            case 10 : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji10);
+            case 11 : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji11);
+            case 12 : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji12);
+            case 13 : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji13);
+            case 14 : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji14);
+            case 15 : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji15);
+            case 16 : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji16);
+            case 17 : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji17);
+            case 18 : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji18);
+            case 19 : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji19);
+            case 20 : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji20);
+            case 21 : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji21);
+            case 22 : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji22);
+            case 23 : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji23);
+            case 24 : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji24);
+            case 25 : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji25);
+            case 26 : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji26);
+            case 27 : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji27);
+            case 28 : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji28);
+            case 29 : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji29);
+            case 30 : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji30);
+            case 31 : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji31);
+            case 32 : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji32);
+            case 33 : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji33);
+            case 34 : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji34);
+            case 35 : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji35);
+            case 36 : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji36);
+            case 37 : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji37);
+            case 38 : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji38);
+            case 39 : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji39);
+            case 40 : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji40);
+            case 41 : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji41);
+            case 42 : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji42);
+            case 43 : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji43);
+            case 44 : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji44);
+            case 45 : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji45);
+            default : return BitmapFactory.decodeResource(getResources(),R.drawable.emoji1);
 
         }
-
-
-        return b;
-
-
-
 
     }
     private void setStickers(ListViewAdapter adapter)
