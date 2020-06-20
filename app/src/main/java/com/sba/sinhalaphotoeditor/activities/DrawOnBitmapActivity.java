@@ -1,11 +1,14 @@
 package com.sba.sinhalaphotoeditor.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -17,11 +20,13 @@ import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import com.github.chuross.library.ExpandableLayout;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -37,6 +42,11 @@ import com.sba.sinhalaphotoeditor.singleton.ImageList;
 
 import java.util.Timer;
 import java.util.TimerTask;
+
+import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_ENGLISH;
+import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_KEY;
+import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_SINHALA;
+import static com.sba.sinhalaphotoeditor.Config.Constants.SHARED_PREF_NAME;
 
 public class DrawOnBitmapActivity extends AppCompatActivity implements OnTextAttributesChangedListner, OnAsyncTaskState {
 
@@ -59,6 +69,7 @@ public class DrawOnBitmapActivity extends AppCompatActivity implements OnTextAtt
 
     private boolean isZoomIn = true;
     private Timer timer;
+    private ConstraintLayout img_done_container;
 
 
     @Override
@@ -91,6 +102,7 @@ public class DrawOnBitmapActivity extends AppCompatActivity implements OnTextAtt
         img_done = findViewById(R.id.img_done);
         paintView = findViewById(R.id.paintView);
         explandableLayout = findViewById(R.id.explandableLayout);
+        img_done_container = findViewById(R.id.img_done_container);
         paintView.setUserBitmap(DrawOnBitmapActivity.this,ImageList.getInstance().getCurrentBitmap());
 
         explandableLayout.setOnClickListener(new View.OnClickListener() {
@@ -102,17 +114,33 @@ public class DrawOnBitmapActivity extends AppCompatActivity implements OnTextAtt
             }
         });
 
-        img_done.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+//        img_done.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v)
+//            {
+//
+//                img_done_container.setEnabled(false);
+//                img_done.setEnabled(false);
+//                loading.setVisibility(View.VISIBLE);
+//
+//                Bitmap bitmap = paintView.getBitmap();
+//                AddImageToArrayListAsyncTask asyncTask = new AddImageToArrayListAsyncTask(bitmap,DrawOnBitmapActivity.this);
+//                asyncTask.execute();
+//
+//            }
+//        });
 
-                img_done.setEnabled(false);
+        img_done_container.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                img_done_container.setEnabled(false);
+//                img_done.setEnabled(false);
                 loading.setVisibility(View.VISIBLE);
 
                 Bitmap bitmap = paintView.getBitmap();
                 AddImageToArrayListAsyncTask asyncTask = new AddImageToArrayListAsyncTask(bitmap,DrawOnBitmapActivity.this);
                 asyncTask.execute();
-
             }
         });
 
@@ -155,6 +183,8 @@ public class DrawOnBitmapActivity extends AppCompatActivity implements OnTextAtt
 
             }
         }, 0, 500);
+
+
 
 
     }

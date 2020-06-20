@@ -116,7 +116,7 @@ public class TextOnImageActivity extends AppCompatActivity
     private float lastX = 0, lastY = 0;
     private Typeface selectedTypeFace = null;
     private TextViewPlus clickedTextView = null;
-    private ImageView doneImage;
+
 
     private ProgressBar progress_bar;
 
@@ -146,8 +146,6 @@ public class TextOnImageActivity extends AppCompatActivity
 
 
         helper = new DatabaseHelper(TextOnImageActivity.this);
-        doneImage = findViewById(R.id.img_done);
-        ImageView addNewTextViewButton = findViewById(R.id.img_add_text);
         expandableLayout = (ExpandableLayout)findViewById(R.id.explandableLayout);
         expandIcon = findViewById(R.id.expandIcon);
         progress_bar = findViewById(R.id.progress_bar);
@@ -165,10 +163,12 @@ public class TextOnImageActivity extends AppCompatActivity
             }
         });
 
-        doneImage.setOnClickListener(new View.OnClickListener() {
+        final ConstraintLayout img_done_container = findViewById(R.id.img_done_container);
+        img_done_container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
+                img_done_container.setEnabled(false);
                 progress_bar.setVisibility(View.VISIBLE);
                 if(createFinalBitmap())
                 {
@@ -187,7 +187,7 @@ public class TextOnImageActivity extends AppCompatActivity
                             task = new AddImageToArrayListAsyncTask(null,TextOnImageActivity.this);
                         }
                         task.execute();
-                        
+
                     }
                     catch (Exception e)
                     {
@@ -197,19 +197,13 @@ public class TextOnImageActivity extends AppCompatActivity
             }
         });
 
-        addNewTextViewButton.setOnClickListener(new View.OnClickListener() {
+        ConstraintLayout img_add_text_container = findViewById(R.id.img_add_text_container);
+        img_add_text_container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showPopup();
             }
         });
-
-
-
-        if(getSupportActionBar() != null)
-        {
-            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#114f5e")));
-        }
 
 
         scaleGestureDetector = new ScaleGestureDetector(TextOnImageActivity.this,new TextOnImageActivity.simpleOnScaleGestureListener());
