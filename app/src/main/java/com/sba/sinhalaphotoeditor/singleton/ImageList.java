@@ -2,7 +2,7 @@ package com.sba.sinhalaphotoeditor.singleton;
 
 import android.graphics.Bitmap;
 
-import com.glidebitmappool.GlideBitmapPool;
+
 import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.activities.MainActivity;
 
@@ -119,7 +119,6 @@ public class ImageList
                     {
 
                         object.bitmapList.remove(i);
-                        GlideBitmapPool.clearMemory();
                     }
                 }
 

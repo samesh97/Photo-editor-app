@@ -4,6 +4,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -21,16 +22,19 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 
 import com.github.chuross.library.ExpandableLayout;
-import com.glidebitmappool.GlideBitmapPool;
+import com.sba.sinhalaphotoeditor.CallBacks.OnAsyncTaskState;
 import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.Config.RotationGestureDetector;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
+import com.sba.sinhalaphotoeditor.aynctask.AddImageToArrayListAsyncTask;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;
 
 import java.io.File;
@@ -43,15 +47,14 @@ import java.util.Locale;
 import render.animations.Bounce;
 import render.animations.Render;
 
-public class PhotoOnPhotoActivity extends AppCompatActivity implements RotationGestureDetector.OnRotationGestureListener
+public class PhotoOnPhotoActivity extends AppCompatActivity implements RotationGestureDetector.OnRotationGestureListener, OnAsyncTaskState
 {
 
 
     public static String IMAGE_OUT_URI = "imageOutURI";
-    public static String IMAGE_OUT_ERROR = "imageOutError";
+
 
     public static Uri IMAGE_ON_IMAGE_URI;
-
     public static int IMAGE_ON_IMAGE_RESULT_OK_CODE = 110;
     public static int IMAGE_ON_IMAGE_RESULT_FAILED_CODE = -100;
     public static int IMAGE_ON_IMAGE_REQUEST_CODE = 100;
@@ -60,21 +63,22 @@ public class PhotoOnPhotoActivity extends AppCompatActivity implements RotationG
 
     private Uri imageOutUri;
     private String saveDir="/tmp/";
-    ImageView addNewImage;
+    private ImageView addNewImage;
     private String errorAny = "";
     private ImageView sourceImageView;
     private ConstraintLayout workingLayout,baseLayout;
     private ScaleGestureDetector scaleGestureDetector;
-    private ProgressDialog progressDialog;
     private RotationGestureDetector mRotationGestureDetector;
     private float scaleFactor;
 
-    DatabaseHelper helper = new DatabaseHelper(PhotoOnPhotoActivity.this);
+    private DatabaseHelper helper = new DatabaseHelper(PhotoOnPhotoActivity.this);
 
     private ExpandableLayout expandableLayout;
     private ImageView expandIcon;
     private SeekBar opacitySeekBar;
     private float opacityLevel = 1f;
+
+    private Dialog dialog;
 
 
     private Methods methods;
@@ -82,19 +86,11 @@ public class PhotoOnPhotoActivity extends AppCompatActivity implements RotationG
     @Override
     protected void onPause() {
         super.onPause();
-        if(progressDialog != null)
-        {
-            progressDialog.dismiss();
-        }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if(progressDialog != null)
-        {
-            progressDialog.dismiss();
-        }
     }
 
 
@@ -134,7 +130,6 @@ public class PhotoOnPhotoActivity extends AppCompatActivity implements RotationG
         //setup the scale detection and rotation detection for the textview
         scaleGestureDetector = new ScaleGestureDetector(PhotoOnPhotoActivity.this,new simpleOnScaleGestureListener());
         mRotationGestureDetector = new RotationGestureDetector(PhotoOnPhotoActivity.this);
-        progressDialog = new ProgressDialog(PhotoOnPhotoActivity.this);
         extractBundle();
         uiSetup();
 
@@ -170,7 +165,6 @@ public class PhotoOnPhotoActivity extends AppCompatActivity implements RotationG
                 if(expandableLayout.isExpanded())
                 {
                     expandableLayout.collapse();
-                    //expandIcon.setImageResource(R.drawable.slide_up_image);
                     expandIcon.setBackground(getResources().getDrawable(R.drawable.top_rounded_background));
                     expandableLayout.setBackgroundColor(Color.TRANSPARENT);
                 }
@@ -178,9 +172,7 @@ public class PhotoOnPhotoActivity extends AppCompatActivity implements RotationG
                 {
                     expandIcon.setBackgroundColor(Color.TRANSPARENT);
                     expandableLayout.setBackground(getResources().getDrawable(R.drawable.white_opacity_background));
-                    expandableLayout.expand();// expand with animation
-                    //expandIcon.setImageResource(R.drawable.slide_down_image);
-
+                    expandableLayout.expand();
                 }
 
 
@@ -197,6 +189,33 @@ public class PhotoOnPhotoActivity extends AppCompatActivity implements RotationG
         float angle = rotationDetector.getAngle();
         addNewImage.setRotation(angle);
     }
+
+    @Override
+    public void startActivityForResult()
+    {
+        hideProgressDialog();
+        AsyncTask.execute(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                //get Date and time
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd \nHH:mm:ss", Locale.getDefault());
+                String currentDateandTime = sdf.format(new Date());
+
+                String path = Methods.saveToInternalStorage(getApplicationContext(),ImageList.getInstance().getCurrentBitmap(),currentDateandTime);
+                helper.AddImage(null,path);
+                ImageList.getInstance().deleteUndoRedoImages();
+
+            }
+        });
+
+        Intent intent = new Intent();
+        intent.putExtra(IMAGE_OUT_URI,imageOutUri.toString());
+        setResult(IMAGE_ON_IMAGE_RESULT_OK_CODE,intent);
+        finish();
+    }
+
     public class simpleOnScaleGestureListener extends ScaleGestureDetector.SimpleOnScaleGestureListener{
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
@@ -208,14 +227,6 @@ public class PhotoOnPhotoActivity extends AppCompatActivity implements RotationG
             scaleFactor = ((float)((int)(scaleFactor * 100))) / 100; // Change precision to help with jitter when user just rests their fingers //
             addNewImage.setScaleX(scaleFactor);
             addNewImage.setScaleY(scaleFactor);
-
-            /*
-            float size = addNewImage.getWidth();
-            float factor = detector.getScaleFactor();
-            float product = size*factor;
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams((int)product,(int)product);
-            addNewImage.setLayoutParams(layoutParams);
-            return true;*/
 
             return true;
         }
@@ -231,6 +242,7 @@ public class PhotoOnPhotoActivity extends AppCompatActivity implements RotationG
     }
 
     private void extractBundle()
+
     {   //extract the data from previous activity
         Bundle bundle = getIntent().getExtras();
         // imageInUri = Uri.parse(bundle.getString(IMAGE_IN_URI));
@@ -246,9 +258,7 @@ public class PhotoOnPhotoActivity extends AppCompatActivity implements RotationG
     {
         //show progress dialog
 
-        progressDialog.setCancelable(false);
-        progressDialog.setMessage("Loading...");
-        progressDialog.show();
+       showProgressDialog();
 
         //setup action bar
         ActionBar actionBar = getSupportActionBar();
@@ -293,10 +303,7 @@ public class PhotoOnPhotoActivity extends AppCompatActivity implements RotationG
         render.start();
 
         workingLayout.setDrawingCacheEnabled(true);
-        if(progressDialog.isShowing())
-        {
-            progressDialog.dismiss();
-        }
+        hideProgressDialog();
 
         addNewImage.setImageURI(IMAGE_ON_IMAGE_URI);
         //addTextView.setTextSize(textFontSize);
@@ -349,8 +356,37 @@ public class PhotoOnPhotoActivity extends AppCompatActivity implements RotationG
         }
         else if(item.getItemId() == R.id.setImage)
         {
+            showProgressDialog();
+            boolean doneSetting = setTextFinal();
+            if(doneSetting)
+            {
+                try
+                {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageOutUri);
+                    bitmap = methods.CropBitmapTransparency(bitmap);
+                    AddImageToArrayListAsyncTask task = new AddImageToArrayListAsyncTask(bitmap,this);
+                    task.execute();
+                }
+                catch (Exception e)
+                {
+                    hideProgressDialog();
+                    e.printStackTrace();
+                    Intent intent = new Intent();
+                    intent.putExtra(IMAGE_OUT_URI,imageOutUri.toString());
+                    setResult(IMAGE_ON_IMAGE_RESULT_OK_CODE,intent);
+                    finish();
 
-            new RunInBackground().execute();
+                }
+
+            }
+            else
+            {
+                hideProgressDialog();
+                Intent intent = new Intent();
+                intent.putExtra(IMAGE_OUT_URI,imageOutUri.toString());
+                setResult(IMAGE_ON_IMAGE_RESULT_OK_CODE,intent);
+                finish();
+            }
             return  true;
         }
         else
@@ -396,94 +432,29 @@ public class PhotoOnPhotoActivity extends AppCompatActivity implements RotationG
         imageOutUri = Uri.fromFile(imageFile);
         return result;
     }
-    public class RunInBackground extends AsyncTask<Void,Void,Void>
+    public void showProgressDialog()
     {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            progressDialog.setMessage("Loading..");
-            progressDialog.show();
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            progressDialog.dismiss();
-
-            AsyncTask.execute(new Runnable()
-            {@Override
-            public void run()
-            {
-                //get Date and time
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd \nHH:mm:ss", Locale.getDefault());
-                String currentDateandTime = sdf.format(new Date());
-
-                String path = Methods.saveToInternalStorage(getApplicationContext(),ImageList.getInstance().getCurrentBitmap(),currentDateandTime);
-                helper.AddImage(null,path);
-                ImageList.getInstance().deleteUndoRedoImages();
-
-                GlideBitmapPool.clearMemory();
-            }
-            });
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids)
+        if(dialog == null)
         {
+            dialog = new Dialog(PhotoOnPhotoActivity.this,R.style.CustomBottomSheetDialogTheme);
+        }
+        View view = getLayoutInflater().inflate(R.layout.progress_dialog,null);
+        ProgressBar bar = view.findViewById(R.id.progressBar);
+        bar.setVisibility(View.VISIBLE);
 
-
-            //set the text
-            boolean doneSetting = setTextFinal();
-            if(doneSetting)
-            {
-                Intent intent = new Intent();
-                intent.putExtra(IMAGE_OUT_URI,imageOutUri.toString());
-                try {
-                    Bitmap  bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageOutUri);
-
-                    bitmap = methods.CropBitmapTransparency(bitmap);
-                    ImageList.getInstance().addBitmap(bitmap,true);
-                    if(EditorActivity.isNeededToDelete)
-                    {
-                        try
-                        {
-                            ImageList.getInstance().removeBitmap(ImageList.getInstance().getCurrentPosition() + 1,false);
-                        }
-                        catch (Exception e)
-                        {
-
-                        }
-                    }
-
-                    // MainActivity.CurrentWorkingFilePath = imageOutUri;
-                    // MainActivity.filePaths.add(imageOutUri);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                setResult(IMAGE_ON_IMAGE_RESULT_OK_CODE,intent);
-                /*
-                if(progressDialog.isShowing())
-                {
-                    progressDialog.dismiss();
-                }*/
-                finish();
-
-            }else
-            {
-                Intent intent = new Intent();
-                intent.putExtra(IMAGE_OUT_ERROR,errorAny);
-                setResult(IMAGE_ON_IMAGE_RESULT_FAILED_CODE,intent);
-                /*
-                if(progressDialog.isShowing())
-                {
-                    progressDialog.dismiss();
-                }*/
-                finish();
-
-            }
-            return null;
+        dialog.setContentView(view,new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        dialog.show();
+    }
+    public void hideProgressDialog()
+    {
+        if(dialog != null)
+        {
+            View view = getLayoutInflater().inflate(R.layout.progress_dialog,null);
+            ProgressBar bar = view.findViewById(R.id.progressBar);
+            bar.setVisibility(View.GONE);
+            dialog.setContentView(view,new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            dialog.hide();
         }
     }
+
 }

@@ -2,7 +2,6 @@ package com.sba.sinhalaphotoeditor.activities;
 
 import android.Manifest;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,9 +12,8 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.AnimatedVectorDrawable;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -26,24 +24,26 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -58,19 +58,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.sba.sinhalaphotoeditor.BuildConfig;
+import com.sba.sinhalaphotoeditor.CallBacks.OnAsyncTaskState;
 import com.sba.sinhalaphotoeditor.Config.Constants;
 import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
-import com.sba.sinhalaphotoeditor.adapters.PreviuoslyEditedImageAdapter;
+import com.sba.sinhalaphotoeditor.adapters.RecentImageAdapter;
+import com.sba.sinhalaphotoeditor.aynctask.AddImageToArrayListAsyncTask;
 import com.sba.sinhalaphotoeditor.model.AppData;
 import com.sba.sinhalaphotoeditor.model.SihalaUser;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;
 
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -86,12 +85,11 @@ import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_KEY;
 import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_POSITION_KEY;
 import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_SINHALA;
 import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_TAMIL;
-import static com.sba.sinhalaphotoeditor.Config.Constants.NUMBER_OF_IMAGES_WAS_ADDED;
 import static com.sba.sinhalaphotoeditor.Config.Constants.SHARED_PREF_NAME;
 import static com.sba.sinhalaphotoeditor.activities.MyCustomGallery.IMAGE_PICK_RESULT_CODE;
 import static com.sba.sinhalaphotoeditor.activities.MyCustomGallery.selectedBitmap;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, OnAsyncTaskState {
 
 
     private static final int PICK_IMAGE_REQUEST = 234;
@@ -101,29 +99,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static boolean isFirstTime = true;
 
 
-    private ProgressDialog dialog;
+    private Dialog dialog;
     private Spinner languagePicker;
     private Methods methods;
 
 
-    private ImageView animation;
-    private AnimatedVectorDrawable animations;
     private FirebaseDatabase database;
     private DatabaseReference reference;
 
-    private ImageView createBitmap;
+
     private ConstraintLayout createImageFromLibrary;
-    private ConstraintLayout pickImageFromDb;
     private ConstraintLayout pickImageFromGallery;
-    private ImageView imageView;
-    private ImageView roundImage;
-    private TextView selectPictureText;
-    private TextView verionName;
-    private ImageView topGreenPannel;
-    private TextView useOne;
-    private TextView createOne;
-    private TextView fromGalery;
-    private ImageView usePreviousBitmap;
+    private TextView versionName;
 
 
 
@@ -132,9 +119,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
 
-    //previosly edited images
-
-    PreviuoslyEditedImageAdapter adapter;
+    //previously edited images
+    RecentImageAdapter adapter;
     RecyclerView recentImageRecyclerview;
     ArrayList<Bitmap> images = new ArrayList<>();
     ArrayList<Integer> ids = new ArrayList<>();
@@ -171,7 +157,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == IMAGE_PICK_RESULT_CODE && selectedBitmap != null)
         {
-            new startActivity().execute();
+            showProgressDialog();
+            imageList.clearImageList();
+            bitmap = selectedBitmap.copy(selectedBitmap.getConfig(), true);
+            selectedBitmap = null;
+            bitmap = methods.getResizedBitmap(bitmap, 1500);
+            AddImageToArrayListAsyncTask task = new AddImageToArrayListAsyncTask(bitmap,this);
+            task.execute();
         }
     }
 
@@ -184,27 +176,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         helper.deleteUnnessaryImages();
 
         imageList = ImageList.getInstance();
-        dialog = new ProgressDialog(MainActivity.this);
-//        initViews();
         initProfilePicture();
         methods = new Methods(getApplicationContext());
 
-//        setTextViewFontAndSize();
         setAppLanguage();
 
-
-
-        recentImageRecyclerview = (RecyclerView) findViewById(R.id.ImageList);
+        recentImageRecyclerview = findViewById(R.id.ImageList);
         LinearLayoutManager manager = new LinearLayoutManager(this);
         manager.setOrientation(RecyclerView.HORIZONTAL);
         recentImageRecyclerview.setLayoutManager(manager);
-        adapter = new PreviuoslyEditedImageAdapter(this,images,ids,dates);
+        adapter = new RecentImageAdapter(this,images,ids,dates);
         recentImageRecyclerview.setAdapter(adapter);
 
 
-        createImageFromLibrary = (ConstraintLayout) findViewById(R.id.createImageFromLibrary);
+        createImageFromLibrary =  findViewById(R.id.createImageFromLibrary);
         createImageFromLibrary.setOnClickListener(this);
-        pickImageFromGallery = (ConstraintLayout) findViewById(R.id.pickImageFromGallery);
+        pickImageFromGallery =  findViewById(R.id.pickImageFromGallery);
+        versionName = findViewById(R.id.versionName);
+
+        String version = BuildConfig.VERSION_NAME;
+        versionName.setText("Version " + version);
 
 
 
@@ -225,7 +216,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 createImageFromLibrary.setVisibility(View.VISIBLE);
                 TranslateAnimation animation = new TranslateAnimation(1000,0,0, 0);
-                animation.setDuration(300); // duartion in ms
+                animation.setDuration(300);
                 animation.setFillAfter(true);
                 createImageFromLibrary.startAnimation(animation);
 
@@ -242,6 +233,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         getRecentImages();
         configPushNotification();
         checkForTheCurrentVersion();
+        //configLanguagePicker();
+
+        changeTypeFace();
 
 
 
@@ -249,10 +243,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void getRecentImages()
     {
 
+        ImageView empty_list_image = findViewById(R.id.empty_list_image);
+        TextView recentTextView = findViewById(R.id.textView13);
 
-        try {
+        try
+        {
             Cursor cursor = helper.GetAllImages();
-            //cursor.moveToFirst();
             while(cursor.moveToNext())
             {
                 ids.add(cursor.getInt(0));
@@ -266,18 +262,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //free up memory
                 Methods.freeUpMemory();
 
+                empty_list_image.setVisibility(View.GONE);
+                recentTextView.setVisibility(View.VISIBLE);
+
 
             }
             if(cursor.getCount() == 0)
             {
-                //if there is no recent images avaiable
-                Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.emoji18);
-                images.add(bitmap);
-                bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.emoji44);
-                images.add(bitmap);
-                bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.emoji21);
-                images.add(bitmap);
-                adapter.notifyDataSetChanged();
+                //if there is no recent images available
+                empty_list_image.setVisibility(View.VISIBLE);
+                recentTextView.setVisibility(View.GONE);
             }
 
 
@@ -286,19 +280,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         catch (Exception e)
         {
             Methods.showCustomToast(MainActivity.this,getResources().getString(R.string.we_will_fix_it_soon_text));
-            Log.d("Erroe",e.getMessage());
-
         }
     }
-
-
-    public static InputStream bitmapToInputStream(Bitmap bitmap) {
-        int size = bitmap.getHeight() * bitmap.getRowBytes();
-        ByteBuffer buffer = ByteBuffer.allocate(size);
-        bitmap.copyPixelsToBuffer(buffer);
-        return new ByteArrayInputStream(buffer.array());
-    }
-
     private void initProfilePicture()
     {
         CircleImageView profilePic = findViewById(R.id.profilePic);
@@ -322,113 +305,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-//    private void initViews()
-//    {
-//        createBitmap = (ImageView) findViewById(R.id.createBitmap);
-//        createImageFromLibrary = (ConstraintLayout) findViewById(R.id.createImageFromLibrary);
-//        pickImageFromDb = (ConstraintLayout) findViewById(R.id.pickImageFromDb);
-//        pickImageFromGallery = (ConstraintLayout) findViewById(R.id.pickImageFromGallery);
-//        imageView = (ImageView) findViewById(R.id.imageView);
-//        roundImage = (ImageView) findViewById(R.id.roundImage);
-//        selectPictureText = findViewById(R.id.selectPictureText);
-//        languagePicker = findViewById(R.id.languagePicker);
-//        verionName = findViewById(R.id.verionName);
-//        topGreenPannel = findViewById(R.id.topGreenPannel);
-//        createOne = (TextView) findViewById(R.id.createOne);
-//        useOne = (TextView) findViewById(R.id.useOne);
-//        fromGalery = (TextView) findViewById(R.id.fromGalery);
-//        usePreviousBitmap = (ImageView) findViewById(R.id.usePreviousBitmap);
-//
-//
-//
-//        imageList = ImageList.getInstance();
-//
-//
-//        dialog = new ProgressDialog(MainActivity.this);
-//
-//
-//        Glide.with(getApplicationContext()).load(R.drawable.samplewalpaper).into(topGreenPannel);
-//        verionName.setText("Version " + BuildConfig.VERSION_NAME);
-////        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#018577")));
-//
-//
-//        Runtime rt = Runtime.getRuntime();
-//        int maxMemory = (int)rt.freeMemory();
-//        GlideBitmapPool.initialize(maxMemory);
-//        GlideBitmapPool.clearMemory();
-//
-//
-//        //pickImageFromGallery.animate().alpha(0.0f).setDuration(0).translationY(2000);
-//
-//
-//        Animation top = AnimationUtils.loadAnimation(MainActivity.this, R.anim.bottomtotop);
-//        Animation bottom = AnimationUtils.loadAnimation(MainActivity.this, R.anim.toptobottom);
-//        pickImageFromGallery.startAnimation(top);
-//        createImageFromLibrary.startAnimation(top);
-//        pickImageFromDb.startAnimation(top);
-//        roundImage.startAnimation(bottom);
-//        //languagePicker.startAnimation(bottom);
-//        selectPictureText.startAnimation(bottom);
-//
-//
-//
-//
-//
-//
-//
-//
-//        Animation pulse = AnimationUtils.loadAnimation(this, R.anim.pulse);
-//        imageView.startAnimation(pulse);
-//
-//
-//        useOne.setOnClickListener(this);
-//        pickImageFromDb.setOnClickListener(this);
-//        createImageFromLibrary.setOnClickListener(this);
-//        createOne.setOnClickListener(this);
-//        createBitmap.setOnClickListener(this);
-//        usePreviousBitmap.setOnClickListener(this);
-//
-//
-//        createBitmap.startAnimation(pulse);
-//        usePreviousBitmap.startAnimation(pulse);
-//
-//
-//
-//        configLanguagePicker();
-//
-//
-//
-//
-//
-//
-//        database = FirebaseDatabase.getInstance();
-//        reference = database.getReference().child(FIREBASE_APP_INFO_REFERENCE);
-//
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run()
-//            {
-//                checkForTheCurrentVersion();
-//            }
-//        },1500);
-//
-//
-//
-//
-//        configPushNotification();
-//
-//
-//
-//
-//    }
-
     private void configPushNotification()
     {
         Intent intent = getIntent();
         if(intent != null && intent.hasExtra(FIREBASE_PAYLOAD_TITLE_TEXT) && intent.hasExtra(FIREBASE_PAYLOAD_MESSAGE_TEXT))
         {
 
-            Log.d("intentResult","MainActivitynotNUll");
             if(intent.getExtras() != null)
             {
 
@@ -596,17 +478,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             dialog.getWindow().setLayout(finalWidth,RelativeLayout.LayoutParams.WRAP_CONTENT);
         }
 
-
-
-
         View view = getLayoutInflater().inflate(R.layout.exit_dialog_layout,null);
-
         dialog.setContentView(view);
 
-        WindowManager wm = (WindowManager) getApplication().getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        DisplayMetrics metrics = new DisplayMetrics();
-        display.getMetrics(metrics);
 
         ImageView imageView6 = view.findViewById(R.id.imageView6);
         imageView6.setImageDrawable(getDrawable(R.drawable.exit_editing_cartoon));
@@ -628,6 +502,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         yes.setText(getResources().getText(R.string.exit_app_yes_text));
         no.setText(getResources().getText(R.string.exit_app_no_text));
+
+
+        SharedPreferences pref = getApplicationContext().getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        String language = pref.getString(LANGUAGE_KEY,LANGUAGE_SINHALA);
+        Typeface typeface = null;
+
+        if(language.equals(LANGUAGE_ENGLISH))
+        {
+            //english
+            typeface = ResourcesCompat.getFont(getApplicationContext(),R.font.englishfont);
+        }
+        else
+        {
+            //sinhala
+            typeface = ResourcesCompat.getFont(getApplicationContext(),R.font.bindumathi);
+        }
+
+        message.setTypeface(typeface);
+        title.setTypeface(typeface);
+        yes.setTypeface(typeface);
+        no.setTypeface(typeface);
+
         yes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
@@ -699,125 +595,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
 
     }
-//    public void setTextViewFontAndSize()
-//    {
-//
-//        TextView selectPictureText = findViewById(R.id.selectPictureText);
-//        TextView fromGalery = findViewById(R.id.fromGalery);
-//        TextView createOne = findViewById(R.id.createOne);
-//        TextView useOne = findViewById(R.id.useOne);
-//
-//        Typeface typeface;
-//
-//        SharedPreferences pref = getApplicationContext().getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
-//        int pos = pref.getInt(LANGUAGE_POSITION_KEY,-99);
-//        if(pos != 99)
-//        {
-//            switch (pos)
-//            {
-//                case 1 :
-//
-//
-//                    typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.gemunulibresemibold);
-//                    selectPictureText.setTypeface(typeface);
-//                    fromGalery.setTypeface(typeface);
-//                    createOne.setTypeface(typeface);
-//                    useOne.setTypeface(typeface);
-//                    break;
-//                case 2 :
-//
-//                    typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.englishfont);
-//                    selectPictureText.setTypeface(typeface);
-//
-//
-//                    fromGalery.setTypeface(typeface);
-//
-//
-//                    createOne.setTypeface(typeface);
-//
-//
-//
-//
-//                    useOne.setTypeface(typeface);
-//
-//
-//                    break;
-//                case 3:
-//
-//
-//                    typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.tamilfont);
-//
-//
-//                    selectPictureText.setTypeface(typeface);
-//                    selectPictureText.setTextSize(20);
-//
-//                    fromGalery.setTypeface(typeface);
-//                    fromGalery.setTextSize(14);
-//
-//                    createOne.setTypeface(typeface);
-//                    createOne.setTextSize(14);
-//
-//                    useOne.setTypeface(typeface);
-//                    useOne.setTextSize(14);
-//                    break;
-//            }
-//        }
-//    }
+
 
     @Override
     public void onClick(View v)
     {
-        if(v == useOne || v == usePreviousBitmap)
-        {
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            {
-
-                if(!isPermissonGranted())
-                {
-                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-                }
-                if(!isPermissonGranted2())
-                {
-                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
-                }
-                if(isPermissonGranted() && isPermissonGranted2())
-                {
-                    startActivity(new Intent(MainActivity.this, UsePreviouslyEditedImageActivity.class));
-                    overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
-                }
-            }
-            else
-            {
-                startActivity(new Intent(MainActivity.this,UsePreviouslyEditedImageActivity.class));
-                overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
-            }
-        }
-        else if(v == pickImageFromDb)
-        {
-                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                    {
-
-                        if(!isPermissonGranted())
-                        {
-                            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-                        }
-                        if(!isPermissonGranted2())
-                        {
-                            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
-                        }
-                        if(isPermissonGranted() && isPermissonGranted2())
-                        {
-                            startActivity(new Intent(MainActivity.this,UsePreviouslyEditedImageActivity.class));
-                        }
-                    }
-                    else
-                    {
-                        startActivity(new Intent(MainActivity.this,UsePreviouslyEditedImageActivity.class));
-                        overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
-                    }
-
-        }
-        else if(v == createImageFromLibrary || v == createOne || v == createBitmap)
+        if(v == createImageFromLibrary)
         {
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
             {
@@ -845,97 +628,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
     }
-    public class startActivity extends AsyncTask<Void,Void,Void> {
 
-        @Override
-        protected void onPreExecute()
-        {
-            super.onPreExecute();
-            configDialog();
-
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid)
-        {
-            super.onPostExecute(aVoid);
-            checkAnimationOverTime();
-
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids)
-        {
-            imageList.clearImageList();
-
-            bitmap = selectedBitmap.copy(selectedBitmap.getConfig(), true);
-            selectedBitmap = null;
-
-            bitmap = methods.getResizedBitmap(bitmap, 1500);
-            return null;
-
-        }
-
-
-    }
-    public void checkAnimationOverTime()
+    @Override
+    public void startActivityForResult()
     {
-        if(animations.isRunning())
-        {
-            animations.invalidateSelf();
-            animations.stop();
-        }
-
-        Drawable drawable = getResources().getDrawable(R.drawable.finish_loading);
-        animation.setImageDrawable(drawable);
-
-        Drawable d = animation.getDrawable();
-        if (d instanceof AnimatedVectorDrawable) {
-
-            animations = (AnimatedVectorDrawable) d;
-            animations.start();
-
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run()
-                {
-                    imageList.addBitmapToThisPosition(bitmap,0,false);
-                    startActivity(new Intent(getApplicationContext(), EditorActivity.class));
-                    overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
-                    dialog.dismiss();
-                }
-            },2500);
-        }
-
-
-
-
-    }
-    public void configDialog()
-    {
-        dialog.show();
-        dialog.setCancelable(false);
-
-        if(dialog.getWindow() != null)
-        {
-            WindowManager.LayoutParams lp = dialog.getWindow().getAttributes();
-            lp.dimAmount = 0.6f; // Dim level. 0.0 - no dim, 1.0 - completely opaque
-            dialog.getWindow().setAttributes(lp);
-
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            View view = getLayoutInflater().inflate(R.layout.custom_progress_dialog, null);
-            dialog.setContentView(view);
-
-            animation = view.findViewById(R.id.animation);
-
-            Drawable d = animation.getDrawable();
-            if (d instanceof AnimatedVectorDrawable) {
-
-                animations = (AnimatedVectorDrawable) d;
-                animations.start();
-            }
-        }
-
+        hideProgressDialog();
+        startActivity(new Intent(getApplicationContext(), EditorActivity.class));
+        overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
     }
     public void checkForTheCurrentVersion()
     {
@@ -1115,6 +814,59 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     {
         startActivity(new Intent(getApplicationContext(),EditorActivity.class));
         overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
+    }
+    public void showProgressDialog()
+    {
+        if(dialog == null)
+        {
+            dialog = new Dialog(MainActivity.this,R.style.CustomBottomSheetDialogTheme);
+        }
+        View view = getLayoutInflater().inflate(R.layout.progress_dialog,null);
+        ProgressBar bar = view.findViewById(R.id.progressBar);
+        bar.setVisibility(View.VISIBLE);
+
+//        Glide.with(getApplicationContext()).asGif().load(R.drawable.loading_gif).into(bar);
+
+        dialog.setContentView(view,new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        dialog.show();
+    }
+    public void hideProgressDialog()
+    {
+        if(dialog != null)
+        {
+            View view = getLayoutInflater().inflate(R.layout.progress_dialog,null);
+            ProgressBar bar = view.findViewById(R.id.progressBar);
+            bar.setVisibility(View.GONE);
+            dialog.setContentView(view,new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            dialog.hide();
+        }
+    }
+    private void changeTypeFace()
+    {
+        SharedPreferences pref = getApplicationContext().getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        String language = pref.getString(LANGUAGE_KEY,LANGUAGE_SINHALA);
+        Typeface typeface = null;
+
+        if(language.equals(LANGUAGE_ENGLISH))
+        {
+            //english
+            typeface = ResourcesCompat.getFont(getApplicationContext(),R.font.englishfont);
+        }
+        else
+        {
+            //sinhala
+            typeface = ResourcesCompat.getFont(getApplicationContext(),R.font.bindumathi);
+        }
+
+        TextView textView13 = findViewById(R.id.textView13);
+        TextView fromGalery = findViewById(R.id.fromGalery);
+        TextView createOne = findViewById(R.id.createOne);
+        textView13.setTypeface(typeface);
+        fromGalery.setTypeface(typeface);
+        createOne.setTypeface(typeface);
+
+
+
     }
 
 }

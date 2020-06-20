@@ -3,9 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@color/material_dark_blue"
     android:layout_height="match_parent"
-    tools:context=".activities.WalkThroughActivity">
+    android:background="@android:color/white">
 
 
     <androidx.viewpager.widget.ViewPager
@@ -28,13 +27,13 @@
         android:layout_marginTop="@dimen/activity_walk_through_margin_8"
         android:layout_marginEnd="@dimen/activity_walk_through_margin_16"
         android:layout_marginBottom="@dimen/activity_walk_through_margin_8"
-        android:background="@drawable/borderred"
+        android:background="@drawable/round_bg_ash"
+        android:fontFamily="@font/bindumathi"
         android:paddingTop="10dp"
         android:textColor="@color/material_dark_blue"
         android:textStyle="bold"
         android:typeface="sans"
         android:textSize="17sp"
-        android:fontFamily="@font/gemunulibrebold"
         android:paddingBottom="10dp"
         android:text="@string/next_text"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -49,13 +48,13 @@
         android:layout_marginStart="@dimen/activity_walk_through_margin_16"
         android:layout_marginTop="@dimen/activity_walk_through_margin_8"
         android:layout_marginBottom="8dp"
-        android:background="@drawable/borderred"
+        android:background="@drawable/round_bg_ash"
+        android:fontFamily="@font/bindumathi"
         android:paddingTop="10dp"
         android:textColor="@color/material_dark_blue"
         android:textStyle="bold"
         android:typeface="sans"
         android:textSize="17sp"
-        android:fontFamily="@font/gemunulibrebold"
         android:paddingBottom="10dp"
         android:text="@string/back_text"
         app:layout_constraintBottom_toBottomOf="parent"

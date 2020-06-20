@@ -16,16 +16,17 @@ import android.widget.ImageView;
 
 
 import com.bumptech.glide.Glide;
-import com.glidebitmappool.GlideBitmapPool;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+import com.sba.sinhalaphotoeditor.CallBacks.OnAsyncTaskState;
 import com.sba.sinhalaphotoeditor.Config.BlurUtils;
 import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
+import com.sba.sinhalaphotoeditor.aynctask.AddImageToArrayListAsyncTask;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;
 import com.warkiz.tickseekbar.OnSeekChangeListener;
 import com.warkiz.tickseekbar.SeekParams;
@@ -38,7 +39,7 @@ import java.util.Locale;
 
 import render.animations.*;
 
-public class AdjustImage extends AppCompatActivity {
+public class AdjustImage extends AppCompatActivity implements OnAsyncTaskState {
 
     private ImageView adjustImage;
     private float blurValue = 0.0f;
@@ -115,7 +116,19 @@ public class AdjustImage extends AppCompatActivity {
             }
             else
             {
-                new RunInBackground().execute();
+                if(saturationValue > 0 || blurValue > 0 || brightnessValue > 0)
+                {
+                    dialog.setMessage("Loading..");
+                    dialog.setCancelable(false);
+                    dialog.show();
+                    AddImageToArrayListAsyncTask task = new AddImageToArrayListAsyncTask(currentEditingImage,this);
+                    task.execute();
+                }
+                else
+                {
+                    startActivityForResult();
+                }
+
             }
 
         }
@@ -232,28 +245,14 @@ public class AdjustImage extends AppCompatActivity {
         Glide.with(getApplicationContext()).load(currentEditingImage).into(adjustImage);
     }
 
-    public class RunInBackground extends AsyncTask<Void,Void,Void>
+    @Override
+    public void startActivityForResult()
     {
-        Bitmap bitmap;
+        dialog.hide();
+        dialog.cancel();
 
-
-        @Override
-        protected void onPreExecute()
+        if(saturationValue > 0 || blurValue > 0 || brightnessValue > 0)
         {
-            super.onPreExecute();
-
-            dialog.setMessage("Loading..");
-            dialog.setCancelable(false);
-            dialog.show();
-
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-            //dialog.dismiss();
-
             AsyncTask.execute(new Runnable()
             {
                 @Override
@@ -266,96 +265,15 @@ public class AdjustImage extends AppCompatActivity {
                     String path = Methods.saveToInternalStorage(getApplicationContext(),ImageList.getInstance().getCurrentBitmap(),currentDateandTime);
 
                     if(helper.AddImage(null,path))
-                    {
-                        bitmap = null;
-                    }
-                    ImageList.getInstance().deleteUndoRedoImages();
-
-                    GlideBitmapPool.clearMemory();
-
+                        ImageList.getInstance().deleteUndoRedoImages();
 
 
                 }
             });
-
-
-
         }
 
-        @Override
-        protected Void doInBackground(Void... voids)
-        {
-            if(saturationValue > 0 || blurValue > 0 || brightnessValue > 0)
-            {
-                ImageList.getInstance().addBitmap(currentEditingImage,true);
-                if (EditorActivity.isNeededToDelete) {
-                    try {
-                        ImageList.getInstance().removeBitmap(ImageList.getInstance().getCurrentPosition() + 1,false);
-                    } catch (Exception e) {
-
-                    }
-                }
-            }
-
-
-//
-//            if(blurValue > 0 && saturationValue > 0)
-//            {
-//                bitmap = new BlurUtils().blur(AdjustImage.this,filterAddingBitmap, blurValue);
-//                bitmap = methods.addSaturation(bitmap,contrastValue);
-//                ImageList.getInstance().addBitmap(bitmap,true);
-//                if (EditorActivity.isNeededToDelete) {
-//                    try {
-//                       ImageList.getInstance().removeBitmap(ImageList.getInstance().getCurrentPosition() + 1,false);
-//                    } catch (Exception e) {
-//
-//                    }
-//                }
-//
-//                //MainActivity.CurrentWorkingFilePath = getImageUri(AdjustImage.this, filterAddingBitmap);
-//               // MainActivity.filePaths.add(getImageUri(AdjustImage.this, filterAddingBitmap));
-//            }
-//            else if(blurValue > 0)
-//            {
-//                bitmap = new BlurUtils().blur(AdjustImage.this,filterAddingBitmap, blurValue);
-//                //bitmap = changeBitmapContrastBrightness(bitmap,contrastValue,0);
-//                ImageList.getInstance().addBitmap(bitmap,true);
-//                if (EditorActivity.isNeededToDelete) {
-//                    try {
-//                        ImageList.getInstance().removeBitmap(ImageList.getInstance().getCurrentPosition() + 1,false);
-//                    } catch (Exception e) {
-//
-//                    }
-//                }
-//
-//                //MainActivity.CurrentWorkingFilePath = getImageUri(AdjustImage.this, filterAddingBitmap);
-//                //MainActivity.filePaths.add(getImageUri(AdjustImage.this, filterAddingBitmap));
-//            }
-//            else if(contrastValue > 0)
-//            {
-//                //Bitmap bitmap = new BlurUtils().blur(AdjustImage.this,filterAddingBitmap, blurValue);
-//                bitmap = methods.addSaturation(filterAddingBitmap,contrastValue);
-//                ImageList.getInstance().addBitmap(bitmap,true);
-//                if (EditorActivity.isNeededToDelete) {
-//                    try {
-//                        ImageList.getInstance().removeBitmap(ImageList.getInstance().getCurrentPosition() + 1,false);
-//                    } catch (Exception e)
-//                    {
-//                        Log.d("Error",e.getMessage());
-//                    }
-//                }
-//
-//               // MainActivity.CurrentWorkingFilePath = getImageUri(AdjustImage.this, filterAddingBitmap);
-//               // MainActivity.filePaths.add(getImageUri(AdjustImage.this, filterAddingBitmap));
-//            }
-
-
-            Intent intent = new Intent();
-            setResult(11,intent);
-            finish();
-
-
-            return null;
-        }
+        Intent intent = new Intent();
+        setResult(11,intent);
+        finish();
     }
 }

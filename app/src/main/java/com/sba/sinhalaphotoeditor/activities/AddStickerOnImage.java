@@ -43,7 +43,6 @@ import android.widget.SeekBar;
 
 import com.bumptech.glide.Glide;
 import com.github.chuross.library.ExpandableLayout;
-import com.glidebitmappool.GlideBitmapPool;
 import com.sba.sinhalaphotoeditor.CallBacks.OnAsyncTaskState;
 import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.R;
@@ -63,7 +62,7 @@ import java.util.Locale;
 import render.animations.Bounce;
 import render.animations.Render;
 
-import static com.sba.sinhalaphotoeditor.activities.EditorActivity.screenHeight;
+
 
 public class AddStickerOnImage extends AppCompatActivity
         implements RotationGestureDetector.OnRotationGestureListener,
@@ -323,7 +322,6 @@ public class AddStickerOnImage extends AppCompatActivity
 
                 ImageList.getInstance().deleteUndoRedoImages();
 
-                GlideBitmapPool.clearMemory();
             }
             });
         }
@@ -542,7 +540,7 @@ public class AddStickerOnImage extends AppCompatActivity
         if(dia.getWindow() != null)
         {
             dia.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            dia.getWindow().setLayout(RelativeLayout.LayoutParams.FILL_PARENT,screenHeight / 2);
+            dia.getWindow().setLayout(RelativeLayout.LayoutParams.FILL_PARENT, (int) (Methods.getDeviceHeightInPX(getApplicationContext()) / 2));
             Window window = dia.getWindow();
             WindowManager.LayoutParams wlp = window.getAttributes();
             wlp.gravity = Gravity.BOTTOM;

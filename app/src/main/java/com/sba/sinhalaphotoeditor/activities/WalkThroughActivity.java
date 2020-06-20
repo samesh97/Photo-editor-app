@@ -10,7 +10,9 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.R;
@@ -20,53 +22,47 @@ import com.sba.sinhalaphotoeditor.adapters.WalkthroughPagerAdapter;
 import java.util.ArrayList;
 
 import static com.sba.sinhalaphotoeditor.Config.Constants.IS_WALKTHROUGH_NEEDED_KEY;
+import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_ENGLISH;
+import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_KEY;
 import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_POSITION_KEY;
+import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_SINHALA;
 import static com.sba.sinhalaphotoeditor.Config.Constants.SHARED_PREF_NAME;
 
 public class WalkThroughActivity extends AppCompatActivity {
 
-    ViewPager viewPager;
-    WalkthroughPagerAdapter walkthroughPagerAdapter;
+    private ViewPager viewPager;
+    private WalkthroughPagerAdapter walkthroughPagerAdapter;
 
-    ArrayList<Drawable> image1 = new ArrayList<android.graphics.drawable.Drawable>();
-    ArrayList<Drawable> image2 = new ArrayList<Drawable>();
-    ArrayList<Drawable> image3 = new ArrayList<Drawable>();
-
-    ArrayList<Drawable> topImages = new ArrayList<Drawable>();
-
-    ArrayList<String> titles = new ArrayList<>();
-    ArrayList<String> description = new ArrayList<>();
+    private ArrayList<Drawable> image1 = new ArrayList<android.graphics.drawable.Drawable>();
+    private ArrayList<Drawable> image2 = new ArrayList<Drawable>();
+    private ArrayList<Drawable> image3 = new ArrayList<Drawable>();
 
 
-    Button next,previous;
+    private ArrayList<String> titles = new ArrayList<>();
+    private ArrayList<String> description = new ArrayList<>();
+
+
+    private Button next,previous;
+    private boolean isAnimate = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_walk_through);
 
+
         Methods.freeUpMemory();
 
-        setTextViewFontAndSize();
 
         next = findViewById(R.id.next);
         previous = findViewById(R.id.previous);
 
 
 
-        topImages.add(getResources().getDrawable(R.drawable.walkthroughimage1));
-        topImages.add(getResources().getDrawable(R.drawable.walkthroughimage2));
-        topImages.add(getResources().getDrawable(R.drawable.walkthroughimage2));
-        topImages.add(getResources().getDrawable(R.drawable.walkthroughimage2));
-        topImages.add(getResources().getDrawable(R.drawable.walkthroughimage2));
-        topImages.add(getResources().getDrawable(R.drawable.walkthroughimage3));
-        topImages.add(getResources().getDrawable(R.drawable.walkthroughimage2));
-        topImages.add(getResources().getDrawable(R.drawable.walkthroughimage4));
 
 
 
-
-        image1.add(getResources().getDrawable(R.drawable.addimage));
+        //image1.add(getResources().getDrawable(R.drawable.addimage));
         image1.add(null);
         image1.add(null);
         image1.add(null);
@@ -74,7 +70,7 @@ public class WalkThroughActivity extends AppCompatActivity {
         image1.add(null);
         image1.add(null);
 
-        image3.add(getResources().getDrawable(R.drawable.addfromimages));
+       // image3.add(getResources().getDrawable(R.drawable.addfromimages));
         image3.add(null);
         image3.add(null);
         image3.add(null);
@@ -83,7 +79,7 @@ public class WalkThroughActivity extends AppCompatActivity {
         image3.add(null);
 
 
-        image2.add(getResources().getDrawable(R.drawable.createbitmap));
+        //image2.add(getResources().getDrawable(R.drawable.createbitmap));
         image2.add(getResources().getDrawable(R.drawable.addtext));
         image2.add(getResources().getDrawable(R.drawable.addimage));
         image2.add(getResources().getDrawable(R.drawable.addsticker));
@@ -95,8 +91,8 @@ public class WalkThroughActivity extends AppCompatActivity {
         image2.add(getResources().getDrawable(R.drawable.saveimage));
         image3.add(getResources().getDrawable(R.drawable.redo));
 
-        titles.add(getResources().getString(R.string.title1));
-        description.add(getResources().getString(R.string.desc1));
+//        titles.add(getResources().getString(R.string.title1));
+//        description.add(getResources().getString(R.string.desc1));
 
 
         titles.add(getResources().getString(R.string.title2));
@@ -125,8 +121,9 @@ public class WalkThroughActivity extends AppCompatActivity {
         description.add(getResources().getString(R.string.desc8));
 
         previous.setVisibility(View.GONE);
+
         viewPager = findViewById(R.id.viewPager);
-        walkthroughPagerAdapter = new WalkthroughPagerAdapter(getSupportFragmentManager(),image1,image2,image3,titles,description,topImages);
+        walkthroughPagerAdapter = new WalkthroughPagerAdapter(getSupportFragmentManager(),image1,image2,image3,titles,description);
         viewPager.setAdapter(walkthroughPagerAdapter);
 
 
@@ -169,6 +166,8 @@ public class WalkThroughActivity extends AppCompatActivity {
             @Override
             public void onPageSelected(int position) {
 
+                previous.setVisibility(View.VISIBLE);
+
                 if (position == (viewPager.getAdapter().getCount())-1)
                 {
                     next.setText(getResources().getString(R.string.finish_text));
@@ -180,11 +179,25 @@ public class WalkThroughActivity extends AppCompatActivity {
 
                 if (position == 0)
                 {
-                    previous.setVisibility(View.INVISIBLE);
+                    TranslateAnimation animation = new TranslateAnimation(0,-Methods.getDeviceWidthInPX(getApplicationContext()),0,0);
+                    animation.setDuration(500);
+                    animation.setFillAfter(true);
+                    previous.startAnimation(animation);
+
+                    isAnimate = true;
                 }
                 else
                 {
-                    previous.setVisibility(View.VISIBLE);
+                    if(isAnimate)
+                    {
+                        TranslateAnimation animation = new TranslateAnimation(-Methods.getDeviceWidthInPX(getApplicationContext()),0,0,0);
+                        animation.setDuration(500);
+                        animation.setFillAfter(true);
+                        previous.startAnimation(animation);
+
+                        isAnimate = false;
+                    }
+
                 }
             }
 
@@ -196,57 +209,32 @@ public class WalkThroughActivity extends AppCompatActivity {
         });
 
 
+        changeTypeFace();
+
 
 
     }
-    public void setTextViewFontAndSize()
+    private void changeTypeFace()
     {
-
-        Button previous = findViewById(R.id.previous);
-        Button next = findViewById(R.id.next);
-
-
-        Typeface typeface;
-
         SharedPreferences pref = getApplicationContext().getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
-        int pos = pref.getInt(LANGUAGE_POSITION_KEY,-99);
-        if(pos != 99) {
-            switch (pos) {
-                case 1:
+        String language = pref.getString(LANGUAGE_KEY,LANGUAGE_SINHALA);
+        Typeface typeface = null;
 
-
-                    typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.gemunulibresemibold);
-                    previous.setTypeface(typeface);
-                    next.setTypeface(typeface);
-
-                    break;
-                case 2:
-
-                    typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.englishfont);
-                    previous.setTypeface(typeface);
-
-
-                    next.setTypeface(typeface);
-
-
-
-
-
-                    break;
-                case 3:
-
-
-                    typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.tamilfont);
-
-
-                    previous.setTypeface(typeface);
-                    previous.setTextSize(20);
-
-                    next.setTypeface(typeface);
-                    next.setTextSize(14);
-
-                    break;
-            }
+        if(language.equals(LANGUAGE_ENGLISH))
+        {
+            //english
+            typeface = ResourcesCompat.getFont(getApplicationContext(),R.font.englishfont);
         }
+        else
+        {
+            //sinhala
+            typeface = ResourcesCompat.getFont(getApplicationContext(),R.font.bindumathi);
+        }
+
+        next.setTypeface(typeface);
+        previous.setTypeface(typeface);
+
+
+
     }
 }

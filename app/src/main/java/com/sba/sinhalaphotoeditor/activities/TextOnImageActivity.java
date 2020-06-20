@@ -57,7 +57,6 @@ import com.flask.colorpicker.OnColorSelectedListener;
 import com.flask.colorpicker.builder.ColorPickerClickListener;
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
 import com.github.chuross.library.ExpandableLayout;
-import com.glidebitmappool.GlideBitmapPool;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.sba.sinhalaphotoeditor.CallBacks.OnAsyncTaskState;
 import com.sba.sinhalaphotoeditor.CallBacks.OnTextAttributesChangedListner;
@@ -89,7 +88,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import render.animations.Bounce;
 import render.animations.Render;
 
-import static com.sba.sinhalaphotoeditor.activities.EditorActivity.screenHeight;
+
 
 public class TextOnImageActivity extends AppCompatActivity
         implements RotationGestureDetector.OnRotationGestureListener,
@@ -310,7 +309,6 @@ public class TextOnImageActivity extends AppCompatActivity
                 String path = Methods.saveToInternalStorage(getApplicationContext(),ImageList.getInstance().getCurrentBitmap(),currentDateandTime);
                 helper.AddImage(null,path);
                 ImageList.getInstance().deleteUndoRedoImages();
-                GlideBitmapPool.clearMemory();
             }
             });
         }

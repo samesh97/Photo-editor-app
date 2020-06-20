@@ -21,9 +21,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.glidebitmappool.GlideBitmapPool;
 import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.R;
+import com.sba.sinhalaphotoeditor.aynctask.GalleryImageHandler;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;
 
 import java.io.ByteArrayOutputStream;
@@ -213,7 +213,6 @@ public class ImageSavingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                methods.SaveImage(ImageList.getInstance().getCurrentBitmap(),getContentResolver());
                 dialog.dismiss();
             }
         });

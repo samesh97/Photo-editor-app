@@ -20,10 +20,9 @@ public class WalkthroughPagerAdapter extends FragmentStatePagerAdapter
 
     private ArrayList<String> titles = new ArrayList<>();
     private ArrayList<String> description = new ArrayList<>();
-    private ArrayList<Drawable> topImages = new ArrayList<Drawable>();
 
 
-    public WalkthroughPagerAdapter(@NonNull FragmentManager fm, ArrayList<Drawable> image1, ArrayList<Drawable> image2, ArrayList<Drawable> image3, ArrayList<String> titles, ArrayList<String> description, ArrayList<Drawable> topImages)
+    public WalkthroughPagerAdapter(@NonNull FragmentManager fm, ArrayList<Drawable> image1, ArrayList<Drawable> image2, ArrayList<Drawable> image3, ArrayList<String> titles, ArrayList<String> description)
     {
         super(fm);
         this.image1 = image1;
@@ -31,7 +30,6 @@ public class WalkthroughPagerAdapter extends FragmentStatePagerAdapter
         this.image3 = image3;
         this.titles = titles;
         this.description = description;
-        this.topImages = topImages;
     }
 
     @NonNull
@@ -72,7 +70,7 @@ public class WalkthroughPagerAdapter extends FragmentStatePagerAdapter
             im3 = null;
         }
 
-        WalkthroughPagerFragment fragment = new WalkthroughPagerFragment(im1,im2,im3,titles.get(position),description.get(position),topImages.get(position));
+        WalkthroughPagerFragment fragment = new WalkthroughPagerFragment(im1,im2,im3,titles.get(position),description.get(position));
         return fragment;
     }
 

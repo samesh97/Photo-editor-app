@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Sihala Photo Editor</string>
+    <string name="app_name">Sihala</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="select_an_image_text">Select an Image</string>
-    <string name="select_from_galery_text">Select From Gallery</string>
+    <string name="select_from_galery_text">Pick From Gallery</string>
     <string name="create_a_background_text">Create a Background</string>
     <string name="select_a_background_text">Choose a Background</string>
 
@@ -78,12 +78,18 @@
     <string name="pick_color_text">Pick a color</string>
     <string name="width_exceed_text">You can only create of maximum width of 1000</string>
     <string name="height_exceed_text">You can only create of maximum height of 1000</string>
-    <string name="height_is_low_text">You can only create of minimum width of 400</string>
     <string name="width_is_low_text">You can only create of minimum width of 400</string>
     <string name="height_is_low_text2">You can only create of minimum height of 400</string>
     <string name="select_an_image_first_text">Please select an image first</string>
     <string name="removed_text">Removed</string>
     <string name="saved_to_gallery_text">Saved to gallery</string>
 
+    <string name="text_skip">Skip</string>
+    <string name="scroll_to_where_you_left_off">Navigate to the Last State</string>
+    <string name="pick_a_language">Please Choose the Preferred Language to Proceed</string>
+    <string name="thank_you_for_downloading_text">Thank you for downloading</string>
+    <string name="name_text">Name</string>
+    <string name="recent_text">Recent</string>
+    <string name="select_text">Select</string>
 
 </resources>

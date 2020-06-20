@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -32,67 +33,77 @@ import static com.sba.sinhalaphotoeditor.Config.Constants.SHARED_PREF_NAME;
 
 public class WelcomeScreen extends AppCompatActivity {
 
-    private int selectedLanguagePos = 0;
+
+    private  Button sinhala,english;
+    private Drawable drawable,drawable2;
+    private static boolean isUpdate = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+        loadLocale();
         setContentView(R.layout.activity_welcome_screen);
 
 
-        setTextViewFontAndSize();
+        sinhala = findViewById(R.id.sinhala);
+        english = findViewById(R.id.english);
+        drawable = getDrawable(R.drawable.left_side_corner_round_blue_background);
+        drawable2 = getDrawable(R.drawable.right_side_corner_round_blue_background);
 
-        Button proceed = findViewById(R.id.proceed);
-        Spinner languagePicker = findViewById(R.id.languagePicker);
-        ImageView topGreenPannel = findViewById(R.id.topGreenPannel);
 
-
-        Glide.with(getApplicationContext()).load(R.drawable.samplewalpaper).into(topGreenPannel);
-
-        languagePicker.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        sinhala.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                selectedLanguagePos = position;
-                switch (position)
-                {
-                    case 1:
-                        setLocale(LANGUAGE_SINHALA,position);
-                        break;
-                    case 2:
-                        setLocale(LANGUAGE_ENGLISH,position);
-                        break;
-                    case 3:
-                        setLocale(LANGUAGE_TAMIL,position);
-                        break;
-                }
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+            public void onClick(View v)
+            {
+                isUpdate = true;
+                onLanguageChanged(LANGUAGE_SINHALA);
+                setLocale(LANGUAGE_SINHALA);
 
             }
         });
+        english.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                isUpdate = true;
+                onLanguageChanged(LANGUAGE_ENGLISH);
+                setLocale(LANGUAGE_ENGLISH);
+            }
+        });
+
+        SharedPreferences pref = getApplicationContext().getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        String lan = pref.getString(LANGUAGE_KEY,LANGUAGE_SINHALA);
+        if(lan.equals(LANGUAGE_ENGLISH))
+        {
+            onLanguageChanged(LANGUAGE_ENGLISH);
+        }
+        else
+        {
+            onLanguageChanged(LANGUAGE_SINHALA);
+        }
+
+
+        Button proceed = findViewById(R.id.proceed);
+
 
         proceed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
-                if(selectedLanguagePos == 0)
-                {
-                    Methods.showCustomToast(WelcomeScreen.this,"Select a language first");
-                    //Toast.makeText(WelcomeScreen.this, "Select a language first", Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
+
                     startActivity(new Intent(WelcomeScreen.this, WalkThroughActivity.class));
-                }
+                    overridePendingTransition(R.anim.activity_start_animation,R.anim.activity_exit_animation);
             }
         });
+
+        changeTypeFace();
     }
-    public void setLocale(String lang,int position)
+    public void setLocale(String lang)
     {
+
+        //set locale
         Locale myLocale = new Locale(lang);
         Resources res = getResources();
         DisplayMetrics dm = res.getDisplayMetrics();
@@ -101,69 +112,90 @@ public class WelcomeScreen extends AppCompatActivity {
         res.updateConfiguration(conf, dm);
 
 
+
+        //save locale
         SharedPreferences pref = getApplicationContext().getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
-
-        editor.putInt(LANGUAGE_POSITION_KEY,position);
         editor.putString(LANGUAGE_KEY,lang);
-
         editor.apply();
 
+        if(isUpdate)
+        {
+            isUpdate = false;
+            refreshActivity();
+        }
+
+
+
     }
-    public void setTextViewFontAndSize()
+    public void loadLocale()
     {
+        //get locale
+        SharedPreferences pref = getApplicationContext().getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        String lan = pref.getString(LANGUAGE_KEY,null);
+        if(lan != null)
+        {
+            isUpdate = false;
+            setLocale(lan);
+        }
+        else
+        {
+            isUpdate = true;
+            setLocale(LANGUAGE_SINHALA);
+        }
+
+    }
+    public void onLanguageChanged(String language)
+    {
+
+        if(language.equals(LANGUAGE_SINHALA))
+        {
+            sinhala.setBackground(drawable);
+            english.setBackground(null);
+        }
+        else if(language.equals(LANGUAGE_ENGLISH))
+        {
+            english.setBackground(drawable2);
+            sinhala.setBackground(null);
+        }
+
+    }
+    public void refreshActivity()
+    {
+        //refresh activity with  no animation
+        Intent intent = getIntent();
+        overridePendingTransition(0, 0);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        finish();
+        overridePendingTransition(0, 0);
+        startActivity(intent);
+    }
+    private void changeTypeFace()
+    {
+        SharedPreferences pref = getApplicationContext().getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        String language = pref.getString(LANGUAGE_KEY,LANGUAGE_SINHALA);
+        Typeface typeface = null;
+
+        if(language.equals(LANGUAGE_ENGLISH))
+        {
+            //english
+            typeface = ResourcesCompat.getFont(getApplicationContext(),R.font.englishfont);
+        }
+        else
+        {
+            //sinhala
+            typeface = ResourcesCompat.getFont(getApplicationContext(),R.font.bindumathi);
+        }
 
         TextView textView2 = findViewById(R.id.textView2);
         TextView textView3 = findViewById(R.id.textView3);
         Button proceed = findViewById(R.id.proceed);
 
-
-        Typeface typeface;
-
-        SharedPreferences pref = getApplicationContext().getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
-        int pos = pref.getInt(LANGUAGE_POSITION_KEY,-99);
-        if(pos != 99) {
-            switch (pos) {
-                case 1:
+        textView2.setTypeface(typeface);
+        textView3.setTypeface(typeface);
+        proceed.setTypeface(typeface);
 
 
-                    typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.gemunulibresemibold);
-                    textView2.setTypeface(typeface);
-                    textView3.setTypeface(typeface);
-                    proceed.setTypeface(typeface);
-
-                    break;
-                case 2:
-
-                    typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.englishfont);
-                    textView2.setTypeface(typeface);
-
-
-                    textView3.setTypeface(typeface);
-                    proceed.setTypeface(typeface);
-
-
-
-
-
-                    break;
-                case 3:
-
-
-                    typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.tamilfont);
-
-
-                    textView2.setTypeface(typeface);
-                    textView2.setTextSize(20);
-
-                    textView3.setTypeface(typeface);
-                    textView3.setTextSize(14);
-
-                    proceed.setTextSize(14);
-                    proceed.setTypeface(typeface);
-
-                    break;
-            }
-        }
     }
+
 }

@@ -1,6 +1,8 @@
 package com.sba.sinhalaphotoeditor.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import android.app.Activity;
@@ -8,8 +10,10 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -38,6 +42,11 @@ import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
+
+import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_ENGLISH;
+import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_KEY;
+import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_SINHALA;
+import static com.sba.sinhalaphotoeditor.Config.Constants.SHARED_PREF_NAME;
 
 public class RegisterScreen extends AppCompatActivity{
 
@@ -139,6 +148,8 @@ public class RegisterScreen extends AppCompatActivity{
 
         phone = (EditText) findViewById(R.id.phoneNumber);
         next = (Button) findViewById(R.id.loginButton);
+
+        changeTypeFace();
 
     }
 
@@ -296,6 +307,30 @@ public class RegisterScreen extends AppCompatActivity{
         {
             Methods.showCustomToast(RegisterScreen.this, "Please Fill out the Required Fields!");
         }
+    }
+    private void changeTypeFace()
+    {
+        SharedPreferences pref = getApplicationContext().getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        String language = pref.getString(LANGUAGE_KEY,LANGUAGE_SINHALA);
+        Typeface typeface = null;
+
+        if(language.equals(LANGUAGE_ENGLISH))
+        {
+            //english
+            typeface = ResourcesCompat.getFont(getApplicationContext(),R.font.englishfont);
+        }
+        else
+        {
+            //sinhala
+            typeface = ResourcesCompat.getFont(getApplicationContext(),R.font.bindumathi);
+        }
+
+        fullName.setTypeface(typeface);
+        phone.setTypeface(typeface);
+        next.setTypeface(typeface);
+        skipButton.setTypeface(typeface);
+
+
     }
 }
 

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#114f5e"
+    android:background="@android:color/white"
     tools:context=".activities.WelcomeScreen">
 
 
@@ -12,75 +12,137 @@
         android:id="@+id/topGreenPannel"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:background="@drawable/bottom_curve_background"
         android:scaleType="fitXY"
-        android:src="@drawable/samplewalpaper"
         app:layout_constraintBottom_toTopOf="@+id/guideline15"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 
+    <ImageView
+
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="24dp"
+        android:src="@drawable/thank_you_character"
+        app:layout_constraintBottom_toTopOf="@+id/textView2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/topGreenPannel" />
+
     <TextView
         android:id="@+id/textView2"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/activity_previous_image_margin_16"
-        android:layout_marginEnd="@dimen/activity_previous_image_margin_16"
-        android:layout_marginBottom="8dp"
-        android:fontFamily="@font/gemunulibrebold"
+        android:layout_height="30dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="@font/bindumathi"
         android:gravity="center"
-        android:text="Thank you for downloading!"
+        android:text="@string/thank_you_for_downloading_text"
         android:textColor="@android:color/white"
-        android:textSize="28sp"
+        android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/guideline15"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />\
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/textView3"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/activity_previous_image_margin_16"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="@dimen/activity_previous_image_margin_16"
-        android:fontFamily="@font/gemunulibrebold"
+        android:layout_height="50dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="56dp"
+        android:layout_marginEnd="50dp"
+        android:fontFamily="@font/bindumathi"
         android:gravity="center"
-        android:text="Please Choose the\n Preferred Language to Proceed"
-        android:textColor="@android:color/white"
-        android:textSize="20sp"
+        android:text="@string/pick_a_language"
+        android:textColor="@color/darkAsh"
+        android:textSize="16sp"
+        android:ellipsize="end"
+
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+        app:layout_constraintTop_toBottomOf="@+id/topGreenPannel" />
+
+<!--    <androidx.constraintlayout.widget.ConstraintLayout-->
+<!--        android:id="@+id/constraintLayout2"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="8dp"-->
+<!--        android:layout_marginEnd="16dp"-->
+<!--        android:background="@drawable/custom_drop_shadow_drawable"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="@+id/topGreenPannel">-->
+
+<!--        <Spinner-->
+<!--            android:id="@+id/languagePicker"-->
+<!--            style="@style/spinner_style"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="2dp"-->
+<!--            android:layout_marginBottom="2dp"-->
+<!--            android:drawSelectorOnTop="true"-->
+<!--            android:entries="@array/select_language"-->
+<!--            android:spinnerMode="dropdown"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent" />-->
+
+
+<!--    </androidx.constraintlayout.widget.ConstraintLayout>-->
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout2"
+        android:id="@+id/constraintLayout6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:background="@drawable/custom_drop_shadow_drawable"
-        app:layout_constraintEnd_toEndOf="@+id/textView3"
-        app:layout_constraintTop_toTopOf="@+id/topGreenPannel">
+        android:background="@drawable/dark_ash_round_background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView3">
 
-        <Spinner
-            android:id="@+id/languagePicker"
-            style="@style/spinner_style"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
-            android:drawSelectorOnTop="true"
-            android:entries="@array/select_language"
-            android:spinnerMode="dropdown"
+
+        <Button
+            android:id="@+id/sinhala"
+            android:layout_width="100dp"
+            android:layout_height="45dp"
+            android:layout_marginEnd="1dp"
+            android:background="@drawable/left_side_corner_round_blue_background"
+            android:fontFamily="@font/bindumathi"
+            android:text="සිංහල"
+            android:textSize="15sp"
+            android:textColor="@android:color/white"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/english"
+            app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <Button
+            android:id="@+id/english"
+            android:layout_width="100dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="1dp"
+            android:text="English"
+            android:textColor="@android:color/white"
+            android:textAllCaps="false"
+            android:textSize="15sp"
+            android:background="@null"
+            app:layout_constraintBottom_toBottomOf="@+id/sinhala"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/sinhala"
+            app:layout_constraintTop_toTopOf="@+id/sinhala" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -89,26 +151,26 @@
         android:id="@+id/proceed"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/activity_previous_image_margin_16"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="@dimen/activity_previous_image_margin_16"
-        android:background="@drawable/borderred"
-        android:fontFamily="@font/gemunulibrebold"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/round_bg_ash"
+        android:fontFamily="@font/bindumathi"
         android:paddingTop="@dimen/activity_previous_image_padding_10"
         android:paddingBottom="@dimen/activity_previous_image_padding_10"
-        android:text="proceed"
+        android:text="@string/next_text"
         android:textSize="17sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.503"
+        app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout6" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline15"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="215dp" />
+        app:layout_constraintGuide_begin="279dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

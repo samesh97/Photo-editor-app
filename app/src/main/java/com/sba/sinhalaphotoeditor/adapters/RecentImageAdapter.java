@@ -1,17 +1,11 @@
 package com.sba.sinhalaphotoeditor.adapters;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
 import android.os.AsyncTask;
-import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -22,6 +16,7 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -29,48 +24,40 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.sba.sinhalaphotoeditor.CallBacks.OnAsyncTaskState;
 import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
-import com.sba.sinhalaphotoeditor.activities.EditorActivity;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
 import com.sba.sinhalaphotoeditor.activities.MainActivity;
+import com.sba.sinhalaphotoeditor.aynctask.AddImageToArrayListAsyncTask;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class PreviuoslyEditedImageAdapter extends RecyclerView.Adapter<PreviuoslyEditedImageAdapter.MyViewHolder>
+public class RecentImageAdapter extends RecyclerView.Adapter<RecentImageAdapter.MyViewHolder>
 {
 
     private ArrayList<Bitmap> images = new ArrayList<>();
     private ArrayList<Integer> ids = new ArrayList<>();
     private ArrayList<String> dates = new ArrayList<>();
-
     private Context context;
-
     private DatabaseHelper helper;
-
     private Bitmap selectedImage = null;
-
-    private ProgressDialog pdLoading;
-
+    private Dialog dialog;
 
 
 
 
-    public PreviuoslyEditedImageAdapter(Context context, ArrayList<Bitmap> images, ArrayList<Integer> ids, ArrayList<String> dates)
+
+    public RecentImageAdapter(Context context, ArrayList<Bitmap> images, ArrayList<Integer> ids, ArrayList<String> dates)
     {
         this.images = images;
         this.ids = ids;
         this.dates = dates;
         this.context = context;
         helper = new DatabaseHelper(context);
-
-        pdLoading = new ProgressDialog(context);
     }
 
     @NonNull
@@ -174,7 +161,21 @@ public class PreviuoslyEditedImageAdapter extends RecyclerView.Adapter<Previuosl
                 public void onClick(View v)
                 {
                     selectedImage = images.get(getAdapterPosition());
-                    new AsyncCaller().execute();
+                    showProgressDialog();
+                    ImageList.getInstance().clearImageList();
+                    AddImageToArrayListAsyncTask task = new AddImageToArrayListAsyncTask(selectedImage, new OnAsyncTaskState() {
+                        @Override
+                        public void startActivityForResult()
+                        {
+                           hideProgressDialog();
+                           if(context instanceof MainActivity)
+                           {
+                              ((MainActivity)context).startActivityForRecentEdits();
+                           }
+                        }
+                    });
+
+                    task.execute();
                 }
             });
 
@@ -182,58 +183,30 @@ public class PreviuoslyEditedImageAdapter extends RecyclerView.Adapter<Previuosl
 
         }
     }
-    public class AsyncCaller extends AsyncTask<Void, Void, Void>
+    public void showProgressDialog()
     {
-
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            //this method will be running on UI thread
-            pdLoading.setMessage("\tLoading...");
-            pdLoading.setCancelable(false);
-            pdLoading.show();
-        }
-        @Override
-        protected Void doInBackground(Void... params)
+        if(dialog == null)
         {
-
-            //this method will be running on background thread so don't update UI frome here
-            //do your long running http tasks here,you dont want to pass argument and u can access the parent class' variable url over here
-
-            if(!isCancelled())
-            {
-                if(selectedImage != null)
-                {
-                    ImageList.getInstance().clearImageList();
-
-                    WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-                    Display display = wm.getDefaultDisplay();
-                    DisplayMetrics metrics = new DisplayMetrics();
-                    display.getMetrics(metrics);
-
-
-                    ImageList.getInstance().addBitmap(selectedImage,false);
-
-                   if(context instanceof MainActivity)
-                   {
-                       ((MainActivity)context).startActivityForRecentEdits();
-                   }
-                }
-            }
-
-
-            return null;
+            dialog = new Dialog(context,R.style.CustomBottomSheetDialogTheme);
         }
 
-        @Override
-        protected void onPostExecute(Void result)
+        View view = LayoutInflater.from(context).inflate(R.layout.progress_dialog,null);
+        ProgressBar bar = view.findViewById(R.id.progressBar);
+        bar.setVisibility(View.VISIBLE);
+//        Glide.with(context).asGif().load(R.drawable.loading_gif).into(bar);
+        dialog.setContentView(view,new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        dialog.show();
+    }
+    public void hideProgressDialog()
+    {
+        if(dialog != null)
         {
-            super.onPostExecute(result);
-            pdLoading.dismiss();
+            View view = LayoutInflater.from(context).inflate(R.layout.progress_dialog,null);
+            ProgressBar bar = view.findViewById(R.id.progressBar);
+            bar.setVisibility(View.GONE);
+            dialog.setContentView(view,new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            dialog.hide();
         }
-
     }
 
 }

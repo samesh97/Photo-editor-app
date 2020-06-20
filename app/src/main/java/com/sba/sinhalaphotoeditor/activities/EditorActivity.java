@@ -40,7 +40,6 @@ import android.widget.TextView;
 
 
 import com.bumptech.glide.Glide;
-import com.glidebitmappool.GlideBitmapPool;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
@@ -70,12 +69,9 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
     private ImageView userSelectedImage;
     private ImageView addText,addImage,addSticker,addCrop,addBlur;
     private static final int PICK_IMAGE_REQUEST = 234;
-    public static boolean isNeededToDelete = false;
 
     private ImageView addEffect;
 
-
-    public static int screenWidth,screenHeight;
 
     private Dialog dia;
 
@@ -92,11 +88,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
 
     private AdView mAdView;
 
-
-    private DatabaseHelper helper = new DatabaseHelper(EditorActivity.this);
-
     private Render render;
-
     private Methods methods;
     private InterstitialAd mInterstitialAd;
 
@@ -203,7 +195,6 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
 
 
                 Methods.showCustomToast(EditorActivity.this,getResources().getString(R.string.you_reach_end_text_2));
-                //Toast.makeText(this, "You reached to the end", Toast.LENGTH_LONG).show();
             }
         }
 
@@ -220,36 +211,8 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         {
             if(resultCode == TextOnImageActivity.TEXT_ON_IMAGE_RESULT_OK_CODE)
             {
-
-                if(ImageList.getInstance().getCurrentPosition() == ImageList.getInstance().getImageListSize() - 1)
-                {
-                    isNeededToDelete = false;
-                }
-                else {
-                    isNeededToDelete = true;
-
-                    MainActivity.bitmap = ImageList.getInstance().getCurrentBitmap();
-                    for (int i = (ImageList.getInstance().getCurrentPosition()); i < ImageList.getInstance().getImageListSize(); i++) {
-                        try {
-                            ImageList.getInstance().removeBitmap(++i,false);
-
-                        } catch (Exception e) {
-
-                        }
-
-                    }
-                }
-
-                //Uri resultImageUri = Uri.parse(data.getStringExtra(TextOnImageActivity.IMAGE_OUT_URI));
-
-                //Bitmap  bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), resultImageUri);
-                //MainActivity.CurrentWorkingFilePath = MainActivity.filePaths.get(MainActivity.imagePosition);
-                //userSelectedImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
                 methods.setImageViewScaleType(userSelectedImage);
                 Glide.with(getApplicationContext()).load(ImageList.getInstance().getCurrentBitmap()).into(userSelectedImage);
-
-
-
             }
 
         }
@@ -257,43 +220,21 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         {
             if(resultCode == PhotoOnPhotoActivity.IMAGE_ON_IMAGE_RESULT_OK_CODE)
             {
-
-                if(ImageList.getInstance().getCurrentPosition() == ImageList.getInstance().getImageListSize() - 1)
-                {
-                    isNeededToDelete = false;
-                }
-                else
-                {
-
-                    isNeededToDelete = true;
-                    MainActivity.bitmap = ImageList.getInstance().getCurrentBitmap();
-                    for(int i = (ImageList.getInstance().getCurrentPosition() + 1); i < ImageList.getInstance().getImageListSize(); i++)
-                    {
-                        ImageList.getInstance().removeBitmap(i,false);
-                    }
-
-                }
-
-
                 methods.setImageViewScaleType(userSelectedImage);
                 Glide.with(getApplicationContext()).load(ImageList.getInstance().getCurrentBitmap()).into(userSelectedImage);
-
             }
             if(requestCode == PhotoOnPhotoActivity.IMAGE_ON_IMAGE_RESULT_FAILED_CODE)
             {
-
 
             }
         }
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == IMAGE_PICK_RESULT_CODE && selectedBitmap != null)
         {
-            //Uri CurrentWorkingFilePath = data.getData();
             try
             {
 
                 Bitmap bitmap = selectedBitmap.copy(selectedBitmap.getConfig(),true);
                 selectedBitmap = null;
-                //Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), CurrentWorkingFilePath);
                 bitmap = methods.getResizedBitmap(bitmap,1000);
 
                 Uri imgUri = methods.getImageUri(bitmap,false);
@@ -321,24 +262,6 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         {
             if(resultCode == AddStickerOnImage.STICKER_ON_IMAGE_RESULT_OK_CODE)
             {
-
-                if(ImageList.getInstance().getCurrentPosition() == ImageList.getInstance().getImageListSize() - 1)
-                {
-                    isNeededToDelete = false;
-                }
-                else
-                {
-
-                    isNeededToDelete = true;
-                    MainActivity.bitmap = ImageList.getInstance().getCurrentBitmap();
-                    for(int i = (ImageList.getInstance().getCurrentPosition() + 1); i < ImageList.getInstance().getImageListSize(); i++)
-                    {
-                        ImageList.getInstance().removeBitmap(i,false);
-                    }
-
-
-                }
-
                 methods.setImageViewScaleType(userSelectedImage);
                 Glide.with(getApplicationContext()).load(ImageList.getInstance().getCurrentBitmap()).into(userSelectedImage);
 
@@ -349,110 +272,44 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
             if(CropType.equals("NormalCrop"))
             {
                 addCrop.setEnabled(true);
-
-//                CropImage.ActivityResult result = CropImage.getActivityResult(data);
-
+                if(data != null)
+                {
                     Uri resultUri = UCrop.getOutput(data);
-                    Bitmap bitmap = null;
                     try
                     {
-
-                        if(ImageList.getInstance().getCurrentPosition() == ImageList.getInstance().getImageListSize() - 1)
-                        {
-                            isNeededToDelete = false;
-                        }
-                        else
-                        {
-                            isNeededToDelete = true;
-
-                            MainActivity.bitmap = ImageList.getInstance().getCurrentBitmap();
-                            for(int i = (ImageList.getInstance().getCurrentPosition()); i < ImageList.getInstance().getImageListSize(); i++)
-                            {
-                                try
-                                {
-                                    ImageList.getInstance().removeBitmap(++i,false);
-                                }
-                                catch (Exception e)
-                                {
-
-                                }
-
-                            }
-                            try
-                            {
-                                ImageList.getInstance().removeBitmap(ImageList.getInstance().getCurrentPosition() + 1,false);
-                            }
-                            catch (Exception e)
-                            {
-
-                            }
-
-
-                        }
-
-
-
-
-                        ImageList.getInstance().increaseImagePosition(1);
-                        bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), resultUri);
-
-
-                        WindowManager wm = (WindowManager) getApplication().getSystemService(Context.WINDOW_SERVICE);
-                        Display display = wm.getDefaultDisplay();
-                        DisplayMetrics metrics = new DisplayMetrics();
-                        display.getMetrics(metrics);
-
-                        bitmap = methods.scale(bitmap,metrics.widthPixels,metrics.heightPixels);
-
-
-                        ImageList.getInstance().addBitmap(bitmap,false);
-                    /*
-                    AsyncTask.execute(new Runnable()
-                    {
-                        @Override
-                        public void run()
-                        {
-                            //get Date and time
-                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd \nHH:mm:ss", Locale.getDefault());
-                            String currentDateandTime = sdf.format(new Date());
-                            helper.AddImage(helper.getBytes((MainActivity.images.get(MainActivity.imagePosition))),currentDateandTime);
-                        }
-                    });*/
-                        //userSelectedImage.setImageBitmap(bitmap);
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), resultUri);
+                        ImageList.getInstance().addBitmap(bitmap,true);
                         methods.setImageViewScaleType(userSelectedImage);
                         Glide.with(getApplicationContext()).load(bitmap).into(userSelectedImage);
-
-
                         ImageList.getInstance().deleteUndoRedoImages();
-                        //GlideBitmapPool.clearMemory();
-
-
                     }
                     catch (IOException e)
                     {
                         e.printStackTrace();
                     }
+                }
 
             }
             else if(CropType.equals("PhotoOnPhotoCrop"))
             {
+                if(data != null)
+                {
                     Uri resultUri = UCrop.getOutput(data);
+                    if(resultUri != null)
                     addImageOnImage(resultUri);
+                }
+
             }
         }
         if(requestCode == 10  && resultCode == 11)
         {
-            //userSelectedImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
             methods.setImageViewScaleType(userSelectedImage);
             Glide.with(getApplicationContext()).load(ImageList.getInstance().getCurrentBitmap()).into(userSelectedImage);
-
         }
         if(requestCode == 20  && resultCode == 21)
         {
-            //userSelectedImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
             methods.setImageViewScaleType(userSelectedImage);
             Glide.with(getApplicationContext()).load(ImageList.getInstance().getCurrentBitmap()).into(userSelectedImage);
-
         }
         if(requestCode == DRAW_ON_BITMAP_REQUEST_CODE && resultCode == Activity.RESULT_OK)
         {
@@ -480,8 +337,6 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
 
 
 
-
-
         methods = new Methods(getApplicationContext());
 
 
@@ -498,26 +353,6 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
 
         render = new Render(EditorActivity.this);
 
-
-        WindowManager wm = (WindowManager) getApplication().getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        DisplayMetrics metrics = new DisplayMetrics();
-        display.getMetrics(metrics);
-
-
-        screenWidth = metrics.widthPixels;
-        screenHeight = metrics.heightPixels;
-
-
-
-
-
-
-
-        if(getActionBar() != null && getSupportActionBar() != null)
-        {
-            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#114f5e")));
-        }
 
 
         dia = new Dialog(this, R.style.DialogSlideAnim);
@@ -822,7 +657,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         if(dia.getWindow() != null)
         {
             dia.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            dia.getWindow().setLayout(RelativeLayout.LayoutParams.FILL_PARENT,screenHeight / 2);
+            dia.getWindow().setLayout(RelativeLayout.LayoutParams.FILL_PARENT, (int) (Methods.getDeviceHeightInPX(getApplicationContext()) / 2));
             Window window = dia.getWindow();
             WindowManager.LayoutParams wlp = window.getAttributes();
             wlp.gravity = Gravity.BOTTOM;
@@ -969,18 +804,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
             {
                     Methods.showCustomToast(EditorActivity.this,getResources().getString(R.string.no_image_selected_text));
             }
-
-
-
         }
-
-
-
-
-
-
-
-
     }
 
     public class ListViewAdapter extends BaseAdapter implements AdapterView.OnItemClickListener
@@ -990,7 +814,6 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         ArrayList<Bitmap> stic3;
         ArrayList<Bitmap> stic4;
         ArrayList<Bitmap> stic5;
-
 
         ListViewAdapter(ArrayList<Bitmap> stic1,ArrayList<Bitmap> stic2,ArrayList<Bitmap> stic3,ArrayList<Bitmap> stic4,ArrayList<Bitmap> stic5)
         {
@@ -1110,8 +933,6 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
 
         switch (position)
         {
-            case 1 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji1);
-                     break;
             case 2 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji2);
                 break;
             case 3 : b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji3);
@@ -1203,13 +1024,9 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
             default:b = BitmapFactory.decodeResource(getResources(),R.drawable.emoji1);
                 break;
 
-
         }
 
-
         return b;
-
-
 
 
     }
@@ -1231,18 +1048,14 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         if(dialog.getWindow() != null)
         {
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-           // dialog.getWindow().setDimAmount(0.4f);
             float deviceWidth = Methods.getDeviceWidthInPX(getApplicationContext());
             int finalWidth = (int) (deviceWidth - (deviceWidth / 8));
             dialog.getWindow().setLayout(finalWidth,RelativeLayout.LayoutParams.WRAP_CONTENT);
         }
 
 
-
         View view = getLayoutInflater().inflate(R.layout.exit_dialog_layout,null);
         dialog.setContentView(view);
-
-
 
 
         ImageView imageView6 = view.findViewById(R.id.imageView6);
@@ -1272,7 +1085,6 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
                 overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
             }
         });
-
 
         no.setOnClickListener(new View.OnClickListener() {
             @Override

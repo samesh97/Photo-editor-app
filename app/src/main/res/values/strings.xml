@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Sinhala Photo Editor</string>
+    <string name="app_name">Sihala</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -50,34 +50,38 @@
 
     <string name="rate_app_text">ඇප් එක Rate කරන්න</string>
     <string name="rate_app_description">මෙවැනි Apps තවත් නිර්මාණය කිරිමට අපට ඔබගේ වටිනා Rate එක ලබා දෙන්න!</string>
-    <string name="okay_text">Okay</string>
-    <string name="cannot_text">No</string>
+    <string name="okay_text">ලබාදෙන්න</string>
+    <string name="cannot_text">එපා</string>
 
-    <string name="app_exit_text">Exit</string>
-    <string name="exit_app_confirmation_text">Are you sure you want to exit?</string>
-    <string name="exit_app_yes_text">Yes</string>
-    <string name="exit_app_no_text">No</string>
-    <string name="no_images_available_text">No Images Available</string>
-    <string name="you_reach_end_text">You reached to the Original Photo</string>
-    <string name="we_will_fix_it_soon_text">Something is not right. We\'ll fix it soon</string>
-    <string name="something_went_wrong_text">Something went wrong</string>
-    <string name="you_reach_end_text_2">You reached to the end</string>
-    <string name="enter_text">Enter a text</string>
-    <string name="deleted_text">Deleted</string>
-    <string name="no_image_selected_text">No image selected</string>
-    <string name="enter_valid_width">Enter a valid width</string>
-    <string name="enter_valid_height">Enter a valid height</string>
-    <string name="pick_color_text">Pick a color</string>
-    <string name="width_exceed_text">You can only create of maximum width of 1000</string>
-    <string name="height_exceed_text">You can only create of maximum height of 1000</string>
-    <string name="height_is_low_text">You can only create of minimum width of 400</string>
-    <string name="width_is_low_text">You can only create of minimum width of 400</string>
-    <string name="height_is_low_text2">You can only create of minimum height of 400</string>
-    <string name="select_an_image_first_text">Please select an image first</string>
-    <string name="removed_text">Removed</string>
-    <string name="saved_to_gallery_text">Saved to gallery</string>
-    <string name="text_skip">Skip</string>
+    <string name="app_exit_text">ඉවත්වීම</string>
+    <string name="exit_app_confirmation_text">ඔබට ඉවත් වීමට අවශ්‍යමද?</string>
+    <string name="exit_app_yes_text">ඔව්</string>
+    <string name="exit_app_no_text">නෑ</string>
+    <string name="no_images_available_text">ඉවත් කිරීමට පිංතූර නොමත</string>
+    <string name="you_reach_end_text">අවසාන පිංතූරයට ලගා වී ඇත</string>
+    <string name="we_will_fix_it_soon_text">දෝශයක් පැනනැගුනි අප එය හැකි ඉක්මනින් නිවැරදි කරන්නම්</string>
+    <string name="something_went_wrong_text">දෝශයක් පැනනැගුනි</string>
+    <string name="you_reach_end_text_2">අවසානයට ලගා වුනි</string>
+    <string name="enter_text">නිවැරදි වචනයක් එකතු කරන්න</string>
+    <string name="deleted_text">ඉවත් කෙරුනි</string>
+    <string name="no_image_selected_text">පිංතූරයක් තෝරා නොමැත</string>
+    <string name="enter_valid_width">නිවැරදි පළලක් එකතු කරන්න</string>
+    <string name="enter_valid_height">නිවැරදි දිගක් එකතු කරන්න</string>
+    <string name="pick_color_text">වර්ණයක් තෝරා ගන්න</string>
+    <string name="width_exceed_text">පළල 1000 ට අඩුවෙන් එකතු කරන්න</string>
+    <string name="height_exceed_text">දිග 1000 ට අඩුවෙන් එකතු කරන්න</string>
+    <string name="width_is_low_text">පළල 400 ට වැඩියෙන් එකතු කරන්න</string>
+    <string name="height_is_low_text2">දිග 400 ට වැඩියෙන් එකතු කරන්න</string>
+    <string name="select_an_image_first_text">Please select an imමුලින්ම පිංතූරයක් තෝරා ගන්නage first</string>
+    <string name="removed_text">ඉවත් කෙරුනි</string>
+    <string name="saved_to_gallery_text">ගැලරියට Save කලහ</string>
+    <string name="text_skip">මගහරින්න</string>
     <string name="scroll_to_where_you_left_off">කලින් හිටපු තැනට යමු</string>
+    <string name="pick_a_language">Please Choose the Preferred Language to Proceed</string>
+    <string name="thank_you_for_downloading_text">Thank you for downloading</string>
+    <string name="name_text">Name</string>
+    <string name="recent_text">නවතම</string>
+    <string name="select_text">Select</string>
 
 
     <string-array name="select_language">
@@ -86,4 +90,59 @@
         <item>English</item>
     </string-array>
 
+
+
+<!--    <string name="hello_blank_fragment">Hello blank fragment</string>-->
+<!--    <string name="select_an_image_text">படத்தை தெரிவு செய்யுங்கள்</string>-->
+<!--    <string name="select_from_galery_text">கெலரியிலிருந்து தெரிவு செய்யுங்கள்</string>-->
+<!--    <string name="create_a_background_text">பின்புலம் ஒன்றை உருவாக்க</string>-->
+<!--    <string name="select_a_background_text">பின்புலம் ஒன்றை தெரிவு செய்ய</string>-->
+
+
+<!--    <string name="share_image_text">பகிருங்கள்</string>-->
+<!--    <string name="download_image_text">தரவிறக்கம் செய்துகொள்ள</string>-->
+<!--    <string name="type_something_text">டைப் செய்ய</string>-->
+<!--    <string name="add_text">ஒன்று சேர்க்க</string>-->
+<!--    <string name="previously_created_images">முன் தயாரிக்கப்பட்ட படங்கள்</string>-->
+<!--    <string name="delete_all_text">அனைத்தையும் அழிக்க</string>-->
+<!--    <string name="next_text">முன் செல்ல</string>-->
+<!--    <string name="back_text">பின் செல்ல</string>-->
+
+<!--    <string name="width_text">அகலம்</string>-->
+<!--    <string name="height_text">நீளம்</string>-->
+<!--    <string name="create_text">அமைக்க</string>-->
+<!--    <string name="use_image">பாவிக்க</string>-->
+<!--    <string name="finish_text">முடிப்பதற்கு</string>-->
+
+
+
+<!--    <string name="title1">ஒரு படத்தை சேர்க்கும் முறை</string>-->
+<!--    <string name="desc1">இங்கு இருக்கும் முதலாவது Icon ஐ click செய்து Edit செய்ய தேவையான படத்தை கெலரியில் இருந்து தெரிவுசெய்யலாம். இரண்டாவது Icon மூலம் தேவையான பின்புலத்தை அமைக்கலாம். மூன்றாவது Icon மூலம் இதற்கு முன் edit செய்த படத்தை பெற முடியும்.</string>-->
+<!--    <string name="title3">படமொன்றின் மேல் படமொன்றை சேர்க்கும் முறை</string>-->
+<!--    <string name="desc3">இங்கு எமக்கு edit செய்யும் படத்தின் மேல் மேலும் படங்களை சேர்க்க கெலரிக்கு செல்ல முடியும். கெலரியில் படமொன்றை தெரிவு செய்து தேவையானவாறு அளவை மாற்றி தேவையான இடத்தில் வைத்த பின் மேலுள்ள சரி அடையாளத்தை click செய்வதன் மூலம் படத்தினை உட்சேர்க்க முடியும்.</string>-->
+<!--    <string name="title4">ஸ்டிக்கர் சேர்க்கும் முறை</string>-->
+<!--    <string name="desc4">இங்கு எமக்கு படத்திற்கு மேல் ஸ்டிக்கர் சேர்க்க முடியும். ஸ்டிக்கர் ஒன்றை தேர்வு செய்து அதன் அளவினை மாற்றி பொருத்தமான இடத்தில் வைத்த பின்னர் மேலே இருக்கும் சரி அடையாளத்தை click செய்வதன் மூலம் படத்தில் சேர்த்துக்கொள்ளலாம்.</string>-->
+<!--    <string name="title5">Filters சேர்க்கும் முறை</string>-->
+<!--    <string name="desc5">இங்கு படத்துக்கு filters செர்க்கலாம். கீழே வரும் filters ஐ click செய்து படத்திற்கு பொருத்தமான filter ஐ தெரிவுசெய்த பின்னர் மேலுள்ள சரி அடையாளத்தை click செயவதனால் படத்திற்கு சேர்த்துக்கொள்ள முடியும்.</string>-->
+<!--    <string name="title6">படத்தினை சரிசெய்யும் முறை</string>-->
+<!--    <string name="desc6">இங்கு படத்தின் நிறத்தை ஒழுங்கு படுத்த மற்றும் Blur செய்யவும் முடியும். முதலாவது சுட்டியினால் Blur effect இனை சேர்த்து அதனை ஒழுங்கு பகுத்தலாம். இரண்டாம் சுட்டியினால் படத்தின் நிறத்தை ஒழுங்குபடுத்தலாம். தேவைக்கேற்ப மாற்றங்களை செய்த பின் மேலிருக்கும் சரி அடையாளத்தை click செய்து படத்தில் சேர்க்கலாம்.</string>-->
+<!--    <string name="title7">படத்தை Crop செய்யும் முறை</string>-->
+<!--    <string name="desc7">இங்கு படத்தை crop, rotate, flip செய்துகொள்ளலாம். Crop செய்ய வேண்டுமெனில் crop செய்வதற்கு வரும் செயலாக்கத்தினை தேவையானவாறு மாற்ற வேண்டும். வலப்பக்க மேல் மூலையில் 3 புள்ளிகள் இருக்கும் அடையாளத்தை click செய்வதனூடு படத்தை rotate செய்வது மற்றும் vertical மற்றும் horizontal ஆக flip செய்ய முடியும். தேவையானவாறு மாற்றம் செய்த பின் crop button ஐ click செய்து படத்தில் சேர்க்கலாம்.</string>-->
+<!--    <string name="title8">undo , redo மற்றும் save செய்யும் முறை</string>-->
+<!--    <string name="desc8">படத்தை edit செய்த பின் வலது பக்க மேல் மூலையுலுள்ள சரி அடையாளத்தை click செய்து அப்படத்தை பகிர அல்லது தரவிறக்கம் செய்ய முடியும். அத்தோடு அங்கிருக்கும் மற்றைய button இரண்டினாலும் undo redo செய்யலாம்.</string>-->
+
+<!--    <string name="title2">எழுத்து சேர்க்கும் முறை</string>-->
+<!--    <string name="desc2">இங்கு இருக்கும் button ஐ பாவித்து படத்தின் மேல் வார்த்தைகளை type செய்யலாம். அதன் பின் அவ்வார்த்தைகளுக்கு நிறம் மற்றும் எழுத்து வடிவம் என்பவற்றை மாற்றாலாம். அத்தோடு அவ்வார்த்தைகளுக்கு நிழல் மற்றும் glow ஒன்றை கொடுக்க முடிவதோடு glow இனது நிறத்தை மாற்றலாம்.</string>-->
+
+
+
+<!--    <string name="are_you_sure_want_to_exit_text">வெளியேறுவதால் நீங்கள் செய்த படங்கள் அழிவதோடு அவற்றை மீள்பெற முடியாது. மேலும் உங்களுக்கு வெளியேற வேண்டுமா?</string>-->
+<!--    <string name="yes_text">வேண்டும்</string>-->
+<!--    <string name="no_text">வேண்டாம்</string>-->
+<!--    <string name="warning_text">எச்சரிக்கை!</string>-->
+
+<!--    <string name="rate_app_text">App இனை மதிப்பீடு செய்க</string>-->
+<!--    <string name="rate_app_description">இது போன்ற app களை மேலும் தயாரிக்க எமக்கு உங்களது பெறுமதிமிக்க மதிப்பீடுகளை வழங்குக!</string>-->
+<!--    <string name="okay_text">வழங்கு</string>-->
+<!--    <string name="cannot_text">வேண்டாம்</string>-->
 </resources>

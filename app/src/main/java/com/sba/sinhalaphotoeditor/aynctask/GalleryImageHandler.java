@@ -5,8 +5,10 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
+import android.util.Log;
 
 import com.sba.sinhalaphotoeditor.CallBacks.OnAFileAddedListner;
+import com.sba.sinhalaphotoeditor.activities.MyCustomGallery;
 import com.sba.sinhalaphotoeditor.model.GalleryImage;
 
 import java.io.File;
@@ -57,6 +59,7 @@ public class GalleryImageHandler extends AsyncTask<Void,Void,Void>
         Uri uri;
         Cursor cursor;
         int column_index_data, column_index_folder_name;
+        final String orderBy = MediaStore.Images.Media.DATE_ADDED + " DESC";
 
         String absolutePathOfImage, imageName;
 
@@ -71,7 +74,7 @@ public class GalleryImageHandler extends AsyncTask<Void,Void,Void>
 
 
         cursor = contentResolver.query(uri, projection, null,
-                null, "date_modified DESC");
+                null, orderBy);
 
 
 
@@ -92,14 +95,27 @@ public class GalleryImageHandler extends AsyncTask<Void,Void,Void>
 
             if(absolutePathOfImage != null && !absolutePathOfImage.equals(""))
             {
-                if(getBitmap(new File(absolutePathOfImage).toString()) != null)
+                try
                 {
-                    GalleryImage imgObj = new GalleryImage(new File(absolutePathOfImage));
-                    imageList.put(absolutePathOfImage,imgObj);
+                    if(getBitmap(new File(absolutePathOfImage).toString()) != null)
+                    {
+                        GalleryImage imgObj = new GalleryImage(new File(absolutePathOfImage));
+                        imageList.put(absolutePathOfImage,imgObj);
+                    }
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
                 }
 
             }
 
+            if(isCancelled() && imageList.size() >= MyCustomGallery.imageLimit)
+            {
+                Log.d("Running","Stopped " + imageList.size());
+                break;
+            }
+            Log.d("Running","Running " + imageList.size());
 
         }
 
@@ -107,8 +123,10 @@ public class GalleryImageHandler extends AsyncTask<Void,Void,Void>
 
         uri = android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI;
 
+
+
         cursor = contentResolver.query(uri, projection, null,
-                null, "date_modified DESC");
+                null, orderBy);
 
 
 
@@ -129,12 +147,26 @@ public class GalleryImageHandler extends AsyncTask<Void,Void,Void>
 
             if(absolutePathOfImage != null && !absolutePathOfImage.equals(""))
             {
-                if(getBitmap(new File(absolutePathOfImage).toString()) != null)
+                try
                 {
-                    GalleryImage imgObj = new GalleryImage(new File(absolutePathOfImage));
-                    imageList.put(absolutePathOfImage,imgObj);
+                    if(getBitmap(new File(absolutePathOfImage).toString()) != null)
+                    {
+                        GalleryImage imgObj = new GalleryImage(new File(absolutePathOfImage));
+                        imageList.put(absolutePathOfImage,imgObj);
+                    }
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
                 }
             }
+            if(isCancelled() && imageList.size() >= MyCustomGallery.imageLimit)
+            {
+                Log.d("Running","Stopped " + imageList.size());
+                break;
+            }
+
+            Log.d("Running","Running " + imageList.size());
         }
 
 
@@ -143,8 +175,7 @@ public class GalleryImageHandler extends AsyncTask<Void,Void,Void>
     public void getList(ArrayList<GalleryImage> list,int size)
     {
 
-        synchronized (list)
-        {
+
             if(imageList != null)
             {
 
@@ -165,13 +196,14 @@ public class GalleryImageHandler extends AsyncTask<Void,Void,Void>
                     }
                 }
             }
-        }
+
     }
     private int getImageCount()
     {
         int count = 0;
         Uri uri;
         Cursor cursor;
+        final String orderBy = MediaStore.Images.Media.DATE_ADDED + " DESC";
         int column_index_data, column_index_folder_name;
 
         String absolutePathOfImage = null, imageName;
@@ -187,7 +219,7 @@ public class GalleryImageHandler extends AsyncTask<Void,Void,Void>
 
 
         cursor = contentResolver.query(uri, projection, null,
-                null, "date_modified DESC");
+                null, orderBy);
 
         if(cursor != null)
         count+= cursor.getCount();
@@ -195,7 +227,7 @@ public class GalleryImageHandler extends AsyncTask<Void,Void,Void>
         uri = android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI;
 
         cursor = contentResolver.query(uri, projection, null,
-                null, "date_modified DESC");
+                null, orderBy);
 
         if(cursor != null)
         count+= cursor.getCount();

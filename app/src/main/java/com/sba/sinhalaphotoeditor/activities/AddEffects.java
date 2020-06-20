@@ -4,11 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,7 +14,7 @@ import android.widget.ProgressBar;
 
 
 import com.bumptech.glide.Glide;
-import com.glidebitmappool.GlideBitmapPool;
+
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
@@ -50,11 +47,11 @@ import java.util.Locale;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import render.animations.*;
 
 
 public class AddEffects extends AppCompatActivity implements OnBitmapChanged, OnAsyncTaskState {
 
+    //Filters
     static
     {
         System.loadLibrary("NativeImageProcessor");
@@ -85,7 +82,6 @@ public class AddEffects extends AppCompatActivity implements OnBitmapChanged, On
     protected void onDestroy()
     {
         super.onDestroy();
-        GlideBitmapPool.clearMemory();
     }
 
     @Override
@@ -164,11 +160,6 @@ public class AddEffects extends AppCompatActivity implements OnBitmapChanged, On
 
     }
 
-
-
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -188,9 +179,6 @@ public class AddEffects extends AppCompatActivity implements OnBitmapChanged, On
 
         filters = FilterPack.getFilterPack(AddEffects.this);
 
-
-
-
         filterRecyclerView = findViewById(R.id.filterRecyclerView);
         filterRecyclerView.setItemViewCacheSize(filters.size());
         LinearLayoutManager manager = new LinearLayoutManager(this);
@@ -198,8 +186,6 @@ public class AddEffects extends AppCompatActivity implements OnBitmapChanged, On
         filterAdapter = new FilterAdapter(AddEffects.this,filters,this);
         filterRecyclerView.setLayoutManager(manager);
         filterRecyclerView.setAdapter(filterAdapter);
-
-
 
 
         MobileAds.initialize(this, new OnInitializationCompleteListener() {
@@ -212,11 +198,7 @@ public class AddEffects extends AppCompatActivity implements OnBitmapChanged, On
 
 
 
-
-
         Methods.freeUpMemory();
-
-
 
 
         MobileAds.initialize(this, new OnInitializationCompleteListener() {
@@ -242,8 +224,6 @@ public class AddEffects extends AppCompatActivity implements OnBitmapChanged, On
                 }
             }
         });
-
-
 
     }
     private void init()

@@ -12,29 +12,33 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.sba.sinhalaphotoeditor.R;
 
-/**
- * A simple {@link Fragment} subclass.
- */
+import static android.content.Context.MODE_PRIVATE;
+import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_ENGLISH;
+import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_KEY;
+import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_SINHALA;
+import static com.sba.sinhalaphotoeditor.Config.Constants.SHARED_PREF_NAME;
+
+
 public class WalkthroughPagerFragment extends Fragment
 {
 
-    private Drawable image1,image2,image3,topImage;
+    private Drawable image1,image2,image3;
     private String title,description;
 
-    public WalkthroughPagerFragment(Drawable image1, Drawable image2, Drawable image3, String title, String description, Drawable topImage)
+    public WalkthroughPagerFragment(Drawable image1, Drawable image2, Drawable image3, String title, String description)
     {
         this.image1 = image1;
         this.image2 = image2;
         this.image3 = image3;
         this.title = title;
         this.description = description;
-        this.topImage = topImage;
     }
     public WalkthroughPagerFragment()
     {
@@ -46,7 +50,8 @@ public class WalkthroughPagerFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
+
         View view = inflater.inflate(R.layout.fragment_view_pager, container, false);
 
         ImageView imageView1 = view.findViewById(R.id.image1);
@@ -56,14 +61,11 @@ public class WalkthroughPagerFragment extends Fragment
         TextView titleTextView = view.findViewById(R.id.title);
         TextView descTextView = view.findViewById(R.id.description);
 
-        ImageView topGreenPannel = view.findViewById(R.id.topGreenPannel);
-
 
 
 
         if(image1 != null)
         {
-           // imageView1.setImageDrawable(image1);
             Glide.with(getActivity()).load(image1).into(imageView1);
         }
         else {
@@ -72,7 +74,6 @@ public class WalkthroughPagerFragment extends Fragment
         }
         if(image2 != null)
         {
-            //imageView2.setImageDrawable(image2);
             Glide.with(getActivity()).load(image2).into(imageView2);
         }
         else
@@ -81,7 +82,6 @@ public class WalkthroughPagerFragment extends Fragment
         }
         if(image3 != null)
         {
-            //imageView3.setImageDrawable(image3);
             Glide.with(getActivity()).load(image3).into(imageView3);
         }
         else
@@ -92,71 +92,39 @@ public class WalkthroughPagerFragment extends Fragment
         descTextView.setText(description);
 
 
-        if(topImage != null)
-        {
-            //topGreenPannel.setBackground(topImage);
-            Glide.with(getActivity()).load(topImage).into(topGreenPannel);
-        }
 
-        setTextViewFontAndSize(view);
+        changeTypeFace(view);
 
 
         return view;
     }
-    private void setTextViewFontAndSize(View view)
+    public void changeTypeFace(View view)
     {
+        if(getActivity() != null)
+        {
+            SharedPreferences pref = getActivity().getApplicationContext().getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+            String language = pref.getString(LANGUAGE_KEY,LANGUAGE_SINHALA);
+            Typeface typeface = null;
 
-        TextView title = view.findViewById(R.id.title);
-        TextView description = view.findViewById(R.id.description);
-
-
-
-        Typeface typeface;
-
-        SharedPreferences pref = getActivity().getSharedPreferences("com.sba.sinhalaphotoeditor", 0);
-        int pos = pref.getInt("LanguagePosition",-99);
-        if(pos != 99) {
-            switch (pos) {
-                case 1:
-
-
-                    typeface = ResourcesCompat.getFont(getActivity(), R.font.gemunulibresemibold);
-                    title.setTypeface(typeface);
-                    description.setTypeface(typeface);
-
-
-                    break;
-                case 2:
-
-                    typeface = ResourcesCompat.getFont(getActivity(), R.font.englishfont);
-                    title.setTypeface(typeface);
-
-
-                    description.setTypeface(typeface);
-
-
-
-
-
-
-                    break;
-                case 3:
-
-
-                    typeface = ResourcesCompat.getFont(getActivity(), R.font.tamilfont);
-
-
-                    title.setTypeface(typeface);
-                    title.setTextSize(20);
-
-                    description.setTypeface(typeface);
-
-
-
-
-                    break;
+            if(language.equals(LANGUAGE_ENGLISH))
+            {
+                //english
+                typeface = ResourcesCompat.getFont(getActivity().getApplicationContext(),R.font.englishfont);
             }
+            else
+            {
+                //sinhala
+                typeface = ResourcesCompat.getFont(getActivity().getApplicationContext(),R.font.bindumathi);
+            }
+
+
+            TextView titleTextView = view.findViewById(R.id.title);
+            TextView descTextView = view.findViewById(R.id.description);
+            titleTextView.setTypeface(typeface);
+            descTextView.setTypeface(typeface);
+
         }
+
     }
 
 }

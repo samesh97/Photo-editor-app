@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,6 +15,7 @@ import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
@@ -35,7 +37,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.glidebitmappool.GlideBitmapPool;
+import androidx.core.content.res.ResourcesCompat;
+
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.aynctask.GalleryImageHandler;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;
@@ -51,6 +54,12 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static android.content.Context.MODE_PRIVATE;
+import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_ENGLISH;
+import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_KEY;
+import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_SINHALA;
+import static com.sba.sinhalaphotoeditor.Config.Constants.SHARED_PREF_NAME;
 
 
 public class Methods
@@ -330,9 +339,7 @@ public class Methods
                     }
                 });
 
-        GalleryImageHandler handler = new GalleryImageHandler(resolver,null);
-        handler.setListEmpty();
-        handler.execute();
+
 
 
     }
@@ -522,6 +529,24 @@ public class Methods
         TextView toastMessage = view.findViewById(R.id.toastMessage);
         toastMessage.setText(message);
 
+
+        SharedPreferences pref = context.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        String language = pref.getString(LANGUAGE_KEY,LANGUAGE_SINHALA);
+        Typeface typeface = null;
+
+        if(language.equals(LANGUAGE_ENGLISH))
+        {
+            //english
+            typeface = ResourcesCompat.getFont(context,R.font.englishfont);
+        }
+        else
+        {
+            //sinhala
+            typeface = ResourcesCompat.getFont(context,R.font.bindumathi);
+        }
+
+        toastMessage.setTypeface(typeface);
+
         Toast toast = new Toast(context);
         toast.setDuration(Toast.LENGTH_LONG);
         toast.setView(view);
@@ -666,7 +691,8 @@ public class Methods
     {
         Bitmap bitmap = null;
 
-        try {
+        try
+        {
 
             File f = new File(path);
             BitmapFactory.Options options = new BitmapFactory.Options();
@@ -674,7 +700,9 @@ public class Methods
 
             bitmap = BitmapFactory.decodeStream(new FileInputStream(f), null, options);
 
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             e.printStackTrace();
             return null;
         }
@@ -684,7 +712,7 @@ public class Methods
     public static String saveToInternalStorage(Context context,Bitmap bitmapImage,String name){
 
         ContextWrapper cw = new ContextWrapper(context);
-        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+        File directory = cw.getDir("imageDir", MODE_PRIVATE);
         File file = null;
         Random rn = new Random();
         int randomValue = rn.nextInt(10000000) + 1;
@@ -731,7 +759,7 @@ public class Methods
     public static void deleteFileFromInternalStorage(Context context,String name){
 
         ContextWrapper cw = new ContextWrapper(context);
-        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+        File directory = cw.getDir("imageDir", MODE_PRIVATE);
         File file = new File(directory, name);
 
         if(file.exists())
@@ -792,7 +820,7 @@ public class Methods
     {
         //get image from private storage
         ContextWrapper cw = new ContextWrapper(context);
-        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+        File directory = cw.getDir("imageDir", MODE_PRIVATE);
         File file = new File(directory, name);
         Drawable d = Drawable.createFromPath(file.toString());
         return drawableToBitmap(d);
@@ -811,20 +839,21 @@ public class Methods
     }
     public static void freeUpMemory()
     {
-        AsyncTask asyncTask = new AsyncTask() {
-            @Override
-            protected Object doInBackground(Object[] objects)
-            {
-                Runtime rt = Runtime.getRuntime();
-                int maxMemory = (int)rt.freeMemory();
-                GlideBitmapPool.initialize(maxMemory);
-                GlideBitmapPool.clearMemory();
-                GlideBitmapPool.clearMemory();
-                return null;
-            }
-        };
-
-        asyncTask.execute();
+//        final AsyncTask asyncTask = new AsyncTask() {
+//            @Override
+//            protected Object doInBackground(Object[] objects)
+//            {
+//                Runtime rt = Runtime.getRuntime();
+//                int maxMemory = (int)rt.freeMemory();
+//                GlideBitmapPool.initialize(maxMemory);
+//                GlideBitmapPool.clearMemory();
+//                GlideBitmapPool.clearMemory();
+//
+//                return null;
+//            }
+//        };
+//
+//        asyncTask.execute();
 
     }
 }

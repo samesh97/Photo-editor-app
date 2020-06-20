@@ -1,14 +1,17 @@
 package com.sba.sinhalaphotoeditor.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Display;
@@ -25,7 +28,6 @@ import com.flask.colorpicker.ColorPickerView;
 import com.flask.colorpicker.OnColorSelectedListener;
 import com.flask.colorpicker.builder.ColorPickerClickListener;
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
-import com.glidebitmappool.GlideBitmapPool;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
@@ -34,6 +36,11 @@ import com.google.android.gms.ads.initialization.OnInitializationCompleteListene
 import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;
+
+import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_ENGLISH;
+import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_KEY;
+import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_SINHALA;
+import static com.sba.sinhalaphotoeditor.Config.Constants.SHARED_PREF_NAME;
 
 
 public class CreateABackgroundActivity extends AppCompatActivity {
@@ -201,6 +208,8 @@ public class CreateABackgroundActivity extends AppCompatActivity {
         createdBitmap = createImage(widthValue,heightValue,hex);
         userCreatedImage.setImageBitmap(createdBitmap);
 
+        changeTypeFace();
+
 
     }
     public  Bitmap createImage(int width, int height, String color)
@@ -248,6 +257,28 @@ public class CreateABackgroundActivity extends AppCompatActivity {
 
                     }
                 }).build().show();
+    }
+    private void changeTypeFace()
+    {
+        SharedPreferences pref = getApplicationContext().getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        String language = pref.getString(LANGUAGE_KEY,LANGUAGE_SINHALA);
+        Typeface typeface = null;
+
+        if(language.equals(LANGUAGE_ENGLISH))
+        {
+            //english
+            typeface = ResourcesCompat.getFont(getApplicationContext(),R.font.englishfont);
+        }
+        else
+        {
+            //sinhala
+            typeface = ResourcesCompat.getFont(getApplicationContext(),R.font.bindumathi);
+        }
+
+        create.setTypeface(typeface);
+        useImage.setTypeface(typeface);
+
+
     }
 
 }

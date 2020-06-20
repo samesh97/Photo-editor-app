@@ -13,6 +13,7 @@ public class AddImageToArrayListAsyncTask extends AsyncTask<Void,Void,Void>
     private Bitmap imageToBeAdded;
     private OnAsyncTaskState listner;
 
+
     public AddImageToArrayListAsyncTask(Bitmap imageToBeAdded, OnAsyncTaskState listner)
     {
         this.imageToBeAdded = imageToBeAdded;
@@ -29,8 +30,9 @@ public class AddImageToArrayListAsyncTask extends AsyncTask<Void,Void,Void>
     @Override
     protected void onPostExecute(Void aVoid)
     {
-        super.onPostExecute(aVoid);
+
         listner.startActivityForResult();
+        super.onPostExecute(aVoid);
 
     }
 
@@ -40,24 +42,6 @@ public class AddImageToArrayListAsyncTask extends AsyncTask<Void,Void,Void>
         if(imageToBeAdded != null)
         {
             ImageList.getInstance().addBitmap(imageToBeAdded,true);
-
-
-            if (EditorActivity.isNeededToDelete)
-            {
-                try
-                {
-                    ImageList.getInstance().removeBitmap(ImageList.getInstance().getCurrentPosition() + 1,false);
-                }
-                catch (Exception e)
-                {
-                    if(e.getMessage() != null)
-                    {
-                        Log.d("Error",e.getMessage());
-                    }
-
-                }
-            }
-
         }
         return null;
     }

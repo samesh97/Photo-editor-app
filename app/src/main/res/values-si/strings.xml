@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Sihala Photo Editor</string>
+
+    <string name="app_name">Sihala</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="select_an_image_text">පිංතූරයක් තෝරා ගන්න</string>
     <string name="select_from_galery_text">ගැලරියෙන් තෝරා ගන්න</string>
@@ -81,4 +82,12 @@
     <string name="removed_text">ඉවත් කෙරුනි</string>
     <string name="saved_to_gallery_text">ගැලරියට Save කලහ</string>
 
+
+    <string name="text_skip">මගහරින්න</string>
+    <string name="scroll_to_where_you_left_off">කලින් හිටපු තැනට යමු</string>
+    <string name="pick_a_language">ඔබගෙ ප්‍රියතම භාශාව තෝරාගන්න</string>
+    <string name="thank_you_for_downloading_text">ස්තූතියි භාගත කරගත්තාට</string>
+    <string name="name_text">නම</string>
+    <string name="recent_text">නවතම</string>
+    <string name="select_text">තෝරාගන්න</string>
 </resources>

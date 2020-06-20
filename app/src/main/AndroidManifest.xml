@@ -16,7 +16,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.BeautyActivity"></activity>
+        <activity android:name=".activities.BeautyActivity"/>
         <activity
             android:name=".activities.SplashScreen"
             android:theme="@style/NoActionBarAppTheme">
@@ -63,10 +63,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/NoActionBarAppTheme" />
         <activity
-            android:name=".activities.UsePreviouslyEditedImageActivity"
-            android:label="Edited Images"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".activities.AddEffects"
             android:label="Add Effect"
             android:screenOrientation="portrait" />
@@ -91,7 +87,7 @@
             android:name=".activities.MainActivity"
             android:label="Editor"
             android:screenOrientation="portrait"
-            android:theme="@style/NoActionBarAppTheme"></activity>
+            android:theme="@style/NoActionBarAppTheme"/>
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"

@@ -52,7 +52,7 @@ dependencies {
 
     implementation 'info.androidhive:imagefilters:1.0.7'
 
-    implementation 'com.amitshekhar.android:glide-bitmap-pool:0.0.1'
+    //implementation 'com.amitshekhar.android:glide-bitmap-pool:0.0.1'
 
     implementation 'com.github.gayanvoice:android-view-animations-java:1.0.2'
 

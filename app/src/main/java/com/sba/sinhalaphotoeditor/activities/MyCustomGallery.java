@@ -3,6 +3,7 @@ package com.sba.sinhalaphotoeditor.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -12,9 +13,11 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -41,6 +44,7 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -64,6 +68,10 @@ import java.util.TimerTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_ENGLISH;
+import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_KEY;
+import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_SINHALA;
+import static com.sba.sinhalaphotoeditor.Config.Constants.SHARED_PREF_NAME;
 import static com.sba.sinhalaphotoeditor.adapters.GridViewAdapter.numberOfImagesInARow;
 
 
@@ -81,7 +89,7 @@ public class MyCustomGallery extends AppCompatActivity {
     private SwipeRefreshLayout swipe_layout;
     private GalleryImageHandler galleryImageHandler;
     private ArrayList<GalleryImage> showingImages;
-    private int imageLimit = 18;
+    public static final int imageLimit = 18;
     private int maxImagesPerScroll = 18;
     private static int lastScrolledPosition = 0;
     private static int lastShowingListCount = 0;
@@ -104,12 +112,15 @@ public class MyCustomGallery extends AppCompatActivity {
             timer.cancel();
         }
 
+        galleryImageHandler.cancel(true);
+
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
+        galleryImageHandler.cancel(true);
     }
 
     @Override
@@ -277,6 +288,8 @@ public class MyCustomGallery extends AppCompatActivity {
         }, 0, 100);
 
 
+        changeTypeFace();
+
     }
     public Bitmap getBitmap(String path)
     {
@@ -324,6 +337,8 @@ public class MyCustomGallery extends AppCompatActivity {
                 {
                     if(selectedBitmap != null)
                     {
+
+                        galleryImageHandler.cancel(true);
                         Intent intent = new Intent();
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         setResult(IMAGE_PICK_RESULT_CODE,intent);
@@ -349,6 +364,31 @@ public class MyCustomGallery extends AppCompatActivity {
             },2000);
 
         }
+
+    }
+    private void changeTypeFace()
+    {
+        SharedPreferences pref = getApplicationContext().getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        String language = pref.getString(LANGUAGE_KEY,LANGUAGE_SINHALA);
+        Typeface typeface = null;
+
+        if(language.equals(LANGUAGE_ENGLISH))
+        {
+            //english
+            typeface = ResourcesCompat.getFont(getApplicationContext(),R.font.englishfont);
+        }
+        else
+        {
+            //sinhala
+            typeface = ResourcesCompat.getFont(getApplicationContext(),R.font.bindumathi);
+        }
+
+        TextView tool_bar_title = findViewById(R.id.tool_bar_title);
+        Button scrollToPos = findViewById(R.id.scrollToPos);
+        Button select_btn = findViewById(R.id.select_btn);
+        tool_bar_title.setTypeface(typeface);
+        scrollToPos.setTypeface(typeface);
+        select_btn.setTypeface(typeface);
 
     }
 }
