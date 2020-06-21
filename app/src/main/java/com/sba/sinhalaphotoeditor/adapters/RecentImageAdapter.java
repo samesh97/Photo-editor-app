@@ -86,45 +86,45 @@ public class RecentImageAdapter extends RecyclerView.Adapter<RecentImageAdapter.
 
         Log.d("adapterSize","" + images.size());
 
-        holder.delete.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setTitle("Delete Image");
-                builder.setIcon(R.drawable.delete);
-                builder.setMessage("Are sure you want to delete?");
-                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which)
-                    {
-                        if(helper.deleteImage(ids.get(position)))
-                        {
-                            ids.remove(position);
-                            images.remove(position);
-                            dates.remove(position);
-
-
-                            Methods.showCustomToast(context,context.getResources().getString(R.string.removed_text));
-                            notifyDataSetChanged();
-                        }
-                        else
-                        {
-                            Methods.showCustomToast(context,context.getString(R.string.something_went_wrong_text));
-                        }
-
-                    }
-                });
-                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
-                builder.show();
-            }
-        });
+//        holder.delete.setOnClickListener(new View.OnClickListener()
+//        {
+//            @Override
+//            public void onClick(View v)
+//            {
+//                final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+//                builder.setTitle("Delete Image");
+//                builder.setIcon(R.drawable.delete);
+//                builder.setMessage("Are sure you want to delete?");
+//                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which)
+//                    {
+//                        if(helper.deleteImage(ids.get(position)))
+//                        {
+//                            ids.remove(position);
+//                            images.remove(position);
+//                            dates.remove(position);
+//
+//
+//                            Methods.showCustomToast(context,context.getResources().getString(R.string.removed_text));
+//                            notifyDataSetChanged();
+//                        }
+//                        else
+//                        {
+//                            Methods.showCustomToast(context,context.getString(R.string.something_went_wrong_text));
+//                        }
+//
+//                    }
+//                });
+//                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//
+//                    }
+//                });
+//                builder.show();
+//            }
+//        });
 
     }
 

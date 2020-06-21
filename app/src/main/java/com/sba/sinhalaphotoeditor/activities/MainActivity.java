@@ -458,11 +458,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public boolean isPermissonGranted2()
     {
 
-        if(ContextCompat.checkSelfPermission(getApplicationContext(),Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
-        {
-            return true;
-        }
-        return false;
+        return ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
 
     }
     public void isUserWantToExitTheApp()
@@ -504,20 +500,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         no.setText(getResources().getText(R.string.exit_app_no_text));
 
 
-        SharedPreferences pref = getApplicationContext().getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
-        String language = pref.getString(LANGUAGE_KEY,LANGUAGE_SINHALA);
-        Typeface typeface = null;
-
-        if(language.equals(LANGUAGE_ENGLISH))
-        {
-            //english
-            typeface = ResourcesCompat.getFont(getApplicationContext(),R.font.englishfont);
-        }
-        else
-        {
-            //sinhala
-            typeface = ResourcesCompat.getFont(getApplicationContext(),R.font.bindumathi);
-        }
+        Typeface typeface = Methods.getDefaultTypeFace(getApplicationContext());
 
         message.setTypeface(typeface);
         title.setTypeface(typeface);
@@ -528,6 +511,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onClick(View v)
             {
+                dialog.dismiss();
                 isExit = true;
                 onBackPressed();
             }
@@ -843,20 +827,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
     private void changeTypeFace()
     {
-        SharedPreferences pref = getApplicationContext().getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
-        String language = pref.getString(LANGUAGE_KEY,LANGUAGE_SINHALA);
-        Typeface typeface = null;
-
-        if(language.equals(LANGUAGE_ENGLISH))
-        {
-            //english
-            typeface = ResourcesCompat.getFont(getApplicationContext(),R.font.englishfont);
-        }
-        else
-        {
-            //sinhala
-            typeface = ResourcesCompat.getFont(getApplicationContext(),R.font.bindumathi);
-        }
+       Typeface typeface = Methods.getDefaultTypeFace(getApplicationContext());
 
         TextView textView13 = findViewById(R.id.textView13);
         TextView fromGalery = findViewById(R.id.fromGalery);
@@ -864,8 +835,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         textView13.setTypeface(typeface);
         fromGalery.setTypeface(typeface);
         createOne.setTypeface(typeface);
-
-
 
     }
 

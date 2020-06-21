@@ -62,6 +62,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:alpha="0.5"
         app:layout_constraintBottom_toTopOf="@+id/adView">
 
         <ImageView

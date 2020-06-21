@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Handler;
@@ -375,7 +376,6 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
 
         try
         {
-            //userSelectedImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
             methods.setImageViewScaleType(userSelectedImage);
             Glide.with(getApplicationContext()).load(ImageList.getInstance().getCurrentBitmap()).into(userSelectedImage);
 
@@ -606,6 +606,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
     public void showPopup()
     {
         final Dialog dialog = new Dialog(this);
+        if(dialog.getWindow() != null)
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         View view = getLayoutInflater().inflate(R.layout.activity_popup_screen,null);
@@ -621,10 +622,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
             {
                 if(editText.getText().toString().equals("") || editText.getText().toString().trim().equals(""))
                 {
-
                     Methods.showCustomToast(EditorActivity.this,getResources().getString(R.string.enter_text));
-
-                    //Toast.makeText(EditorActivity.this, "Enter a text", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 dialog.dismiss();
@@ -657,7 +655,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         if(dia.getWindow() != null)
         {
             dia.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            dia.getWindow().setLayout(RelativeLayout.LayoutParams.FILL_PARENT, (int) (Methods.getDeviceHeightInPX(getApplicationContext()) / 2));
+            dia.getWindow().setLayout(RelativeLayout.LayoutParams.MATCH_PARENT, (int) (Methods.getDeviceHeightInPX(getApplicationContext()) / 2));
             Window window = dia.getWindow();
             WindowManager.LayoutParams wlp = window.getAttributes();
             wlp.gravity = Gravity.BOTTOM;
@@ -1062,21 +1060,31 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         imageView6.setImageDrawable(getDrawable(R.drawable.exit_editing_cartoon));
         imageView6.setScaleType(ImageView.ScaleType.CENTER);
 
+        Typeface typeface = Methods.getDefaultTypeFace(getApplicationContext());
+
 
         TextView message = view.findViewById(R.id.textView8);
         message.setText(getResources().getString(R.string.are_you_sure_want_to_exit_text));
-        TextView title = view.findViewById(R.id.textView7);
+        message.setTypeface(typeface);
 
+        TextView title = view.findViewById(R.id.textView7);
         title.setText(getResources().getString(R.string.warning_text));
+        title.setTypeface(typeface);
+
         Button yes = view.findViewById(R.id.yesButton);
         Button no = view.findViewById(R.id.noButton);
 
         yes.setText(getResources().getString(R.string.yes_text));
+        yes.setTypeface(typeface);
+
         no.setText(getResources().getString(R.string.no_text));
+        no.setTypeface(typeface);
+
         yes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
+                dialog.dismiss();
                 Intent intent = new Intent(getApplicationContext(),MainActivity.class);
                 intent.putExtra(NUMBER_OF_IMAGES_WAS_ADDED,(ImageList.getInstance().getImageListSize() - 1));
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);

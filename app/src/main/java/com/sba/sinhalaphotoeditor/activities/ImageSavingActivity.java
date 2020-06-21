@@ -31,21 +31,10 @@ import java.io.ByteArrayOutputStream;
 import render.animations.Flip;
 import render.animations.Render;
 
+import static com.sba.sinhalaphotoeditor.Config.Constants.APP_MARKET_LINK;
+
 public class ImageSavingActivity extends AppCompatActivity {
 
-    private ImageView saveFinalImage;
-    private ImageView userSavingImage;
-    private ImageView shareFinalImage;
-
-
-    private ImageView shareImageView;
-    private TextView fromGalery;
-
-    private Render render;
-
-    private ImageView downloadImageView;
-
-    private TextView downloadImageText;
 
     private Methods methods;
 
@@ -62,29 +51,19 @@ public class ImageSavingActivity extends AppCompatActivity {
 
         methods = new Methods(ImageSavingActivity.this);
 
-        setTextViewFontAndSize();
 
 
+        ImageView saveFinalImage = (ImageView) findViewById(R.id.saveFinalImage);
+        ImageView userSavingImage = (ImageView) findViewById(R.id.userSavingImage);
 
+        TextView fromGalery = findViewById(R.id.fromGalery);
 
+        ImageView shareImageView = findViewById(R.id.shareImageView);
 
-        render = new Render(ImageSavingActivity.this);
+        ImageView downloadImageView = findViewById(R.id.downloadImageView);
 
-        saveFinalImage = (ImageView) findViewById(R.id.saveFinalImage);
-        userSavingImage = (ImageView) findViewById(R.id.userSavingImage);
+        TextView downloadImageText = findViewById(R.id.downloadImageText);
 
-        fromGalery = findViewById(R.id.fromGalery);
-
-        shareImageView = findViewById(R.id.shareImageView);
-
-        downloadImageView = findViewById(R.id.downloadImageView);
-
-        downloadImageText = findViewById(R.id.downloadImageText);
-
-
-        ImageView topGreenPannel;
-        topGreenPannel = findViewById(R.id.topGreenPannel);
-        Glide.with(getApplicationContext()).load(R.drawable.samplewalpaper).into(topGreenPannel);
 
 
         shareImageView.setOnClickListener(new View.OnClickListener() {
@@ -123,9 +102,7 @@ public class ImageSavingActivity extends AppCompatActivity {
         });
 
 
-
-
-        shareFinalImage = (ImageView) findViewById(R.id.shareFinalImage);
+        ImageView shareFinalImage = (ImageView) findViewById(R.id.shareFinalImage);
 
         shareFinalImage.setOnClickListener(new View.OnClickListener()
         {
@@ -136,8 +113,12 @@ public class ImageSavingActivity extends AppCompatActivity {
             }
         });
 
-        //userSavingImage.setImageBitmap(MainActivity.images.get(MainActivity.imagePosition));
+
         Glide.with(getApplicationContext()).load(ImageList.getInstance().getCurrentBitmap()).into(userSavingImage);
+        userSavingImage.setClipToOutline(true);
+
+
+
 
         saveFinalImage.setOnClickListener(new View.OnClickListener()
         {
@@ -148,12 +129,6 @@ public class ImageSavingActivity extends AppCompatActivity {
 
             }
         });
-
-        render.setAnimation(Flip.InX(userSavingImage));
-        render.start();
-
-
-
 
 
     }
@@ -170,15 +145,16 @@ public class ImageSavingActivity extends AppCompatActivity {
             dialog.getWindow().setLayout(finalWidth,RelativeLayout.LayoutParams.WRAP_CONTENT);
         }
 
-
         View view = getLayoutInflater().inflate(R.layout.exit_dialog_layout,null);
-
         dialog.setContentView(view);
 
+
+        Typeface typeface = Methods.getDefaultTypeFace(getApplicationContext());
 
         TextView message = view.findViewById(R.id.textView8);
 
         message.setText(getResources().getString(R.string.rate_app_description));
+        message.setTypeface(typeface);
 
         TextView title = view.findViewById(R.id.textView7);
 
@@ -186,25 +162,25 @@ public class ImageSavingActivity extends AppCompatActivity {
         ImageView imageView6 = view.findViewById(R.id.imageView6);
         imageView6.setImageDrawable(getDrawable(R.drawable.download_image_cartoon));
 
-
-
-       // ImageView icon = view.findViewById(R.id.imageView4);
-       // icon.setImageResource(R.drawable.ic_star_half);
-
-
         title.setText(getResources().getString(R.string.rate_app_text));
+        title.setTypeface(typeface);
 
         Button yes = view.findViewById(R.id.yesButton);
         Button no = view.findViewById(R.id.noButton);
 
         yes.setText(getResources().getString(R.string.okay_text));
+        yes.setTypeface(typeface);
         no.setText(getResources().getString(R.string.cannot_text));
+        no.setTypeface(typeface);
+
         yes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
+                dialog.dismiss();
                 methods.SaveImage(ImageList.getInstance().getCurrentBitmap(),getContentResolver());
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id="+"com.sba.sinhalaphotoeditor")));
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(APP_MARKET_LINK)));
+
             }
         });
 
@@ -214,6 +190,8 @@ public class ImageSavingActivity extends AppCompatActivity {
             public void onClick(View v)
             {
                 dialog.dismiss();
+                methods.SaveImage(ImageList.getInstance().getCurrentBitmap(),getContentResolver());
+
             }
         });
         dialog.show();
@@ -232,68 +210,7 @@ public class ImageSavingActivity extends AppCompatActivity {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
         String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-/*
-
-        String realPath = getRealPathFromDocumentUri(getApplicationContext(),Uri.parse(path));
-        Log.d("image",realPath);
-
-        File file = new File(realPath);
-        if(file.exists())
-        {
-            file.delete();
-            Log.d("image","deleted");
-        }*/
 
         return Uri.parse(path);
-    }
-    public void setTextViewFontAndSize()
-    {
-
-        TextView downloadImageText = findViewById(R.id.downloadImageText);
-        TextView fromGalery = findViewById(R.id.fromGalery);
-
-
-        Typeface typeface;
-
-        SharedPreferences pref = getApplicationContext().getSharedPreferences("com.sba.sinhalaphotoeditor", 0);
-        int pos = pref.getInt("LanguagePosition",-99);
-        if(pos != 99) {
-            switch (pos) {
-                case 1:
-
-
-                    typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.gemunulibresemibold);
-                    downloadImageText.setTypeface(typeface);
-                    fromGalery.setTypeface(typeface);
-
-                    break;
-                case 2:
-
-                    typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.englishfont);
-                    downloadImageText.setTypeface(typeface);
-
-
-                    fromGalery.setTypeface(typeface);
-
-
-
-
-
-                    break;
-                case 3:
-
-
-                    typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.tamilfont);
-
-
-                    downloadImageText.setTypeface(typeface);
-                    downloadImageText.setTextSize(20);
-
-                    fromGalery.setTypeface(typeface);
-                    fromGalery.setTextSize(14);
-
-                    break;
-            }
-        }
     }
 }

@@ -856,4 +856,23 @@ public class Methods
 //        asyncTask.execute();
 
     }
+    public static Typeface getDefaultTypeFace(Context context)
+    {
+        SharedPreferences pref = context.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        String language = pref.getString(LANGUAGE_KEY,LANGUAGE_SINHALA);
+        Typeface typeface = null;
+
+        if(language.equals(LANGUAGE_ENGLISH))
+        {
+            //english
+            typeface = ResourcesCompat.getFont(context,R.font.englishfont);
+        }
+        else
+        {
+            //sinhala
+            typeface = ResourcesCompat.getFont(context,R.font.bindumathi);
+        }
+
+        return typeface;
+    }
 }

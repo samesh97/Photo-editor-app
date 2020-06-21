@@ -4,47 +4,49 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#114f5e"
-    tools:context=".activities.ImageSavingActivity">
-
-    <ImageView
-        android:id="@+id/topGreenPannel"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/activity_image_saving_top_image_height"
-        android:scaleType="fitXY"
-        android:src="@drawable/samplewalpaper"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
+    android:background="@android:color/white">
 
     <ImageView
         android:id="@+id/userSavingImage"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/activity_image_saving_image_height_160"
-        android:layout_marginStart="@dimen/activity_image_saving_margin_32"
-        android:layout_marginTop="@dimen/activity_image_saving_margin_50"
-        android:layout_marginEnd="@dimen/activity_image_saving_margin_32"
-        android:adjustViewBounds="true"
-        android:scaleType="fitCenter"
+        android:layout_height="0dp"
+        android:background="@drawable/bottom_curve_background"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toTopOf="@+id/guideline8"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+
+<!--    <ImageView-->
+<!--        android:id="@+id/userSavingImage"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:layout_marginStart="32dp"-->
+<!--        android:layout_marginTop="32dp"-->
+<!--        android:layout_marginEnd="32dp"-->
+<!--        android:layout_marginBottom="32dp"-->
+<!--        android:adjustViewBounds="true"-->
+<!--        android:scaleType="fitCenter"-->
+<!--        app:layout_constraintBottom_toTopOf="@+id/guideline8"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintHorizontal_bias="0.0"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent" />-->
 
 
     <ImageView
         android:id="@+id/shareImageView"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/activity_image_saving_image_height_80"
-        android:layout_marginStart="@dimen/activity_image_saving_margin_10"
-        android:layout_marginTop="@dimen/activity_image_saving_margin_16"
-        android:layout_marginEnd="@dimen/activity_image_saving_margin_10"
-        android:background="@drawable/custom_drop_shadow_drawable"
+        android:layout_height="70dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/round_bg_ash"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/userSavingImage" />
+        app:layout_constraintTop_toTopOf="@+id/guideline8" />
 
     <ImageView
         android:id="@+id/shareFinalImage"
@@ -61,12 +63,12 @@
         android:id="@+id/fromGalery"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/bindumathi"
         android:gravity="center"
         android:text="@string/share_image_text"
-        android:textColor="#018577"
+        android:textColor="@color/colorPrimary"
+        android:textSize="19sp"
         android:textStyle="bold"
-        android:textSize="22sp"
-        android:fontFamily="@font/gemunulibrebold"
         android:typeface="sans"
         app:layout_constraintBottom_toBottomOf="@+id/shareFinalImage"
         app:layout_constraintStart_toStartOf="@+id/downloadImageText"
@@ -75,11 +77,11 @@
     <ImageView
         android:id="@+id/downloadImageView"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/activity_image_saving_image_height_80"
-        android:layout_marginStart="@dimen/activity_image_saving_margin_10"
+        android:layout_height="70dp"
+        android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="@dimen/activity_image_saving_margin_10"
-        android:background="@drawable/custom_drop_shadow_drawable"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/round_bg_ash"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -102,17 +104,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/activity_image_saving_margin_32"
+        android:fontFamily="@font/bindumathi"
         android:gravity="center"
         android:text="@string/download_image_text"
-        android:textColor="#018577"
-        android:textSize="22sp"
-        android:fontFamily="@font/gemunulibrebold"
+        android:textColor="@color/colorPrimary"
+        android:textSize="19sp"
         android:textStyle="bold"
         android:typeface="sans"
         app:layout_constraintBottom_toBottomOf="@+id/saveFinalImage"
         app:layout_constraintStart_toEndOf="@+id/saveFinalImage"
         app:layout_constraintTop_toTopOf="@+id/saveFinalImage" />
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.46" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

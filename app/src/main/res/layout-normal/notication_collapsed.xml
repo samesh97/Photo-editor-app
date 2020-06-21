@@ -12,7 +12,7 @@
         android:layout_height="50dp"
         android:layout_marginStart="12dp"
         android:layout_marginLeft="12dp"
-        android:src="@drawable/greenlogo"
+        android:src="@drawable/logo"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

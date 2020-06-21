@@ -110,7 +110,6 @@ public class AddStickerOnImage extends AppCompatActivity
     private int addedStickerCount = 0;
     float lastX = 0, lastY = 0;
 
-    private Button addNewStickerButton;
     private ProgressBar progress_bar;
 
     @Override
@@ -160,11 +159,13 @@ public class AddStickerOnImage extends AppCompatActivity
         setBackgroundAsSelected();
 
         progress_bar = findViewById(R.id.progress_bar);
-        addNewStickerButton = findViewById(R.id.addNewStickerButton);
-        addNewStickerButton.setOnClickListener(new View.OnClickListener() {
+
+
+        ConstraintLayout img_add_sticker_container = findViewById(R.id.img_add_sticker_container);
+        img_add_sticker_container.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
+
                 showStickerPopup();
             }
         });
@@ -237,6 +238,45 @@ public class AddStickerOnImage extends AppCompatActivity
 
             }
         });
+
+
+        ConstraintLayout img_done_container = findViewById(R.id.img_done_container);
+        img_done_container.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                if(setTextFinal())
+                {
+                    progress_bar.setVisibility(View.VISIBLE);
+
+                    try
+                    {
+                        Bitmap  bitmap = null;
+                        bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageOutUri);
+                        bitmap = methods.CropBitmapTransparency(bitmap);
+
+                        AddImageToArrayListAsyncTask task;
+                        if(addedStickersList.size() > 0)
+                        {
+                            task = new AddImageToArrayListAsyncTask(bitmap,AddStickerOnImage.this);
+                        }
+                        else
+                        {
+                            task = new AddImageToArrayListAsyncTask(null,AddStickerOnImage.this);
+                        }
+
+                        task.execute();
+                    }
+                    catch (IOException e)
+                    {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+        });
+
+
 
 
     }
@@ -421,64 +461,6 @@ public class AddStickerOnImage extends AppCompatActivity
 
 
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.photo_on_photo_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == android.R.id.home)
-        {
-            onBackPressed();
-            return true;
-        }
-        else if(item.getItemId() == R.id.setImage)
-        {
-            if(setTextFinal())
-            {
-                progress_bar.setVisibility(View.VISIBLE);
-
-                try
-                {
-                    Bitmap  bitmap = null;
-                    bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageOutUri);
-                    bitmap = methods.CropBitmapTransparency(bitmap);
-
-                    AddImageToArrayListAsyncTask task;
-                    if(addedStickersList.size() > 0)
-                    {
-                        task = new AddImageToArrayListAsyncTask(bitmap,this);
-                    }
-                    else
-                    {
-                        task = new AddImageToArrayListAsyncTask(null,this);
-                    }
-
-                    task.execute();
-                }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                }
-
-            }
-
-
-            //new RunInBackground().execute();
-            return  true;
-        }
-        else
-        {
-            return super.onOptionsItemSelected(item);
-        }
-
-
-
-    }
-
     private boolean setTextFinal()
     {
         runOnUiThread(new Runnable() {
@@ -540,7 +522,7 @@ public class AddStickerOnImage extends AppCompatActivity
         if(dia.getWindow() != null)
         {
             dia.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            dia.getWindow().setLayout(RelativeLayout.LayoutParams.FILL_PARENT, (int) (Methods.getDeviceHeightInPX(getApplicationContext()) / 2));
+            dia.getWindow().setLayout(RelativeLayout.LayoutParams.MATCH_PARENT, (int) (Methods.getDeviceHeightInPX(getApplicationContext()) / 2));
             Window window = dia.getWindow();
             WindowManager.LayoutParams wlp = window.getAttributes();
             wlp.gravity = Gravity.BOTTOM;

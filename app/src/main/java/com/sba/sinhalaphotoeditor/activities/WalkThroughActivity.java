@@ -216,20 +216,7 @@ public class WalkThroughActivity extends AppCompatActivity {
     }
     private void changeTypeFace()
     {
-        SharedPreferences pref = getApplicationContext().getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
-        String language = pref.getString(LANGUAGE_KEY,LANGUAGE_SINHALA);
-        Typeface typeface = null;
-
-        if(language.equals(LANGUAGE_ENGLISH))
-        {
-            //english
-            typeface = ResourcesCompat.getFont(getApplicationContext(),R.font.englishfont);
-        }
-        else
-        {
-            //sinhala
-            typeface = ResourcesCompat.getFont(getApplicationContext(),R.font.bindumathi);
-        }
+        Typeface typeface = Methods.getDefaultTypeFace(getApplicationContext());
 
         next.setTypeface(typeface);
         previous.setTypeface(typeface);

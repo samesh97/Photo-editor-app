@@ -41,7 +41,6 @@ public class Constants
 
     public static final String APP_MARKET_LINK = "market://details?id=com.sba.sinhalaphotoeditor";
 
-
     //Sihala User
 
     public static final String USER_NAME_KEY = "SihalaUserName";

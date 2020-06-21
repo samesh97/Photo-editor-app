@@ -28,7 +28,6 @@
         android:layout_height="45dp"
         android:layout_marginEnd="@dimen/row_image_margin_16"
         android:visibility="gone"
-        android:src="@drawable/delete"
         app:layout_constraintBottom_toBottomOf="@+id/image"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/image" />
