@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.sba.sinhalaphotoeditor.CallBacks.OnTextAttributesChangedListner;
+import com.sba.sinhalaphotoeditor.callbacks.OnTextAttributesChangedListner;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.model.TextViewPlus;
 

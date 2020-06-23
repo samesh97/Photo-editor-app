@@ -28,7 +28,7 @@
         android:layout_centerHorizontal="true"
         app:adSize="BANNER"
         app:adUnitId="ca-app-pub-3538783908730049/1216781500"
-        app:layout_constraintBottom_toTopOf="@+id/filterRecyclerView"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -60,10 +60,10 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:alpha="0.5"
-        app:layout_constraintBottom_toTopOf="@+id/adView">
+        app:layout_constraintBottom_toBottomOf="@+id/userSelectedImage">
 
         <ImageView
             android:id="@+id/expandIcon"
@@ -81,15 +81,15 @@
             android:id="@+id/subFiltersLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:visibility="gone"
-            tools:visibility="visible"
-            android:background="@color/colorPrimary"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/expandIcon"
-            app:layout_constraintVertical_bias="0.0" >
+            app:layout_constraintVertical_bias="0.0"
+            tools:visibility="visible">
 
 
             <TextView

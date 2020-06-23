@@ -6,17 +6,12 @@ import android.widget.ImageView;
 
 public class StickerViewPlus
 {
-    private Context context;
-    private ImageView sticker;
-    private float opacityLevel;
-    private float angle;
 
 
     public StickerViewPlus(Context context)
     {
-        this.context = context;
-        sticker = new ImageView(context);
-        this.opacityLevel = 1f;
-        this.angle = 0;
+        ImageView sticker = new ImageView(context);
+        float opacityLevel = 1f;
+        float angle = 0;
     }
 }

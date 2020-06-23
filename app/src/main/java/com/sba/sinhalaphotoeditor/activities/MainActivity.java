@@ -10,7 +10,6 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
@@ -24,7 +23,6 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -33,7 +31,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,11 +55,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.sba.sinhalaphotoeditor.BuildConfig;
-import com.sba.sinhalaphotoeditor.CallBacks.OnAsyncTaskState;
-import com.sba.sinhalaphotoeditor.Config.Constants;
-import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
+import com.sba.sinhalaphotoeditor.callbacks.OnAsyncTaskState;
+import com.sba.sinhalaphotoeditor.config.Constants;
+import com.sba.sinhalaphotoeditor.sdk.Methods;
 import com.sba.sinhalaphotoeditor.R;
-import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
+import com.sba.sinhalaphotoeditor.database.DatabaseHelper;
 import com.sba.sinhalaphotoeditor.adapters.RecentImageAdapter;
 import com.sba.sinhalaphotoeditor.aynctask.AddImageToArrayListAsyncTask;
 import com.sba.sinhalaphotoeditor.model.AppData;
@@ -74,18 +71,18 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 
-import static com.sba.sinhalaphotoeditor.Config.Constants.ACTIVITY_EXTRA_KEY;
-import static com.sba.sinhalaphotoeditor.Config.Constants.APP_MARKET_LINK;
-import static com.sba.sinhalaphotoeditor.Config.Constants.FIREBASE_APP_INFO_REFERENCE;
-import static com.sba.sinhalaphotoeditor.Config.Constants.FIREBASE_PAYLOAD_MESSAGE_TEXT;
-import static com.sba.sinhalaphotoeditor.Config.Constants.FIREBASE_PAYLOAD_TITLE_TEXT;
-import static com.sba.sinhalaphotoeditor.Config.Constants.IS_WALKTHROUGH_NEEDED_KEY;
-import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_ENGLISH;
-import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_KEY;
-import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_POSITION_KEY;
-import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_SINHALA;
-import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_TAMIL;
-import static com.sba.sinhalaphotoeditor.Config.Constants.SHARED_PREF_NAME;
+import static com.sba.sinhalaphotoeditor.config.Constants.ACTIVITY_EXTRA_KEY;
+import static com.sba.sinhalaphotoeditor.config.Constants.APP_MARKET_LINK;
+import static com.sba.sinhalaphotoeditor.config.Constants.FIREBASE_APP_INFO_REFERENCE;
+import static com.sba.sinhalaphotoeditor.config.Constants.FIREBASE_PAYLOAD_MESSAGE_TEXT;
+import static com.sba.sinhalaphotoeditor.config.Constants.FIREBASE_PAYLOAD_TITLE_TEXT;
+import static com.sba.sinhalaphotoeditor.config.Constants.IS_WALKTHROUGH_NEEDED_KEY;
+import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_ENGLISH;
+import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_KEY;
+import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_POSITION_KEY;
+import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_SINHALA;
+import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_TAMIL;
+import static com.sba.sinhalaphotoeditor.config.Constants.SHARED_PREF_NAME;
 import static com.sba.sinhalaphotoeditor.activities.MyCustomGallery.IMAGE_PICK_RESULT_CODE;
 import static com.sba.sinhalaphotoeditor.activities.MyCustomGallery.selectedBitmap;
 
@@ -109,9 +106,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     private ConstraintLayout createImageFromLibrary;
-    private ConstraintLayout pickImageFromGallery;
-    private TextView versionName;
-
 
 
     private ImageList.ImageListModel imageList = null;
@@ -142,6 +136,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             isUserWantToExitTheApp();
         }
 
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase)
+    {
+        SharedPreferences pref = newBase.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        String localeString = pref.getString(LANGUAGE_KEY,LANGUAGE_SINHALA);
+        Locale myLocale = new Locale(localeString);
+        Locale.setDefault(myLocale);
+        Configuration config = newBase.getResources().getConfiguration();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            config.setLocale(myLocale);
+            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.N){
+                Context newContext = newBase.createConfigurationContext(config);
+                super.attachBaseContext(newContext);
+                return;
+            }
+        } else {
+            config.locale = myLocale;
+        }
+        super.attachBaseContext(newBase);
+        getResources().updateConfiguration(config, getResources().getDisplayMetrics());
     }
 
     @Override
@@ -191,8 +207,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         createImageFromLibrary =  findViewById(R.id.createImageFromLibrary);
         createImageFromLibrary.setOnClickListener(this);
-        pickImageFromGallery =  findViewById(R.id.pickImageFromGallery);
-        versionName = findViewById(R.id.versionName);
+        ConstraintLayout pickImageFromGallery = findViewById(R.id.pickImageFromGallery);
+        TextView versionName = findViewById(R.id.versionName);
 
         String version = BuildConfig.VERSION_NAME;
         versionName.setText("Version " + version);

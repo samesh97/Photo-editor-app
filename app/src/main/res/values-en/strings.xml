@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+
     <string name="app_name">Sihala</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="select_an_image_text">Select an Image</string>
     <string name="select_from_galery_text">Pick From Gallery</string>
     <string name="create_a_background_text">Create a Background</string>
     <string name="select_a_background_text">Choose a Background</string>
-
     <string name="share_image_text">Share Image</string>
     <string name="download_image_text">Download Image</string>
     <string name="type_something_text">Type Something</string>
@@ -15,16 +16,11 @@
     <string name="delete_all_text">Delete All</string>
     <string name="next_text">Next</string>
     <string name="back_text">Previous</string>
-
     <string name="width_text">Width</string>
     <string name="height_text">Height</string>
     <string name="create_text">Create</string>
     <string name="use_image">Use Image</string>
-
     <string name="finish_text">Finish</string>
-
-
-
     <string name="title1">Types Of Selecting an Image</string>
     <string name="desc1">Click on the first icon and select the photo you want to edit. The second icon lets you create the desired background. The third icon provides a previously edited image.</string>
     <string name="title3">How to add a picture to a picture</string>
@@ -39,32 +35,20 @@
     <string name="desc7">Here we can crop, rotate, flip the image. If you want to crop, you need to change the setting to crop. Click on the three dots on the top right corner to rotate the image and flip it vertical and horizontal. After making the necessary adjustments, click on the crop button and apply them to the picture.</string>
     <string name="title8">How to undo, redo and save</string>
     <string name="desc8">After editing an image, you can click on the icon at the top right corner to share or download it. You can also undo the other two buttons.</string>
-
-
     <string name="title2">How to Add Text On Image</string>
     <string name="desc2">You can use the button here to type words and insert them into a photo. You can change the color and font of the text after adding it to the image. At the same time you can give the text a shadow or glow and change the color of the given glow.</string>
-
-
-
     <string name="are_you_sure_want_to_exit_text">You will lose everything you have edited. Are you sure you want to leave?</string>
     <string name="yes_text">Yes</string>
     <string name="no_text">No</string>
     <string name="warning_text">Warning!</string>
-
-
     <string name="rate_app_text">Rate this app</string>
     <string name="rate_app_description">Please give us your valuable rating to develop more applications like this.</string>
     <string name="okay_text">Okay</string>
     <string name="cannot_text">No</string>
-
     <string name="app_exit_text">Exit</string>
     <string name="exit_app_confirmation_text">Are you sure you want to exit?</string>
     <string name="exit_app_yes_text">Yes</string>
     <string name="exit_app_no_text">No</string>
-
-
-
-
     <string name="no_images_available_text">No Images Available</string>
     <string name="you_reach_end_text">You reached to the Original Photo</string>
     <string name="we_will_fix_it_soon_text">Something is not right. We\'ll fix it soon</string>
@@ -83,7 +67,6 @@
     <string name="select_an_image_first_text">Please select an image first</string>
     <string name="removed_text">Removed</string>
     <string name="saved_to_gallery_text">Saved to gallery</string>
-
     <string name="text_skip">Skip</string>
     <string name="scroll_to_where_you_left_off">Navigate to the Last State</string>
     <string name="pick_a_language">Please Choose the Preferred Language to Proceed</string>

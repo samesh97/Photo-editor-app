@@ -1,6 +1,5 @@
 package com.sba.sinhalaphotoeditor.adapters;
 
-import android.content.ContentProvider;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -9,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.sba.sinhalaphotoeditor.CallBacks.OnTextAttributesChangedListner;
+import com.sba.sinhalaphotoeditor.callbacks.OnTextAttributesChangedListner;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.model.TextViewPlus;
 

@@ -3,11 +3,13 @@ package com.sba.sinhalaphotoeditor.activities;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -21,11 +23,11 @@ import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
-import com.sba.sinhalaphotoeditor.CallBacks.OnAsyncTaskState;
-import com.sba.sinhalaphotoeditor.Config.BlurUtils;
-import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
+import com.sba.sinhalaphotoeditor.callbacks.OnAsyncTaskState;
+import com.sba.sinhalaphotoeditor.config.BlurUtils;
+import com.sba.sinhalaphotoeditor.sdk.Methods;
 import com.sba.sinhalaphotoeditor.R;
-import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
+import com.sba.sinhalaphotoeditor.database.DatabaseHelper;
 import com.sba.sinhalaphotoeditor.aynctask.AddImageToArrayListAsyncTask;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;
 import com.warkiz.tickseekbar.OnSeekChangeListener;
@@ -39,6 +41,10 @@ import java.util.Locale;
 
 import render.animations.*;
 
+import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_KEY;
+import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_SINHALA;
+import static com.sba.sinhalaphotoeditor.config.Constants.SHARED_PREF_NAME;
+
 public class AdjustImage extends AppCompatActivity implements OnAsyncTaskState {
 
     private ImageView adjustImage;
@@ -50,7 +56,6 @@ public class AdjustImage extends AppCompatActivity implements OnAsyncTaskState {
 
     private ProgressDialog dialog;
     private DatabaseHelper helper = new DatabaseHelper(AdjustImage.this);
-    private Render render;
     private Methods methods;
     private InterstitialAd mInterstitialAd;
 
@@ -101,6 +106,27 @@ public class AdjustImage extends AppCompatActivity implements OnAsyncTaskState {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.photo_on_photo_menu, menu);
         return true;
+    }
+    @Override
+    protected void attachBaseContext(Context newBase)
+    {
+        SharedPreferences pref = newBase.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        String localeString = pref.getString(LANGUAGE_KEY,LANGUAGE_SINHALA);
+        Locale myLocale = new Locale(localeString);
+        Locale.setDefault(myLocale);
+        Configuration config = newBase.getResources().getConfiguration();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            config.setLocale(myLocale);
+            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.N){
+                Context newContext = newBase.createConfigurationContext(config);
+                super.attachBaseContext(newContext);
+                return;
+            }
+        } else {
+            config.locale = myLocale;
+        }
+        super.attachBaseContext(newBase);
+        getResources().updateConfiguration(config, getResources().getDisplayMetrics());
     }
 
     @Override
@@ -157,7 +183,7 @@ public class AdjustImage extends AppCompatActivity implements OnAsyncTaskState {
         Methods.freeUpMemory();
 
         methods = new Methods(getApplicationContext());
-        render = new Render(AdjustImage.this);
+        Render render = new Render(AdjustImage.this);
         dialog = new ProgressDialog(AdjustImage.this);
 
         adjustImage = findViewById(R.id.adjustImage);

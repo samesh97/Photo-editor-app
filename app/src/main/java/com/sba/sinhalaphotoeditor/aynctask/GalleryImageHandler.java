@@ -7,7 +7,7 @@ import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.util.Log;
 
-import com.sba.sinhalaphotoeditor.CallBacks.OnAFileAddedListner;
+import com.sba.sinhalaphotoeditor.callbacks.OnAFileAddedListner;
 import com.sba.sinhalaphotoeditor.activities.MyCustomGallery;
 import com.sba.sinhalaphotoeditor.model.GalleryImage;
 
@@ -15,7 +15,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static com.sba.sinhalaphotoeditor.MostUsedMethods.Methods.getBitmap;
+import static com.sba.sinhalaphotoeditor.sdk.Methods.getBitmap;
 
 public class GalleryImageHandler extends AsyncTask<Void,Void,Void>
 {
@@ -153,6 +153,7 @@ public class GalleryImageHandler extends AsyncTask<Void,Void,Void>
                     {
                         GalleryImage imgObj = new GalleryImage(new File(absolutePathOfImage));
                         imageList.put(absolutePathOfImage,imgObj);
+
                     }
                 }
                 catch (Exception e)
@@ -243,5 +244,13 @@ public class GalleryImageHandler extends AsyncTask<Void,Void,Void>
         {
             imageList.clear();
         }
+    }
+    public int getListSize()
+    {
+        if(imageList != null)
+        {
+            return imageList.size();
+        }
+        return 0;
     }
 }

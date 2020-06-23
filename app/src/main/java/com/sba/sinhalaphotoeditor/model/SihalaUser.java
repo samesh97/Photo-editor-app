@@ -11,16 +11,16 @@ import androidx.annotation.Nullable;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
-import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
+import com.sba.sinhalaphotoeditor.sdk.Methods;
 
 import java.io.Serializable;
 
-import static com.sba.sinhalaphotoeditor.Config.Constants.SHARED_PREF_NAME;
-import static com.sba.sinhalaphotoeditor.Config.Constants.USER_ID_KEY;
-import static com.sba.sinhalaphotoeditor.Config.Constants.USER_IMAGE_LOCAL_PATH;
-import static com.sba.sinhalaphotoeditor.Config.Constants.USER_NAME_KEY;
-import static com.sba.sinhalaphotoeditor.Config.Constants.USER_PHONE_KEY;
-import static com.sba.sinhalaphotoeditor.Config.Constants.USER_PROFILE_LINK_KEY;
+import static com.sba.sinhalaphotoeditor.config.Constants.SHARED_PREF_NAME;
+import static com.sba.sinhalaphotoeditor.config.Constants.USER_ID_KEY;
+import static com.sba.sinhalaphotoeditor.config.Constants.USER_IMAGE_LOCAL_PATH;
+import static com.sba.sinhalaphotoeditor.config.Constants.USER_NAME_KEY;
+import static com.sba.sinhalaphotoeditor.config.Constants.USER_PHONE_KEY;
+import static com.sba.sinhalaphotoeditor.config.Constants.USER_PROFILE_LINK_KEY;
 
 public class SihalaUser implements Serializable
 {

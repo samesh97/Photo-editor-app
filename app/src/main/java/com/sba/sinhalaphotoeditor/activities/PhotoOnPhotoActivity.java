@@ -5,14 +5,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
@@ -29,23 +31,26 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 
 import com.github.chuross.library.ExpandableLayout;
-import com.sba.sinhalaphotoeditor.CallBacks.OnAsyncTaskState;
-import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
+import com.sba.sinhalaphotoeditor.callbacks.OnAsyncTaskState;
+import com.sba.sinhalaphotoeditor.sdk.Methods;
 import com.sba.sinhalaphotoeditor.R;
-import com.sba.sinhalaphotoeditor.Config.RotationGestureDetector;
-import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
+import com.sba.sinhalaphotoeditor.config.RotationGestureDetector;
+import com.sba.sinhalaphotoeditor.database.DatabaseHelper;
 import com.sba.sinhalaphotoeditor.aynctask.AddImageToArrayListAsyncTask;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
 import render.animations.Bounce;
 import render.animations.Render;
+
+import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_KEY;
+import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_SINHALA;
+import static com.sba.sinhalaphotoeditor.config.Constants.SHARED_PREF_NAME;
 
 public class PhotoOnPhotoActivity extends AppCompatActivity implements RotationGestureDetector.OnRotationGestureListener, OnAsyncTaskState
 {
@@ -62,11 +67,8 @@ public class PhotoOnPhotoActivity extends AppCompatActivity implements RotationG
 
 
     private Uri imageOutUri;
-    private String saveDir="/tmp/";
     private ImageView addNewImage;
-    private String errorAny = "";
-    private ImageView sourceImageView;
-    private ConstraintLayout workingLayout,baseLayout;
+    private ConstraintLayout workingLayout;
     private ScaleGestureDetector scaleGestureDetector;
     private RotationGestureDetector mRotationGestureDetector;
     private float scaleFactor;
@@ -75,7 +77,6 @@ public class PhotoOnPhotoActivity extends AppCompatActivity implements RotationG
 
     private ExpandableLayout expandableLayout;
     private ImageView expandIcon;
-    private SeekBar opacitySeekBar;
     private float opacityLevel = 1f;
 
     private Dialog dialog;
@@ -91,6 +92,28 @@ public class PhotoOnPhotoActivity extends AppCompatActivity implements RotationG
     @Override
     protected void onStop() {
         super.onStop();
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase)
+    {
+        SharedPreferences pref = newBase.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        String localeString = pref.getString(LANGUAGE_KEY,LANGUAGE_SINHALA);
+        Locale myLocale = new Locale(localeString);
+        Locale.setDefault(myLocale);
+        Configuration config = newBase.getResources().getConfiguration();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            config.setLocale(myLocale);
+            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.N){
+                Context newContext = newBase.createConfigurationContext(config);
+                super.attachBaseContext(newContext);
+                return;
+            }
+        } else {
+            config.locale = myLocale;
+        }
+        super.attachBaseContext(newBase);
+        getResources().updateConfiguration(config, getResources().getDisplayMetrics());
     }
 
 
@@ -135,7 +158,7 @@ public class PhotoOnPhotoActivity extends AppCompatActivity implements RotationG
 
         expandableLayout = (ExpandableLayout)findViewById(R.id.explandableLayout);
         expandIcon = findViewById(R.id.expandIcon);
-        opacitySeekBar = (SeekBar) findViewById(R.id.opacitySeekBar);
+        SeekBar opacitySeekBar = (SeekBar) findViewById(R.id.opacitySeekBar);
 
         opacitySeekBar.setProgress((int)opacityLevel * 100);
 
@@ -281,11 +304,11 @@ public class PhotoOnPhotoActivity extends AppCompatActivity implements RotationG
 
         //create the layouts
         //base layout
-        baseLayout = findViewById(R.id.baseLayout);
+        ConstraintLayout baseLayout = findViewById(R.id.baseLayout);
         //working layout
         workingLayout = findViewById(R.id.workingLayout);
         //image view
-        sourceImageView = findViewById(R.id.sourceImageView);
+        ImageView sourceImageView = findViewById(R.id.sourceImageView);
         //textview
         addNewImage = findViewById(R.id.addImageView);
 
@@ -410,6 +433,7 @@ public class PhotoOnPhotoActivity extends AppCompatActivity implements RotationG
     private boolean saveFile(Bitmap sourceImageBitmap,String fileName)
     {
         boolean result = false;
+        String saveDir = "/tmp/";
         String path = getApplicationInfo().dataDir + saveDir;
         File pathFile = new File(path);
         pathFile.mkdirs();
@@ -425,7 +449,7 @@ public class PhotoOnPhotoActivity extends AppCompatActivity implements RotationG
             sourceImageBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
             result = true;
         } catch (Exception e) {
-            errorAny = e.getMessage();
+            String errorAny = e.getMessage();
             result =false;
             e.printStackTrace();
         }

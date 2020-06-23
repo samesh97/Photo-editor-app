@@ -5,9 +5,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.MimeTypeMap;
@@ -30,16 +34,21 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
+import com.sba.sinhalaphotoeditor.sdk.Methods;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.model.SihalaUser;
 
 
+import java.util.Locale;
+
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_KEY;
+import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_SINHALA;
+import static com.sba.sinhalaphotoeditor.config.Constants.SHARED_PREF_NAME;
 
 public class ConfirmPhoneNumber extends AppCompatActivity {
 
-    private Button varify;
     private FirebaseAuth mAuth;
     private String mVerificationId;
     private String name;
@@ -48,11 +57,8 @@ public class ConfirmPhoneNumber extends AppCompatActivity {
     private Uri filePath;
     private StorageReference storageReference;
     private String code = "null";
-    private Pinview pin;
     private ProgressDialog pd;
-    private TextView textView;
     private String CountryCode;
-    private CircleImageView profilePicture;
 
 
     @Override
@@ -62,16 +68,39 @@ public class ConfirmPhoneNumber extends AppCompatActivity {
     }
 
     @Override
+    protected void attachBaseContext(Context newBase)
+    {
+        SharedPreferences pref = newBase.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        String localeString = pref.getString(LANGUAGE_KEY,LANGUAGE_SINHALA);
+        Locale myLocale = new Locale(localeString);
+        Locale.setDefault(myLocale);
+        Configuration config = newBase.getResources().getConfiguration();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            config.setLocale(myLocale);
+            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.N){
+                Context newContext = newBase.createConfigurationContext(config);
+                super.attachBaseContext(newContext);
+                return;
+            }
+        } else {
+            config.locale = myLocale;
+        }
+        super.attachBaseContext(newBase);
+        getResources().updateConfiguration(config, getResources().getDisplayMetrics());
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_confirm_phone_number);
 
         Methods.freeUpMemory();
 
-        pin = (Pinview) findViewById(R.id.pinview);
-        textView = (TextView) findViewById(R.id.textView);
-        varify = (Button) findViewById(R.id.varify);
-        profilePicture = findViewById(R.id.profilePicture);
+        Pinview pin = (Pinview) findViewById(R.id.pinview);
+        TextView textView = (TextView) findViewById(R.id.textView);
+        Button varify = (Button) findViewById(R.id.varify);
+        CircleImageView profilePicture = findViewById(R.id.profilePicture);
 
 
         mAuth = FirebaseAuth.getInstance();

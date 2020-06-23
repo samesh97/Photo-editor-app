@@ -9,10 +9,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class StickerAdapter extends RecyclerView.Adapter<StickerAdapter.MyViewHolder>
 {
-    private Context context;
     public StickerAdapter(Context context)
     {
-        this.context = context;
     }
 
     @NonNull

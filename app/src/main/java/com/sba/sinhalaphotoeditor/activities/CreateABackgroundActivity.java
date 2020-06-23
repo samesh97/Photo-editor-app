@@ -1,29 +1,24 @@
 package com.sba.sinhalaphotoeditor.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.res.ResourcesCompat;
 
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.flask.colorpicker.ColorPickerView;
 import com.flask.colorpicker.OnColorSelectedListener;
 import com.flask.colorpicker.builder.ColorPickerClickListener;
@@ -33,16 +28,15 @@ import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
-import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
+import com.sba.sinhalaphotoeditor.sdk.Methods;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;
 
-import java.lang.reflect.Type;
+import java.util.Locale;
 
-import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_ENGLISH;
-import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_KEY;
-import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_SINHALA;
-import static com.sba.sinhalaphotoeditor.Config.Constants.SHARED_PREF_NAME;
+import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_KEY;
+import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_SINHALA;
+import static com.sba.sinhalaphotoeditor.config.Constants.SHARED_PREF_NAME;
 
 
 public class CreateABackgroundActivity extends AppCompatActivity {
@@ -54,7 +48,6 @@ public class CreateABackgroundActivity extends AppCompatActivity {
     private static int widthValue = 1000;
     private static int heightValue = 1000;
     private Bitmap createdBitmap = null;
-    private ImageView pickColor;
     private Button useImage;
     private Boolean isImageCreating = false;
 
@@ -74,6 +67,28 @@ public class CreateABackgroundActivity extends AppCompatActivity {
             overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
         }
 
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase)
+    {
+        SharedPreferences pref = newBase.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        String localeString = pref.getString(LANGUAGE_KEY,LANGUAGE_SINHALA);
+        Locale myLocale = new Locale(localeString);
+        Locale.setDefault(myLocale);
+        Configuration config = newBase.getResources().getConfiguration();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            config.setLocale(myLocale);
+            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.N){
+                Context newContext = newBase.createConfigurationContext(config);
+                super.attachBaseContext(newContext);
+                return;
+            }
+        } else {
+            config.locale = myLocale;
+        }
+        super.attachBaseContext(newBase);
+        getResources().updateConfiguration(config, getResources().getDisplayMetrics());
     }
 
     @Override
@@ -104,7 +119,7 @@ public class CreateABackgroundActivity extends AppCompatActivity {
         width = (EditText) findViewById(R.id.width);
         height = (EditText) findViewById(R.id.height);
         userCreatedImage = (ImageView) findViewById(R.id.userCreatedImage);
-        pickColor = (ImageView) findViewById(R.id.pickColor);
+        ImageView pickColor = (ImageView) findViewById(R.id.pickColor);
         useImage = (Button) findViewById(R.id.useImage);
 
 

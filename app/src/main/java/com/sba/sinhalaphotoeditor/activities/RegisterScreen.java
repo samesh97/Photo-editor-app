@@ -1,24 +1,22 @@
 package com.sba.sinhalaphotoeditor.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.res.ResourcesCompat;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
@@ -33,20 +31,19 @@ import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.rilixtech.Country;
 import com.rilixtech.CountryCodePicker;
-import com.sba.sinhalaphotoeditor.Config.Constants;
-import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
+import com.sba.sinhalaphotoeditor.config.Constants;
+import com.sba.sinhalaphotoeditor.sdk.Methods;
 import com.sba.sinhalaphotoeditor.R;
 
 import java.io.File;
-import java.io.IOException;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
-import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_ENGLISH;
-import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_KEY;
-import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_SINHALA;
-import static com.sba.sinhalaphotoeditor.Config.Constants.SHARED_PREF_NAME;
+import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_KEY;
+import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_SINHALA;
+import static com.sba.sinhalaphotoeditor.config.Constants.SHARED_PREF_NAME;
 
 public class RegisterScreen extends AppCompatActivity{
 
@@ -55,13 +52,11 @@ public class RegisterScreen extends AppCompatActivity{
     private Uri filePath;
     private CircleImageView profilePicture;
     private static final int PICK_IMAGE_REQUEST = 234;
-    private CountryCodePicker ccp;
     private String Countrycode;
     private String mVerificationId;
     private boolean isAlreadyVerified = false;
     private ProgressBar progress_bar;
     private TextView skipButton;
-    private Methods methods;
     private long startedTime;
 
 
@@ -98,6 +93,27 @@ public class RegisterScreen extends AppCompatActivity{
         }
     }
 
+    @Override
+    protected void attachBaseContext(Context newBase)
+    {
+        SharedPreferences pref = newBase.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        String localeString = pref.getString(LANGUAGE_KEY,LANGUAGE_SINHALA);
+        Locale myLocale = new Locale(localeString);
+        Locale.setDefault(myLocale);
+        Configuration config = newBase.getResources().getConfiguration();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            config.setLocale(myLocale);
+            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.N){
+                Context newContext = newBase.createConfigurationContext(config);
+                super.attachBaseContext(newContext);
+                return;
+            }
+        } else {
+            config.locale = myLocale;
+        }
+        super.attachBaseContext(newBase);
+        getResources().updateConfiguration(config, getResources().getDisplayMetrics());
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,9 +121,8 @@ public class RegisterScreen extends AppCompatActivity{
         setContentView(R.layout.activity_register_screen);
 
 
-
-        methods = new Methods(getApplicationContext());
-        ccp = (CountryCodePicker) findViewById(R.id.ccp);
+        Methods methods = new Methods(getApplicationContext());
+        CountryCodePicker ccp = (CountryCodePicker) findViewById(R.id.ccp);
         progress_bar = findViewById(R.id.progress_bar);
         skipButton = findViewById(R.id.skip_button);
 

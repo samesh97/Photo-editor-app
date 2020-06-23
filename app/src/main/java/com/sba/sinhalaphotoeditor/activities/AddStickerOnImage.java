@@ -8,6 +8,8 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -15,14 +17,12 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -33,9 +33,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -43,11 +41,11 @@ import android.widget.SeekBar;
 
 import com.bumptech.glide.Glide;
 import com.github.chuross.library.ExpandableLayout;
-import com.sba.sinhalaphotoeditor.CallBacks.OnAsyncTaskState;
-import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
+import com.sba.sinhalaphotoeditor.callbacks.OnAsyncTaskState;
+import com.sba.sinhalaphotoeditor.sdk.Methods;
 import com.sba.sinhalaphotoeditor.R;
-import com.sba.sinhalaphotoeditor.Config.RotationGestureDetector;
-import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
+import com.sba.sinhalaphotoeditor.config.RotationGestureDetector;
+import com.sba.sinhalaphotoeditor.database.DatabaseHelper;
 import com.sba.sinhalaphotoeditor.aynctask.AddImageToArrayListAsyncTask;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;
 
@@ -62,6 +60,9 @@ import java.util.Locale;
 import render.animations.Bounce;
 import render.animations.Render;
 
+import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_KEY;
+import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_SINHALA;
+import static com.sba.sinhalaphotoeditor.config.Constants.SHARED_PREF_NAME;
 
 
 public class AddStickerOnImage extends AppCompatActivity
@@ -75,10 +76,9 @@ public class AddStickerOnImage extends AppCompatActivity
     public static int STICKER_ON_IMAGE_REQUEST_CODE = 200;
 
     private Uri imageOutUri;
-    private String saveDir="/tmp/";
 
     private ImageView sourceImageView;
-    private ConstraintLayout workingLayout,baseLayout;
+    private ConstraintLayout workingLayout;
     private ScaleGestureDetector scaleGestureDetector;
     private ProgressDialog progressDialog;
     private RotationGestureDetector mRotationGestureDetector;
@@ -88,7 +88,6 @@ public class AddStickerOnImage extends AppCompatActivity
 
     private ExpandableLayout expandableLayout;
     private ImageView expandIcon;
-    private SeekBar opacitySeekBar;
     private float opacityLevel = 1f;
 
     private Dialog dia;
@@ -129,6 +128,27 @@ public class AddStickerOnImage extends AppCompatActivity
             progressDialog.dismiss();
         }
     }
+    @Override
+    protected void attachBaseContext(Context newBase)
+    {
+        SharedPreferences pref = newBase.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        String localeString = pref.getString(LANGUAGE_KEY,LANGUAGE_SINHALA);
+        Locale myLocale = new Locale(localeString);
+        Locale.setDefault(myLocale);
+        Configuration config = newBase.getResources().getConfiguration();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            config.setLocale(myLocale);
+            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.N){
+                Context newContext = newBase.createConfigurationContext(config);
+                super.attachBaseContext(newContext);
+                return;
+            }
+        } else {
+            config.locale = myLocale;
+        }
+        super.attachBaseContext(newBase);
+        getResources().updateConfiguration(config, getResources().getDisplayMetrics());
+    }
 
 
     @Override
@@ -152,6 +172,7 @@ public class AddStickerOnImage extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_add_sticker_on_image);
 
 
@@ -184,7 +205,7 @@ public class AddStickerOnImage extends AppCompatActivity
 
         expandableLayout = (ExpandableLayout)findViewById(R.id.explandableLayout);
         expandIcon = findViewById(R.id.expandIcon);
-        opacitySeekBar = (SeekBar) findViewById(R.id.opacitySeekBar);
+        SeekBar opacitySeekBar = (SeekBar) findViewById(R.id.opacitySeekBar);
 
         opacitySeekBar.setProgress((int)opacityLevel * 100);
 
@@ -431,7 +452,7 @@ public class AddStickerOnImage extends AppCompatActivity
 
         //create the layouts
         //base layout
-        baseLayout = findViewById(R.id.baseLayout);
+        ConstraintLayout baseLayout = findViewById(R.id.baseLayout);
         //working layout
         workingLayout = findViewById(R.id.workingLayout);
         //image view
@@ -491,6 +512,7 @@ public class AddStickerOnImage extends AppCompatActivity
     private boolean saveFile(Bitmap sourceImageBitmap,String fileName)
     {
         boolean result = false;
+        String saveDir = "/tmp/";
         String path = getApplicationInfo().dataDir + saveDir;
         File pathFile = new File(path);
         pathFile.mkdirs();

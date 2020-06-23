@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.sba.sinhalaphotoeditor.CallBacks.OnBitmapChanged;
+import com.sba.sinhalaphotoeditor.callbacks.OnBitmapChanged;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;
 import com.zomato.photofilters.imageprocessors.Filter;

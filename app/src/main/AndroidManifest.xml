@@ -16,23 +16,27 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.BeautyActivity"/>
+        <activity android:name=".activities.PickStickerActivity">
+
+
+        </activity>
+        <activity android:name=".activities.BeautyActivity" />
         <activity
             android:name=".activities.SplashScreen"
-            android:theme="@style/NoActionBarAppTheme"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/NoActionBarAppTheme">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
         </activity>
         <activity
             android:name=".activities.ConfirmPhoneNumber"
-            android:theme="@style/NoActionBarAppTheme"
-            android:screenOrientation="portrait">
-        </activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/NoActionBarAppTheme"/>
         <activity
             android:name=".activities.RegisterScreen"
             android:label="Register"
@@ -41,13 +45,15 @@
         <activity android:name=".keyboard.KeyBoardAc" />
         <activity
             android:name=".activities.NotificationView"
-            android:theme="@style/NoActionBarAppTheme"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".activities.AddStickerOnImage"
-            android:theme="@style/NoActionBarAppTheme"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".activities.PhotoOnPhotoActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/NoActionBarAppTheme" />
+        <activity
+            android:name=".activities.AddStickerOnImage"
+            android:screenOrientation="portrait"
+            android:theme="@style/NoActionBarAppTheme" />
+        <activity
+            android:name=".activities.PhotoOnPhotoActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activities.MyCustomGallery"
             android:label="Pick Image"
@@ -81,12 +87,12 @@
             android:name=".activities.CreateABackgroundActivity"
             android:label="Create Image"
             android:screenOrientation="portrait"
-            android:theme="@style/NoActionBarAppTheme"/>
+            android:theme="@style/NoActionBarAppTheme" />
         <activity
             android:name=".activities.ImageSavingActivity"
             android:label="Final Step"
             android:screenOrientation="portrait"
-            android:theme="@style/NoActionBarAppTheme"/>
+            android:theme="@style/NoActionBarAppTheme" />
         <activity
             android:name=".activities.EditorActivity"
             android:label="Editor"
@@ -95,7 +101,7 @@
             android:name=".activities.MainActivity"
             android:label="Editor"
             android:screenOrientation="portrait"
-            android:theme="@style/NoActionBarAppTheme"/>
+            android:theme="@style/NoActionBarAppTheme" />
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"

@@ -1,12 +1,9 @@
 package com.sba.sinhalaphotoeditor.adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
@@ -14,23 +11,14 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.sba.sinhalaphotoeditor.CallBacks.OnItemClickListner;
-import com.sba.sinhalaphotoeditor.Config.ExifUtil;
-import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
+import com.sba.sinhalaphotoeditor.callbacks.OnItemClickListner;
+import com.sba.sinhalaphotoeditor.sdk.Methods;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.activities.MyCustomGallery;
 import com.sba.sinhalaphotoeditor.model.GalleryImage;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Set;
-
-import de.hdodenhof.circleimageview.CircleImageView;
-
-import static com.sba.sinhalaphotoeditor.MostUsedMethods.Methods.getBitmap;
-import static com.sba.sinhalaphotoeditor.activities.MyCustomGallery.selectedBitmap;
 
 public class GridViewAdapter extends RecyclerView.Adapter<GridViewAdapter.MyViewHolder>
 {

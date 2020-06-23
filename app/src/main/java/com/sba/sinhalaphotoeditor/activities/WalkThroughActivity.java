@@ -1,37 +1,35 @@
 package com.sba.sinhalaphotoeditor.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.viewpager.widget.ViewPager;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
-import android.widget.TextView;
 
-import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
+import com.sba.sinhalaphotoeditor.sdk.Methods;
 import com.sba.sinhalaphotoeditor.R;
-import com.sba.sinhalaphotoeditor.activities.RegisterScreen;
 import com.sba.sinhalaphotoeditor.adapters.WalkthroughPagerAdapter;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
-import static com.sba.sinhalaphotoeditor.Config.Constants.IS_WALKTHROUGH_NEEDED_KEY;
-import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_ENGLISH;
-import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_KEY;
-import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_POSITION_KEY;
-import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_SINHALA;
-import static com.sba.sinhalaphotoeditor.Config.Constants.SHARED_PREF_NAME;
+import static com.sba.sinhalaphotoeditor.config.Constants.IS_WALKTHROUGH_NEEDED_KEY;
+import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_KEY;
+import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_SINHALA;
+import static com.sba.sinhalaphotoeditor.config.Constants.SHARED_PREF_NAME;
 
 public class WalkThroughActivity extends AppCompatActivity {
 
     private ViewPager viewPager;
-    private WalkthroughPagerAdapter walkthroughPagerAdapter;
 
     private ArrayList<Drawable> image1 = new ArrayList<android.graphics.drawable.Drawable>();
     private ArrayList<Drawable> image2 = new ArrayList<Drawable>();
@@ -44,6 +42,28 @@ public class WalkThroughActivity extends AppCompatActivity {
 
     private Button next,previous;
     private boolean isAnimate = true;
+
+    @Override
+    protected void attachBaseContext(Context newBase)
+    {
+        SharedPreferences pref = newBase.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        String localeString = pref.getString(LANGUAGE_KEY,LANGUAGE_SINHALA);
+        Locale myLocale = new Locale(localeString);
+        Locale.setDefault(myLocale);
+        Configuration config = newBase.getResources().getConfiguration();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            config.setLocale(myLocale);
+            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.N){
+                Context newContext = newBase.createConfigurationContext(config);
+                super.attachBaseContext(newContext);
+                return;
+            }
+        } else {
+            config.locale = myLocale;
+        }
+        super.attachBaseContext(newBase);
+        getResources().updateConfiguration(config, getResources().getDisplayMetrics());
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,7 +143,7 @@ public class WalkThroughActivity extends AppCompatActivity {
         previous.setVisibility(View.GONE);
 
         viewPager = findViewById(R.id.viewPager);
-        walkthroughPagerAdapter = new WalkthroughPagerAdapter(getSupportFragmentManager(),image1,image2,image3,titles,description);
+        WalkthroughPagerAdapter walkthroughPagerAdapter = new WalkthroughPagerAdapter(getSupportFragmentManager(), image1, image2, image3, titles, description);
         viewPager.setAdapter(walkthroughPagerAdapter);
 
 

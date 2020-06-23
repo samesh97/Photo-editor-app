@@ -38,7 +38,6 @@
         android:layout_marginEnd="@dimen/layout_popup_screen_margin_24"
         android:background="@drawable/border"
         android:fontFamily="@font/gemunulibrebold"
-        android:onClick="OpenLoggedOnScreen"
         android:text="@string/add_text"
         android:textColor="@color/red"
         android:textSize="22sp"

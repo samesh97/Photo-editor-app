@@ -1,24 +1,24 @@
 package com.sba.sinhalaphotoeditor.activities;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.res.ResourcesCompat;
 
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.Editable;
@@ -26,44 +26,28 @@ import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Display;
-import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.flask.colorpicker.ColorPickerView;
-import com.flask.colorpicker.OnColorSelectedListener;
-import com.flask.colorpicker.builder.ColorPickerClickListener;
-import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
 import com.github.chuross.library.ExpandableLayout;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.sba.sinhalaphotoeditor.CallBacks.OnAsyncTaskState;
-import com.sba.sinhalaphotoeditor.CallBacks.OnTextAttributesChangedListner;
-import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
+import com.sba.sinhalaphotoeditor.callbacks.OnAsyncTaskState;
+import com.sba.sinhalaphotoeditor.callbacks.OnTextAttributesChangedListner;
+import com.sba.sinhalaphotoeditor.sdk.Methods;
 import com.sba.sinhalaphotoeditor.R;
-import com.sba.sinhalaphotoeditor.Config.RotationGestureDetector;
-import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
+import com.sba.sinhalaphotoeditor.config.RotationGestureDetector;
+import com.sba.sinhalaphotoeditor.database.DatabaseHelper;
 import com.sba.sinhalaphotoeditor.adapters.ShadowColorAdapter;
 import com.sba.sinhalaphotoeditor.adapters.TextColorAdapter;
 import com.sba.sinhalaphotoeditor.adapters.TextFontAdapter;
@@ -71,23 +55,21 @@ import com.sba.sinhalaphotoeditor.aynctask.AddImageToArrayListAsyncTask;
 import com.sba.sinhalaphotoeditor.model.TextViewPlus;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;
 
-import org.w3c.dom.Text;
-
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.security.spec.ECField;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import render.animations.Bounce;
 import render.animations.Render;
 
+import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_KEY;
+import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_SINHALA;
+import static com.sba.sinhalaphotoeditor.config.Constants.SHARED_PREF_NAME;
 
 
 public class TextOnImageActivity extends AppCompatActivity
@@ -101,10 +83,9 @@ public class TextOnImageActivity extends AppCompatActivity
     public static int TEXT_ON_IMAGE_REQUEST_CODE = 4;
 
     private Uri imageOutUri;
-    private String saveDir="/tmp/";
     private String textToWrite = "";
     private ImageView sourceImageView;
-    private ConstraintLayout workingLayout,baseLayout;
+    private ConstraintLayout workingLayout;
     private ScaleGestureDetector scaleGestureDetector;
     private RotationGestureDetector mRotationGestureDetector;
     private DatabaseHelper helper;
@@ -136,6 +117,28 @@ public class TextOnImageActivity extends AppCompatActivity
             overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
         }
 
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase)
+    {
+        SharedPreferences pref = newBase.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        String localeString = pref.getString(LANGUAGE_KEY,LANGUAGE_SINHALA);
+        Locale myLocale = new Locale(localeString);
+        Locale.setDefault(myLocale);
+        Configuration config = newBase.getResources().getConfiguration();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            config.setLocale(myLocale);
+            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.N){
+                Context newContext = newBase.createConfigurationContext(config);
+                super.attachBaseContext(newContext);
+                return;
+            }
+        } else {
+            config.locale = myLocale;
+        }
+        super.attachBaseContext(newBase);
+        getResources().updateConfiguration(config, getResources().getDisplayMetrics());
     }
 
     @Override
@@ -386,7 +389,7 @@ public class TextOnImageActivity extends AppCompatActivity
     {
         Bitmap bitmapForImageView = ImageList.getInstance().getCurrentBitmap().copy(ImageList.getInstance().getCurrentBitmap().getConfig(), true);
 
-        baseLayout = (ConstraintLayout) findViewById(R.id.baseLayout);
+        ConstraintLayout baseLayout = (ConstraintLayout) findViewById(R.id.baseLayout);
         workingLayout = (ConstraintLayout) findViewById(R.id.workingLayout);
         sourceImageView = (ImageView) findViewById(R.id.sourceImageView);
 
@@ -430,6 +433,7 @@ public class TextOnImageActivity extends AppCompatActivity
     private boolean saveFile(Bitmap sourceImageBitmap,String fileName)
     {
         boolean result = false;
+        String saveDir = "/tmp/";
         String path = getApplicationInfo().dataDir + saveDir;
         File pathFile = new File(path);
         pathFile.mkdirs();

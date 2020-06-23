@@ -1,18 +1,13 @@
 package com.sba.sinhalaphotoeditor.adapters;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -24,10 +19,9 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.sba.sinhalaphotoeditor.CallBacks.OnAsyncTaskState;
-import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
+import com.sba.sinhalaphotoeditor.callbacks.OnAsyncTaskState;
 import com.sba.sinhalaphotoeditor.R;
-import com.sba.sinhalaphotoeditor.SQLiteDatabase.DatabaseHelper;
+import com.sba.sinhalaphotoeditor.database.DatabaseHelper;
 import com.sba.sinhalaphotoeditor.activities.MainActivity;
 import com.sba.sinhalaphotoeditor.aynctask.AddImageToArrayListAsyncTask;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;
@@ -40,10 +34,8 @@ public class RecentImageAdapter extends RecyclerView.Adapter<RecentImageAdapter.
 {
 
     private ArrayList<Bitmap> images = new ArrayList<>();
-    private ArrayList<Integer> ids = new ArrayList<>();
     private ArrayList<String> dates = new ArrayList<>();
     private Context context;
-    private DatabaseHelper helper;
     private Bitmap selectedImage = null;
     private Dialog dialog;
 
@@ -54,10 +46,9 @@ public class RecentImageAdapter extends RecyclerView.Adapter<RecentImageAdapter.
     public RecentImageAdapter(Context context, ArrayList<Bitmap> images, ArrayList<Integer> ids, ArrayList<String> dates)
     {
         this.images = images;
-        this.ids = ids;
         this.dates = dates;
         this.context = context;
-        helper = new DatabaseHelper(context);
+        DatabaseHelper helper = new DatabaseHelper(context);
     }
 
     @NonNull

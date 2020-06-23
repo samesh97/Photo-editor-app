@@ -1,7 +1,5 @@
 package com.sba.sinhalaphotoeditor.firebase;
 
-import android.app.LauncherActivity;
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -11,14 +9,10 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.os.Build;
 import android.provider.Settings;
-import android.util.Log;
-import android.widget.RemoteViews;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -26,13 +20,12 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.sba.sinhalaphotoeditor.BuildConfig;
-import com.sba.sinhalaphotoeditor.Config.Constants;
-import com.sba.sinhalaphotoeditor.activities.MainActivity;
+import com.sba.sinhalaphotoeditor.config.Constants;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.activities.NotificationView;
 
-import static com.sba.sinhalaphotoeditor.Config.Constants.FIREBASE_PAYLOAD_MESSAGE_TEXT;
-import static com.sba.sinhalaphotoeditor.Config.Constants.FIREBASE_PAYLOAD_TITLE_TEXT;
+import static com.sba.sinhalaphotoeditor.config.Constants.FIREBASE_PAYLOAD_MESSAGE_TEXT;
+import static com.sba.sinhalaphotoeditor.config.Constants.FIREBASE_PAYLOAD_TITLE_TEXT;
 
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService

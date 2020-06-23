@@ -36,7 +36,6 @@
                 android:id="@+id/tool_bar_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
                 android:ellipsize="end"
                 android:gravity="left"
                 android:maxLines="1"
@@ -44,7 +43,7 @@
                 android:textColor="@android:color/white"
                 android:textSize="19sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/img_delete_text"
+                app:layout_constraintEnd_toStartOf="@+id/img_done_container"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 

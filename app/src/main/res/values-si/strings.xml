@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+
     <string name="app_name">Sihala</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="select_an_image_text">පිංතූරයක් තෝරා ගන්න</string>
     <string name="select_from_galery_text">ගැලරියෙන් තෝරා ගන්න</string>
     <string name="create_a_background_text">පසුබිමක් සකසා ගන්න</string>
     <string name="select_a_background_text">සැකසු පසුබිමක් තෝරා ගන්න</string>
-
-
     <string name="share_image_text">ශෙයා කරන්න</string>
     <string name="download_image_text">ඩව්න්ලෝඩ් කරගන්න</string>
     <string name="type_something_text">ටයිප් කරන්න</string>
@@ -17,15 +16,11 @@
     <string name="delete_all_text">සියල්ලම මකන්න</string>
     <string name="next_text">ඉදිරියට</string>
     <string name="back_text">ආපසු</string>
-
     <string name="width_text">පළල</string>
     <string name="height_text">දිග</string>
     <string name="create_text">සකසන්න</string>
     <string name="use_image">භාවිතා කරන්න</string>
     <string name="finish_text">අවසන් කරන්න</string>
-
-
-
     <string name="title1">පිංතූරයක් එකතු කරගන්නා ආකාර</string>
     <string name="desc1">මෙහි තිබෙන පලමු icon එක click කිරීමෙන් edit කිරීමට අවශ්ය photo එක ගැලරියෙන් තෝරාගත හැක. දෙවනි icon එකෙන් අවශ්ය පසුබිමක් සාදාගැනීමට යා හැක. තෙවන icon එකෙන් මීට කලින්  edit කල පින්තුරයක් ලබාගත හැක.</string>
     <string name="title3">පිංතූරයක් උඩට පිංතූරයක් එකතු කරගන්නා ආකරය</string>
@@ -40,29 +35,20 @@
     <string name="desc7">මෙහිදී අපට පින්තූරය crop,rotate,flip කරගත හැක. crop කිරීමට අවශ්‍ය නම් crop කිරීමට එන සැකසුම අවශ්‍ය පරිදි වෙනස්කරගත යුතුයි. උඩම දකුනු කෙලවරේ තිත් 3 ක් ඇති ලකුන click කිරීමෙන් පින්තූරය rotate කරගැනීමට සහ vertical හා horizontal ලෙස flip කරගැනීමට හැක. අවශ්‍ය පරිදි වෙනස්කම් සිදු කිරීමෙන් පසු crop button එක click කර ඒවා  පින්තූරයට යොදගත හැක.</string>
     <string name="title8">undo,redo සහ save කරන ආකාරය</string>
     <string name="desc8">පින්තූරයක් edit කරගැනීමෙන් පසුව උඩම දකුනු කෙලවරේ ඇති හරි ලකුන click කර එම පින්තූරය share කිරීම හෝ download කිරීම කල හැක. තවද එතන ඇති අනෙක් buttons දෙකෙන් undo redo කරගත හැක.</string>
-
     <string name="title2">අකුරු එකතු කරගන්නා අකාරය</string>
     <string name="desc2">මෙහි තිබෙන button එක භාවිතා කර ඔබට වචන type කර photo එක මතට එක් කරගත හැක. එය පින්තූරයට add කරගැනීමෙන් පසුව එහි වර්ණය සහ text එකේ font එක වෙනස්කරගත හැක. එම අවස්තාවේදීම text එකට shadow එකක් හෝ glow එකක් ලබාදිය හැකි අතර ලබාදුන් glow එකේ වර්ණයද වෙනස් කරගත හැක.</string>
-
-
-
     <string name="are_you_sure_want_to_exit_text">ඉවත් වීමකදි ඔබ සකසාගෙන ඇති සියලුම පිංතූර මැකෙන අතර මෙය නැවත ලබාගත නොහැක.\nතවමත් ඔබට ඉවත් වීමට අවශ්‍යද?</string>
     <string name="yes_text">අවශ්‍යයි</string>
     <string name="no_text">නැත</string>
     <string name="warning_text">අවවාදයයි!</string>
-
     <string name="rate_app_text">ඇප් එක Rate කරන්න</string>
     <string name="rate_app_description">මෙවැනි Apps තවත් නිර්මාණය කිරිමට අපට ඔබගේ වටිනා Rate එක ලබා දෙන්න!</string>
     <string name="okay_text">ලබාදෙන්න</string>
     <string name="cannot_text">එපා</string>
-
     <string name="app_exit_text">ඉවත්වීම</string>
     <string name="exit_app_confirmation_text">ඔබට ඉවත් වීමට අවශ්‍යමද?</string>
     <string name="exit_app_yes_text">ඔව්</string>
     <string name="exit_app_no_text">නෑ</string>
-
-
-
     <string name="no_images_available_text">ඉවත් කිරීමට  පිංතූර නොමත</string>
     <string name="you_reach_end_text">අවසාන පිංතූරයට ලගා වී ඇත</string>
     <string name="we_will_fix_it_soon_text">දෝශයක් පැනනැගුනි අප එය හැකි ඉක්මනින් නිවැරදි කරන්නම්</string>
@@ -81,8 +67,6 @@
     <string name="select_an_image_first_text">මුලින්ම පිංතූරයක් තෝරා ගන්න</string>
     <string name="removed_text">ඉවත් කෙරුනි</string>
     <string name="saved_to_gallery_text">ගැලරියට Save කලහ</string>
-
-
     <string name="text_skip">මගහරින්න</string>
     <string name="scroll_to_where_you_left_off">කලින් හිටපු තැනට යමු</string>
     <string name="pick_a_language">ඔබගෙ ප්‍රියතම භාශාව තෝරාගන්න</string>

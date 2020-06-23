@@ -3,56 +3,32 @@ package com.sba.sinhalaphotoeditor.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.animation.Animator;
-import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
-import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.PersistableBundle;
-import android.provider.MediaStore;
-import android.renderscript.Allocation;
-import android.renderscript.Element;
-import android.renderscript.RenderScript;
-import android.renderscript.ScriptIntrinsicBlur;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
-import android.widget.AbsListView;
-import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
-import com.sba.sinhalaphotoeditor.CallBacks.OnAFileAddedListner;
-import com.sba.sinhalaphotoeditor.CallBacks.OnItemClickListner;
-import com.sba.sinhalaphotoeditor.Config.ExifUtil;
-import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
+import com.sba.sinhalaphotoeditor.callbacks.OnAFileAddedListner;
+import com.sba.sinhalaphotoeditor.callbacks.OnItemClickListner;
+import com.sba.sinhalaphotoeditor.sdk.Methods;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.adapters.GridViewAdapter;
 import com.sba.sinhalaphotoeditor.aynctask.GalleryImageHandler;
@@ -60,19 +36,16 @@ import com.sba.sinhalaphotoeditor.model.GalleryImage;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.sql.Time;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_ENGLISH;
-import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_KEY;
-import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_SINHALA;
-import static com.sba.sinhalaphotoeditor.Config.Constants.SHARED_PREF_NAME;
-import static com.sba.sinhalaphotoeditor.adapters.GridViewAdapter.numberOfImagesInARow;
+import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_KEY;
+import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_SINHALA;
+import static com.sba.sinhalaphotoeditor.config.Constants.SHARED_PREF_NAME;
 
 
 public class MyCustomGallery extends AppCompatActivity {
@@ -82,11 +55,8 @@ public class MyCustomGallery extends AppCompatActivity {
     public static final int IMAGE_PICK_RESULT_CODE = 235;
 
 
-
-    private RecyclerView gridView;
     private GridViewAdapter adapter;
     private LinearLayoutManager manager;
-    private SwipeRefreshLayout swipe_layout;
     private GalleryImageHandler galleryImageHandler;
     private ArrayList<GalleryImage> showingImages;
     public static final int imageLimit = 18;
@@ -117,6 +87,28 @@ public class MyCustomGallery extends AppCompatActivity {
     }
 
     @Override
+    protected void attachBaseContext(Context newBase)
+    {
+        SharedPreferences pref = newBase.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        String localeString = pref.getString(LANGUAGE_KEY,LANGUAGE_SINHALA);
+        Locale myLocale = new Locale(localeString);
+        Locale.setDefault(myLocale);
+        Configuration config = newBase.getResources().getConfiguration();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            config.setLocale(myLocale);
+            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.N){
+                Context newContext = newBase.createConfigurationContext(config);
+                super.attachBaseContext(newContext);
+                return;
+            }
+        } else {
+            config.locale = myLocale;
+        }
+        super.attachBaseContext(newBase);
+        getResources().updateConfiguration(config, getResources().getDisplayMetrics());
+    }
+
+    @Override
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
@@ -129,13 +121,15 @@ public class MyCustomGallery extends AppCompatActivity {
         setContentView(R.layout.activity_my_custom_gallery);
 
 
-        swipe_layout = findViewById(R.id.swipe_layout);
-        gridView = findViewById(R.id.gridView);
+        final SwipeRefreshLayout swipe_layout = findViewById(R.id.swipe_layout);
+        final RecyclerView gridView = findViewById(R.id.gridView);
         manager = new LinearLayoutManager(getApplicationContext());
         showingImages = new ArrayList<>();
 
+        swipe_layout.setEnabled(false);
 
-        final GridViewAdapter adapter = new GridViewAdapter(getApplicationContext(), showingImages, new OnItemClickListner() {
+
+        adapter = new GridViewAdapter(getApplicationContext(), showingImages, new OnItemClickListner() {
             @Override
             public void onClicked(File file)
             {
@@ -171,7 +165,32 @@ public class MyCustomGallery extends AppCompatActivity {
 
         if(lastShowingListCount == 0)
         {
-            galleryImageHandler.getList(showingImages,imageLimit);
+            swipe_layout.setEnabled(true);
+            swipe_layout.setRefreshing(true);
+            final Timer timer = new Timer();
+            timer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run()
+                {
+                    if(galleryImageHandler.getListSize() >= imageLimit)
+                    {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run()
+                            {
+                                galleryImageHandler.getList(showingImages,imageLimit);
+
+                                swipe_layout.setRefreshing(false);
+                                swipe_layout.setEnabled(false);
+                            }
+                        });
+
+                        timer.cancel();
+                    }
+
+                }
+            }, 0, 500);
+
         }
         else
         {

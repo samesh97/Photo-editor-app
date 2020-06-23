@@ -6,10 +6,11 @@ android {
         applicationId "com.sba.sinhalaphotoeditor"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 20
-        versionName "1.2.0"
+        versionCode 23
+        versionName "1.2.3"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled = true
+
 
     }
     buildTypes {

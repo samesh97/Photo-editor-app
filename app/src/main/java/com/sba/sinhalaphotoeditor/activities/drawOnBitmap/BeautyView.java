@@ -26,7 +26,6 @@ public class BeautyView extends View
 
     private float mX,mY;
     private Canvas mCanvas;
-    private final int DEFERENECE_SPACE = 4;
 
     private ArrayList<Bitmap> listAction = new ArrayList<>();
 
@@ -221,6 +220,7 @@ public class BeautyView extends View
         float dx = Math.abs(x - mX);
         float dy = Math.abs(y - mY);
 
+        int DEFERENECE_SPACE = 4;
         if(dx >= DEFERENECE_SPACE || dy >= DEFERENECE_SPACE)
         {
             mPath.quadTo(x ,y,(x+mX) / 2,(y + mY) / 2 );

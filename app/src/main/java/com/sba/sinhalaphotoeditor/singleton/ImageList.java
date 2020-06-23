@@ -3,8 +3,7 @@ package com.sba.sinhalaphotoeditor.singleton;
 import android.graphics.Bitmap;
 
 
-import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
-import com.sba.sinhalaphotoeditor.activities.MainActivity;
+import com.sba.sinhalaphotoeditor.sdk.Methods;
 
 import java.util.ArrayList;
 

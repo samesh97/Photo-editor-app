@@ -2,9 +2,8 @@ package com.sba.sinhalaphotoeditor.aynctask;
 
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
-import android.util.Log;
-import com.sba.sinhalaphotoeditor.CallBacks.OnAsyncTaskState;
-import com.sba.sinhalaphotoeditor.activities.EditorActivity;
+
+import com.sba.sinhalaphotoeditor.callbacks.OnAsyncTaskState;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;
 
 

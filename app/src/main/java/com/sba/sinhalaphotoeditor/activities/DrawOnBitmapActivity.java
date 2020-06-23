@@ -2,17 +2,19 @@ package com.sba.sinhalaphotoeditor.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -20,19 +22,17 @@ import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.Switch;
-import android.widget.TextView;
 
 import com.github.chuross.library.ExpandableLayout;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.sba.sinhalaphotoeditor.CallBacks.OnAsyncTaskState;
-import com.sba.sinhalaphotoeditor.CallBacks.OnTextAttributesChangedListner;
-import com.sba.sinhalaphotoeditor.MostUsedMethods.Methods;
+import com.sba.sinhalaphotoeditor.callbacks.OnAsyncTaskState;
+import com.sba.sinhalaphotoeditor.callbacks.OnTextAttributesChangedListner;
+import com.sba.sinhalaphotoeditor.sdk.Methods;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.activities.drawOnBitmap.PaintView;
 import com.sba.sinhalaphotoeditor.adapters.TextColorAdapter;
@@ -40,13 +40,13 @@ import com.sba.sinhalaphotoeditor.aynctask.AddImageToArrayListAsyncTask;
 import com.sba.sinhalaphotoeditor.model.TextViewPlus;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;
 
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_ENGLISH;
-import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_KEY;
-import static com.sba.sinhalaphotoeditor.Config.Constants.LANGUAGE_SINHALA;
-import static com.sba.sinhalaphotoeditor.Config.Constants.SHARED_PREF_NAME;
+import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_KEY;
+import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_SINHALA;
+import static com.sba.sinhalaphotoeditor.config.Constants.SHARED_PREF_NAME;
 
 public class DrawOnBitmapActivity extends AppCompatActivity implements OnTextAttributesChangedListner, OnAsyncTaskState {
 
@@ -64,7 +64,6 @@ public class DrawOnBitmapActivity extends AppCompatActivity implements OnTextAtt
     private float scaleFactor,prevScale = 0f;
     private float focusX,focusY = 0f;
     private ScaleGestureDetector scaleGestureDetector;
-    private Switch isZooming;
     private boolean userNeedToZoom = false;
 
     private boolean isZoomIn = true;
@@ -80,6 +79,27 @@ public class DrawOnBitmapActivity extends AppCompatActivity implements OnTextAtt
         {
             timer.cancel();
         }
+    }
+    @Override
+    protected void attachBaseContext(Context newBase)
+    {
+        SharedPreferences pref = newBase.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        String localeString = pref.getString(LANGUAGE_KEY,LANGUAGE_SINHALA);
+        Locale myLocale = new Locale(localeString);
+        Locale.setDefault(myLocale);
+        Configuration config = newBase.getResources().getConfiguration();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            config.setLocale(myLocale);
+            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.N){
+                Context newContext = newBase.createConfigurationContext(config);
+                super.attachBaseContext(newContext);
+                return;
+            }
+        } else {
+            config.locale = myLocale;
+        }
+        super.attachBaseContext(newBase);
+        getResources().updateConfiguration(config, getResources().getDisplayMetrics());
     }
 
     @Override
@@ -144,7 +164,7 @@ public class DrawOnBitmapActivity extends AppCompatActivity implements OnTextAtt
             }
         });
 
-        isZooming = findViewById(R.id.isZooming);
+        Switch isZooming = findViewById(R.id.isZooming);
 
         isZooming.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
