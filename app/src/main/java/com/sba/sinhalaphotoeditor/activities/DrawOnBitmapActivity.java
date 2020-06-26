@@ -34,7 +34,7 @@ import com.sba.sinhalaphotoeditor.callbacks.OnAsyncTaskState;
 import com.sba.sinhalaphotoeditor.callbacks.OnTextAttributesChangedListner;
 import com.sba.sinhalaphotoeditor.sdk.Methods;
 import com.sba.sinhalaphotoeditor.R;
-import com.sba.sinhalaphotoeditor.activities.drawOnBitmap.PaintView;
+import com.sba.sinhalaphotoeditor.custom.views.PaintView;
 import com.sba.sinhalaphotoeditor.adapters.TextColorAdapter;
 import com.sba.sinhalaphotoeditor.aynctask.AddImageToArrayListAsyncTask;
 import com.sba.sinhalaphotoeditor.model.TextViewPlus;

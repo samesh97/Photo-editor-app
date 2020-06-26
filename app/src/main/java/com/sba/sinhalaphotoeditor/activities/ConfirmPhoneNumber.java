@@ -261,6 +261,8 @@ public class ConfirmPhoneNumber extends AppCompatActivity {
 
 
 
+
+
 //                                UserDetails user = new UserDetails(mAuth.getCurrentUser().getUid(),name,phone,profilePicId,password);
 
 

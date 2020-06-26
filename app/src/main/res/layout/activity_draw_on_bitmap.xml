@@ -7,7 +7,7 @@
     tools:context=".activities.DrawOnBitmapActivity">
 
 
-    <com.sba.sinhalaphotoeditor.activities.drawOnBitmap.PaintView
+    <com.sba.sinhalaphotoeditor.custom.views.PaintView
         android:id="@+id/paintView"
         android:layout_width="match_parent"
         android:layout_height="0dp"

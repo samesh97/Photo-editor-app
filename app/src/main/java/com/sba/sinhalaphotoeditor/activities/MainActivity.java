@@ -301,6 +301,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void initProfilePicture()
     {
         CircleImageView profilePic = findViewById(R.id.profilePic);
+        TextView user_name = findViewById(R.id.user_name);
         SihalaUser currentUser = SihalaUser.getUser(MainActivity.this);
 
         if(currentUser != null)
@@ -317,7 +318,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 profilePic.setBorderColor(Color.WHITE);
                 profilePic.setBorderWidth(4);
+
+                if(currentUser.getUserName() != null && !currentUser.getUserName().trim().equals(""))
+                {
+                    user_name.setText("Hello " + currentUser.getUserName());
+                }
+                else
+                {
+                    user_name.setText("Hello User");
+                }
+
             }
+        }
+        else
+        {
+            user_name.setText("Hello User");
         }
     }
 
@@ -783,8 +798,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         else
         {
-            SihalaUser user = new SihalaUser();
-            SihalaUser cUser = user.getUser(MainActivity.this);
+            SihalaUser cUser = SihalaUser.getUser(MainActivity.this);
             if(cUser == null)
             {
                 if(!Constants.isRegistrationSkipped)

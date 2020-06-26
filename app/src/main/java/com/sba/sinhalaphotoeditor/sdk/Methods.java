@@ -477,7 +477,7 @@ public class Methods
         return resizedBitmap;
     }
 
-    public Bitmap CropBitmapTransparency(Bitmap sourceBitmap)
+    public static Bitmap CropBitmapTransparency(Bitmap sourceBitmap)
     {
         int minX = sourceBitmap.getWidth();
         int minY = sourceBitmap.getHeight();

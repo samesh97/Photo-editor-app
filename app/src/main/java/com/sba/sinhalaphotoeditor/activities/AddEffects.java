@@ -134,7 +134,9 @@ public class AddEffects extends AppCompatActivity implements OnBitmapChanged, On
                 super.attachBaseContext(newContext);
                 return;
             }
-        } else {
+        }
+        else
+        {
             config.locale = myLocale;
         }
         super.attachBaseContext(newBase);

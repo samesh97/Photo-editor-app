@@ -1,4 +1,4 @@
-package com.sba.sinhalaphotoeditor.activities.drawOnBitmap;
+package com.sba.sinhalaphotoeditor.custom.views;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -13,26 +13,32 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
+
+
+import com.sba.sinhalaphotoeditor.activities.DrawOnBitmapActivity;
+import com.sba.sinhalaphotoeditor.sdk.Methods;
 
 import java.util.ArrayList;
 
-public class BeautyView extends View
+public class PaintView extends View
 {
     private Bitmap btmBackground,btmView,userBitmap;
-    private Paint mPaint =new Paint();
+    private Paint mPaint = new Paint();
     private Path mPath = new Path();
     private int colorBackground,sizeBrush,sizeEraser;
 
     private float mX,mY;
     private Canvas mCanvas;
 
+    private int drwingColor = Color.RED;
+
     private ArrayList<Bitmap> listAction = new ArrayList<>();
+    private Context context;
 
-    public BeautyView(Context context, @Nullable AttributeSet attrs) {
+    public PaintView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-
-
 
         init();
     }
@@ -49,12 +55,10 @@ public class BeautyView extends View
         mPaint.setStrokeCap(Paint.Cap.ROUND);
         mPaint.setStrokeJoin(Paint.Join.ROUND);
         mPaint.setStrokeWidth(sizeBrush);
-
-
     }
     private float brushSizeToPx()
     {
-        return sizeBrush*(getResources().getDisplayMetrics().density);
+        return sizeBrush * 1.0f *(getResources().getDisplayMetrics().density);
     }
 
     @Override
@@ -66,12 +70,13 @@ public class BeautyView extends View
         options.inMutable = true;
         userBitmap = resize(userBitmap,w,h);
 
-        btmBackground = Bitmap.createBitmap(w,h,Bitmap.Config.ARGB_8888);
-        btmView = Bitmap.createBitmap(w,h,Bitmap.Config.ARGB_8888);
+        btmBackground = Bitmap.createBitmap(userBitmap.getWidth(),userBitmap.getHeight(),Bitmap.Config.ARGB_8888);
+        btmView = Bitmap.createBitmap(userBitmap.getWidth(),userBitmap.getHeight(),Bitmap.Config.ARGB_8888);
         mCanvas = new Canvas(btmView);
     }
-    public void setUserBitmap(Bitmap bitmap)
+    public void setUserBitmap(Context context,Bitmap bitmap)
     {
+        this.context = context;
         userBitmap = bitmap.copy(bitmap.getConfig(),true);
         invalidate();
     }
@@ -81,9 +86,9 @@ public class BeautyView extends View
         super.onDraw(canvas);
 
         canvas.drawColor(colorBackground);
-        canvas.drawBitmap(userBitmap,(getWidth() - userBitmap.getWidth()) / 2 ,(getHeight() - userBitmap.getHeight()) / 2,null);
-        canvas.drawBitmap(btmBackground,0,0,null);
-        canvas.drawBitmap(btmView,0,0,null);
+        canvas.drawBitmap(userBitmap,(getWidth() - userBitmap.getWidth()) / 2.0f ,(getHeight() - userBitmap.getHeight()) / 2.0f,null);
+        canvas.drawBitmap(btmBackground,(getWidth() - userBitmap.getWidth()) / 2.0f ,(getHeight() - userBitmap.getHeight()) / 2.0f,null);
+        canvas.drawBitmap(btmView,(getWidth() - userBitmap.getWidth()) / 2.0f ,(getHeight() - userBitmap.getHeight()) / 2.0f,null);
 
     }
     public void setColorBackground(int color)
@@ -103,6 +108,7 @@ public class BeautyView extends View
     }
     public void setBrushColor(int color)
     {
+        drwingColor = color;
         mPaint.setColor(color);
     }
     public void setSizeEraser(int s)
@@ -112,12 +118,7 @@ public class BeautyView extends View
     }
     public void enableEraser()
     {
-
-
-       // mCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-//        mPaint.setColor(Color.TRANSPARENT);
         mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-
     }
     public void desableEraser()
     {
@@ -155,39 +156,79 @@ public class BeautyView extends View
         float x = event.getX();
         float y = event.getY();
 
+        if(getWidth() > userBitmap.getWidth())
+        {
+            x =  x - (getWidth() - userBitmap.getWidth()) / 2.0f;
+        }
+        if(getHeight() > userBitmap.getHeight())
+        {
+            y = y - (getHeight() - userBitmap.getHeight()) / 2.0f;
+        }
 
-        if(y + (brushSizeToPx() / 2) <= ((getHeight() / 2) + userBitmap.getHeight() / 2)&& y  - (brushSizeToPx() / 2) >= ((getHeight() / 2) - userBitmap.getHeight() / 2))
-        {
-            //y is inside
-        }
-        else
-        {
-            if(y > ((getHeight() / 2) + userBitmap.getHeight() / 2))
-            {
-                y = ((getHeight() / 2) + userBitmap.getHeight() / 2) - (brushSizeToPx() / 2);
-            }
-            else
-            {
-                y = ((getHeight() / 2) - userBitmap.getHeight() / 2) + (brushSizeToPx() / 2);
-            }
 
-        }
-        if(x   + (brushSizeToPx() / 2) <= ((getWidth() / 2) + userBitmap.getWidth() / 2) && x  - (brushSizeToPx() / 2) >= ((getWidth()/ 2) - userBitmap.getWidth() / 2))
-        {
-            //x is inside
-        }
-        else
-        {
-            if(x >  ((getWidth() / 2) + userBitmap.getWidth() / 2))
-            {
-                x =  ((getWidth() / 2) + userBitmap.getWidth() / 2) - (brushSizeToPx() / 2);;
-            }
-            else
-            {
-                x = ((getWidth() / 2) - userBitmap.getWidth() / 2) +  (brushSizeToPx() / 2);
-            }
 
+//        if(y + (brushSizeToPx() / 2.0f) <= ((getHeight() / 2.0f) + userBitmap.getHeight() / 2.0f) && y  - (brushSizeToPx() / 2.0f) >= ((getHeight() / 2.0f) - userBitmap.getHeight() / 2.0f))
+//        {
+//            //y is inside
+//        }
+//        else
+//        {
+//            if(y >= ((getHeight() / 2.0f) + userBitmap.getHeight() / 2.0f))
+//            {
+//                y = (getHeight() - userBitmap.getHeight()) / 2.0f + (userBitmap.getHeight()) - (brushSizeToPx() / 2.0f);
+//            }
+//            else
+//            {
+//                y = (getHeight() - userBitmap.getHeight()) / 2.0f + ((brushSizeToPx() / 2.0f));
+//            }
+//
+//        }
+//        if(x   + (brushSizeToPx() / 2.0f) <= ((getWidth() / 2.0f) + userBitmap.getWidth() / 2.0f) && x  - (brushSizeToPx() / 2) >= ((getWidth()/ 2.0f) - userBitmap.getWidth() / 2.0f))
+//        {
+//            //x is inside
+//        }
+//        else
+//        {
+//            if(x >=  ((getWidth() / 2.0f) + userBitmap.getWidth() / 2.0f))
+//            {
+//                if((getWidth() - userBitmap.getWidth()) / 2.0f > 0f)
+//                {
+//                    x = (getWidth() - userBitmap.getWidth()) / 2.0f + (userBitmap.getWidth()) - (brushSizeToPx() / 2.0f);
+//                }
+//                else
+//                {
+//                    x = (userBitmap.getWidth()) - (brushSizeToPx() / 2.0f);
+//                }
+//
+//            }
+//            else
+//            {
+//                if((getWidth() - userBitmap.getWidth()) / 2.0f > 0f)
+//                {
+//                    x = (getWidth() - userBitmap.getWidth()) / 2.0f + ((brushSizeToPx() / 2.0f));
+//                }
+//                else
+//                {
+//                    x = (brushSizeToPx() / 2.0f);
+//                }
+//
+//            }
+//
+//        }
+
+        if(event.getPointerCount() == 2)
+        {
+            if(context != null && context instanceof DrawOnBitmapActivity)
+            {
+                if(((DrawOnBitmapActivity)context).getUserWantToZoomOrDrawState())
+                {
+                    ((DrawOnBitmapActivity)context).setMotionEvent(event);
+                }
+
+            }
         }
+
+
 
 
 
@@ -197,11 +238,41 @@ public class BeautyView extends View
                 touchStart(x,y);
                 break;
             case MotionEvent.ACTION_MOVE:
-                touchMove(x,y);
+                if(event.getPointerCount() == 1)
+                {
+                    if(context != null && context instanceof DrawOnBitmapActivity)
+                    {
+                        if(!((DrawOnBitmapActivity)context).getUserWantToZoomOrDrawState())
+                        {
+                            touchMove(x,y);
+                        }
+                    }
+
+                }
                 break;
             case MotionEvent.ACTION_UP:
+                if(context != null && context instanceof DrawOnBitmapActivity)
+                {
+                    if(((DrawOnBitmapActivity)context).getUserWantToZoomOrDrawState())
+                    {
+                        ((DrawOnBitmapActivity)context).zoomOver(true,event);
+                    }
+
+                }
+                if(event.getPointerCount() == 1)
+                {
+                    if(context != null && context instanceof DrawOnBitmapActivity)
+                    {
+                        if(((DrawOnBitmapActivity)context).getUserWantToZoomOrDrawState())
+                        {
+                            ((DrawOnBitmapActivity)context).setFocusXAndY(x ,y);
+                        }
+
+                    }
+                }
                 touchUp();
                 break;
+
 
         }
 
@@ -220,7 +291,7 @@ public class BeautyView extends View
         float dx = Math.abs(x - mX);
         float dy = Math.abs(y - mY);
 
-        int DEFERENECE_SPACE = 4;
+        int DEFERENECE_SPACE = 0;
         if(dx >= DEFERENECE_SPACE || dy >= DEFERENECE_SPACE)
         {
             mPath.quadTo(x ,y,(x+mX) / 2,(y + mY) / 2 );
@@ -228,7 +299,6 @@ public class BeautyView extends View
             mX = x;
 
             mCanvas.drawPath(mPath,mPaint);
-
 
             invalidate();
         }
@@ -244,12 +314,13 @@ public class BeautyView extends View
     }
     public Bitmap getBitmap()
     {
+
         this.setDrawingCacheEnabled(true);
         this.buildDrawingCache();
         Bitmap bitmap = Bitmap.createBitmap(this.getDrawingCache());
         this.setDrawingCacheEnabled(false);
 
-        bitmap = CropBitmapTransparency(bitmap);
+        bitmap = Methods.CropBitmapTransparency(bitmap);
         return bitmap;
 
     }
@@ -274,34 +345,17 @@ public class BeautyView extends View
             return image;
         }
     }
-    public Bitmap CropBitmapTransparency(Bitmap sourceBitmap)
+    public void setOpacity(int level)
     {
-        int minX = sourceBitmap.getWidth();
-        int minY = sourceBitmap.getHeight();
-        int maxX = -1;
-        int maxY = -1;
-        for(int y = 0; y < sourceBitmap.getHeight(); y++)
-        {
-            for(int x = 0; x < sourceBitmap.getWidth(); x++)
-            {
-                int alpha = (sourceBitmap.getPixel(x, y) >> 24) & 255;
-                if(alpha > 0)   // pixel is not 100% transparent
-                {
-                    if(x < minX)
-                        minX = x;
-                    if(x > maxX)
-                        maxX = x;
-                    if(y < minY)
-                        minY = y;
-                    if(y > maxY)
-                        maxY = y;
-                }
-            }
-        }
-        if((maxX < minX) || (maxY < minY))
-            return null; // Bitmap is entirely transparent
+        //mPaint.setAlpha(level);
+        mPaint.setColor(adjustAlpha(drwingColor,level));
 
-        // crop bitmap to non-transparent area and return:
-        return Bitmap.createBitmap(sourceBitmap, minX, minY, (maxX - minX) + 1, (maxY - minY) + 1);
+    }
+    public  int adjustAlpha(@ColorInt int color, float factor) {
+        int alpha = Math.round(Color.alpha(color) * factor);
+        int red = Color.red(color);
+        int green = Color.green(color);
+        int blue = Color.blue(color);
+        return Color.argb(alpha, red, green, blue);
     }
 }

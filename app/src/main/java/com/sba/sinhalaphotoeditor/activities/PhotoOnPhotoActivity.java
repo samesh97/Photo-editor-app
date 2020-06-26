@@ -48,6 +48,7 @@ import java.util.Locale;
 import render.animations.Bounce;
 import render.animations.Render;
 
+import static com.sba.sinhalaphotoeditor.activities.MyCustomGallery.selectedBitmap;
 import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_KEY;
 import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_SINHALA;
 import static com.sba.sinhalaphotoeditor.config.Constants.SHARED_PREF_NAME;
@@ -59,7 +60,6 @@ public class PhotoOnPhotoActivity extends AppCompatActivity implements RotationG
     public static String IMAGE_OUT_URI = "imageOutURI";
 
 
-    public static Uri IMAGE_ON_IMAGE_URI;
     public static int IMAGE_ON_IMAGE_RESULT_OK_CODE = 110;
     public static int IMAGE_ON_IMAGE_RESULT_FAILED_CODE = -100;
     public static int IMAGE_ON_IMAGE_REQUEST_CODE = 100;
@@ -144,16 +144,10 @@ public class PhotoOnPhotoActivity extends AppCompatActivity implements RotationG
 
         methods = new Methods(getApplicationContext());
 
-        if(getActionBar() != null && getSupportActionBar() != null)
-        {
-            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#114f5e")));
-        }
-
 
         //setup the scale detection and rotation detection for the textview
         scaleGestureDetector = new ScaleGestureDetector(PhotoOnPhotoActivity.this,new simpleOnScaleGestureListener());
         mRotationGestureDetector = new RotationGestureDetector(PhotoOnPhotoActivity.this);
-        extractBundle();
         uiSetup();
 
         expandableLayout = (ExpandableLayout)findViewById(R.id.explandableLayout);
@@ -263,20 +257,6 @@ public class PhotoOnPhotoActivity extends AppCompatActivity implements RotationG
         mRotationGestureDetector.onTouchEvent(event);
         return super.onTouchEvent(event);
     }
-
-    private void extractBundle()
-
-    {   //extract the data from previous activity
-        Bundle bundle = getIntent().getExtras();
-        // imageInUri = Uri.parse(bundle.getString(IMAGE_IN_URI));
-        if(bundle != null)
-        {
-            IMAGE_ON_IMAGE_URI = Uri.parse((bundle.getString("IMAGE_ON_IMAGE_URI")));
-        }
-
-
-    }
-
     private void uiSetup()
     {
         //show progress dialog
@@ -328,7 +308,7 @@ public class PhotoOnPhotoActivity extends AppCompatActivity implements RotationG
         workingLayout.setDrawingCacheEnabled(true);
         hideProgressDialog();
 
-        addNewImage.setImageURI(IMAGE_ON_IMAGE_URI);
+        addNewImage.setImageBitmap(selectedBitmap);
         //addTextView.setTextSize(textFontSize);
 
 

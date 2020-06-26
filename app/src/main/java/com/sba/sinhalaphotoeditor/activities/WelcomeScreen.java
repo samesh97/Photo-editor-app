@@ -31,14 +31,12 @@ public class WelcomeScreen extends AppCompatActivity {
 
     private  Button sinhala,english;
     private Drawable drawable,drawable2;
-    private static boolean isUpdate = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
 
-        loadLocale();
         setContentView(R.layout.activity_welcome_screen);
 
 
@@ -52,7 +50,6 @@ public class WelcomeScreen extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                isUpdate = true;
                 onLanguageChanged(LANGUAGE_SINHALA);
                 setLocale(LANGUAGE_SINHALA);
 
@@ -62,7 +59,6 @@ public class WelcomeScreen extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                isUpdate = true;
                 onLanguageChanged(LANGUAGE_ENGLISH);
                 setLocale(LANGUAGE_ENGLISH);
             }
@@ -98,53 +94,13 @@ public class WelcomeScreen extends AppCompatActivity {
     public void setLocale(String lang)
     {
 
-        //set locale
-//        Locale myLocale = new Locale(lang);
-//        Resources res = getResources();
-//        DisplayMetrics dm = res.getDisplayMetrics();
-//        Configuration conf = res.getConfiguration();
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
-//        {
-//            conf.setLocale(myLocale);
-//        }
-//        else
-//        {
-//            conf.locale = myLocale;
-//        }
-//
-//        res.updateConfiguration(conf, dm);
-
-
         //save locale
         SharedPreferences pref = getApplicationContext().getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         editor.putString(LANGUAGE_KEY,lang);
         editor.apply();
 
-        if(isUpdate)
-        {
-            isUpdate = false;
-            refreshActivity();
-        }
-
-
-
-    }
-    public void loadLocale()
-    {
-        //get locale
-        SharedPreferences pref = getApplicationContext().getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
-        String lan = pref.getString(LANGUAGE_KEY,null);
-        if(lan != null)
-        {
-            isUpdate = false;
-            setLocale(lan);
-        }
-        else
-        {
-            isUpdate = true;
-            setLocale(LANGUAGE_SINHALA);
-        }
+        refreshActivity();
 
     }
     public void refreshActivity()
@@ -196,14 +152,18 @@ public class WelcomeScreen extends AppCompatActivity {
         Locale myLocale = new Locale(localeString);
         Locale.setDefault(myLocale);
         Configuration config = newBase.getResources().getConfiguration();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+        {
             config.setLocale(myLocale);
-            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.N){
+            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.N)
+            {
                 Context newContext = newBase.createConfigurationContext(config);
                 super.attachBaseContext(newContext);
                 return;
             }
-        } else {
+        }
+        else
+        {
             config.locale = myLocale;
         }
         super.attachBaseContext(newBase);

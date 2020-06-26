@@ -51,7 +51,7 @@ import com.google.android.gms.ads.initialization.OnInitializationCompleteListene
 import com.sba.sinhalaphotoeditor.sdk.Methods;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;
-import com.yalantis.ucrop.UCrop;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -71,6 +71,8 @@ import static com.sba.sinhalaphotoeditor.config.Constants.SHARED_PREF_NAME;
 public class EditorActivity extends AppCompatActivity implements View.OnClickListener {
 
     public static final int DRAW_ON_BITMAP_REQUEST_CODE = 500;
+    public static final int NORMAL_CROP_IMAGE_REQUEST_CODE = 700;
+    public static final int PICKED_IMAGE_CROP_IMAGE_REQUEST_CODE = 701;
     private ImageView userSelectedImage;
     private ImageView addText,addImage,addSticker,addCrop,addBlur;
     private static final int PICK_IMAGE_REQUEST = 234;
@@ -254,33 +256,8 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         }
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == IMAGE_PICK_RESULT_CODE && selectedBitmap != null)
         {
-            try
-            {
-
-                Bitmap bitmap = selectedBitmap.copy(selectedBitmap.getConfig(),true);
-                selectedBitmap = null;
-                bitmap = methods.getResizedBitmap(bitmap,1000);
-
-                Uri imgUri = methods.getImageUri(bitmap,false);
-
-                CropType = "PhotoOnPhotoCrop";
-
-                UCrop.of(imgUri,Uri.fromFile(new File(getCacheDir(),"SinhalaPhotoEditors")))
-//                        .withAspectRatio(16, 9)
-                        .useSourceImageAspectRatio()
-                        .withMaxResultSize(1500, 1500)
-                        .withOptions(getCropOptions())
-                        .start(EditorActivity.this);
-
-
-
-               // addImageOnImage(imgUri);
-
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
+                Intent intent = new Intent(getApplicationContext(),CropActivity.class);
+                startActivityForResult(intent,PICKED_IMAGE_CROP_IMAGE_REQUEST_CODE);
         }
         if(requestCode == AddStickerOnImage.STICKER_ON_IMAGE_REQUEST_CODE)
         {
@@ -291,39 +268,18 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
 
             }
         }
-        if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP)
+        if(requestCode == NORMAL_CROP_IMAGE_REQUEST_CODE && resultCode == RESULT_OK)
         {
-            if(CropType.equals("NormalCrop"))
-            {
-                addCrop.setEnabled(true);
-                if(data != null)
-                {
-                    Uri resultUri = UCrop.getOutput(data);
-                    try
-                    {
-                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), resultUri);
-                        ImageList.getInstance().addBitmap(bitmap,true);
-                        methods.setImageViewScaleType(userSelectedImage);
-                        Glide.with(getApplicationContext()).load(bitmap).into(userSelectedImage);
-                        ImageList.getInstance().deleteUndoRedoImages();
-                    }
-                    catch (IOException e)
-                    {
-                        e.printStackTrace();
-                    }
-                }
+            ImageList.getInstance().addBitmap(CropActivity.croppedBitmap,true);
+            methods.setImageViewScaleType(userSelectedImage);
+            Glide.with(getApplicationContext()).load(CropActivity.croppedBitmap).into(userSelectedImage);
+            ImageList.getInstance().deleteUndoRedoImages();
 
-            }
-            else if(CropType.equals("PhotoOnPhotoCrop"))
-            {
-                if(data != null)
-                {
-                    Uri resultUri = UCrop.getOutput(data);
-                    if(resultUri != null)
-                    addImageOnImage(resultUri);
-                }
-
-            }
+        }
+        if(requestCode == PICKED_IMAGE_CROP_IMAGE_REQUEST_CODE && resultCode == RESULT_OK)
+        {
+            selectedBitmap = CropActivity.croppedBitmap;
+            addImageOnImage();
         }
         if(requestCode == 10  && resultCode == 11)
         {
@@ -617,12 +573,9 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
 
     }
-    private void addImageOnImage(Uri uri)
+    private void addImageOnImage()
     {
         Intent intent = new Intent(EditorActivity.this,PhotoOnPhotoActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putString("IMAGE_ON_IMAGE_URI",uri.toString());
-        intent.putExtras(bundle);
         startActivityForResult(intent, PhotoOnPhotoActivity.IMAGE_ON_IMAGE_REQUEST_CODE);
         overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
     }
@@ -779,47 +732,9 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
 
             if(ImageList.getInstance().getCurrentBitmap() != null && ImageList.getInstance().getImageListSize() > 0)
             {
-                CropType = "NormalCrop";
-                render.setAnimation(Attention.Bounce(addCrop));
-                render.start();
-                //addCrop.setEnabled(false);
-                final Uri uri = methods.getImageUri(ImageList.getInstance().getCurrentBitmap(),false);
-//                CropImage.activity(uri).start(EditorActivity.this);
-
-
-
-
-                ContextWrapper cw = new ContextWrapper(getApplicationContext());
-                File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
-                String path = "cropImage" + ".PNG";
-                File file = new File(directory, path);
-                if(file.exists())
-                {
-                    file.delete();
-                }
-
-                UCrop.of(uri,Uri.fromFile(file))
-//                        .withAspectRatio(16, 9)
-                        .useSourceImageAspectRatio()
-                        .withMaxResultSize(1500, 1500)
-                        .withOptions(getCropOptions())
-                        .start(EditorActivity.this);
-
-
-
-
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        File f = new File(methods.getRealPathFromDocumentUri(uri));
-                        if(f.exists())
-                        {
-                            f.delete();
-                        }
-                    }
-                    },5000);
-
+                selectedBitmap = ImageList.getInstance().getCurrentBitmap();
+                Intent intent = new Intent(getApplicationContext(),CropActivity.class);
+                startActivityForResult(intent,NORMAL_CROP_IMAGE_REQUEST_CODE);
             }
             else
             {
@@ -1050,18 +965,6 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         return b;
 
 
-    }
-    private UCrop.Options getCropOptions()
-    {
-        UCrop.Options options = new UCrop.Options();
-        options.setStatusBarColor(getResources().getColor(R.color.material_dark_blue));
-        options.setToolbarColor(getResources().getColor(R.color.material_dark_blue));
-        options.setToolbarTitle("Crop");
-        options.setCompressionFormat(Bitmap.CompressFormat.PNG);
-        options.setLogoColor(Color.WHITE);
-        options.setToolbarWidgetColor(Color.WHITE);
-
-        return options;
     }
     private void showConfirmationDialogToExit()
     {

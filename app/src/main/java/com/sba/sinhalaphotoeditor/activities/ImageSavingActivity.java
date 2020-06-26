@@ -1,11 +1,13 @@
 package com.sba.sinhalaphotoeditor.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.ViewCompat;
 
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -22,6 +24,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.imageview.ShapeableImageView;
+import com.google.android.material.shape.CornerFamily;
+import com.google.android.material.shape.MaterialShapeDrawable;
+import com.google.android.material.shape.ShapeAppearanceModel;
 import com.sba.sinhalaphotoeditor.sdk.Methods;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;
@@ -77,7 +83,7 @@ public class ImageSavingActivity extends AppCompatActivity {
 
 
         ImageView saveFinalImage = (ImageView) findViewById(R.id.saveFinalImage);
-        ImageView userSavingImage = (ImageView) findViewById(R.id.userSavingImage);
+        ShapeableImageView userSavingImage = (ShapeableImageView) findViewById(R.id.userSavingImage);
 
         TextView fromGalery = findViewById(R.id.fromGalery);
 
@@ -137,8 +143,9 @@ public class ImageSavingActivity extends AppCompatActivity {
         });
 
 
+
         Glide.with(getApplicationContext()).load(ImageList.getInstance().getCurrentBitmap()).into(userSavingImage);
-        userSavingImage.setClipToOutline(true);
+
 
 
 
