@@ -27,7 +27,6 @@ public class CropView extends View
 
     private Paint mPaintRect;
 
-
     //4 handler positions
     private float leftTopX = 100;
     private float leftTopY = 200;
@@ -37,7 +36,6 @@ public class CropView extends View
     private float rightTopY = 200;
     private float rightBottomX = 400;
     private float rightBottomY = 500;
-
 
     //4 handler MAX positions
     private float leftTopMaxX = 100;
@@ -55,36 +53,25 @@ public class CropView extends View
 
     //source image
     private Bitmap cropBitmap;
-    //holds original bitmap
-    private Bitmap originalBitmap;
 
-
-    //rotation value for bitmap
-    private int rotateDegree = 0;
-
-
-    //remove handlers to get the finalBitmap
+    //remove handlers to get the finalBitmap || if false the handlers will be drawn
     private boolean isCropFinished = false;
 
-
-    //image actual height and width
+    //image actual height and width in the original bitmap
     private int finalImageWidth,finalImageHeight;
 
-
-    //cnvas width height
+    //canvas width height
     private int canvasWidth,canvasHeight = 0;
 
-
-    //padding between the layout
+    //padding between the layout || since it is hard to control the handler when it is close to the edge,
+    // i have put some padding with the layout. So the handlers are easy to move
     private int padding = 32;
 
     public CropView(Context context)
     {
-
         super(context);
         init();
     }
-
     public CropView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init();
@@ -104,9 +91,11 @@ public class CropView extends View
     private void init()
     {
 
+        //creating and setting rectangle positions
         rectangle = new Rect();
         rectangle.set((int) leftTopX,(int)leftTopY,(int)rightTopX,(int)rightBottomY);
 
+        //paint used to draw the handlers
         mPaint = new Paint();
         mPaint.setColor(getContext().getResources().getColor(R.color.colorPrimary));
         mPaint.setAntiAlias(true);
@@ -116,6 +105,7 @@ public class CropView extends View
         mPaint.setDither(true);
         mPaint.setStrokeJoin(Paint.Join.ROUND);
 
+        //paint used to draw the rectangle
         mPaintRect = new Paint();
         mPaintRect.setColor(Color.WHITE);
         mPaintRect.setAntiAlias(true);
@@ -131,27 +121,31 @@ public class CropView extends View
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
+        //draw color transparent in the background
         canvas.drawColor(Color.TRANSPARENT);
 
-        //draw image
+        //draw image if not null
         if(cropBitmap != null)
         {
+            //draw image in the center of the screen
             canvas.drawBitmap(cropBitmap,(getWidth() - cropBitmap.getWidth()) / 2.0f ,(getHeight() - cropBitmap.getHeight()) / 2.0f,null);
         }
 
+        //check whether the crop has finished to undraw the handlers to get the final bitmap
         if(!isCropFinished)
         {
+            //placing the rectangle in the exact positions
             rectangle.set((int) leftTopX,(int)leftTopY,(int)rightTopX,(int)rightBottomY);
 
             //draw rectangle
             canvas.drawRect(rectangle,mPaintRect);
-            //left top handler
+            //draw left top handler
             canvas.drawCircle(leftTopX,leftTopY,handlerRadius,mPaint);
-            //left bottom handler
+            //draw left bottom handler
             canvas.drawCircle(leftBottomX,leftBottomY,handlerRadius,mPaint);
-            //right top handler
+            //draw right top handler
             canvas.drawCircle(rightTopX,rightTopY,handlerRadius,mPaint);
-            //right bottom handler
+            //draw right bottom handler
             canvas.drawCircle(rightBottomX,rightBottomY,handlerRadius,mPaint);
         }
 
@@ -161,21 +155,19 @@ public class CropView extends View
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
 
-
-
+        //saving canvas with and height in global variables
         canvasWidth = w;
         canvasHeight = h;
 
-
+        //resize the bitmap with the screen size
         this.cropBitmap = resize(cropBitmap,canvasWidth - padding,canvasHeight - padding);
-        this.originalBitmap = resize(originalBitmap,canvasWidth - padding,canvasHeight - padding);
-
+        //set handler positions
         setHandlerPositions();
-
 
     }
     public void setHandlerPositions()
     {
+        //calculate max expanded handler positions
         float x = (getWidth() - cropBitmap.getWidth()) / 2.0f;
         float y = (getHeight() - cropBitmap.getHeight()) / 2.0f;
 
@@ -217,6 +209,7 @@ public class CropView extends View
 
         if (event.getAction() == MotionEvent.ACTION_MOVE)
         {
+            //move the handlers with x,y coordinates
             moveHandler(event.getX(), event.getY());
         }
 
@@ -226,8 +219,12 @@ public class CropView extends View
     private void moveHandler(float x, float y)
     {
         //consider as clicked the handler through this area
+        //tolerance will be used to make the touch point accurate in the handler
+        //increase it to make it more accurate
         float tolerance = 75;
+        //minSpace has used to restrict the minimum size the handlers can collaps
         float minSpace = 150;
+        //reduceSpace is used to reduce X,Y values if running out of minSpace
         float reduceSpace = 5;
 
         //check for the top left handler was dragged
@@ -445,7 +442,6 @@ public class CropView extends View
         this.cropBitmap = bitmap.copy(bitmap.getConfig(),true);
         finalImageHeight = bitmap.getHeight();
         finalImageWidth = bitmap.getWidth();
-        originalBitmap = bitmap;
 
         //keeping the padding with the layout
         this.cropBitmap = resize(cropBitmap,canvasWidth - padding,canvasHeight - padding);
@@ -507,13 +503,5 @@ public class CropView extends View
         bitmap =  Bitmap.createBitmap(bitmap,rectangle.left,rectangle.top,rectangle.right - rectangle.left,rectangle.bottom - rectangle.top);
         bitmap = resize(bitmap,finalImageWidth,finalImageHeight);
         return bitmap;
-    }
-    public int getCanvasWidth()
-    {
-        return canvasWidth;
-    }
-    public int getCanvasHeight()
-    {
-        return canvasHeight;
     }
 }

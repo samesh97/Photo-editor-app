@@ -81,7 +81,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
     public void createNotification(String title, String message)
     {
 
-        Bitmap bitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.greenlogo);
+        Bitmap bitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.logo);
 
 
         Intent resultIntent = new Intent(this , NotificationView.class);
@@ -95,7 +95,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
-        mBuilder.setSmallIcon(R.drawable.greenlogo);
+        mBuilder.setSmallIcon(R.drawable.logo);
         mBuilder.setAutoCancel(false)
                .setContentTitle(title)
                 .setLargeIcon(bitmap)
