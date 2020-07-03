@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Matrix;
@@ -77,36 +78,57 @@ public class Methods
 
         Bitmap bitmap = ImageList.getInstance().getCurrentBitmap();
 
-        int imageWidth = bitmap.getWidth();
-        int imageHeight = bitmap.getHeight();
-
-        if(imageHeight > imageWidth)
+        if(bitmap != null && image != null)
         {
-            if(((float)imageHeight / (float)imageWidth) > 1.3)
+            int imageWidth = bitmap.getWidth();
+            int imageHeight = bitmap.getHeight();
+
+            if(imageHeight > imageWidth)
             {
-                image.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                if(((float)imageHeight / (float)imageWidth) > 1.3)
+                {
+                    image.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                }
+                else
+                {
+                    image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+//                    BitmapDrawable ob = new BitmapDrawable(context.getResources(), getBlurBitmap(bitmap.copy(bitmap.getConfig(),true),context));
+//                    image.setBackground(ob);
+
+                    int color = bitmap.getPixel(0,0);
+                    if(color != context.getResources().getColor(R.color.color_gray))
+                    {
+                        image.setBackgroundColor(context.getResources().getColor(R.color.color_gray));
+                    }
+                    else
+                    {
+
+                        image.setBackgroundColor(context.getResources().getColor(R.color.darkAsh));
+                    }
+
+
+                }
+
             }
             else
             {
+
                 image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-                Bitmap blurbit = getBlurBitmap(bitmap.copy(bitmap.getConfig(),true),context);
-                BitmapDrawable ob = new BitmapDrawable(context.getResources(), blurbit);
+//                BitmapDrawable ob = new BitmapDrawable(context.getResources(), getBlurBitmap(bitmap.copy(bitmap.getConfig(),true),context));
+//                image.setBackground(ob);
+                int color = bitmap.getPixel(0,0);
+                if(color != context.getResources().getColor(R.color.color_gray))
+                {
+                    image.setBackgroundColor(context.getResources().getColor(R.color.color_gray));
+                }
+                else
+                {
+                    image.setBackgroundColor(context.getResources().getColor(R.color.darkAsh));
+                }
 
-                image.setBackground(ob);
-                blurbit = null;
             }
-
         }
-        else
-        {
-            image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-            Bitmap blurbit = getBlurBitmap(bitmap.copy(bitmap.getConfig(),true),context);
-            BitmapDrawable ob = new BitmapDrawable(context.getResources(), blurbit);
 
-            image.setBackground(ob);
-            blurbit = null;
-            image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-        }
 
     }
     public Bitmap getBlurBitmap(Bitmap image, Context context)

@@ -2,10 +2,6 @@ package com.sba.sinhalaphotoeditor.config;
 
 import android.view.MotionEvent;
 
-/**
- * Created by Sarthak on 11/12/2017.
- */
-
 public class RotationGestureDetector {
     private static final int INVALID_POINTER_ID = -1;
     private float fX, fY, sX, sY;
