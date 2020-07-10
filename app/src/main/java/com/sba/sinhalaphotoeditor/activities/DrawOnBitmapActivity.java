@@ -44,6 +44,7 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static android.view.View.LAYER_TYPE_HARDWARE;
 import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_KEY;
 import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_SINHALA;
 import static com.sba.sinhalaphotoeditor.config.Constants.SHARED_PREF_NAME;
@@ -134,33 +135,25 @@ public class DrawOnBitmapActivity extends AppCompatActivity implements OnTextAtt
             }
         });
 
-//        img_done.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v)
-//            {
-//
-//                img_done_container.setEnabled(false);
-//                img_done.setEnabled(false);
-//                loading.setVisibility(View.VISIBLE);
-//
-//                Bitmap bitmap = paintView.getBitmap();
-//                AddImageToArrayListAsyncTask asyncTask = new AddImageToArrayListAsyncTask(bitmap,DrawOnBitmapActivity.this);
-//                asyncTask.execute();
-//
-//            }
-//        });
 
         img_done_container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
                 img_done_container.setEnabled(false);
-//                img_done.setEnabled(false);
                 loading.setVisibility(View.VISIBLE);
 
-                Bitmap bitmap = paintView.getBitmap();
-                AddImageToArrayListAsyncTask asyncTask = new AddImageToArrayListAsyncTask(bitmap,DrawOnBitmapActivity.this);
-                asyncTask.execute();
+                if(paintView.getPathSize() > 0)
+                {
+                    Bitmap bitmap = paintView.getBitmap();
+                    AddImageToArrayListAsyncTask asyncTask = new AddImageToArrayListAsyncTask(bitmap,DrawOnBitmapActivity.this);
+                    asyncTask.execute();
+                }
+                else
+                {
+                    startActivityForResult();
+                }
+
             }
         });
 
@@ -187,11 +180,7 @@ public class DrawOnBitmapActivity extends AppCompatActivity implements OnTextAtt
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-//                            paintView.setScaleX(scaleFactor);
-//                            paintView.setScaleY(scaleFactor);
-
                             paintView.animate().scaleY(scaleFactor).scaleX(scaleFactor).start();
-                            //paintView.animate().scaleXBy(scaleFactor).scaleYBy(scaleFactor).setDuration(0).start();
                             if(focusX > 0 && focusY > 0)
                             {
                                 paintView.animate().translationX(focusX).translationY(focusY).start();
@@ -202,7 +191,24 @@ public class DrawOnBitmapActivity extends AppCompatActivity implements OnTextAtt
                 }
 
             }
-        }, 0, 500);
+        }, 0, 100);
+
+
+        ConstraintLayout img_undo_container = findViewById(R.id.img_undo_container);
+        img_undo_container.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                paintView.undo();
+            }
+        });
+
+        ConstraintLayout img_redo_container = findViewById(R.id.img_redo_container);
+        img_redo_container.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                paintView.redo();
+            }
+        });
 
 
 
@@ -313,7 +319,7 @@ public class DrawOnBitmapActivity extends AppCompatActivity implements OnTextAtt
         brush.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                paintView.desableEraser();
+                paintView.disableEraser();
                 brush.setBackground(getResources().getDrawable(R.drawable.brush_type_selected_background));
                 eraser.setBackground(null);
 
@@ -359,7 +365,7 @@ public class DrawOnBitmapActivity extends AppCompatActivity implements OnTextAtt
         if(!isBrushSelected)
         {
             isBrushSelected = true;
-            paintView.desableEraser();
+            paintView.disableEraser();
 
             if(brush != null && eraser != null)
             {

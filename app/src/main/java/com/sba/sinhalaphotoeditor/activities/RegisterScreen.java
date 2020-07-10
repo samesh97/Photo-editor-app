@@ -56,12 +56,15 @@ public class RegisterScreen extends AppCompatActivity{
     private String mVerificationId;
     private boolean isAlreadyVerified = false;
     private ProgressBar progress_bar;
-    private TextView skipButton;
     private long startedTime;
 
 
-
-
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+        overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
@@ -88,7 +91,7 @@ public class RegisterScreen extends AppCompatActivity{
             }
             else
             {
-                Methods.showCustomToast(RegisterScreen.this,"No Image Selected");
+                Methods.showCustomToast(RegisterScreen.this,getString(R.string.select_image_text));
             }
         }
     }
@@ -124,14 +127,7 @@ public class RegisterScreen extends AppCompatActivity{
         Methods methods = new Methods(getApplicationContext());
         CountryCodePicker ccp = (CountryCodePicker) findViewById(R.id.ccp);
         progress_bar = findViewById(R.id.progress_bar);
-        skipButton = findViewById(R.id.skip_button);
 
-        skipButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                skipRegistraion();
-            }
-        });
 
         ccp.setOnCountryChangeListener(new CountryCodePicker.OnCountryChangeListener() {
             @Override
@@ -173,20 +169,13 @@ public class RegisterScreen extends AppCompatActivity{
         Intent intent = new Intent(RegisterScreen.this,MyCustomGallery.class);
         startActivityForResult(intent,PICK_IMAGE_REQUEST);
     }
-
-    public String getFileExtension(Uri uri)
-    {
-        ContentResolver cR = getContentResolver();
-        MimeTypeMap mime = MimeTypeMap.getSingleton();
-        return mime.getExtensionFromMimeType(cR.getType(uri));
-    }
     private void sendVerificationCode(String no)
     {
         startedTime = System.currentTimeMillis();
         startCounting();
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
                 Countrycode + Integer.parseInt(no),
-                60,
+                120,
                 TimeUnit.SECONDS,
                 TaskExecutors.MAIN_THREAD,mCallbacks);
 
@@ -240,7 +229,7 @@ public class RegisterScreen extends AppCompatActivity{
         {
             if(e != null)
             {
-                Toast.makeText(RegisterScreen.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                Methods.showCustomToast(getApplicationContext(),e.getMessage());
             }
             runOnUiThread(new Runnable() {
                 @Override
@@ -296,14 +285,6 @@ public class RegisterScreen extends AppCompatActivity{
         next.setVisibility(View.VISIBLE);
 
     }
-    public void skipRegistraion()
-    {
-        Constants.isRegistrationSkipped = true;
-        Intent intent = new Intent(RegisterScreen.this,MainActivity.class);
-        startActivity(intent);
-        finish();
-        overridePendingTransition(R.anim.activity_start_animation,R.anim.activity_exit_animation);
-    }
     public void onNextClicked(View view)
     {
         if(!fullName.getText().toString().equals("") && filePath != null && !phone.getText().toString().equals(""))
@@ -316,11 +297,15 @@ public class RegisterScreen extends AppCompatActivity{
         }
         else if(filePath == null && (!fullName.getText().toString().equals("")  && !phone.getText().toString().equals("")))
         {
-            Methods.showCustomToast(RegisterScreen.this,"Please Select an Image for Your Profile Picture!");
+            Methods.showCustomToast(RegisterScreen.this,getString(R.string.select_image_text));
         }
-        else if(fullName.getText().toString().equals("") || phone.getText().toString().equals(""))
+        else if(fullName.getText().toString().equals(""))
         {
-            Methods.showCustomToast(RegisterScreen.this, "Please Fill out the Required Fields!");
+            Methods.showCustomToast(RegisterScreen.this, getString(R.string.enter_name_text));
+        }
+        else if(phone.getText().toString().equals(""))
+        {
+            Methods.showCustomToast(RegisterScreen.this, getString(R.string.enter_phone_number_text));
         }
     }
     private void changeTypeFace()
@@ -330,7 +315,6 @@ public class RegisterScreen extends AppCompatActivity{
         fullName.setTypeface(typeface);
         phone.setTypeface(typeface);
         next.setTypeface(typeface);
-        skipButton.setTypeface(typeface);
 
 
     }

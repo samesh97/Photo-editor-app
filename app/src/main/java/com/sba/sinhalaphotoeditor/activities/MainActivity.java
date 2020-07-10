@@ -302,6 +302,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     {
         CircleImageView profilePic = findViewById(R.id.profilePic);
         TextView user_name = findViewById(R.id.user_name);
+        Button login_button = findViewById(R.id.login_button);
         SihalaUser currentUser = SihalaUser.getUser(MainActivity.this);
 
         if(currentUser != null)
@@ -322,18 +323,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if(currentUser.getUserName() != null && !currentUser.getUserName().trim().equals(""))
                 {
                     user_name.setText("Hello " + currentUser.getUserName());
+                    login_button.setText("Log out");
                 }
                 else
                 {
-                    user_name.setText("Hello User");
+                    user_name.setText("Hello user");
+                    login_button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view)
+                        {
+                            startActivity(new Intent(MainActivity.this, RegisterScreen.class));
+                            overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
+                        }
+                    });
                 }
 
             }
         }
         else
         {
-            user_name.setText("Hello User");
+            user_name.setText("Hello user");
+            login_button.setText("Login");
+            login_button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view)
+                {
+                    startActivity(new Intent(MainActivity.this, RegisterScreen.class));
+                    overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
+                }
+            });
         }
+
     }
 
     private void configPushNotification()
@@ -788,27 +808,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void isNeedToOpenAnotherActivity()
     {
         SharedPreferences pref = getApplicationContext().getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
-        //SharedPreferences.Editor editor = pref.edit();
         boolean isWalkThroughNeeded = pref.getBoolean(IS_WALKTHROUGH_NEEDED_KEY, false);
         if (!isWalkThroughNeeded)
         {
             startActivity(new Intent(MainActivity.this, WelcomeScreen.class));
             finish();
             overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
-        }
-        else
-        {
-            SihalaUser cUser = SihalaUser.getUser(MainActivity.this);
-            if(cUser == null)
-            {
-                if(!Constants.isRegistrationSkipped)
-                {
-                    startActivity(new Intent(MainActivity.this, RegisterScreen.class));
-                    finish();
-                    overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
-                }
-
-            }
         }
     }
     private void setAppLanguage()

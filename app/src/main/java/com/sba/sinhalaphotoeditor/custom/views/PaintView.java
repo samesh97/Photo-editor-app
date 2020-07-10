@@ -18,6 +18,7 @@ import androidx.annotation.Nullable;
 
 
 import com.sba.sinhalaphotoeditor.activities.DrawOnBitmapActivity;
+import com.sba.sinhalaphotoeditor.model.DrawnPath;
 import com.sba.sinhalaphotoeditor.sdk.Methods;
 
 import java.util.ArrayList;
@@ -25,21 +26,21 @@ import java.util.ArrayList;
 public class PaintView extends View
 {
     private Bitmap btmBackground,btmView,userBitmap;
-    private Paint mPaint = new Paint();
-    private Path mPath = new Path();
+    private Paint mPaint;
+    private Path mPath;
     private int colorBackground,sizeBrush,sizeEraser;
 
-    private float mX,mY;
     private Canvas mCanvas;
 
-    private int drwingColor = Color.RED;
+    private int drawingColor = Color.RED;
 
-    private ArrayList<Bitmap> listAction = new ArrayList<>();
     private Context context;
+    private ArrayList<DrawnPath> paths;
+    private ArrayList<DrawnPath> undonePaths;
 
-    public PaintView(Context context, @Nullable AttributeSet attrs) {
+    public PaintView(Context context, @Nullable AttributeSet attrs)
+    {
         super(context, attrs);
-
         init();
     }
 
@@ -48,6 +49,7 @@ public class PaintView extends View
         sizeEraser = sizeBrush = 12;
         colorBackground = Color.TRANSPARENT;
 
+        mPaint = new Paint();
         mPaint.setColor(Color.RED);
         mPaint.setAntiAlias(true);
         mPaint.setDither(true);
@@ -55,6 +57,10 @@ public class PaintView extends View
         mPaint.setStrokeCap(Paint.Cap.ROUND);
         mPaint.setStrokeJoin(Paint.Join.ROUND);
         mPaint.setStrokeWidth(sizeBrush);
+
+        paths = new ArrayList<>();
+        undonePaths = new ArrayList<>();
+        mPath = new Path();
     }
     private float brushSizeToPx()
     {
@@ -65,20 +71,17 @@ public class PaintView extends View
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
 
-
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inMutable = true;
         userBitmap = resize(userBitmap,w,h);
-
         btmBackground = Bitmap.createBitmap(userBitmap.getWidth(),userBitmap.getHeight(),Bitmap.Config.ARGB_8888);
         btmView = Bitmap.createBitmap(userBitmap.getWidth(),userBitmap.getHeight(),Bitmap.Config.ARGB_8888);
         mCanvas = new Canvas(btmView);
+
     }
     public void setUserBitmap(Context context,Bitmap bitmap)
     {
         this.context = context;
         userBitmap = bitmap.copy(bitmap.getConfig(),true);
-        invalidate();
+        postInvalidate();
     }
 
     @Override
@@ -108,7 +111,7 @@ public class PaintView extends View
     }
     public void setBrushColor(int color)
     {
-        drwingColor = color;
+        drawingColor = color;
         mPaint.setColor(color);
     }
     public void setSizeEraser(int s)
@@ -118,35 +121,14 @@ public class PaintView extends View
     }
     public void enableEraser()
     {
+        //mPaint.setColor(Color.TRANSPARENT);
         mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
     }
-    public void desableEraser()
+    public void disableEraser()
     {
         mPaint.setXfermode(null);
         mPaint.setShader(null);
         mPaint.setMaskFilter(null);
-    }
-    public void addLastAction(Bitmap bitmap)
-    {
-        listAction.add(bitmap);
-    }
-    public void returnLastAction()
-    {
-       if(listAction.size() > 0)
-       {
-           listAction.remove(listAction.size() - 1);
-           if(listAction.size() > 0)
-           {
-               btmView = listAction.get(listAction.size() - 1);
-           }
-           else
-           {
-               btmView = Bitmap.createBitmap(getWidth(),getHeight(), Bitmap.Config.ARGB_8888);
-
-           }
-           mCanvas = new Canvas(btmView);
-           invalidate();
-       }
     }
 
     @Override
@@ -166,56 +148,6 @@ public class PaintView extends View
         }
 
 
-
-//        if(y + (brushSizeToPx() / 2.0f) <= ((getHeight() / 2.0f) + userBitmap.getHeight() / 2.0f) && y  - (brushSizeToPx() / 2.0f) >= ((getHeight() / 2.0f) - userBitmap.getHeight() / 2.0f))
-//        {
-//            //y is inside
-//        }
-//        else
-//        {
-//            if(y >= ((getHeight() / 2.0f) + userBitmap.getHeight() / 2.0f))
-//            {
-//                y = (getHeight() - userBitmap.getHeight()) / 2.0f + (userBitmap.getHeight()) - (brushSizeToPx() / 2.0f);
-//            }
-//            else
-//            {
-//                y = (getHeight() - userBitmap.getHeight()) / 2.0f + ((brushSizeToPx() / 2.0f));
-//            }
-//
-//        }
-//        if(x   + (brushSizeToPx() / 2.0f) <= ((getWidth() / 2.0f) + userBitmap.getWidth() / 2.0f) && x  - (brushSizeToPx() / 2) >= ((getWidth()/ 2.0f) - userBitmap.getWidth() / 2.0f))
-//        {
-//            //x is inside
-//        }
-//        else
-//        {
-//            if(x >=  ((getWidth() / 2.0f) + userBitmap.getWidth() / 2.0f))
-//            {
-//                if((getWidth() - userBitmap.getWidth()) / 2.0f > 0f)
-//                {
-//                    x = (getWidth() - userBitmap.getWidth()) / 2.0f + (userBitmap.getWidth()) - (brushSizeToPx() / 2.0f);
-//                }
-//                else
-//                {
-//                    x = (userBitmap.getWidth()) - (brushSizeToPx() / 2.0f);
-//                }
-//
-//            }
-//            else
-//            {
-//                if((getWidth() - userBitmap.getWidth()) / 2.0f > 0f)
-//                {
-//                    x = (getWidth() - userBitmap.getWidth()) / 2.0f + ((brushSizeToPx() / 2.0f));
-//                }
-//                else
-//                {
-//                    x = (brushSizeToPx() / 2.0f);
-//                }
-//
-//            }
-//
-//        }
-
         if(event.getPointerCount() == 2)
         {
             if(context != null && context instanceof DrawOnBitmapActivity)
@@ -229,13 +161,20 @@ public class PaintView extends View
         }
 
 
-
-
-
         switch (event.getAction())
         {
             case MotionEvent.ACTION_DOWN:
-                touchStart(x,y);
+                if(event.getPointerCount() == 1)
+                {
+                    if(context != null && context instanceof DrawOnBitmapActivity)
+                    {
+                        if(!((DrawOnBitmapActivity)context).getUserWantToZoomOrDrawState())
+                        {
+                            touchStart(x,y);
+                        }
+                    }
+
+                }
                 break;
             case MotionEvent.ACTION_MOVE:
                 if(event.getPointerCount() == 1)
@@ -270,47 +209,64 @@ public class PaintView extends View
 
                     }
                 }
-                touchUp();
+
+                if(event.getPointerCount() == 1)
+                {
+                    if(context != null && context instanceof DrawOnBitmapActivity)
+                    {
+                        if(!((DrawOnBitmapActivity)context).getUserWantToZoomOrDrawState())
+                        {
+                            touchUp();
+                        }
+                    }
+
+                }
+
                 break;
 
 
         }
 
-
         return true;
-
     }
 
     private void touchUp()
     {
-        mPath.reset();
+        if(mPath != null && !mPath.isEmpty())
+        {
+            DrawnPath p = new DrawnPath();
+            p.setPath(mPath);
+            Paint paint = new Paint(mPaint);
+            p.setPaint(paint);
+            paths.add(p);
+        }
+        mPath = null;
+        drawPaths();
+
     }
 
     private void touchMove(float x, float y)
     {
-        float dx = Math.abs(x - mX);
-        float dy = Math.abs(y - mY);
-
-        int DEFERENECE_SPACE = 0;
-        if(dx >= DEFERENECE_SPACE || dy >= DEFERENECE_SPACE)
+        mPath.lineTo(x,y);
+        mCanvas.drawPath(mPath,mPaint);
+        postInvalidate();
+    }
+    public void drawPaths()
+    {
+        btmView = Bitmap.createBitmap(userBitmap.getWidth(),userBitmap.getHeight(),Bitmap.Config.ARGB_8888);
+        mCanvas = new Canvas(btmView);
+        for(DrawnPath path : paths)
         {
-            mPath.quadTo(x ,y,(x+mX) / 2,(y + mY) / 2 );
-            mY = y;
-            mX = x;
-
-            mCanvas.drawPath(mPath,mPaint);
-
-            invalidate();
+            mCanvas.drawPath(path.getPath(),path.getPaint());
         }
+
+        postInvalidate();
     }
 
     private void touchStart(float x, float y)
     {
-
+        mPath = new Path();
         mPath.moveTo(x,y);
-        mX = x;
-        mY = y;
-
     }
     public Bitmap getBitmap()
     {
@@ -347,15 +303,39 @@ public class PaintView extends View
     }
     public void setOpacity(int level)
     {
-        //mPaint.setAlpha(level);
-        mPaint.setColor(adjustAlpha(drwingColor,level));
-
+        mPaint.setColor(adjustAlpha(drawingColor,level));
     }
-    public  int adjustAlpha(@ColorInt int color, float factor) {
+    public  int adjustAlpha(@ColorInt int color, float factor)
+    {
         int alpha = Math.round(Color.alpha(color) * factor);
         int red = Color.red(color);
         int green = Color.green(color);
         int blue = Color.blue(color);
         return Color.argb(alpha, red, green, blue);
+    }
+    public void undo()
+    {
+        if(paths != null && paths.size() > 0)
+        {
+            DrawnPath path = paths.get(paths.size() - 1);
+            undonePaths.add(path);
+            paths.remove(paths.size() - 1);
+            drawPaths();
+        }
+    }
+    public void redo()
+    {
+        if(paths != null && undonePaths != null && undonePaths.size() > 0)
+        {
+            DrawnPath path = undonePaths.get(undonePaths.size() - 1);
+            paths.add(path);
+            undonePaths.remove(undonePaths.size() - 1);
+            drawPaths();
+
+        }
+    }
+    public int getPathSize()
+    {
+        return paths.size();
     }
 }

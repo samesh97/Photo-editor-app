@@ -132,7 +132,7 @@ public class ConfirmPhoneNumber extends AppCompatActivity {
 
         if(CountryCode != null && phone != null)
         {
-            textView.setText("Enter the code We've sent \nto " + CountryCode + phone);
+            textView.setText("Enter the code we've sent \nto " + CountryCode + phone);
         }
         if(uri != null)
         {
@@ -173,7 +173,7 @@ public class ConfirmPhoneNumber extends AppCompatActivity {
                 }
                 else
                 {
-                    Methods.showCustomToast(ConfirmPhoneNumber.this, "Please Enter the Valid Code");
+                    Methods.showCustomToast(ConfirmPhoneNumber.this, getString(R.string.enter_valid_code_text));
                 }
 
 
@@ -287,7 +287,7 @@ public class ConfirmPhoneNumber extends AppCompatActivity {
                                                     startActivity(intent);
 
 
-                                                    Methods.showCustomToast(ConfirmPhoneNumber.this,"Successfully Registered!");
+                                                    Methods.showCustomToast(ConfirmPhoneNumber.this,getString(R.string.registration_success_text));
                                                 }
                                                 else
                                                 {

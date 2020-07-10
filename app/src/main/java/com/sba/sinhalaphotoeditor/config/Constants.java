@@ -49,8 +49,7 @@ public class Constants
     public static final String USER_ID_KEY = "SihalaUserId";
     public static final String USER_IMAGE_LOCAL_PATH = "SinhalaUserProfilePicLocalPath";
 
-    //User registration
-    public static boolean isRegistrationSkipped = false;
+
 
 
 
