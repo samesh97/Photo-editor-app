@@ -158,7 +158,7 @@ public class WalkThroughActivity extends AppCompatActivity {
                     editor.putBoolean(IS_WALKTHROUGH_NEEDED_KEY,true);
                     editor.apply();
 
-                    Intent intent = new Intent(getApplicationContext(), RegisterScreen.class);
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                     finish();

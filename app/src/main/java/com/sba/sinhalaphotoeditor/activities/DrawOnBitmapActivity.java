@@ -191,7 +191,7 @@ public class DrawOnBitmapActivity extends AppCompatActivity implements OnTextAtt
                 }
 
             }
-        }, 0, 100);
+        }, 0, 250);
 
 
         ConstraintLayout img_undo_container = findViewById(R.id.img_undo_container);
