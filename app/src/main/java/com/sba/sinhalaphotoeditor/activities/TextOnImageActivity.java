@@ -78,12 +78,10 @@ public class TextOnImageActivity extends AppCompatActivity
         OnAsyncTaskState, OnTextAttributesChangedListner {
 
 
-    public static String TEXT_TO_WRITE = "sourceText";
     public static int TEXT_ON_IMAGE_RESULT_OK_CODE = 1;
     public static int TEXT_ON_IMAGE_REQUEST_CODE = 4;
 
     private Uri imageOutUri;
-    private String textToWrite = "";
     private ImageView sourceImageView;
     private ConstraintLayout workingLayout;
     private ScaleGestureDetector scaleGestureDetector;
@@ -178,7 +176,7 @@ public class TextOnImageActivity extends AppCompatActivity
                     try
                     {
                         Bitmap  bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageOutUri);
-                        bitmap = CropBitmapTransparency(bitmap);
+                        bitmap = Methods.CropBitmapTransparency(bitmap);
 
                         AddImageToArrayListAsyncTask task;
                         if(addedTextViews.size() > 0)
@@ -211,9 +209,7 @@ public class TextOnImageActivity extends AppCompatActivity
 
         scaleGestureDetector = new ScaleGestureDetector(TextOnImageActivity.this,new TextOnImageActivity.simpleOnScaleGestureListener());
         mRotationGestureDetector = new RotationGestureDetector(TextOnImageActivity.this);
-        extractBundle();
         uiSetup();
-        addNewTextView(textToWrite);
 
 
     }
@@ -375,16 +371,6 @@ public class TextOnImageActivity extends AppCompatActivity
         mRotationGestureDetector.onTouchEvent(event);
         return super.onTouchEvent(event);
     }
-
-    private void extractBundle()
-    {   //extract the data from previous activity
-        Bundle bundle = getIntent().getExtras();
-        if(bundle != null)
-        {
-            textToWrite = bundle.getString(TEXT_TO_WRITE);
-        }
-    }
-
     private void uiSetup()
     {
         Bitmap bitmapForImageView = ImageList.getInstance().getCurrentBitmap().copy(ImageList.getInstance().getCurrentBitmap().getConfig(), true);
@@ -395,12 +381,8 @@ public class TextOnImageActivity extends AppCompatActivity
 
         Glide.with(getApplicationContext()).load(bitmapForImageView).into(sourceImageView);
         Methods methods = new Methods(getApplicationContext());
-        Bitmap background = methods.getBlurBitmap(bitmapForImageView,getApplicationContext());
-        sourceImageView.setBackground(new BitmapDrawable(getResources(), background));
+        methods.setImageViewScaleType(sourceImageView);
 
-        Render render = new Render(TextOnImageActivity.this);
-        render.setAnimation(Bounce.InUp(sourceImageView));
-        render.start();
 
         workingLayout.setDrawingCacheEnabled(true);
     }
@@ -455,36 +437,6 @@ public class TextOnImageActivity extends AppCompatActivity
         imageOutUri = Uri.fromFile(imageFile);
         return result;
     }
-    Bitmap CropBitmapTransparency(Bitmap sourceBitmap)
-    {
-        int minX = sourceBitmap.getWidth();
-        int minY = sourceBitmap.getHeight();
-        int maxX = -1;
-        int maxY = -1;
-        for(int y = 0; y < sourceBitmap.getHeight(); y++)
-        {
-            for(int x = 0; x < sourceBitmap.getWidth(); x++)
-            {
-                int alpha = (sourceBitmap.getPixel(x, y) >> 24) & 255;
-                if(alpha > 0)   // pixel is not 100% transparent
-                {
-                    if(x < minX)
-                        minX = x;
-                    if(x > maxX)
-                        maxX = x;
-                    if(y < minY)
-                        minY = y;
-                    if(y > maxY)
-                        maxY = y;
-                }
-            }
-        }
-        if((maxX < minX) || (maxY < minY))
-            return null; // Bitmap is entirely transparent
-
-        // crop bitmap to non-transparent area and return:
-        return Bitmap.createBitmap(sourceBitmap, minX, minY, (maxX - minX) + 1, (maxY - minY) + 1);
-    }
     public void addNewTextView(String text)
     {
         if(text != null && !text.trim().equals(""))
@@ -516,8 +468,8 @@ public class TextOnImageActivity extends AppCompatActivity
             int width = metrics.widthPixels;
             int height = metrics.heightPixels;
 
-            textView.getTextView().setX(width / 2 - 40);
-            textView.getTextView().setY(height / 2 - 80);
+            textView.getTextView().setX(width / 2.0f - 40);
+            textView.getTextView().setY(height / 2.0f - 80);
             workingLayout.addView(textView.getTextView());
 
             clickedId = addedTextViewCount;
@@ -568,8 +520,7 @@ public class TextOnImageActivity extends AppCompatActivity
                     return;
                 }
                 dialog.dismiss();
-                textToWrite = editText.getText().toString();
-                addNewTextView(textToWrite);
+                addNewTextView(editText.getText().toString());
             }
         });
         dialog.show();

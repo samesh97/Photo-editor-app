@@ -137,154 +137,35 @@
 
 
     <com.github.chuross.library.ExpandableLayout
-            android:id="@+id/explandableLayout"
+        android:id="@+id/explandableLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:exl_collapseHeight="45dp"
+        app:exl_duration="100"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:exl_collapseHeight="45dp"
-            app:exl_duration="100"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            android:layout_height="match_parent">
 
-
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <ImageView
+                android:id="@+id/expandIcon"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <ImageView
-                    android:id="@+id/expandIcon"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:background="@drawable/top_rounded_background"
-                    android:src="@drawable/iphone_swipe_up"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.498"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                android:layout_height="50dp"
+                android:background="@drawable/top_rounded_background"
+                android:src="@drawable/iphone_swipe_up"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
 
-                <androidx.core.widget.NestedScrollView
-                    android:id="@+id/nestedScrollView"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/expandIcon">
 
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <TextView
-                            android:id="@+id/textView4"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="16dp"
-                            android:layout_marginTop="8dp"
-                            android:background="@drawable/borderred"
-                            android:fontFamily="@font/gemunulibrebold"
-                            android:paddingLeft="10dp"
-                            android:paddingTop="5dp"
-                            android:paddingRight="10dp"
-                            android:paddingBottom="5dp"
-                            android:text="Sticker Opacity"
-                            android:textColor="@color/material_dark_blue"
-                            android:textSize="16sp"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-
-                        <SeekBar
-                            android:id="@+id/opacitySeekBar"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="160dp"
-                            android:layout_marginEnd="16dp"
-                            style="@style/MySeekBar"
-                            android:max="100"
-                            app:layout_constraintBottom_toBottomOf="@+id/textView4"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toEndOf="@+id/textView4"
-                            app:layout_constraintTop_toTopOf="@+id/textView4" />
-
-
-                        <!--
-                                            <TextView
-                                                android:id="@+id/textView5"
-                                                android:layout_width="wrap_content"
-                                                android:layout_height="wrap_content"
-                                                android:layout_marginTop="16dp"
-                                                android:background="@drawable/borderred"
-                                                android:fontFamily="@font/gemunulibrebold"
-                                                android:paddingLeft="10dp"
-                                                android:paddingTop="5dp"
-                                                android:paddingRight="10dp"
-                                                android:paddingBottom="5dp"
-                                                android:text="Shadow Direction"
-                                                android:textColor="@color/material_dark_blue"
-                                                android:textSize="16sp"
-                                                app:layout_constraintStart_toStartOf="@+id/textView4"
-                                                app:layout_constraintTop_toBottomOf="@+id/textView4" />
-
-
-                                            <SeekBar
-                                                android:id="@+id/textShadowDirectionSeekBar"
-                                                android:layout_width="match_parent"
-                                                android:layout_height="wrap_content"
-                                                android:layout_marginStart="160dp"
-                                                android:layout_marginEnd="16dp"
-                                                android:max="100"
-                                                app:layout_constraintBottom_toBottomOf="@+id/textView5"
-                                                app:layout_constraintEnd_toEndOf="parent"
-                                                app:layout_constraintStart_toEndOf="@+id/textView4"
-                                                app:layout_constraintTop_toTopOf="@+id/textView5" />
-
-
-                                            <TextView
-                                                android:id="@+id/textView6"
-                                                android:layout_width="wrap_content"
-                                                android:layout_height="wrap_content"
-                                                android:layout_marginTop="16dp"
-                                                android:background="@drawable/borderred"
-                                                android:fontFamily="@font/gemunulibrebold"
-                                                android:paddingLeft="10dp"
-                                                android:paddingTop="5dp"
-                                                android:paddingRight="10dp"
-                                                android:paddingBottom="5dp"
-                                                android:text="Shadow Direction"
-                                                android:textColor="@color/material_dark_blue"
-                                                android:textSize="16sp"
-                                                app:layout_constraintStart_toStartOf="@+id/textView5"
-                                                app:layout_constraintTop_toBottomOf="@+id/textView5" />
-
-
-                                            <SeekBar
-                                                android:id="@+id/textShadowUpDownDirectionSeekBar"
-                                                android:layout_width="match_parent"
-                                                android:layout_height="wrap_content"
-                                                android:layout_marginStart="160dp"
-                                                android:layout_marginEnd="16dp"
-                                                android:layout_marginBottom="8dp"
-                                                android:max="100"
-                                                app:layout_constraintBottom_toBottomOf="@+id/textView6"
-                                                app:layout_constraintEnd_toEndOf="parent"
-                                                app:layout_constraintHorizontal_bias="1.0"
-                                                app:layout_constraintStart_toEndOf="@+id/textView4"
-                                                app:layout_constraintTop_toTopOf="@+id/textView6" />
-                        -->
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-                </androidx.core.widget.NestedScrollView>
-
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </com.github.chuross.library.ExpandableLayout>
+    </com.github.chuross.library.ExpandableLayout>
 
 
     <ProgressBar

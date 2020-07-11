@@ -3,16 +3,21 @@ package com.sba.sinhalaphotoeditor.activities;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -21,8 +26,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -41,7 +48,12 @@ import android.widget.SeekBar;
 
 import com.bumptech.glide.Glide;
 import com.github.chuross.library.ExpandableLayout;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.sba.sinhalaphotoeditor.adapters.ImageViewPlusColorAdapter;
+import com.sba.sinhalaphotoeditor.adapters.TextColorAdapter;
 import com.sba.sinhalaphotoeditor.callbacks.OnAsyncTaskState;
+import com.sba.sinhalaphotoeditor.callbacks.OnTextAttributesChangedListner;
+import com.sba.sinhalaphotoeditor.custom.views.ImageViewPlus;
 import com.sba.sinhalaphotoeditor.sdk.Methods;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.config.RotationGestureDetector;
@@ -100,16 +112,22 @@ public class AddStickerOnImage extends AppCompatActivity
 
 
     private Methods methods;
+    private ExpandableLayout explandableLayout;
+    private ImageViewPlus clickedSticker;
 
 
 
 
-    private ArrayList<ImageView> addedStickersList = new ArrayList<>();
+
+    private ArrayList<ImageViewPlus> addedStickersList = new ArrayList<>();
     private int clickedId = 1;
     private int addedStickerCount = 0;
     float lastX = 0, lastY = 0;
 
     private ProgressBar progress_bar;
+
+
+    private int stickerWidthAndHeight = 100;
 
     @Override
     protected void onPause() {
@@ -154,17 +172,8 @@ public class AddStickerOnImage extends AppCompatActivity
     @Override
     public void onBackPressed()
     {
-        if(expandableLayout.isExpanded())
-        {
-            expandableLayout.collapse();
-            expandIcon.setBackground(getResources().getDrawable(R.drawable.top_rounded_background));
-            expandableLayout.setBackgroundColor(Color.TRANSPARENT);
-        }
-        else
-        {
-            super.onBackPressed();
-            overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
-        }
+        super.onBackPressed();
+        overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
 
     }
 
@@ -203,62 +212,39 @@ public class AddStickerOnImage extends AppCompatActivity
         progressDialog = new ProgressDialog(AddStickerOnImage.this);
         uiSetup();
 
-        expandableLayout = (ExpandableLayout)findViewById(R.id.explandableLayout);
+
         expandIcon = findViewById(R.id.expandIcon);
-        SeekBar opacitySeekBar = (SeekBar) findViewById(R.id.opacitySeekBar);
-
-        opacitySeekBar.setProgress((int)opacityLevel * 100);
-
-        opacitySeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
-            {
-                opacityLevel = (progress / 100.0f);
-                for(ImageView imageView : addedStickersList)
-                {
-                    if(clickedId == imageView.getId())
-                    {
-                        imageView.setAlpha(opacityLevel);
-                    }
-                }
-
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-
-        expandIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if(expandableLayout.isExpanded())
-                {
-                    expandableLayout.collapse();
-                    //expandIcon.setImageResource(R.drawable.slide_up_image);
-                    expandIcon.setBackground(getResources().getDrawable(R.drawable.top_rounded_background));
-                    expandableLayout.setBackgroundColor(Color.TRANSPARENT);
-                }
-                else
-                {
-                    expandIcon.setBackgroundColor(Color.TRANSPARENT);
-                    expandableLayout.setBackground(getResources().getDrawable(R.drawable.white_opacity_background));
-                    expandableLayout.expand();// expand with animation
-                    //expandIcon.setImageResource(R.drawable.slide_down_image);
-
-                }
+//        SeekBar opacitySeekBar = (SeekBar) findViewById(R.id.opacitySeekBar);
+//
+//        opacitySeekBar.setProgress((int)opacityLevel * 100);
+//
+//        opacitySeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+//            @Override
+//            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
+//            {
+//                opacityLevel = (progress / 100.0f);
+//                for(ImageViewPlus imageView : addedStickersList)
+//                {
+//                    if(clickedId == imageView.getId())
+//                    {
+//                        imageView.setAlpha(opacityLevel);
+//                    }
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onStartTrackingTouch(SeekBar seekBar) {
+//
+//            }
+//
+//            @Override
+//            public void onStopTrackingTouch(SeekBar seekBar) {
+//
+//            }
+//        });
 
 
-
-            }
-        });
 
 
         ConstraintLayout img_done_container = findViewById(R.id.img_done_container);
@@ -266,7 +252,7 @@ public class AddStickerOnImage extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                if(setTextFinal())
+                if(finalizing())
                 {
                     progress_bar.setVisibility(View.VISIBLE);
 
@@ -298,14 +284,22 @@ public class AddStickerOnImage extends AppCompatActivity
         });
 
 
-
+        explandableLayout = findViewById(R.id.explandableLayout);
+        explandableLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                animateExpandableLayout();
+                showBottomSheet();
+            }
+        });
 
     }
 
     @Override
     public void OnRotation(RotationGestureDetector rotationDetector)
     {
-        for(ImageView view : addedStickersList)
+        for(ImageViewPlus view : addedStickersList)
         {
             if(view.getId() == clickedId)
             {
@@ -326,7 +320,7 @@ public class AddStickerOnImage extends AppCompatActivity
 
         clickedId = v.getId();
         setBackgroundAsSelected();
-        for(ImageView view : addedStickersList)
+        for(ImageViewPlus view : addedStickersList)
         {
             if(view.getId() == v.getId())
             {
@@ -400,12 +394,17 @@ public class AddStickerOnImage extends AppCompatActivity
             scaleFactor = ((float)((int)(scaleFactor * 100))) / 100; // Change precision to help with jitter when user just rests their fingers //
 
 
-            for(ImageView view : addedStickersList)
+            for(ImageViewPlus view : addedStickersList)
             {
                 if(view.getId() == clickedId)
                 {
-                    view.setScaleX(scaleFactor);
-                    view.setScaleY(scaleFactor);
+//                    view.setScaleX(scaleFactor);
+//                    view.setScaleY(scaleFactor);
+
+                    ConstraintLayout.LayoutParams lp = new ConstraintLayout.LayoutParams ((int)(stickerWidthAndHeight * scaleFactor),(int)(stickerWidthAndHeight * scaleFactor));
+                    view.setLayoutParams(lp);
+                    view.onSizeChanged();
+                    Log.d("Called","Scale factor : " + scaleFactor);
                 }
             }
 
@@ -463,13 +462,9 @@ public class AddStickerOnImage extends AppCompatActivity
 
         Glide.with(getApplicationContext()).load(bitmapForImageView).into(sourceImageView);
         Methods methods = new Methods(getApplicationContext());
-        Bitmap background = methods.getBlurBitmap(bitmapForImageView,getApplicationContext());
-        sourceImageView.setBackground(new BitmapDrawable(getResources(), background));
+        methods.setImageViewScaleType(sourceImageView);
 
 
-        Render render = new Render(AddStickerOnImage.this);
-        render.setAnimation(Bounce.InUp(sourceImageView));
-        render.start();
 
         workingLayout.setDrawingCacheEnabled(true);
         if(progressDialog.isShowing())
@@ -478,11 +473,8 @@ public class AddStickerOnImage extends AppCompatActivity
         }
 
 
-        addNewStickerView(EditorActivity.selectedSticker);
-
-
     }
-    private boolean setTextFinal()
+    private boolean finalizing()
     {
         runOnUiThread(new Runnable() {
             @Override
@@ -490,7 +482,7 @@ public class AddStickerOnImage extends AppCompatActivity
                 sourceImageView.setBackgroundColor(Color.TRANSPARENT);
             }
         });
-        for(final ImageView imageView : addedStickersList)
+        for(final ImageViewPlus imageView : addedStickersList)
         {
             imageView.setOnTouchListener(null);
             runOnUiThread(new Runnable() {
@@ -925,8 +917,7 @@ public class AddStickerOnImage extends AppCompatActivity
         if(bitmap != null)
         {
             addedStickerCount++;
-            ImageView imageView = new ImageView(AddStickerOnImage.this);
-            imageView.setImageBitmap(bitmap);
+            ImageViewPlus imageView = new ImageViewPlus(AddStickerOnImage.this);
             imageView.setId(addedStickerCount);
 
             imageView.setOnTouchListener(this);
@@ -935,25 +926,19 @@ public class AddStickerOnImage extends AppCompatActivity
             addedStickersList.add(imageView);
 
 
-            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(80,80);
-            layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
-            imageView.setLayoutParams(layoutParams);
+            imageView.setBitmap(bitmap);
+            android.view.ViewGroup.LayoutParams lp = new android.view.ViewGroup.LayoutParams(stickerWidthAndHeight,stickerWidthAndHeight);
 
-
-            WindowManager wm = (WindowManager) getApplication().getSystemService(Context.WINDOW_SERVICE);
-            Display display = wm.getDefaultDisplay();
-            DisplayMetrics metrics = new DisplayMetrics();
-            display.getMetrics(metrics);
-            int width = metrics.widthPixels;
-            int height = metrics.heightPixels;
-
-            imageView.setX(width / 2 - 40);
-            imageView.setY(height / 2 - 80);
-            workingLayout.addView(imageView);
+            imageView.setX(Methods.getDeviceWidthInPX(getApplicationContext()) / 2.0f - 40);
+            imageView.setY(Methods.getDeviceHeightInDP(getApplicationContext()) / 2.0f - 80);
+            workingLayout.addView(imageView,lp);
 
             clickedId = addedStickerCount;
 
             setBackgroundAsSelected();
+
+
+
 
         }
     }
@@ -962,7 +947,7 @@ public class AddStickerOnImage extends AppCompatActivity
 
         for(int i = 0; i < addedStickersList.size(); i++)
         {
-            ImageView view = addedStickersList.get(i);
+            ImageViewPlus view = addedStickersList.get(i);
             if(clickedId == view.getId())
             {
                 view.setVisibility(View.GONE);
@@ -976,11 +961,12 @@ public class AddStickerOnImage extends AppCompatActivity
     }
     public void setBackgroundAsSelected()
     {
-        for(ImageView view : addedStickersList)
+        for(ImageViewPlus view : addedStickersList)
         {
             if(clickedId == view.getId())
             {
                 view.setBackgroundResource(R.drawable.selected_background);
+                clickedSticker = view;
             }
             else
             {
@@ -994,12 +980,145 @@ public class AddStickerOnImage extends AppCompatActivity
             @Override
             public void run() {
 
-                for(ImageView view : addedStickersList)
+                for(ImageViewPlus view : addedStickersList)
                 {
                     view.setBackground(null);
                 }
             }
         });
 
+    }
+    private void animateExpandableLayout()
+    {
+        if(explandableLayout != null)
+        {
+            explandableLayout.animate().setDuration(500).translationYBy(0).translationY(200).start();
+        }
+    }
+    private void undoAnimateExpandableLayout()
+    {
+        if(explandableLayout != null)
+        {
+            explandableLayout.animate().setDuration(500).translationYBy(200).translationY(0).start();
+        }
+    }
+    private void showBottomSheet()
+    {
+        BottomSheetDialog dialog = new BottomSheetDialog(AddStickerOnImage.this,R.style.CustomBottomSheetDialogTheme);
+        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog)
+            {
+                undoAnimateExpandableLayout();
+            }
+        });
+        if(dialog.getWindow() != null)
+        {
+            dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            dialog.getWindow().setDimAmount(0.0f);
+        }
+
+        View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.layout_sticker_on_images_bottom_sheet,null,false);
+
+        RecyclerView color_recycler_view = view.findViewById(R.id.color_recycler_view);
+        LinearLayoutManager manager = new LinearLayoutManager(AddStickerOnImage.this);
+        manager.setOrientation(RecyclerView.HORIZONTAL);
+        color_recycler_view.setLayoutManager(manager);
+
+        ImageViewPlusColorAdapter adapter = new ImageViewPlusColorAdapter(getApplicationContext(), clickedSticker, new OnTextAttributesChangedListner() {
+            @Override
+            public void onTextColorChanged(int color)
+            {
+                if(clickedSticker != null)
+                {
+                    clickedSticker.setBorderColor(color);
+                }
+            }
+
+            @Override
+            public void onTextShadowColorChanged(int color) {
+
+            }
+
+            @Override
+            public void onTextFontChanged(Typeface typeFace) {
+
+            }
+        });
+        color_recycler_view.setAdapter(adapter);
+
+        final SeekBar border_size_seek_bar = view.findViewById(R.id.brush_size_seekbar);
+        border_size_seek_bar.getProgressDrawable().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN);
+
+        if(clickedSticker != null)
+        {
+            border_size_seek_bar.setProgress(clickedSticker.getBorderSize());
+        }
+        else
+        {
+            border_size_seek_bar.setProgress(10);
+        }
+
+
+        border_size_seek_bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
+            {
+                if(clickedSticker != null)
+                {
+                    clickedSticker.setBorderSize(progress);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        final SeekBar border_radius_seek_bar = view.findViewById(R.id.opacity_seekbar);
+        border_radius_seek_bar.getProgressDrawable().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN);
+
+        if(clickedSticker != null)
+        {
+            border_radius_seek_bar.setProgress(clickedSticker.getBorderRadius());
+        }
+        else
+        {
+            border_radius_seek_bar.setProgress(10);
+        }
+        border_radius_seek_bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+                if(clickedSticker != null)
+                {
+                    clickedSticker.setBorderRadius(progress);
+                }
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+
+
+
+        int deviceHeight = (int) Methods.getDeviceHeightInPX(getApplicationContext());
+        dialog.setContentView(view,new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,deviceHeight / 2));
+        dialog.show();
     }
 }
