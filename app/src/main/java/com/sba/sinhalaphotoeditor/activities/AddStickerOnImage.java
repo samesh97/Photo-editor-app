@@ -69,8 +69,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-import render.animations.Bounce;
-import render.animations.Render;
+
 
 import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_KEY;
 import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_SINHALA;

@@ -45,8 +45,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import render.animations.Bounce;
-import render.animations.Render;
+
 
 import static com.sba.sinhalaphotoeditor.activities.MyCustomGallery.selectedBitmap;
 import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_KEY;
@@ -301,9 +300,7 @@ public class PhotoOnPhotoActivity extends AppCompatActivity implements RotationG
         sourceImageView.setImageBitmap(bitmapForImageView);
         //Glide.with(getApplicationContext()).load(bitmapForImageView).into(sourceImageView);
 
-        Render render = new Render(PhotoOnPhotoActivity.this);
-        render.setAnimation(Bounce.InUp(sourceImageView));
-        render.start();
+
 
         workingLayout.setDrawingCacheEnabled(true);
         hideProgressDialog();

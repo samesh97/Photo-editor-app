@@ -39,8 +39,6 @@ import java.util.Date;
 import java.util.Locale;
 
 
-import render.animations.*;
-
 import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_KEY;
 import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_SINHALA;
 import static com.sba.sinhalaphotoeditor.config.Constants.SHARED_PREF_NAME;
@@ -183,7 +181,6 @@ public class AdjustImage extends AppCompatActivity implements OnAsyncTaskState {
         Methods.freeUpMemory();
 
         methods = new Methods(getApplicationContext());
-        Render render = new Render(AdjustImage.this);
         dialog = new ProgressDialog(AdjustImage.this);
 
         adjustImage = findViewById(R.id.adjustImage);
@@ -195,9 +192,6 @@ public class AdjustImage extends AppCompatActivity implements OnAsyncTaskState {
 
 
         createImage();
-        render.setAnimation(Flip.InX(adjustImage));
-        render.start();
-
 
 
         listener1.setOnSeekChangeListener(new OnSeekChangeListener()

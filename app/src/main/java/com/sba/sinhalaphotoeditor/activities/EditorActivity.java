@@ -58,8 +58,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import render.animations.Render;
-import render.animations.*;
 
 import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_KEY;
 import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_SINHALA;
