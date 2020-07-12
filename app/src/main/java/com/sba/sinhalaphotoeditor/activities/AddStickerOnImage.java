@@ -93,7 +93,7 @@ public class AddStickerOnImage extends AppCompatActivity
     private ScaleGestureDetector scaleGestureDetector;
     private ProgressDialog progressDialog;
     private RotationGestureDetector mRotationGestureDetector;
-    private float scaleFactor;
+    private float scaleFactor = 1.0f;
 
     DatabaseHelper helper = new DatabaseHelper(AddStickerOnImage.this);
 
@@ -397,13 +397,12 @@ public class AddStickerOnImage extends AppCompatActivity
             {
                 if(view.getId() == clickedId)
                 {
-//                    view.setScaleX(scaleFactor);
-//                    view.setScaleY(scaleFactor);
+//                  view.setScaleX(scaleFactor);
+//                  view.setScaleY(scaleFactor);
 
-                    ConstraintLayout.LayoutParams lp = new ConstraintLayout.LayoutParams ((int)(stickerWidthAndHeight * scaleFactor),(int)(stickerWidthAndHeight * scaleFactor));
+                    ConstraintLayout.LayoutParams lp = new ConstraintLayout.LayoutParams ((int) (stickerWidthAndHeight * scaleFactor),(int) (stickerWidthAndHeight * scaleFactor));
                     view.setLayoutParams(lp);
                     view.onSizeChanged();
-                    Log.d("Called","Scale factor : " + scaleFactor);
                 }
             }
 
@@ -424,45 +423,22 @@ public class AddStickerOnImage extends AppCompatActivity
     private void uiSetup()
     {
         //show progress dialog
-
         progressDialog.setCancelable(false);
         progressDialog.setMessage("Loading...");
         progressDialog.show();
 
-        //setup action bar
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle("Add Image");
-        }
 
         //get the image bitmap
         Bitmap bitmapForImageView = ImageList.getInstance().getCurrentBitmap().copy(ImageList.getInstance().getCurrentBitmap().getConfig(), true);
 
-        WindowManager wm = (WindowManager) getApplication().getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        DisplayMetrics metrics = new DisplayMetrics();
-        display.getMetrics(metrics);
 
-        int width = metrics.widthPixels;
-
-
-
-        //create the layouts
-        //base layout
         ConstraintLayout baseLayout = findViewById(R.id.baseLayout);
-        //working layout
         workingLayout = findViewById(R.id.workingLayout);
-        //image view
         sourceImageView = findViewById(R.id.sourceImageView);
-        //textview
-       // addNewImage = findViewById(R.id.addImageView);
-
 
         Glide.with(getApplicationContext()).load(bitmapForImageView).into(sourceImageView);
         Methods methods = new Methods(getApplicationContext());
         methods.setImageViewScaleType(sourceImageView);
-
 
 
         workingLayout.setDrawingCacheEnabled(true);
@@ -471,13 +447,13 @@ public class AddStickerOnImage extends AppCompatActivity
             progressDialog.dismiss();
         }
 
-
     }
     private boolean finalizing()
     {
         runOnUiThread(new Runnable() {
             @Override
-            public void run() {
+            public void run()
+            {
                 sourceImageView.setBackgroundColor(Color.TRANSPARENT);
             }
         });
@@ -596,20 +572,11 @@ public class AddStickerOnImage extends AppCompatActivity
             ImageView FiveSticker = (ImageView) view.findViewById(R.id.FiveSticker);
 
 
-/*
-            Glide.with(getApplicationContext()).load(getResizedBitmap(stic1.get(position),80)).into(OneSticker);
-            Glide.with(getApplicationContext()).load(getResizedBitmap(stic2.get(position),80)).into(TwoSticker);
-            Glide.with(getApplicationContext()).load(getResizedBitmap(stic3.get(position),80)).into(ThreeSticker);
-            Glide.with(getApplicationContext()).load(getResizedBitmap(stic4.get(position),80)).into(FourSticker);
-            Glide.with(getApplicationContext()).load(getResizedBitmap(stic5.get(position),80)).into(FiveSticker);
-*/
-
             OneSticker.setImageBitmap(stic1.get(position));
             TwoSticker.setImageBitmap(stic2.get(position));
             ThreeSticker.setImageBitmap(stic3.get(position));
             FourSticker.setImageBitmap(stic4.get(position));
             FiveSticker.setImageBitmap(stic5.get(position));
-
 
 
             Animation pulse = AnimationUtils.loadAnimation(AddStickerOnImage.this, R.anim.pulse2);
@@ -618,9 +585,6 @@ public class AddStickerOnImage extends AppCompatActivity
             ThreeSticker.startAnimation(pulse);
             FourSticker.startAnimation(pulse);
             FiveSticker.startAnimation(pulse);
-
-
-
 
 
 
@@ -917,6 +881,19 @@ public class AddStickerOnImage extends AppCompatActivity
         {
             addedStickerCount++;
             ImageViewPlus imageView = new ImageViewPlus(AddStickerOnImage.this);
+
+            if(addedStickersList != null && addedStickersList.size() > 0)
+            {
+                ImageViewPlus last = addedStickersList.get(addedStickersList.size() - 1);
+                imageView.setPaint(last.getPaint());
+                imageView.setBorderRadius(last.getBorderRadius());
+                imageView.setBorderColor(last.getBorderColor());
+                imageView.setBorderSize(last.getBorderSize());
+            }
+
+
+
+
             imageView.setId(addedStickerCount);
 
             imageView.setOnTouchListener(this);
@@ -926,10 +903,10 @@ public class AddStickerOnImage extends AppCompatActivity
 
 
             imageView.setBitmap(bitmap);
-            android.view.ViewGroup.LayoutParams lp = new android.view.ViewGroup.LayoutParams(stickerWidthAndHeight,stickerWidthAndHeight);
+            android.view.ViewGroup.LayoutParams lp = new android.view.ViewGroup.LayoutParams((int)(stickerWidthAndHeight * scaleFactor),(int)(stickerWidthAndHeight * scaleFactor));
 
             imageView.setX(Methods.getDeviceWidthInPX(getApplicationContext()) / 2.0f - 40);
-            imageView.setY(Methods.getDeviceHeightInDP(getApplicationContext()) / 2.0f - 80);
+            imageView.setY(Methods.getDeviceHeightInPX(getApplicationContext()) / 2.0f - 80);
             workingLayout.addView(imageView,lp);
 
             clickedId = addedStickerCount;

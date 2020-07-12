@@ -20,16 +20,14 @@ public class ImageViewPlus extends View
 {
     private Bitmap originalBitmap;
     private Bitmap workingBitmap;
-    private int canvasWidth;
-    private int canvasHeight;
     private  int borderSize;
     private RectF borderRect;
     private Paint paint;
-    private Paint bitmapPaint;
     private int borderColor;
     private int borderRadius;
 
     private int padding = 10;
+    Paint mPaint = new Paint(Paint.FILTER_BITMAP_FLAG);
 
     public ImageViewPlus(Context context)
     {
@@ -58,16 +56,13 @@ public class ImageViewPlus extends View
         borderSize = 10;
         borderColor = Color.WHITE;
         paint = new Paint();
-        paint.setStyle(Paint.Style.FILL_AND_STROKE);
+        paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(borderSize);
         paint.setColor(borderColor);
         paint.setAntiAlias(true);
 
         borderRect = new RectF();
 
-        bitmapPaint = new Paint();
-        bitmapPaint.setAntiAlias(true);
-        bitmapPaint.setShadowLayer(3.0f, 0.0f, 2.0f, Color.YELLOW);
 
     }
     @Override
@@ -97,7 +92,7 @@ public class ImageViewPlus extends View
             }
 
 
-            canvas.drawBitmap(workingBitmap,marginX,marginY,null);
+            canvas.drawBitmap(workingBitmap,marginX,marginY,mPaint);
         }
 
     }
@@ -106,8 +101,6 @@ public class ImageViewPlus extends View
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
 
-        canvasHeight = h;
-        canvasWidth = w;
         resizeBitmap();
 
     }
@@ -155,8 +148,6 @@ public class ImageViewPlus extends View
     }
     public void onSizeChanged()
     {
-        Log.d("Called","Canvas Width " + getWidth() + " Canvas Height : " + getHeight());
-        Log.d("Called","Bitmap Width " + workingBitmap.getWidth() + " Bitmap Height : " + workingBitmap.getHeight());
         resizeBitmap();
     }
     public int getBorderColor()
@@ -170,6 +161,15 @@ public class ImageViewPlus extends View
     public int getBorderRadius()
     {
         return borderRadius;
+    }
+    public void setPaint(Paint paint)
+    {
+        this.paint = paint;
+        postInvalidate();
+    }
+    public Paint getPaint()
+    {
+        return new Paint(paint);
     }
 
 }

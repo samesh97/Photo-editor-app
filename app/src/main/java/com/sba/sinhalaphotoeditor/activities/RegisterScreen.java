@@ -52,7 +52,7 @@ public class RegisterScreen extends AppCompatActivity{
     private Uri filePath;
     private CircleImageView profilePicture;
     private static final int PICK_IMAGE_REQUEST = 234;
-    private String Countrycode;
+    private String countryCode;
     private String mVerificationId;
     private boolean isAlreadyVerified = false;
     private ProgressBar progress_bar;
@@ -133,13 +133,13 @@ public class RegisterScreen extends AppCompatActivity{
             @Override
             public void onCountrySelected(Country selectedCountry)
             {
-                Countrycode = "+" + selectedCountry.getPhoneCode();
+                countryCode = "+" + selectedCountry.getPhoneCode();
 
             }
         });
-        if(Countrycode == null)
+        if(countryCode == null)
         {
-            Countrycode = "+94";
+            countryCode = "+94";
         }
 
 
@@ -174,7 +174,7 @@ public class RegisterScreen extends AppCompatActivity{
         startedTime = System.currentTimeMillis();
         startCounting();
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
-                Countrycode + Integer.parseInt(no),
+                countryCode + Integer.parseInt(no),
                 120,
                 TimeUnit.SECONDS,
                 TaskExecutors.MAIN_THREAD,mCallbacks);
@@ -275,7 +275,7 @@ public class RegisterScreen extends AppCompatActivity{
         intent.putExtra("name",fullName.getText().toString());
         intent.putExtra("phone",phone.getText().toString());
         intent.putExtra("uri",filePath.toString());
-        intent.putExtra("CountryCode",Countrycode);
+        intent.putExtra("CountryCode",countryCode);
         intent.putExtra("mVerificationId",mVerificationId);
         intent.putExtra("code",code);
 
