@@ -25,6 +25,7 @@ public class ImageViewPlus extends View
     private Paint paint;
     private int borderColor;
     private int borderRadius;
+    private float opacity = 1.0f;
 
     private int padding = 10;
     Paint mPaint = new Paint(Paint.FILTER_BITMAP_FLAG);
@@ -171,5 +172,14 @@ public class ImageViewPlus extends View
     {
         return new Paint(paint);
     }
+    public void setOpacity(float value)
+    {
+        this.opacity = value;
+    }
+    public float getOpacity()
+    {
+        return this.opacity;
+    }
+    
 
 }

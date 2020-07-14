@@ -919,4 +919,8 @@ public class Methods
             return image;
         }
     }
+    public static int convertDpToPixel(float dp, Context context)
+    {
+        return (int) (dp * ((float) context.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT));
+    }
 }

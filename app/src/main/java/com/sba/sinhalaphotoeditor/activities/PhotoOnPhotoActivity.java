@@ -32,6 +32,7 @@ import android.widget.SeekBar;
 
 import com.github.chuross.library.ExpandableLayout;
 import com.sba.sinhalaphotoeditor.callbacks.OnAsyncTaskState;
+import com.sba.sinhalaphotoeditor.custom.views.ImageViewPlus;
 import com.sba.sinhalaphotoeditor.sdk.Methods;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.config.RotationGestureDetector;
@@ -56,21 +57,16 @@ public class PhotoOnPhotoActivity extends AppCompatActivity implements RotationG
 {
 
 
-    public static String IMAGE_OUT_URI = "imageOutURI";
-
-
     public static int IMAGE_ON_IMAGE_RESULT_OK_CODE = 110;
-    public static int IMAGE_ON_IMAGE_RESULT_FAILED_CODE = -100;
     public static int IMAGE_ON_IMAGE_REQUEST_CODE = 100;
 
 
-
     private Uri imageOutUri;
-    private ImageView addNewImage;
+    private ImageViewPlus addNewImage;
     private ConstraintLayout workingLayout;
     private ScaleGestureDetector scaleGestureDetector;
     private RotationGestureDetector mRotationGestureDetector;
-    private float scaleFactor;
+    private float scaleFactor = 1.0f;
 
     private DatabaseHelper helper = new DatabaseHelper(PhotoOnPhotoActivity.this);
 
@@ -82,16 +78,7 @@ public class PhotoOnPhotoActivity extends AppCompatActivity implements RotationG
 
 
     private Methods methods;
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
+    private int imageWidthAndHeight = 100;
 
     @Override
     protected void attachBaseContext(Context newBase)
@@ -227,7 +214,6 @@ public class PhotoOnPhotoActivity extends AppCompatActivity implements RotationG
         });
 
         Intent intent = new Intent();
-        intent.putExtra(IMAGE_OUT_URI,imageOutUri.toString());
         setResult(IMAGE_ON_IMAGE_RESULT_OK_CODE,intent);
         finish();
     }
@@ -241,8 +227,14 @@ public class PhotoOnPhotoActivity extends AppCompatActivity implements RotationG
             scaleFactor *= detector.getScaleFactor();
             scaleFactor = (scaleFactor < 1 ? 1 : scaleFactor); // prevent our view from becoming too small //
             scaleFactor = ((float)((int)(scaleFactor * 100))) / 100; // Change precision to help with jitter when user just rests their fingers //
-            addNewImage.setScaleX(scaleFactor);
-            addNewImage.setScaleY(scaleFactor);
+
+
+//            addNewImage.setScaleX(scaleFactor);
+//            addNewImage.setScaleY(scaleFactor);
+
+            ConstraintLayout.LayoutParams lp = new ConstraintLayout.LayoutParams ((int) (imageWidthAndHeight * scaleFactor),(int) (imageWidthAndHeight * scaleFactor));
+            addNewImage.setLayoutParams(lp);
+            addNewImage.onSizeChanged();
 
             return true;
         }
@@ -259,58 +251,33 @@ public class PhotoOnPhotoActivity extends AppCompatActivity implements RotationG
     private void uiSetup()
     {
         //show progress dialog
-
        showProgressDialog();
-
-        //setup action bar
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle("Add Image");
-        }
 
         //get the image bitmap
         Bitmap bitmapForImageView = ImageList.getInstance().getCurrentBitmap().copy(ImageList.getInstance().getCurrentBitmap().getConfig(), true);
 
-        WindowManager wm = (WindowManager) getApplication().getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        DisplayMetrics metrics = new DisplayMetrics();
-        display.getMetrics(metrics);
-
-        int width = metrics.widthPixels;
-        int height = methods.scaleImageKeepAspectRatio(bitmapForImageView,width);
-
-
-        //create the layouts
-        //base layout
         ConstraintLayout baseLayout = findViewById(R.id.baseLayout);
-        //working layout
         workingLayout = findViewById(R.id.workingLayout);
-        //image view
         ImageView sourceImageView = findViewById(R.id.sourceImageView);
-        //textview
-        addNewImage = findViewById(R.id.addImageView);
 
 
+//        addNewImage = findViewById(R.id.addImageView);
 
+        addNewImage = new ImageViewPlus(PhotoOnPhotoActivity.this);
+        android.view.ViewGroup.LayoutParams lp = new android.view.ViewGroup.LayoutParams((int)(imageWidthAndHeight * scaleFactor),(int)(imageWidthAndHeight * scaleFactor));
 
-
+        addNewImage.setX(Methods.getDeviceWidthInPX(getApplicationContext()) / 2.0f - 40);
+        addNewImage.setY(Methods.getDeviceHeightInPX(getApplicationContext()) / 2.0f - 80);
+        workingLayout.addView(addNewImage,lp);
 
 
         sourceImageView.setImageBitmap(bitmapForImageView);
-        //Glide.with(getApplicationContext()).load(bitmapForImageView).into(sourceImageView);
-
 
 
         workingLayout.setDrawingCacheEnabled(true);
         hideProgressDialog();
 
-        addNewImage.setImageBitmap(selectedBitmap);
-        //addTextView.setTextSize(textFontSize);
-
-
-
-
+        addNewImage.setBitmap(selectedBitmap);
 
 
 
@@ -340,7 +307,6 @@ public class PhotoOnPhotoActivity extends AppCompatActivity implements RotationG
         });
 
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.photo_on_photo_menu, menu);
@@ -363,7 +329,7 @@ public class PhotoOnPhotoActivity extends AppCompatActivity implements RotationG
                 try
                 {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageOutUri);
-                    bitmap = methods.CropBitmapTransparency(bitmap);
+                    bitmap = Methods.CropBitmapTransparency(bitmap);
                     AddImageToArrayListAsyncTask task = new AddImageToArrayListAsyncTask(bitmap,this);
                     task.execute();
                 }
@@ -372,7 +338,6 @@ public class PhotoOnPhotoActivity extends AppCompatActivity implements RotationG
                     hideProgressDialog();
                     e.printStackTrace();
                     Intent intent = new Intent();
-                    intent.putExtra(IMAGE_OUT_URI,imageOutUri.toString());
                     setResult(IMAGE_ON_IMAGE_RESULT_OK_CODE,intent);
                     finish();
 
@@ -383,7 +348,6 @@ public class PhotoOnPhotoActivity extends AppCompatActivity implements RotationG
             {
                 hideProgressDialog();
                 Intent intent = new Intent();
-                intent.putExtra(IMAGE_OUT_URI,imageOutUri.toString());
                 setResult(IMAGE_ON_IMAGE_RESULT_OK_CODE,intent);
                 finish();
             }

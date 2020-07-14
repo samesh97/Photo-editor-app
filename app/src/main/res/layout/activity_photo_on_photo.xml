@@ -25,16 +25,16 @@
             android:layout_height="match_parent" />
 
 
-        <ImageView
-            android:id="@+id/addImageView"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_marginStart="8dp"
-            android:gravity="center"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/sourceImageView"
-            app:layout_constraintStart_toStartOf="@+id/sourceImageView"
-            app:layout_constraintTop_toTopOf="@+id/sourceImageView" />
+<!--        <com.sba.sinhalaphotoeditor.custom.views.ImageViewPlus-->
+<!--            android:id="@+id/addImageView"-->
+<!--            android:layout_width="100dp"-->
+<!--            android:layout_height="100dp"-->
+<!--            android:layout_marginStart="8dp"-->
+<!--            android:gravity="center"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="@+id/sourceImageView"-->
+<!--            app:layout_constraintStart_toStartOf="@+id/sourceImageView"-->
+<!--            app:layout_constraintTop_toTopOf="@+id/sourceImageView" />-->
 
 
 

@@ -213,36 +213,6 @@ public class AddStickerOnImage extends AppCompatActivity
 
 
         expandIcon = findViewById(R.id.expandIcon);
-//        SeekBar opacitySeekBar = (SeekBar) findViewById(R.id.opacitySeekBar);
-//
-//        opacitySeekBar.setProgress((int)opacityLevel * 100);
-//
-//        opacitySeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-//            @Override
-//            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
-//            {
-//                opacityLevel = (progress / 100.0f);
-//                for(ImageViewPlus imageView : addedStickersList)
-//                {
-//                    if(clickedId == imageView.getId())
-//                    {
-//                        imageView.setAlpha(opacityLevel);
-//                    }
-//                }
-//
-//            }
-//
-//            @Override
-//            public void onStartTrackingTouch(SeekBar seekBar) {
-//
-//            }
-//
-//            @Override
-//            public void onStopTrackingTouch(SeekBar seekBar) {
-//
-//            }
-//        });
-
 
 
 
@@ -889,6 +859,8 @@ public class AddStickerOnImage extends AppCompatActivity
                 imageView.setBorderRadius(last.getBorderRadius());
                 imageView.setBorderColor(last.getBorderColor());
                 imageView.setBorderSize(last.getBorderSize());
+                imageView.setAlpha(last.getOpacity());
+                imageView.setOpacity(last.getOpacity());
             }
 
 
@@ -1023,7 +995,7 @@ public class AddStickerOnImage extends AppCompatActivity
         });
         color_recycler_view.setAdapter(adapter);
 
-        final SeekBar border_size_seek_bar = view.findViewById(R.id.brush_size_seekbar);
+        final SeekBar border_size_seek_bar = view.findViewById(R.id.border_size_seekbar);
         border_size_seek_bar.getProgressDrawable().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN);
 
         if(clickedSticker != null)
@@ -1057,7 +1029,7 @@ public class AddStickerOnImage extends AppCompatActivity
             }
         });
 
-        final SeekBar border_radius_seek_bar = view.findViewById(R.id.opacity_seekbar);
+        final SeekBar border_radius_seek_bar = view.findViewById(R.id.border_radius_seek_bar);
         border_radius_seek_bar.getProgressDrawable().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN);
 
         if(clickedSticker != null)
@@ -1075,6 +1047,47 @@ public class AddStickerOnImage extends AppCompatActivity
                 if(clickedSticker != null)
                 {
                     clickedSticker.setBorderRadius(progress);
+                }
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+
+        final SeekBar opacity_seek_bar = view.findViewById(R.id.opacity_seek_bar_);
+        opacity_seek_bar.getProgressDrawable().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN);
+        if(clickedSticker != null)
+        {
+            opacity_seek_bar.setProgress((int)(clickedSticker.getOpacity() * 10));
+        }
+        else
+        {
+            opacity_seek_bar.setProgress(10);
+        }
+
+        opacity_seek_bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
+            {
+                if(progress <= 0)
+                {
+                    progress = 1;
+                    opacity_seek_bar.setProgress(1);
+                }
+
+                if(clickedSticker != null)
+                {
+                    clickedSticker.setOpacity(progress / 10.0f);
+                    clickedSticker.setAlpha(progress / 10.0f);
                 }
 
             }

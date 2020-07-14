@@ -2,7 +2,6 @@ package com.sba.sinhalaphotoeditor.custom.views;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -11,7 +10,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
@@ -21,9 +20,12 @@ import com.sba.sinhalaphotoeditor.activities.DrawOnBitmapActivity;
 import com.sba.sinhalaphotoeditor.model.DrawnPath;
 import com.sba.sinhalaphotoeditor.sdk.Methods;
 
+import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
-public class PaintView extends View
+public class PaintView extends androidx.appcompat.widget.AppCompatImageView
 {
     private Bitmap btmBackground,btmView,userBitmap;
     private Paint mPaint;
@@ -37,6 +39,11 @@ public class PaintView extends View
     private Context context;
     private ArrayList<DrawnPath> paths;
     private ArrayList<DrawnPath> undonePaths;
+
+    //double tap
+    private static final int DOUBLE_TAP_EXPIRE_TIME = 300;
+    public boolean isDoubleTap = false;
+    long lastClickTime = 0;
 
     public PaintView(Context context, @Nullable AttributeSet attrs)
     {
@@ -148,86 +155,85 @@ public class PaintView extends View
         }
 
 
-        if(event.getPointerCount() == 2)
-        {
-            if(context != null && context instanceof DrawOnBitmapActivity)
-            {
-                if(((DrawOnBitmapActivity)context).getUserWantToZoomOrDrawState())
-                {
-                    ((DrawOnBitmapActivity)context).setMotionEvent(event);
-                }
-
-            }
-        }
-
-
-        switch (event.getAction())
-        {
+        switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if(event.getPointerCount() == 1)
+                if (event.getPointerCount() == 1)
                 {
-                    if(context != null && context instanceof DrawOnBitmapActivity)
+                    long clickTime = System.currentTimeMillis();
+                    if (clickTime - lastClickTime < DOUBLE_TAP_EXPIRE_TIME)
                     {
-                        if(!((DrawOnBitmapActivity)context).getUserWantToZoomOrDrawState())
-                        {
-                            touchStart(x,y);
-                        }
+                        //double tap
+                        isDoubleTap = true;
+                        handleDoubleTap(x, y);
+
                     }
+                    else
+                    {
+                        //single tap
+                        isDoubleTap = false;
+                        touchStart(x, y);
+
+                        Timer timer = new Timer();
+                        timer.schedule(new TimerTask()
+                        {
+                            @Override
+                            public void run()
+                            {
+                                if(isDoubleTap)
+                                {
+                                    removeLastAction();
+                                }
+                            }
+                        }, DOUBLE_TAP_EXPIRE_TIME);
+
+
+                    }
+
+                    lastClickTime = clickTime;
+
 
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
-                if(event.getPointerCount() == 1)
+                if (event.getPointerCount() == 1)
                 {
-                    if(context != null && context instanceof DrawOnBitmapActivity)
-                    {
-                        if(!((DrawOnBitmapActivity)context).getUserWantToZoomOrDrawState())
-                        {
-                            touchMove(x,y);
-                        }
-                    }
-
+                    touchMove(x, y);
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                if(context != null && context instanceof DrawOnBitmapActivity)
-                {
-                    if(((DrawOnBitmapActivity)context).getUserWantToZoomOrDrawState())
-                    {
-                        ((DrawOnBitmapActivity)context).zoomOver(true,event);
-                    }
 
-                }
-                if(event.getPointerCount() == 1)
+                if (!isDoubleTap)
                 {
-                    if(context != null && context instanceof DrawOnBitmapActivity)
+                    //single tap
+                    if(event.getPointerCount() == 1)
                     {
-                        if(((DrawOnBitmapActivity)context).getUserWantToZoomOrDrawState())
-                        {
-                            ((DrawOnBitmapActivity)context).setFocusXAndY(x ,y);
-                        }
-
+                        touchUp();
                     }
                 }
-
-                if(event.getPointerCount() == 1)
-                {
-                    if(context != null && context instanceof DrawOnBitmapActivity)
-                    {
-                        if(!((DrawOnBitmapActivity)context).getUserWantToZoomOrDrawState())
-                        {
-                            touchUp();
-                        }
-                    }
-
-                }
-
                 break;
 
 
         }
 
         return true;
+    }
+
+    private void removeLastAction()
+    {
+        if(paths != null && paths.size() > 0)
+        {
+            paths.remove(paths.size() - 1);
+            drawPaths();
+        }
+
+    }
+
+    private void handleDoubleTap(float x, float y)
+    {
+        if(context != null && context instanceof DrawOnBitmapActivity)
+        {
+            ((DrawOnBitmapActivity)context).setFocusXAndY(x ,y);
+        }
     }
 
     private void touchUp()
@@ -239,17 +245,30 @@ public class PaintView extends View
             Paint paint = new Paint(mPaint);
             p.setPaint(paint);
             paths.add(p);
+            clearRedoList();
         }
         mPath = null;
         drawPaths();
 
+
     }
 
+    private void clearRedoList()
+    {
+        if(undonePaths != null)
+        {
+            undonePaths.clear();
+        }
+    }
     private void touchMove(float x, float y)
     {
-        mPath.lineTo(x,y);
-        mCanvas.drawPath(mPath,mPaint);
-        postInvalidate();
+        if(mPath != null && !mPath.isEmpty())
+        {
+            mPath.lineTo(x,y);
+            mCanvas.drawPath(mPath,mPaint);
+            postInvalidate();
+        }
+
     }
     public void drawPaths()
     {
@@ -282,7 +301,8 @@ public class PaintView extends View
     }
     private static Bitmap resize(Bitmap image, int maxWidth, int maxHeight)
     {
-        if (maxHeight > 0 && maxWidth > 0) {
+        if (maxHeight > 0 && maxWidth > 0)
+        {
             int width = image.getWidth();
             int height = image.getHeight();
             float ratioBitmap = (float) width / (float) height;
@@ -296,10 +316,8 @@ public class PaintView extends View
                 finalHeight = (int) ((float)maxWidth / ratioBitmap);
             }
             image = Bitmap.createScaledBitmap(image, finalWidth, finalHeight, true);
-            return image;
-        } else {
-            return image;
         }
+        return image;
     }
     public void setOpacity(int level)
     {

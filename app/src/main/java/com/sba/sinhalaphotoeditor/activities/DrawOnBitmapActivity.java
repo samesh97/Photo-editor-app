@@ -62,24 +62,14 @@ public class DrawOnBitmapActivity extends AppCompatActivity implements OnTextAtt
     private ImageView img_done;
     private ProgressBar loading;
 
-    private float scaleFactor,prevScale = 0f;
-    private float focusX,focusY = 0f;
-    private ScaleGestureDetector scaleGestureDetector;
-    private boolean userNeedToZoom = false;
+    private float scaleFactor;
 
-    private boolean isZoomIn = true;
-    private Timer timer;
     private ConstraintLayout img_done_container;
 
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        if(timer != null)
-        {
-            timer.cancel();
-        }
     }
     @Override
     protected void attachBaseContext(Context newBase)
@@ -157,41 +147,7 @@ public class DrawOnBitmapActivity extends AppCompatActivity implements OnTextAtt
             }
         });
 
-        Switch isZooming = findViewById(R.id.isZooming);
 
-        isZooming.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-                userNeedToZoom = isChecked;
-            }
-        });
-
-        scaleGestureDetector = new ScaleGestureDetector(DrawOnBitmapActivity.this,new simpleOnScaleGestureListener());
-
-
-        timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run()
-            {
-                if(userNeedToZoom && scaleFactor > 0)
-                {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            paintView.animate().scaleY(scaleFactor).scaleX(scaleFactor).start();
-                            if(focusX > 0 && focusY > 0)
-                            {
-                                paintView.animate().translationX(focusX).translationY(focusY).start();
-                            }
-                        }
-                    });
-
-                }
-
-            }
-        }, 0, 250);
 
 
         ConstraintLayout img_undo_container = findViewById(R.id.img_undo_container);
@@ -393,52 +349,30 @@ public class DrawOnBitmapActivity extends AppCompatActivity implements OnTextAtt
         finish();
         loading.setVisibility(View.GONE);
     }
-    public class simpleOnScaleGestureListener extends ScaleGestureDetector.SimpleOnScaleGestureListener{
+    public class simpleOnScaleGestureListener extends ScaleGestureDetector.SimpleOnScaleGestureListener
+    {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
             //change the font size of the text on pinch
 
             detector.setQuickScaleEnabled(true);
-
             scaleFactor *= (detector.getScaleFactor());
             scaleFactor = (scaleFactor < 1 ? 1 : scaleFactor); // prevent our view from becoming too small //
             scaleFactor = ((float)((int)(scaleFactor * 100))) / 100; // Change precision to help with jitter when user just rests their fingers //
-
-
-            //focusX = detector.getFocusX();
-            //focusY = detector.getFocusY();
             return true;
         }
     }
-    public void setMotionEvent(final MotionEvent event)
-    {
-        isZoomIn = true;
-        //focusX = event.getX();
-        //focusY = event.getY();
-        scaleGestureDetector.onTouchEvent(event);
-    }
     public void setFocusXAndY(float x, float y)
     {
-//        focusX = x;
-//        focusY = y;
-//
-//        Log.d("TouchPos","X=" + x);
-//        Log.d("TouchPos","Y=" + y);
-//
-//        int[] location = new int[2];
-//        paintView.getLocationOnScreen(location);
-//        int dx = location[0];
-//        int dy = location[1];
-//
-//        Log.d("TouchPos","DX=" + dx);
-//        Log.d("TouchPos","DY=" + dy);
+        if(paintView.getScaleX() == 2 && paintView.getScaleY() == 2)
+        {
+            paintView.animate().scaleX(1).scaleY(1).start();
+        }
+        else
+        {
+            paintView.animate().scaleX(2).scaleY(2).start();
+        }
+
     }
-    public boolean getUserWantToZoomOrDrawState()
-    {
-        return userNeedToZoom;
-    }
-    public void zoomOver(boolean zoomState,MotionEvent event)
-    {
-        isZoomIn = zoomState;
-    }
+
 }

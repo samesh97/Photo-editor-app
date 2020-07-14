@@ -6,7 +6,7 @@
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:background="@drawable/white_opacity_background"
-    android:layout_height="300dp">
+    android:layout_height="match_parent">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
-        android:text="Border Color"
+        android:text="Color"
         android:textColor="@android:color/white"
         android:textSize="19sp"
         android:textStyle="bold"
@@ -76,7 +76,7 @@
 
 
         <SeekBar
-            android:id="@+id/brush_size_seekbar"
+            android:id="@+id/border_size_seekbar"
             style="@style/MySeekBar"
             android:layout_width="match_parent"
             android:layout_height="55dp"
@@ -92,7 +92,7 @@
 
 
         <SeekBar
-            android:id="@+id/opacity_seekbar"
+            android:id="@+id/border_radius_seek_bar"
             style="@style/MySeekBar"
             android:layout_width="match_parent"
             android:layout_height="55dp"
@@ -111,12 +111,40 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:text="Border Radius"
+            android:text="Curvedness"
             android:textColor="@android:color/white"
             android:textSize="19sp"
             android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="@+id/brush_size_seekbar"
-            app:layout_constraintTop_toBottomOf="@+id/brush_size_seekbar" />
+            app:layout_constraintStart_toStartOf="@+id/border_size_seekbar"
+            app:layout_constraintTop_toBottomOf="@+id/border_size_seekbar" />
+
+
+        <SeekBar
+            android:id="@+id/opacity_seek_bar_"
+            style="@style/MySeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/edit_text_background"
+            android:max="10"
+            android:min="0"
+            android:thumb="@android:color/darker_gray"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/textView4"
+            app:layout_constraintTop_toBottomOf="@+id/textView6" />
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Opacity"
+            android:textColor="@android:color/white"
+            android:textSize="19sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/border_radius_seek_bar"
+            app:layout_constraintTop_toBottomOf="@+id/border_radius_seek_bar" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

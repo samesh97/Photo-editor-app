@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/black"
+    android:id="@+id/constraint_main"
     tools:context=".activities.EditorActivity">
 
 
@@ -21,6 +22,14 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.35" />
 
+    <com.sba.sinhalaphotoeditor.custom.views.GridView
+        android:id="@+id/grid_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/userSelectedImage"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
     <com.google.android.gms.ads.AdView
         android:id="@+id/adView"
@@ -33,9 +42,21 @@
         app:layout_constraintBottom_toTopOf="@+id/guideline20"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-    
+
+
+    <ImageView
+        android:id="@+id/grid_icon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/grid_hide"
+        app:layout_constraintBottom_toTopOf="@+id/adView"
+        app:layout_constraintEnd_toEndOf="parent" />
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout1"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@color/material_dark_blue"
@@ -47,6 +68,7 @@
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_gravity="center"

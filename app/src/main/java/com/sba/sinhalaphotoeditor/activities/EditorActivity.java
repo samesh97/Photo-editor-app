@@ -18,12 +18,15 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 
 
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -37,6 +40,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 
@@ -48,6 +52,7 @@ import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+import com.sba.sinhalaphotoeditor.custom.views.GridView;
 import com.sba.sinhalaphotoeditor.sdk.Methods;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;
@@ -57,6 +62,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_KEY;
@@ -80,6 +87,17 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
 
     private Methods methods;
     private InterstitialAd mInterstitialAd;
+
+    //last double tap
+    private long lastClickTime = 0;
+
+    //gridView
+    private boolean isGridActive = false;
+    private GridView grid_view;
+    private ImageView grid_icon;
+    private boolean isGridViewWidthUpdating = false;
+    private int maxSeconds = 3;
+    private int tempMaxSeconds = 3;
 
 
 
@@ -141,7 +159,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
                 }
                 catch (Exception e)
                 {
-
+                    e.printStackTrace();
                 }
             }
             else
@@ -333,7 +351,140 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         addSticker.setOnClickListener(this);
         addCrop.setOnClickListener(this);
 
+
+
+
+        //double tap zoom
+        final int DOUBLE_TAP_EXPIRE_TIME = 300;
+        userSelectedImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)
+            {
+                long clickTime = System.currentTimeMillis();
+                if (clickTime - lastClickTime < DOUBLE_TAP_EXPIRE_TIME)
+                {
+                    handleImageScale();
+                }
+                lastClickTime = clickTime;
+            }
+        });
+
+
+        //turning on off gridView
+        grid_view = findViewById(R.id.grid_view);
+        grid_icon = findViewById(R.id.grid_icon);
+        grid_icon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)
+            {
+               handleGridView();
+            }
+        });
+
+
+        //set gridCellWidth
+        grid_icon.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view)
+            {
+                if(!isGridActive)
+                {
+                    handleGridView();
+                }
+
+                tempMaxSeconds = maxSeconds;
+                final View view1 = getLayoutInflater().inflate(R.layout.layout_seekbar,null);
+                view1.setId(View.generateViewId());
+                ConstraintLayout.LayoutParams lp = new ConstraintLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+
+                final SeekBar seek_bar = view1.findViewById(R.id.seek_bar);
+                seek_bar.setProgress(grid_view.getGapWidth());
+
+                seek_bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress, boolean b)
+                    {
+
+                        isGridViewWidthUpdating = true;
+                        if(progress < 25)
+                        {
+                            seek_bar.setProgress(25);
+                        }
+                        grid_view.setGapWidth(progress);
+                    }
+
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar)
+                    {
+                        isGridViewWidthUpdating = true;
+                    }
+
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar)
+                    {
+                        isGridViewWidthUpdating = false;
+                        tempMaxSeconds = maxSeconds;
+                    }
+                });
+
+
+                final Timer timer = new Timer();
+                timer.scheduleAtFixedRate(new TimerTask() {
+                    @Override
+                    public void run()
+                    {
+
+                        if(!isGridViewWidthUpdating  && tempMaxSeconds <= 0)
+                        {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run()
+                                {
+                                    view1.animate().scaleX(0).start();
+                                            //view1.animate().alpha(0).setDuration(600).start();
+                                }
+                            });
+                            timer.cancel();
+                        }
+                        tempMaxSeconds--;
+                    }
+                    }, 0, 1000);
+
+
+                ConstraintLayout constraintLayout = findViewById(R.id.constraint_main);
+                constraintLayout.addView(view1,lp);
+                ConstraintSet constraintSet = new ConstraintSet();
+                constraintSet.clone(constraintLayout);
+                constraintSet.connect(view1.getId(), ConstraintSet.RIGHT, grid_icon.getId(), ConstraintSet.LEFT, Methods.convertDpToPixel(40,getApplicationContext()));
+                constraintSet.connect(view1.getId(),ConstraintSet.LEFT,constraintLayout.getId(),ConstraintSet.LEFT,Methods.convertDpToPixel(88,getApplicationContext()));
+                constraintSet.connect(view1.getId(),ConstraintSet.TOP,grid_icon.getId(),ConstraintSet.TOP);
+                constraintSet.connect(view1.getId(),ConstraintSet.BOTTOM,grid_icon.getId(),ConstraintSet.BOTTOM);
+                constraintSet.applyTo(constraintLayout);
+
+
+                return true;
+            }
+        });
+
     }
+
+    private void handleGridView()
+    {
+        if(!isGridActive)
+        {
+            grid_view.setVisibility(View.VISIBLE);
+            grid_icon.setImageDrawable(getDrawable(R.drawable.grid_show));
+            isGridActive = true;
+        }
+        else
+        {
+            grid_view.setVisibility(View.GONE);
+            grid_icon.setImageDrawable(getDrawable(R.drawable.grid_hide));
+            isGridActive = false;
+        }
+    }
+
     private void addTextOnImage()
     {
         Intent intent = new Intent(EditorActivity.this, TextOnImageActivity.class);
@@ -506,4 +657,21 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         dialog.show();
     }
 
+
+    private void handleImageScale()
+    {
+        int maxScale = 2;
+        if(userSelectedImage != null)
+        {
+            if(userSelectedImage.getScaleX() == 1 && userSelectedImage.getScaleY() == 1)
+            {
+                userSelectedImage.animate().scaleX(maxScale).scaleY(maxScale).start();
+
+            }
+            else
+            {
+                userSelectedImage.animate().scaleX(1).scaleY(1).start();
+            }
+        }
+    }
 }
