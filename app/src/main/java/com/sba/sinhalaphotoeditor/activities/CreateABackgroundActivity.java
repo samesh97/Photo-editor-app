@@ -12,6 +12,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -50,7 +51,6 @@ public class CreateABackgroundActivity extends AppCompatActivity {
     private Bitmap createdBitmap = null;
     private Button useImage;
     private Boolean isImageCreating = false;
-
     private InterstitialAd mInterstitialAd;
 
 
@@ -97,8 +97,6 @@ public class CreateABackgroundActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_abackground);
 
 
-
-
         MobileAds.initialize(this, new OnInitializationCompleteListener() {
             @Override
             public void onInitializationComplete(InitializationStatus initializationStatus) {}
@@ -108,21 +106,12 @@ public class CreateABackgroundActivity extends AppCompatActivity {
         mInterstitialAd.loadAd(new AdRequest.Builder().build());
 
 
-        Methods.freeUpMemory();
-
-
-
-
-
-
         create = (Button) findViewById(R.id.create);
         width = (EditText) findViewById(R.id.width);
         height = (EditText) findViewById(R.id.height);
         userCreatedImage = (ImageView) findViewById(R.id.userCreatedImage);
         ImageView pickColor = (ImageView) findViewById(R.id.pickColor);
         useImage = (Button) findViewById(R.id.useImage);
-
-
 
 
 
@@ -221,9 +210,24 @@ public class CreateABackgroundActivity extends AppCompatActivity {
 
         width.setText(String.valueOf(widthValue));
         height.setText(String.valueOf(heightValue));
-        String hex = "#" + Integer.toHexString(color);
-        createdBitmap = createImage(widthValue,heightValue,hex);
-        userCreatedImage.setImageBitmap(createdBitmap);
+        final String hex = "#" + Integer.toHexString(color);
+
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run()
+            {
+                createdBitmap = createImage(widthValue,heightValue,hex);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run()
+                    {
+                        userCreatedImage.setImageBitmap(createdBitmap);
+                    }
+                });
+
+            }
+        });
+
 
         changeTypeFace();
 
@@ -278,11 +282,8 @@ public class CreateABackgroundActivity extends AppCompatActivity {
     private void changeTypeFace()
     {
         Typeface typeface = Methods.getDefaultTypeFace(getApplicationContext());
-
         create.setTypeface(typeface);
         useImage.setTypeface(typeface);
-
-
     }
 
 }

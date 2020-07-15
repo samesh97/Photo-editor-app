@@ -25,6 +25,7 @@ public class GridView extends View
     public  int GAP_WIDTH_DP = 50;
     private float GAP_WIDTH_PIXEL;
     private  Paint paint = new Paint();
+    private Paint blackPaint = new Paint();
 
     public GridView(Context context) {
         super(context);
@@ -58,7 +59,10 @@ public class GridView extends View
 
         // set paint color
         paint.setColor(Color.WHITE);
-        paint.setStrokeWidth(4);
+        paint.setStrokeWidth(2);
+
+        blackPaint.setColor(Color.BLACK);
+        blackPaint.setStrokeWidth(2);
 
         // get view dimentions
         getScreenDimensions();
@@ -101,6 +105,9 @@ public class GridView extends View
             canvas.drawLine(0, verticalPosition,
                     screenWidth, verticalPosition, paint);
 
+            canvas.drawLine(0, verticalPosition - 1,
+                    screenWidth, verticalPosition - 1, blackPaint);
+
             verticalPosition += GAP_WIDTH_PIXEL;
 
         }
@@ -112,6 +119,9 @@ public class GridView extends View
 
             canvas.drawLine(horizontalPosition, 0,
                     horizontalPosition, screenHeight,paint);
+
+            canvas.drawLine(horizontalPosition - 1, 0,
+                    horizontalPosition - 1, screenHeight,blackPaint);
 
             horizontalPosition += GAP_WIDTH_PIXEL;
 

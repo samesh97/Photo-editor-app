@@ -79,6 +79,7 @@ public class PhotoOnPhotoActivity extends AppCompatActivity implements RotationG
 
     private Methods methods;
     private int imageWidthAndHeight = 100;
+    private Bitmap finalBitmap = null;
 
     @Override
     protected void attachBaseContext(Context newBase)
@@ -323,33 +324,24 @@ public class PhotoOnPhotoActivity extends AppCompatActivity implements RotationG
         else if(item.getItemId() == R.id.setImage)
         {
             showProgressDialog();
-            boolean doneSetting = setTextFinal();
-            if(doneSetting)
+            finalBitmap = getFinalImage();
+            if(finalBitmap != null)
             {
-                try
-                {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageOutUri);
-                    bitmap = Methods.CropBitmapTransparency(bitmap);
-                    AddImageToArrayListAsyncTask task = new AddImageToArrayListAsyncTask(bitmap,this);
-                    task.execute();
-                }
-                catch (Exception e)
-                {
-                    hideProgressDialog();
-                    e.printStackTrace();
-                    Intent intent = new Intent();
-                    setResult(IMAGE_ON_IMAGE_RESULT_OK_CODE,intent);
-                    finish();
-
-                }
+                AsyncTask.execute(new Runnable() {
+                    @Override
+                    public void run()
+                    {
+                        finalBitmap = Methods.CropBitmapTransparency(finalBitmap);
+                        AddImageToArrayListAsyncTask task = new AddImageToArrayListAsyncTask(finalBitmap,PhotoOnPhotoActivity.this);
+                        task.execute();
+                    }
+                });
 
             }
             else
             {
                 hideProgressDialog();
-                Intent intent = new Intent();
-                setResult(IMAGE_ON_IMAGE_RESULT_OK_CODE,intent);
-                finish();
+                Methods.showCustomToast(getApplicationContext(),getString(R.string.we_will_fix_it_soon_text));
             }
             return  true;
         }
@@ -362,40 +354,11 @@ public class PhotoOnPhotoActivity extends AppCompatActivity implements RotationG
 
     }
 
-    private boolean setTextFinal()
+    private Bitmap getFinalImage()
     {
         addNewImage.setOnTouchListener(null);
-        boolean toBeReturn = false;
         workingLayout.buildDrawingCache();
-        toBeReturn = saveFile(Bitmap.createBitmap(workingLayout.getDrawingCache()),"temp.jpg");
-        return toBeReturn;
-    }
-
-    private boolean saveFile(Bitmap sourceImageBitmap,String fileName)
-    {
-        boolean result = false;
-        String saveDir = "/tmp/";
-        String path = getApplicationInfo().dataDir + saveDir;
-        File pathFile = new File(path);
-        pathFile.mkdirs();
-        File imageFile = new File(path,fileName);
-        if(imageFile.exists())
-        {
-            imageFile.delete();
-        }
-        FileOutputStream out = null;
-        try {
-            out = new FileOutputStream(imageFile);
-
-            sourceImageBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-            result = true;
-        } catch (Exception e) {
-            String errorAny = e.getMessage();
-            result =false;
-            e.printStackTrace();
-        }
-        imageOutUri = Uri.fromFile(imageFile);
-        return result;
+        return Bitmap.createBitmap(workingLayout.getDrawingCache());
     }
     public void showProgressDialog()
     {

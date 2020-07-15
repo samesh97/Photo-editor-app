@@ -1,17 +1,21 @@
 package com.sba.sinhalaphotoeditor.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.sba.sinhalaphotoeditor.callbacks.OnBitmapChanged;
 import com.sba.sinhalaphotoeditor.R;
+import com.sba.sinhalaphotoeditor.sdk.Methods;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;
 import com.zomato.photofilters.imageprocessors.Filter;
 
@@ -20,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.UiThread;
 import androidx.recyclerview.widget.RecyclerView;
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -32,13 +37,16 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.FilterView
     private Bitmap currentBitmap = null;
 
     private HashMap<Integer,CircleImageView> circleImageList;
+    private Bitmap croppedBitmap = null;
+    private ProgressBar progressBar;
 
-    public FilterAdapter(Context context, List<Filter> filters, OnBitmapChanged listner)
+    public FilterAdapter(Context context, List<Filter> filters, OnBitmapChanged listner,ProgressBar progressBar)
     {
         this.context = context;
         this.filters = filters;
         this.listner = listner;
         circleImageList = new HashMap<>();
+        this.progressBar = progressBar;
 
     }
     @NonNull
@@ -54,11 +62,33 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.FilterView
     {
         if(filters != null)
         {
-            Bitmap icon = BitmapFactory.decodeResource(context.getResources(),
-                    R.drawable.sample_filter_pic);
 
-            Bitmap bitmap = icon.copy(icon.getConfig(),true);
-            Glide.with(context).load(filters.get(position).processFilter(bitmap)).into(holder.previewImage);
+
+            AsyncTask.execute(new Runnable() {
+                @Override
+                public void run()
+                {
+
+                    if(croppedBitmap == null)
+                    {
+                        croppedBitmap = Methods.resize(ImageList.getInstance().getCurrentBitmap(),100,100);
+                    }
+
+                    Bitmap bitmap = croppedBitmap.copy(croppedBitmap.getConfig(),true);
+                    final Bitmap filtered = filters.get(position).processFilter(bitmap);
+
+                    ((Activity)context).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run()
+                        {
+                            Glide.with(context).load(filtered).into(holder.previewImage);
+                        }
+                    });
+
+                }
+            });
+
+
             String name= filters.get(position).getName();
             if(name != null)
             {
@@ -72,9 +102,20 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.FilterView
 
                     if(previousPosition != position)
                     {
-                        currentBitmap = ImageList.getInstance().getCurrentBitmap().copy(ImageList.getInstance().getCurrentBitmap().getConfig(),true);
-                        Bitmap largeBitmap = filters.get(position).processFilter(currentBitmap);
-                        listner.bitmapChanged(largeBitmap,filters.get(position));
+                        if(progressBar != null)
+                        {
+                            progressBar.setVisibility(View.VISIBLE);
+                        }
+                        AsyncTask.execute(new Runnable() {
+                            @Override
+                            public void run()
+                            {
+                                currentBitmap = ImageList.getInstance().getCurrentBitmap().copy(ImageList.getInstance().getCurrentBitmap().getConfig(),true);
+                                Bitmap largeBitmap = filters.get(position).processFilter(currentBitmap);
+                                listner.bitmapChanged(largeBitmap,filters.get(position));
+                            }
+                        });
+
                         previousPosition = position;
 
 

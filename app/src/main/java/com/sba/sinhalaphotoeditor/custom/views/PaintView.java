@@ -217,7 +217,6 @@ public class PaintView extends androidx.appcompat.widget.AppCompatImageView
 
         return true;
     }
-
     private void removeLastAction()
     {
         if(paths != null && paths.size() > 0)
@@ -227,7 +226,6 @@ public class PaintView extends androidx.appcompat.widget.AppCompatImageView
         }
 
     }
-
     private void handleDoubleTap(float x, float y)
     {
         if(context != null && context instanceof DrawOnBitmapActivity)

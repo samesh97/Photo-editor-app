@@ -19,6 +19,14 @@ public class CropActivity extends AppCompatActivity {
     public static Bitmap croppedBitmap;
     private int rotateDegree = 0;
 
+
+    @Override
+    public void onBackPressed()
+    {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

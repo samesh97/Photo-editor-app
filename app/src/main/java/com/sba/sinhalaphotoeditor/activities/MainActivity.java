@@ -91,27 +91,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private static final int PICK_IMAGE_REQUEST = 234;
     public static Bitmap bitmap;
-
     private boolean isExit = false;
-    private static boolean isFirstTime = true;
-
-
     private Dialog dialog;
-    private Spinner languagePicker;
     private Methods methods;
-
-
     private FirebaseDatabase database;
     private DatabaseReference reference;
-
-
     private ConstraintLayout createImageFromLibrary;
-
-
     private ImageList.ImageListModel imageList = null;
-
-
-
 
     //previously edited images
     RecentImageAdapter adapter;
@@ -122,13 +108,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     DatabaseHelper helper = new DatabaseHelper(MainActivity.this);
 
 
-
     @Override
     public void onBackPressed()
     {
         if(isExit)
         {
-            isFirstTime = true;
             super.onBackPressed();
         }
         else
@@ -174,12 +158,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == IMAGE_PICK_RESULT_CODE && selectedBitmap != null)
         {
             showProgressDialog();
-            imageList.clearImageList();
-            bitmap = selectedBitmap.copy(selectedBitmap.getConfig(), true);
-            selectedBitmap = null;
-            bitmap = methods.getResizedBitmap(bitmap, 1500);
-            AddImageToArrayListAsyncTask task = new AddImageToArrayListAsyncTask(bitmap,this);
-            task.execute();
+
+            AsyncTask.execute(new Runnable() {
+                @Override
+                public void run()
+                {
+                    imageList.clearImageList();
+                    bitmap = selectedBitmap.copy(selectedBitmap.getConfig(), true);
+                    selectedBitmap = null;
+                    bitmap = methods.getResizedBitmap(bitmap, 1500);
+                    AddImageToArrayListAsyncTask task = new AddImageToArrayListAsyncTask(bitmap,MainActivity.this);
+                    task.execute();
+                }
+            });
+
         }
     }
 
@@ -195,7 +187,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         initProfilePicture();
         methods = new Methods(getApplicationContext());
 
-        setAppLanguage();
 
         recentImageRecyclerview = findViewById(R.id.ImageList);
         LinearLayoutManager manager = new LinearLayoutManager(this);
@@ -388,47 +379,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void configLanguagePicker()
-    {
-        SharedPreferences pref = getApplicationContext().getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
-        final int pos = pref.getInt(LANGUAGE_POSITION_KEY,0);
-        languagePicker.setSelection(pos);
-
-
-
-
-        languagePicker.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
-            {
-                if(pos != languagePicker.getSelectedItemPosition())
-                {
-                    switch (position)
-                    {
-                        case 1 :
-                            setLocale(LANGUAGE_SINHALA,position);
-                            break;
-
-                        case  2 :
-                            setLocale(LANGUAGE_ENGLISH,position);
-                            break;
-
-                        case 3:
-                            setLocale(LANGUAGE_TAMIL,position);
-                            break;
-                    }
-                }
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-    }
-
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
     {
@@ -611,26 +561,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         finish();
         overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
     }
-    public void setLocaleOnStart(String lang)
-    {
-        Locale myLocale = new Locale(lang);
-        Resources res = getResources();
-        DisplayMetrics dm = res.getDisplayMetrics();
-        Configuration conf = res.getConfiguration();
-        conf.locale = myLocale;
-        res.updateConfiguration(conf, dm);
-
-
-        isFirstTime = false;
-
-        Intent refresh = new Intent(this, MainActivity.class);
-        //refresh.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(refresh);
-        finish();
-        overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
-
-    }
-
 
     @Override
     public void onClick(View v)
@@ -814,19 +744,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             startActivity(new Intent(MainActivity.this, WelcomeScreen.class));
             finish();
             overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
-        }
-    }
-    private void setAppLanguage()
-    {
-        SharedPreferences pref2 = getApplicationContext().getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
-        String code = pref2.getString(LANGUAGE_KEY,null);
-        if(code != null)
-        {
-            if(isFirstTime)
-            {
-                setLocaleOnStart(code);
-            }
-
         }
     }
     public void startActivityForRecentEdits()

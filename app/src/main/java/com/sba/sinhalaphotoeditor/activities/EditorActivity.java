@@ -81,16 +81,13 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
     private ImageView userSelectedImage;
     private ImageView addText,addImage,addSticker,addCrop,addBlur;
     private static final int PICK_IMAGE_REQUEST = 234;
-
     private ImageView addEffect;
-
 
     private Methods methods;
     private InterstitialAd mInterstitialAd;
 
     //last double tap
     private long lastClickTime = 0;
-
     //gridView
     private boolean isGridActive = false;
     private GridView grid_view;
@@ -98,7 +95,6 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
     private boolean isGridViewWidthUpdating = false;
     private int maxSeconds = 3;
     private int tempMaxSeconds = 3;
-
 
 
     @Override
@@ -305,7 +301,8 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         methods = new Methods(getApplicationContext());
 
 
-       MobileAds.initialize(this, new OnInitializationCompleteListener() {
+       MobileAds.initialize(this, new OnInitializationCompleteListener()
+       {
             @Override
             public void onInitializationComplete(InitializationStatus initializationStatus) {
             }
@@ -586,6 +583,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
                 selectedBitmap = ImageList.getInstance().getCurrentBitmap();
                 Intent intent = new Intent(getApplicationContext(),CropActivity.class);
                 startActivityForResult(intent,NORMAL_CROP_IMAGE_REQUEST_CODE);
+                overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
             }
             else
             {

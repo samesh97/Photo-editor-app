@@ -82,11 +82,9 @@ public class AddStickerOnImage extends AppCompatActivity
 
 
 
-    //public static Uri STICKER_ON_IMAGE_URI;
     public static int STICKER_ON_IMAGE_RESULT_OK_CODE = 210;
     public static int STICKER_ON_IMAGE_REQUEST_CODE = 200;
-
-    private Uri imageOutUri;
+    //private Uri imageOutUri;
 
     private ImageView sourceImageView;
     private ConstraintLayout workingLayout;
@@ -97,9 +95,7 @@ public class AddStickerOnImage extends AppCompatActivity
 
     DatabaseHelper helper = new DatabaseHelper(AddStickerOnImage.this);
 
-    private ExpandableLayout expandableLayout;
     private ImageView expandIcon;
-    private float opacityLevel = 1f;
 
     private Dialog dia;
     private ArrayList<Bitmap> stickerList1 = new ArrayList<>();
@@ -127,6 +123,8 @@ public class AddStickerOnImage extends AppCompatActivity
 
 
     private int stickerWidthAndHeight = 100;
+
+    private Bitmap finalBitmap = null;
 
     @Override
     protected void onPause() {
@@ -221,34 +219,34 @@ public class AddStickerOnImage extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                if(finalizing())
-                {
                     progress_bar.setVisibility(View.VISIBLE);
-
-                    try
+                    finalBitmap = getFinalBitmap();
+                    if(finalBitmap != null)
                     {
-                        Bitmap  bitmap = null;
-                        bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageOutUri);
-                        bitmap = methods.CropBitmapTransparency(bitmap);
+                        AsyncTask.execute(new Runnable() {
+                            @Override
+                            public void run()
+                            {
+                                finalBitmap = Methods.CropBitmapTransparency(finalBitmap);
+                                AddImageToArrayListAsyncTask task;
+                                if(addedStickersList.size() > 0)
+                                {
+                                    task = new AddImageToArrayListAsyncTask(finalBitmap,AddStickerOnImage.this);
+                                }
+                                else
+                                {
+                                    task = new AddImageToArrayListAsyncTask(null,AddStickerOnImage.this);
+                                }
+                                task.execute();
+                            }
+                        });
 
-                        AddImageToArrayListAsyncTask task;
-                        if(addedStickersList.size() > 0)
-                        {
-                            task = new AddImageToArrayListAsyncTask(bitmap,AddStickerOnImage.this);
-                        }
-                        else
-                        {
-                            task = new AddImageToArrayListAsyncTask(null,AddStickerOnImage.this);
-                        }
-
-                        task.execute();
                     }
-                    catch (IOException e)
+                    else
                     {
-                        e.printStackTrace();
+                        Methods.showCustomToast(getApplicationContext(),getString(R.string.we_will_fix_it_soon_text));
                     }
 
-                }
             }
         });
 
@@ -418,7 +416,7 @@ public class AddStickerOnImage extends AppCompatActivity
         }
 
     }
-    private boolean finalizing()
+    private Bitmap getFinalBitmap()
     {
         runOnUiThread(new Runnable() {
             @Override
@@ -440,37 +438,8 @@ public class AddStickerOnImage extends AppCompatActivity
 
         }
 
-        boolean toBeReturn = false;
         workingLayout.buildDrawingCache();
-        toBeReturn = saveFile(Bitmap.createBitmap(workingLayout.getDrawingCache()),"temp.jpg");
-        return toBeReturn;
-    }
-
-    private boolean saveFile(Bitmap sourceImageBitmap,String fileName)
-    {
-        boolean result = false;
-        String saveDir = "/tmp/";
-        String path = getApplicationInfo().dataDir + saveDir;
-        File pathFile = new File(path);
-        pathFile.mkdirs();
-        File imageFile = new File(path,fileName);
-        if(imageFile.exists())
-        {
-            imageFile.delete();
-        }
-        FileOutputStream out = null;
-        try {
-            out = new FileOutputStream(imageFile);
-
-            sourceImageBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-            result = true;
-        } catch (Exception e) {
-
-            result =false;
-            e.printStackTrace();
-        }
-        imageOutUri = Uri.fromFile(imageFile);
-        return result;
+        return  Bitmap.createBitmap(workingLayout.getDrawingCache());
     }
     private void showStickerPopup()
     {

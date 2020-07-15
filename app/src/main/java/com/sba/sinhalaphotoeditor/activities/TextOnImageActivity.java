@@ -80,7 +80,6 @@ public class TextOnImageActivity extends AppCompatActivity
     public static int TEXT_ON_IMAGE_RESULT_OK_CODE = 1;
     public static int TEXT_ON_IMAGE_REQUEST_CODE = 4;
 
-    private Uri imageOutUri;
     private ImageView sourceImageView;
     private ConstraintLayout workingLayout;
     private ScaleGestureDetector scaleGestureDetector;
@@ -97,6 +96,7 @@ public class TextOnImageActivity extends AppCompatActivity
 
 
     private ProgressBar progress_bar;
+    private Bitmap finalBitmap = null;
 
 
     @Override
@@ -170,29 +170,32 @@ public class TextOnImageActivity extends AppCompatActivity
             {
                 img_done_container.setEnabled(false);
                 progress_bar.setVisibility(View.VISIBLE);
-                if(createFinalBitmap())
+                finalBitmap = createFinalBitmap();
+                if(finalBitmap != null)
                 {
-                    try
-                    {
-                        Bitmap  bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageOutUri);
-                        bitmap = Methods.CropBitmapTransparency(bitmap);
-
-                        AddImageToArrayListAsyncTask task;
-                        if(addedTextViews.size() > 0)
+                    AsyncTask.execute(new Runnable() {
+                        @Override
+                        public void run()
                         {
-                            task = new AddImageToArrayListAsyncTask(bitmap,TextOnImageActivity.this);
+                            finalBitmap = Methods.CropBitmapTransparency(finalBitmap);
+                            AddImageToArrayListAsyncTask task;
+                            if(addedTextViews.size() > 0)
+                            {
+                                task = new AddImageToArrayListAsyncTask(finalBitmap,TextOnImageActivity.this);
+                            }
+                            else
+                            {
+                                task = new AddImageToArrayListAsyncTask(null,TextOnImageActivity.this);
+                            }
+                            task.execute();
                         }
-                        else
-                        {
-                            task = new AddImageToArrayListAsyncTask(null,TextOnImageActivity.this);
-                        }
-                        task.execute();
+                    });
 
-                    }
-                    catch (Exception e)
-                    {
-                        e.printStackTrace();
-                    }
+                }
+                else
+                {
+                    Methods.showCustomToast(getApplicationContext(),getString(R.string.we_will_fix_it_soon_text));
+                    startActivityForResult();
                 }
             }
         });
@@ -283,10 +286,6 @@ public class TextOnImageActivity extends AppCompatActivity
     @Override
     public void startActivityForResult()
     {
-        progress_bar.setVisibility(View.GONE);
-        Intent intent = new Intent();
-        setResult(TEXT_ON_IMAGE_RESULT_OK_CODE,intent);
-        finish();
 
         if(addedTextViews.size() > 0)
         {
@@ -304,6 +303,11 @@ public class TextOnImageActivity extends AppCompatActivity
             }
             });
         }
+
+        progress_bar.setVisibility(View.GONE);
+        Intent intent = new Intent();
+        setResult(TEXT_ON_IMAGE_RESULT_OK_CODE,intent);
+        finish();
 
     }
 
@@ -385,7 +389,7 @@ public class TextOnImageActivity extends AppCompatActivity
 
         workingLayout.setDrawingCacheEnabled(true);
     }
-    private boolean createFinalBitmap()
+    private Bitmap createFinalBitmap()
     {
         runOnUiThread(new Runnable() {
             @Override
@@ -406,35 +410,8 @@ public class TextOnImageActivity extends AppCompatActivity
             view.getTextView().setOnTouchListener(null);
         }
 
-        boolean toBeReturn = false;
         workingLayout.buildDrawingCache();
-        toBeReturn = saveFile(Bitmap.createBitmap(workingLayout.getDrawingCache()),"temp.jpg");
-        return toBeReturn;
-    }
-    private boolean saveFile(Bitmap sourceImageBitmap,String fileName)
-    {
-        boolean result = false;
-        String saveDir = "/tmp/";
-        String path = getApplicationInfo().dataDir + saveDir;
-        File pathFile = new File(path);
-        pathFile.mkdirs();
-        File imageFile = new File(path,fileName);
-        if(imageFile.exists())
-        {
-            imageFile.delete();
-        }
-        FileOutputStream out = null;
-        try {
-            out = new FileOutputStream(imageFile);
-
-            sourceImageBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-            result = true;
-        } catch (Exception e) {
-            result =false;
-            e.printStackTrace();
-        }
-        imageOutUri = Uri.fromFile(imageFile);
-        return result;
+        return Bitmap.createBitmap(workingLayout.getDrawingCache());
     }
     public void addNewTextView(String text)
     {

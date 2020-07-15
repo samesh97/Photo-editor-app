@@ -53,8 +53,8 @@ public class ImageViewPlus extends View
 
     private void init()
     {
-        borderRadius = 10;
-        borderSize = 10;
+        borderRadius = 0;
+        borderSize = 0;
         borderColor = Color.WHITE;
         paint = new Paint();
         paint.setStyle(Paint.Style.STROKE);

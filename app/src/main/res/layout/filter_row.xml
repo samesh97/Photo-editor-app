@@ -11,7 +11,7 @@
         android:layout_width="@dimen/effect_thumbnail_width_height"
         android:layout_height="@dimen/effect_thumbnail_width_height"
         android:layout_marginTop="4dp"
-        android:src="@drawable/addtext"
+        android:src="@drawable/loading_image_placeholder"
         app:civ_border_color="#FFFFFF"
         app:civ_border_width="2dp"
         app:layout_constraintEnd_toEndOf="@+id/filter_name"

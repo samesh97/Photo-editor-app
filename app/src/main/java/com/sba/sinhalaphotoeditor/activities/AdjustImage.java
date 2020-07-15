@@ -246,7 +246,6 @@ public class AdjustImage extends AppCompatActivity implements OnAsyncTaskState {
     private void createImage()
     {
 
-        Log.d("SaturationValue"," " + saturationValue);
         currentEditingImage = ImageList.getInstance().getCurrentBitmap().copy(ImageList.getInstance().getCurrentBitmap().getConfig(),true);
         if(blurValue > 0)
         {

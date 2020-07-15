@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -49,6 +50,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Timer;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -212,7 +214,7 @@ public class AddEffects extends AppCompatActivity implements OnBitmapChanged, On
         filterRecyclerView.setItemViewCacheSize(filters.size());
         LinearLayoutManager manager = new LinearLayoutManager(this);
         manager.setOrientation(RecyclerView.HORIZONTAL);
-        filterAdapter = new FilterAdapter(AddEffects.this, filters,this);
+        filterAdapter = new FilterAdapter(AddEffects.this, filters,this,progress_bar);
         filterRecyclerView.setLayoutManager(manager);
         filterRecyclerView.setAdapter(filterAdapter);
 
@@ -360,7 +362,16 @@ public class AddEffects extends AppCompatActivity implements OnBitmapChanged, On
 
 
         currentEditingBitmap = bitmap;
-        Glide.with(getApplicationContext()).load(currentEditingBitmap).into(userSelectedImage);
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run()
+            {
+                Glide.with(getApplicationContext()).load(currentEditingBitmap).into(userSelectedImage);
+                progress_bar.setVisibility(View.GONE);
+            }
+        });
+
     }
 
     @Override

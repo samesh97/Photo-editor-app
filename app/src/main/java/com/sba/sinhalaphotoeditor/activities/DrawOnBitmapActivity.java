@@ -14,6 +14,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -104,7 +105,6 @@ public class DrawOnBitmapActivity extends AppCompatActivity implements OnTextAtt
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_draw_on_bitmap);
 
-        Methods.freeUpMemory();
 
         textViewPlus = new TextViewPlus(DrawOnBitmapActivity.this);
         textViewPlus.setTextColor(Color.RED);
@@ -135,9 +135,16 @@ public class DrawOnBitmapActivity extends AppCompatActivity implements OnTextAtt
 
                 if(paintView.getPathSize() > 0)
                 {
-                    Bitmap bitmap = paintView.getBitmap();
-                    AddImageToArrayListAsyncTask asyncTask = new AddImageToArrayListAsyncTask(bitmap,DrawOnBitmapActivity.this);
-                    asyncTask.execute();
+                    AsyncTask.execute(new Runnable() {
+                        @Override
+                        public void run()
+                        {
+                            Bitmap bitmap = paintView.getBitmap();
+                            AddImageToArrayListAsyncTask asyncTask = new AddImageToArrayListAsyncTask(bitmap,DrawOnBitmapActivity.this);
+                            asyncTask.execute();
+                        }
+                    });
+
                 }
                 else
                 {
@@ -343,7 +350,8 @@ public class DrawOnBitmapActivity extends AppCompatActivity implements OnTextAtt
     }
 
     @Override
-    public void startActivityForResult() {
+    public void startActivityForResult()
+    {
         img_done.setEnabled(true);
         setResult(Activity.RESULT_OK);
         finish();
