@@ -3,19 +3,13 @@ package com.sba.sinhalaphotoeditor.activities;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Build;
-import android.os.Handler;
-import android.provider.MediaStore;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -23,22 +17,12 @@ import androidx.constraintlayout.widget.ConstraintSet;
 
 
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -58,19 +42,15 @@ import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;
 
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
 
+import static com.sba.sinhalaphotoeditor.activities.MyGallery.selectedBitmap;
 import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_KEY;
 import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_SINHALA;
 import static com.sba.sinhalaphotoeditor.config.Constants.NUMBER_OF_IMAGES_WAS_ADDED;
-import static com.sba.sinhalaphotoeditor.activities.MyCustomGallery.IMAGE_PICK_RESULT_CODE;
-import static com.sba.sinhalaphotoeditor.activities.MyCustomGallery.selectedBitmap;
 import static com.sba.sinhalaphotoeditor.config.Constants.SHARED_PREF_NAME;
 
 public class EditorActivity extends AppCompatActivity implements View.OnClickListener {
@@ -238,7 +218,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
             }
 
         }
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == IMAGE_PICK_RESULT_CODE && selectedBitmap != null)
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && selectedBitmap != null)
         {
                 Intent intent = new Intent(getApplicationContext(),CropActivity.class);
                 startActivityForResult(intent,PICKED_IMAGE_CROP_IMAGE_REQUEST_CODE);
@@ -498,8 +478,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
     private void showFileChooser()
     {
 
-        Intent intent = new Intent(EditorActivity.this, MyCustomGallery.class);
-        intent.putExtra("Activity","EditorActivity");
+        Intent intent = new Intent(EditorActivity.this, MyGallery.class);
         startActivityForResult(intent,PICK_IMAGE_REQUEST);
         overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
     }

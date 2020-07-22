@@ -147,6 +147,8 @@
             android:indeterminateTint="@android:color/white"
             android:indeterminateTintMode="src_atop"
             android:visibility="gone"
+            style="?android:attr/progressBarStyle"
+            android:indeterminateDrawable="@drawable/progress_bar_material"
             app:layout_constraintBottom_toBottomOf="@+id/loginButton"
             app:layout_constraintEnd_toEndOf="@+id/loginButton"
             app:layout_constraintStart_toStartOf="@+id/loginButton"

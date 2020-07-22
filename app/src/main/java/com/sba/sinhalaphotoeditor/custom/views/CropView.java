@@ -6,7 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.Rect;
 import android.os.Build;
 import android.util.AttributeSet;
@@ -17,7 +16,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 import com.sba.sinhalaphotoeditor.R;
-import com.sba.sinhalaphotoeditor.config.ExifUtil;
 import com.sba.sinhalaphotoeditor.sdk.Methods;
 
 public class CropView extends View
@@ -439,15 +437,23 @@ public class CropView extends View
     }
     public void setBitmap(Bitmap bitmap)
     {
-        this.cropBitmap = bitmap.copy(bitmap.getConfig(),true);
-        finalImageHeight = bitmap.getHeight();
-        finalImageWidth = bitmap.getWidth();
+        if(bitmap != null)
+        {
+            this.cropBitmap = bitmap.copy(bitmap.getConfig(),true);
+            finalImageHeight = bitmap.getHeight();
+            finalImageWidth = bitmap.getWidth();
 
-        //keeping the padding with the layout
-        this.cropBitmap = resize(cropBitmap,canvasWidth - padding,canvasHeight - padding);
+            //keeping the padding with the layout
+            this.cropBitmap = resize(cropBitmap,canvasWidth - padding,canvasHeight - padding);
 
-        setHandlerPositions();
-        postInvalidate();
+            setHandlerPositions();
+            postInvalidate();
+        }
+        else
+        {
+            Methods.showCustomToast(getContext(),"Bitmap is null");
+        }
+
     }
     public void flipInHorizontal()
     {

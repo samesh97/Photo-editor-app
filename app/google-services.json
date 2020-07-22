@@ -15,11 +15,64 @@
       },
       "oauth_client": [
         {
+          "client_id": "12959215893-7a14ssdoignjsa9119bduj6tn5hls7t1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sba.sinhalaphotoeditor",
+            "certificate_hash": "a1b610b637cc7a709106945fe62db62b95992e53"
+          }
+        },
+        {
+          "client_id": "12959215893-o9nbe7oinfostk69ie4dujvjcafajlcb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sba.sinhalaphotoeditor",
+            "certificate_hash": "78f2fde269cb433fb8edeb6943fa3a9504d95f16"
+          }
+        },
+        {
           "client_id": "12959215893-be7v8rt8t8jv2stovdv7a15jc29pa05f.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.sba.sinhalaphotoeditor",
             "certificate_hash": "48d5c2f0fcbb93d42a34028a9e981a4e4c4f6dfb"
+          }
+        },
+        {
+          "client_id": "12959215893-fukig9i4vtlsa8mvbn47e1kf3k4ocvku.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDdQ6zqhA3Z-30PSQMreFZIYFPcoYlEA_g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "12959215893-fukig9i4vtlsa8mvbn47e1kf3k4ocvku.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:12959215893:android:9dab3135f4e831920c791c",
+        "android_client_info": {
+          "package_name": "com.sba.stickerexample"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "12959215893-d9hsh28kpeu7qjueq24hqac3lhrpvagv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sba.stickerexample",
+            "certificate_hash": "78f2fde269cb433fb8edeb6943fa3a9504d95f16"
           }
         },
         {

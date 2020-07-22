@@ -33,7 +33,7 @@ public class CropActivity extends AppCompatActivity {
         setContentView(R.layout.activity_crop);
 
         crop_view = findViewById(R.id.crop_view);
-        crop_view.setBitmap(MyCustomGallery.selectedBitmap);
+        crop_view.setBitmap(MyGallery.selectedBitmap);
 
         ConstraintLayout img_done_container = findViewById(R.id.img_done_container);
         img_done_container.setOnClickListener(new View.OnClickListener() {
@@ -72,7 +72,7 @@ public class CropActivity extends AppCompatActivity {
 
                 Matrix matrix = new Matrix();
                 matrix.preRotate(rotateDegree);
-                Bitmap b = MyCustomGallery.selectedBitmap.copy(MyCustomGallery.selectedBitmap.getConfig(),true);
+                Bitmap b = MyGallery.selectedBitmap.copy(MyGallery.selectedBitmap.getConfig(),true);
 
 
                 int width = b.getWidth();

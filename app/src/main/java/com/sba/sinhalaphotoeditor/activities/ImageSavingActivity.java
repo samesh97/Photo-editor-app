@@ -99,7 +99,14 @@ public class ImageSavingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                shareImageUri(getImageUri(getApplicationContext(), ImageList.getInstance().getCurrentBitmap()));
+                try
+                {
+                    shareImageUri(getImageUri(getApplicationContext(),ImageList.getInstance().getCurrentBitmap()));
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -108,7 +115,14 @@ public class ImageSavingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                shareImageUri(getImageUri(getApplicationContext(),ImageList.getInstance().getCurrentBitmap()));
+                try
+                {
+                    shareImageUri(getImageUri(getApplicationContext(),ImageList.getInstance().getCurrentBitmap()));
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -138,7 +152,15 @@ public class ImageSavingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                shareImageUri(getImageUri(getApplicationContext(),ImageList.getInstance().getCurrentBitmap()));
+                try
+                {
+                    shareImageUri(getImageUri(getApplicationContext(),ImageList.getInstance().getCurrentBitmap()));
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+
             }
         });
 
@@ -229,16 +251,20 @@ public class ImageSavingActivity extends AppCompatActivity {
 
     private void shareImageUri(Uri uri)
     {
-        Intent intent = new Intent(android.content.Intent.ACTION_SEND);
-        intent.putExtra(Intent.EXTRA_STREAM, uri);
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        intent.setType("image/png");
-        startActivity(intent);
+        if(uri != null)
+        {
+            Intent intent = new Intent(android.content.Intent.ACTION_SEND);
+            intent.putExtra(Intent.EXTRA_STREAM, uri);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.setType("image/png");
+            startActivity(intent);
+        }
+
     }
     public Uri getImageUri(Context inContext, Bitmap inImage)
     {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        inImage.compress(Bitmap.CompressFormat.PNG, 100, bytes);
         String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
 
         return Uri.parse(path);

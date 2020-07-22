@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.ContextWrapper;
@@ -71,11 +72,11 @@ public class RegisterScreen extends AppCompatActivity{
     {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == PICK_IMAGE_REQUEST)
+        if(requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK)
         {
-            if(MyCustomGallery.selectedBitmap != null)
+            if(MyGallery.selectedBitmap != null)
             {
-                Bitmap bitmap =  Methods.getResizedProfilePic(getApplicationContext(),MyCustomGallery.selectedBitmap,200);
+                Bitmap bitmap =  Methods.getResizedProfilePic(getApplicationContext(),MyGallery.selectedBitmap,200);
                 profilePicture.setImageBitmap(bitmap);
                 profilePicture.setBorderWidth(4);
                 profilePicture.setBorderColor(Color.WHITE);
@@ -166,7 +167,7 @@ public class RegisterScreen extends AppCompatActivity{
 
     private void openCustomGallery()
     {
-        Intent intent = new Intent(RegisterScreen.this,MyCustomGallery.class);
+        Intent intent = new Intent(RegisterScreen.this,MyGallery.class);
         startActivityForResult(intent,PICK_IMAGE_REQUEST);
     }
     private void sendVerificationCode(String no)

@@ -1,6 +1,6 @@
 package com.sba.sinhalaphotoeditor.activities;
 
-import androidx.appcompat.app.ActionBar;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
@@ -11,21 +11,16 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
@@ -40,15 +35,12 @@ import com.sba.sinhalaphotoeditor.database.DatabaseHelper;
 import com.sba.sinhalaphotoeditor.aynctask.AddImageToArrayListAsyncTask;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
 
-
-import static com.sba.sinhalaphotoeditor.activities.MyCustomGallery.selectedBitmap;
+import static com.sba.sinhalaphotoeditor.activities.MyGallery.selectedBitmap;
 import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_KEY;
 import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_SINHALA;
 import static com.sba.sinhalaphotoeditor.config.Constants.SHARED_PREF_NAME;

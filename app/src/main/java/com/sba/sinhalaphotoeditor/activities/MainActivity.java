@@ -1,6 +1,7 @@
 package com.sba.sinhalaphotoeditor.activities;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -37,12 +38,10 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 
@@ -56,7 +55,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.sba.sinhalaphotoeditor.BuildConfig;
 import com.sba.sinhalaphotoeditor.callbacks.OnAsyncTaskState;
-import com.sba.sinhalaphotoeditor.config.Constants;
 import com.sba.sinhalaphotoeditor.sdk.Methods;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.database.DatabaseHelper;
@@ -71,20 +69,17 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 
+import static com.sba.sinhalaphotoeditor.activities.MyGallery.selectedBitmap;
 import static com.sba.sinhalaphotoeditor.config.Constants.ACTIVITY_EXTRA_KEY;
 import static com.sba.sinhalaphotoeditor.config.Constants.APP_MARKET_LINK;
 import static com.sba.sinhalaphotoeditor.config.Constants.FIREBASE_APP_INFO_REFERENCE;
 import static com.sba.sinhalaphotoeditor.config.Constants.FIREBASE_PAYLOAD_MESSAGE_TEXT;
 import static com.sba.sinhalaphotoeditor.config.Constants.FIREBASE_PAYLOAD_TITLE_TEXT;
 import static com.sba.sinhalaphotoeditor.config.Constants.IS_WALKTHROUGH_NEEDED_KEY;
-import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_ENGLISH;
 import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_KEY;
 import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_POSITION_KEY;
 import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_SINHALA;
-import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_TAMIL;
 import static com.sba.sinhalaphotoeditor.config.Constants.SHARED_PREF_NAME;
-import static com.sba.sinhalaphotoeditor.activities.MyCustomGallery.IMAGE_PICK_RESULT_CODE;
-import static com.sba.sinhalaphotoeditor.activities.MyCustomGallery.selectedBitmap;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, OnAsyncTaskState {
 
@@ -155,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == IMAGE_PICK_RESULT_CODE && selectedBitmap != null)
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && selectedBitmap != null)
         {
             showProgressDialog();
 
@@ -206,8 +201,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
 
+        if(BuildConfig.DEBUG)
+        {
+            Methods.showCustomToast(getApplicationContext(),"This is not a released version");
+        }
+
+
         TranslateAnimation animation2 = new TranslateAnimation(-1000,0,0, 0);
-        animation2.setDuration(500); // duartion in ms
+        animation2.setDuration(500);
         animation2.setFillAfter(true);
         pickImageFromGallery.startAnimation(animation2);
         createImageFromLibrary.setVisibility(View.GONE);
@@ -441,7 +442,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void showFileChooser()
     {
 
-        Intent intent = new Intent(MainActivity.this, MyCustomGallery.class);
+        Intent intent = new Intent(MainActivity.this, MyGallery.class);
         intent.putExtra(ACTIVITY_EXTRA_KEY,"MainActivity");
         startActivityForResult(intent,PICK_IMAGE_REQUEST);
         overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
