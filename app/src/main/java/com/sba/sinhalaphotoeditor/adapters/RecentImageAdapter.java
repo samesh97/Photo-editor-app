@@ -3,8 +3,9 @@ package com.sba.sinhalaphotoeditor.adapters;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +39,7 @@ public class RecentImageAdapter extends RecyclerView.Adapter<RecentImageAdapter.
     private Context context;
     private Bitmap selectedImage = null;
     private Dialog dialog;
+    int percent;
 
 
 
@@ -49,13 +51,19 @@ public class RecentImageAdapter extends RecyclerView.Adapter<RecentImageAdapter.
         this.dates = dates;
         this.context = context;
         DatabaseHelper helper = new DatabaseHelper(context);
+
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
+        //float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+
+        percent = (int) (dpHeight / 4);
     }
 
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
     {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recent_image_list_row, parent, false);
         return new MyViewHolder(view);
     }
 
@@ -63,19 +71,46 @@ public class RecentImageAdapter extends RecyclerView.Adapter<RecentImageAdapter.
     public void onBindViewHolder(@NonNull MyViewHolder holder,final int position)
     {
 
-        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-        float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
-        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+        holder.itemView.setLayoutParams(new ConstraintLayout.LayoutParams(percent, ViewGroup.LayoutParams.MATCH_PARENT));
 
-        int percent = (int) (dpHeight / 4);
-        holder.image.setLayoutParams(new ConstraintLayout.LayoutParams(percent, ViewGroup.LayoutParams.MATCH_PARENT));
-        Glide.with(context).load(images.get(position)).into(holder.image);
-        if(dates != null && dates.size() > position)
+        if(images.size() > position)
         {
-            holder.date.setText(dates.get(position));
+
+            Glide.with(context).load(images.get(position)).into(holder.image);
+            if(dates != null && dates.size() > position)
+            {
+                holder.date.setText(dates.get(position));
+            }
+
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v)
+                {
+                    selectedImage = images.get(position);
+                    showProgressDialog();
+                    ImageList.getInstance().clearImageList();
+                    AddImageToArrayListAsyncTask task = new AddImageToArrayListAsyncTask(selectedImage, new OnAsyncTaskState() {
+                        @Override
+                        public void startActivityForResult()
+                        {
+                            hideProgressDialog();
+                            if(context instanceof MainActivity)
+                            {
+                                ((MainActivity)context).startActivityForRecentEdits();
+                            }
+                        }
+                    });
+
+                    task.execute();
+                }
+            });
+        }
+        else
+        {
+            holder.itemView.setOnClickListener(null);
+
         }
 
-        Log.d("adapterSize","" + images.size());
 
 //        holder.delete.setOnClickListener(new View.OnClickListener()
 //        {
@@ -122,12 +157,16 @@ public class RecentImageAdapter extends RecyclerView.Adapter<RecentImageAdapter.
     @Override
     public int getItemCount()
     {
-        return images.size();
+        if(images.isEmpty())
+        {
+            return 0;
+        }
+        return Math.max(images.size(), 5);
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder
     {
-        CircleImageView image;
+        ImageView image;
         TextView date;
         ImageView delete;
 
@@ -145,30 +184,6 @@ public class RecentImageAdapter extends RecyclerView.Adapter<RecentImageAdapter.
             top.setDuration(500);
             view.setAnimation(top);
             top.start();
-
-
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v)
-                {
-                    selectedImage = images.get(getAdapterPosition());
-                    showProgressDialog();
-                    ImageList.getInstance().clearImageList();
-                    AddImageToArrayListAsyncTask task = new AddImageToArrayListAsyncTask(selectedImage, new OnAsyncTaskState() {
-                        @Override
-                        public void startActivityForResult()
-                        {
-                           hideProgressDialog();
-                           if(context instanceof MainActivity)
-                           {
-                              ((MainActivity)context).startActivityForRecentEdits();
-                           }
-                        }
-                    });
-
-                    task.execute();
-                }
-            });
 
 
 

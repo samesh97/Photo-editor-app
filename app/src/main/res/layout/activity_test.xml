@@ -6,15 +6,28 @@
     android:layout_height="match_parent"
     tools:context=".activities.Test">
 
-    <com.sba.sinhalaphotoeditor.custom.views.ImageViewPlus
-        android:id="@+id/imageViewPlus"
-        android:layout_width="0dp"
-        android:layout_height="300dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/lay_tab"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        app:tabMode="scrollable"
+        android:background="@color/colorPrimary"
+        android:layout_gravity="bottom"
+        app:tabIndicatorColor="@android:color/white"
+        app:tabTextColor="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/sticker_view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lay_tab" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

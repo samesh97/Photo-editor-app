@@ -72,11 +72,12 @@
     <string name="pick_a_language">ඔබගෙ ප්‍රියතම භාශාව තෝරාගන්න</string>
     <string name="thank_you_for_downloading_text">ස්තූතියි භාගත කරගත්තාට</string>
     <string name="name_text">නම</string>
-    <string name="recent_text">නවතම</string>
+    <string name="recent_text">නවතම සංස්කරණ</string>
     <string name="select_text">තෝරාගන්න</string>
     <string name="select_image_text">පිංතූරයක් තෝරා ගන්න</string>
     <string name="enter_name_text">ඔබගේ නම ඇතුලත් කරන්න</string>
     <string name="enter_phone_number_text">දුරකථන අංකය ඇතුලත් කරන්න</string>
     <string name="enter_valid_code_text">නිවැරදි කේතය ඇතුලත් කරන්න</string>
     <string name="registration_success_text">ක්‍රියාවලිය සාර්ථකයි</string>
+    <string name="no_images_found_text">පිංතූර නොමැත</string>
 </resources>

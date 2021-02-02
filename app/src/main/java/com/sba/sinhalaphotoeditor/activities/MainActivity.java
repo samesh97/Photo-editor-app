@@ -252,7 +252,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     {
 
         ImageView empty_list_image = findViewById(R.id.empty_list_image);
-        TextView recentTextView = findViewById(R.id.textView13);
+        TextView recentTextView = findViewById(R.id.recent_tv);
 
         try
         {
@@ -782,7 +782,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     {
        Typeface typeface = Methods.getDefaultTypeFace(getApplicationContext());
 
-        TextView textView13 = findViewById(R.id.textView13);
+        TextView textView13 = findViewById(R.id.recent_tv);
         TextView fromGalery = findViewById(R.id.fromGalery);
         TextView createOne = findViewById(R.id.createOne);
         textView13.setTypeface(typeface);

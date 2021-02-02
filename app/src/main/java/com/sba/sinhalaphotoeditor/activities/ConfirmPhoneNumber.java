@@ -117,7 +117,6 @@ public class ConfirmPhoneNumber extends AppCompatActivity {
         if(code != null)
         {
             pin.setValue(code);
-//            varify.callOnClick();
         }
         else
         {
@@ -156,10 +155,6 @@ public class ConfirmPhoneNumber extends AppCompatActivity {
             }
         });
 
-
-
-
-        //sendVerificationCode(phone);
 
         varify.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -209,16 +204,15 @@ public class ConfirmPhoneNumber extends AppCompatActivity {
                         else
                         {
 
-                            if (task.getException() instanceof FirebaseAuthInvalidCredentialsException)
+                            if(task.getException() instanceof FirebaseAuthInvalidCredentialsException)
                             {
                                 Toast.makeText(ConfirmPhoneNumber.this, "Code is incorrect!", Toast.LENGTH_SHORT).show();
-                                pd.dismiss();
                             }
                             else
                             {
                                 Toast.makeText(ConfirmPhoneNumber.this, "Something went wrong!", Toast.LENGTH_SHORT).show();
-                                pd.dismiss();
                             }
+                            pd.dismiss();
 
 
                         }

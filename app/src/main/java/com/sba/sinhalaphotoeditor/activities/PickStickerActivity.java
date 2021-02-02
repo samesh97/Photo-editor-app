@@ -78,9 +78,9 @@ public class PickStickerActivity extends AppCompatActivity {
     }
     private void setData()
     {
-        StickerViewPagerAdapter stickerViewPagerAdapter = new StickerViewPagerAdapter(getSupportFragmentManager(),5);
-        sticker_view_pager.setAdapter(stickerViewPagerAdapter);
-        tabLayout.setupWithViewPager(sticker_view_pager);
+       // StickerViewPagerAdapter stickerViewPagerAdapter = new StickerViewPagerAdapter(getSupportFragmentManager(),5);
+       // sticker_view_pager.setAdapter(stickerViewPagerAdapter);
+       // tabLayout.setupWithViewPager(sticker_view_pager);
     }
     private void addNewTab()
     {

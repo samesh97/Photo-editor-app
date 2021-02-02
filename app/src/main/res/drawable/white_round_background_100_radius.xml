@@ -8,6 +8,7 @@
         android:endColor="@android:color/white" />
 
 
-    <corners android:radius="100dp"/>
+    <corners android:topLeftRadius="100dp"
+        android:bottomLeftRadius="100dp" />
 
 </shape>

@@ -97,8 +97,8 @@
 
         <ImageView
             android:id="@+id/pickColor"
-            android:layout_width="@dimen/create_background_color_picker_width_height"
-            android:layout_height="@dimen/create_background_color_picker_width_height"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_marginBottom="16dp"
             android:src="@drawable/ic_color_blue"
             android:background="@drawable/round_bg_ash"
@@ -130,8 +130,8 @@
             android:layout_marginBottom="32dp"
             android:background="@drawable/round_bg_ash"
             android:fontFamily="@font/bindumathi"
-            android:paddingTop="@dimen/create_background_padding_10"
-            android:paddingBottom="@dimen/create_background_padding_10"
+            android:paddingTop="@dimen/_10sdp"
+            android:paddingBottom="@dimen/_10sdp"
             android:text="@string/use_image"
             android:textColor="@color/colorPrimary"
             android:textSize="18sp"

@@ -37,9 +37,9 @@
 
     <ImageView
         android:id="@+id/shareFinalImage"
-        android:layout_width="@dimen/activity_image_saving_image_width_height_40"
-        android:layout_height="@dimen/activity_image_saving_image_width_height_40"
-        android:layout_marginStart="@dimen/activity_image_saving_margin_32"
+        android:layout_width="@dimen/_40sdp"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_marginStart="@dimen/_32sdp"
         android:src="@drawable/share"
         app:layout_constraintBottom_toBottomOf="@+id/shareImageView"
         app:layout_constraintStart_toStartOf="@+id/shareImageView"
@@ -76,9 +76,9 @@
 
     <ImageView
         android:id="@+id/saveFinalImage"
-        android:layout_width="@dimen/activity_image_saving_image_width_height_40"
-        android:layout_height="@dimen/activity_image_saving_image_width_height_40"
-        android:layout_marginStart="@dimen/activity_image_saving_margin_32"
+        android:layout_width="@dimen/_40sdp"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_marginStart="@dimen/_32sdp"
         android:src="@drawable/download"
         app:layout_constraintBottom_toBottomOf="@+id/downloadImageView"
         app:layout_constraintStart_toStartOf="@+id/downloadImageView"
@@ -90,7 +90,7 @@
         android:id="@+id/downloadImageText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/activity_image_saving_margin_32"
+        android:layout_marginStart="@dimen/_32sdp"
         android:fontFamily="@font/bindumathi"
         android:gravity="center"
         android:text="@string/download_image_text"

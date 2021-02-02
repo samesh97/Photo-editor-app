@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.Rect;
 import android.os.Build;
 import android.util.AttributeSet;
@@ -65,6 +66,11 @@ public class CropView extends View
     // i have put some padding with the layout. So the handlers are easy to move
     private int padding = 32;
 
+    //path used for the handlers extra 2 lines
+    private Path path = new Path();
+    //extra 2 line width
+    private int widthOfExtraLines = 100;
+
     public CropView(Context context)
     {
         super(context);
@@ -119,6 +125,9 @@ public class CropView extends View
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
+        //reset previously drawn paths
+        path.reset();
+
         //draw color transparent in the background
         canvas.drawColor(Color.TRANSPARENT);
 
@@ -139,12 +148,36 @@ public class CropView extends View
             canvas.drawRect(rectangle,mPaintRect);
             //draw left top handler
             canvas.drawCircle(leftTopX,leftTopY,handlerRadius,mPaint);
+
+            //draw extra lines
+            path.moveTo(leftTopX,leftTopY + widthOfExtraLines);
+            path.lineTo(leftTopX,leftTopY);
+            path.lineTo(leftTopX + widthOfExtraLines,leftTopY);
+            canvas.drawPath(path,mPaint);
+
             //draw left bottom handler
             canvas.drawCircle(leftBottomX,leftBottomY,handlerRadius,mPaint);
+            //draw extra lines
+            path.moveTo(leftBottomX + widthOfExtraLines,leftBottomY);
+            path.lineTo(leftBottomX,leftBottomY);
+            path.lineTo(leftBottomX,leftBottomY - widthOfExtraLines);
+            canvas.drawPath(path,mPaint);
+
             //draw right top handler
             canvas.drawCircle(rightTopX,rightTopY,handlerRadius,mPaint);
+            //draw extra lines
+            path.moveTo(rightTopX - widthOfExtraLines,rightTopY);
+            path.lineTo(rightTopX,rightTopY);
+            path.lineTo(rightTopX,rightTopY + widthOfExtraLines);
+            canvas.drawPath(path,mPaint);
+
             //draw right bottom handler
             canvas.drawCircle(rightBottomX,rightBottomY,handlerRadius,mPaint);
+            //draw extra lines
+            path.moveTo(rightBottomX - widthOfExtraLines,rightBottomY);
+            path.lineTo(rightBottomX,rightBottomY);
+            path.lineTo(rightBottomX,rightBottomY - widthOfExtraLines);
+            canvas.drawPath(path,mPaint);
         }
 
     }

@@ -1,6 +1,5 @@
 package com.sba.sinhalaphotoeditor.activities;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -18,16 +17,10 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -50,7 +43,6 @@ import com.bumptech.glide.Glide;
 import com.github.chuross.library.ExpandableLayout;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.sba.sinhalaphotoeditor.adapters.ImageViewPlusColorAdapter;
-import com.sba.sinhalaphotoeditor.adapters.TextColorAdapter;
 import com.sba.sinhalaphotoeditor.callbacks.OnAsyncTaskState;
 import com.sba.sinhalaphotoeditor.callbacks.OnTextAttributesChangedListner;
 import com.sba.sinhalaphotoeditor.custom.views.ImageViewPlus;
@@ -61,9 +53,7 @@ import com.sba.sinhalaphotoeditor.database.DatabaseHelper;
 import com.sba.sinhalaphotoeditor.aynctask.AddImageToArrayListAsyncTask;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -148,21 +138,25 @@ public class AddStickerOnImage extends AppCompatActivity
     {
         SharedPreferences pref = newBase.getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         String localeString = pref.getString(LANGUAGE_KEY,LANGUAGE_SINHALA);
-        Locale myLocale = new Locale(localeString);
-        Locale.setDefault(myLocale);
-        Configuration config = newBase.getResources().getConfiguration();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            config.setLocale(myLocale);
-            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.N){
-                Context newContext = newBase.createConfigurationContext(config);
-                super.attachBaseContext(newContext);
-                return;
+        if(localeString != null)
+        {
+            Locale myLocale = new Locale(localeString);
+            Locale.setDefault(myLocale);
+            Configuration config = newBase.getResources().getConfiguration();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                config.setLocale(myLocale);
+                if(Build.VERSION.SDK_INT > Build.VERSION_CODES.N){
+                    Context newContext = newBase.createConfigurationContext(config);
+                    super.attachBaseContext(newContext);
+                    return;
+                }
+            } else {
+                config.locale = myLocale;
             }
-        } else {
-            config.locale = myLocale;
+            super.attachBaseContext(newBase);
+            getResources().updateConfiguration(config, getResources().getDisplayMetrics());
         }
-        super.attachBaseContext(newBase);
-        getResources().updateConfiguration(config, getResources().getDisplayMetrics());
+
     }
 
 
@@ -199,11 +193,7 @@ public class AddStickerOnImage extends AppCompatActivity
 
         methods = new Methods(getApplicationContext());
 
-        Methods.freeUpMemory();
 
-
-
-        //setup the scale detection and rotation detection for the textview
         scaleGestureDetector = new ScaleGestureDetector(AddStickerOnImage.this,new simpleOnScaleGestureListener());
         mRotationGestureDetector = new RotationGestureDetector(AddStickerOnImage.this);
         progressDialog = new ProgressDialog(AddStickerOnImage.this);
@@ -400,7 +390,6 @@ public class AddStickerOnImage extends AppCompatActivity
         Bitmap bitmapForImageView = ImageList.getInstance().getCurrentBitmap().copy(ImageList.getInstance().getCurrentBitmap().getConfig(), true);
 
 
-        ConstraintLayout baseLayout = findViewById(R.id.baseLayout);
         workingLayout = findViewById(R.id.workingLayout);
         sourceImageView = findViewById(R.id.sourceImageView);
 

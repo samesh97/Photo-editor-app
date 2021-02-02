@@ -14,7 +14,7 @@
     <string name="add_text">Add Text</string>
     <string name="previously_created_images">Previously Created Images</string>
     <string name="delete_all_text">Delete All</string>
-    <string name="next_text">Next</string>
+    <string name="next_text">Proceed</string>
     <string name="back_text">Previous</string>
     <string name="width_text">Width</string>
     <string name="height_text">Height</string>
@@ -79,5 +79,6 @@
     <string name="enter_phone_number_text">Please enter your mobile number</string>
     <string name="enter_valid_code_text">Please enter the valid code</string>
     <string name="registration_success_text">Successfully Registered!</string>
+    <string name="no_images_found_text">No Images Found</string>
 
 </resources>

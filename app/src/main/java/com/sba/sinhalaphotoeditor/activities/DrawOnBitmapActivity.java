@@ -18,16 +18,13 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
-import android.widget.Switch;
 
 import com.github.chuross.library.ExpandableLayout;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -42,10 +39,7 @@ import com.sba.sinhalaphotoeditor.model.TextViewPlus;
 import com.sba.sinhalaphotoeditor.singleton.ImageList;
 
 import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
 
-import static android.view.View.LAYER_TYPE_HARDWARE;
 import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_KEY;
 import static com.sba.sinhalaphotoeditor.config.Constants.LANGUAGE_SINHALA;
 import static com.sba.sinhalaphotoeditor.config.Constants.SHARED_PREF_NAME;
@@ -53,7 +47,7 @@ import static com.sba.sinhalaphotoeditor.config.Constants.SHARED_PREF_NAME;
 public class DrawOnBitmapActivity extends AppCompatActivity implements OnTextAttributesChangedListner, OnAsyncTaskState {
 
     private PaintView paintView;
-    private ExpandableLayout explandableLayout;
+    private ExpandableLayout expandableLayout;
     TextViewPlus textViewPlus;
     private int preProgress = 12;
     private int opacityLevel = 100;
@@ -112,11 +106,11 @@ public class DrawOnBitmapActivity extends AppCompatActivity implements OnTextAtt
         loading = findViewById(R.id.loading);
         img_done = findViewById(R.id.img_done);
         paintView = findViewById(R.id.paintView);
-        explandableLayout = findViewById(R.id.explandableLayout);
+        expandableLayout = findViewById(R.id.explandableLayout);
         img_done_container = findViewById(R.id.img_done_container);
         paintView.setUserBitmap(DrawOnBitmapActivity.this,ImageList.getInstance().getCurrentBitmap());
 
-        explandableLayout.setOnClickListener(new View.OnClickListener() {
+        expandableLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
@@ -309,16 +303,16 @@ public class DrawOnBitmapActivity extends AppCompatActivity implements OnTextAtt
     }
     private void animateExpandableLayout()
     {
-        if(explandableLayout != null)
+        if(expandableLayout != null)
         {
-            explandableLayout.animate().setDuration(500).translationYBy(0).translationY(200).start();
+            expandableLayout.animate().setDuration(500).translationYBy(0).translationY(200).start();
         }
     }
     private void undoAnimateExpandableLayout()
     {
-        if(explandableLayout != null)
+        if(expandableLayout != null)
         {
-            explandableLayout.animate().setDuration(500).translationYBy(200).translationY(0).start();
+            expandableLayout.animate().setDuration(500).translationYBy(200).translationY(0).start();
         }
     }
 

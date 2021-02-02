@@ -9,5 +9,8 @@
     <color name="color_blue">#6459cf</color>
     <color name="material_dark_blue">#6459cf</color>
     <color name="darkAsh">#b8b3e3</color>
+    <color name="text_color">#FFFFFF</color>
+    <color name="secondary_color">#F1F1F1</color>
+    <color name="white">#FFFFFF</color>
 
 </resources>

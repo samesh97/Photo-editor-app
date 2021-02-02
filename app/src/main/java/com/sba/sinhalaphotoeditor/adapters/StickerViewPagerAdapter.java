@@ -1,32 +1,46 @@
 package com.sba.sinhalaphotoeditor.adapters;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import com.sba.sinhalaphotoeditor.fragments.StickerFragment;
+import com.sba.sinhalaphotoeditor.model.FirebaseStickerCategory;
+
+import java.util.ArrayList;
 
 public class StickerViewPagerAdapter extends FragmentStatePagerAdapter
 {
-    private int size;
+    private ArrayList<FirebaseStickerCategory> categoryList;
 
-    public StickerViewPagerAdapter(@NonNull FragmentManager fm,int size)
+    public StickerViewPagerAdapter(@NonNull FragmentManager fm,ArrayList<FirebaseStickerCategory> categoryList)
     {
         super(fm);
-        this.size = size;
+        this.categoryList = categoryList;
     }
 
     @NonNull
     @Override
     public Fragment getItem(int position)
     {
-        return new StickerFragment();
+        if(categoryList != null && categoryList.size() > position)
+        {
+            return new StickerFragment(categoryList.get(position));
+        }
+
+        return null;
+
     }
 
     @Override
     public int getCount()
     {
-        return size;
+        if(categoryList != null)
+            return categoryList.size();
+        else
+            return 0;
     }
 }

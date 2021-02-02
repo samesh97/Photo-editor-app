@@ -29,7 +29,7 @@
         android:gravity="center"
         android:text="New Notification"
         android:textColor="#FFFFFF"
-        android:textSize="@dimen/select_picture_text_size"
+        android:textSize="20sp"
         android:textStyle="bold"
         android:typeface="sans"
         app:layout_constraintEnd_toEndOf="parent"

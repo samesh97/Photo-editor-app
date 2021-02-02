@@ -19,7 +19,8 @@
         <activity android:name=".activities.MyGallery"
             android:theme="@style/NoActionBarAppTheme">
         </activity>
-        <activity android:name=".activities.Test"></activity>
+        <activity android:name=".activities.Test">
+        </activity>
         <activity
             android:name=".activities.CropActivity"
             android:screenOrientation="portrait"
@@ -36,6 +37,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
         <activity
             android:name=".activities.ConfirmPhoneNumber"

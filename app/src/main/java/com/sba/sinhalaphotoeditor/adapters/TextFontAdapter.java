@@ -155,6 +155,89 @@ public class TextFontAdapter extends RecyclerView.Adapter<TextFontAdapter.MyView
         typeface = ResourcesCompat.getFont(context, R.font.postnobillscolombobold);
         fonts.add(typeface);
 
+        //new fonts
+        typeface = ResourcesCompat.getFont(context, R.font.aa_sinhala);
+        fonts.add(typeface);
+        typeface = ResourcesCompat.getFont(context, R.font.aa_sinhala_9);
+        fonts.add(typeface);
+        typeface = ResourcesCompat.getFont(context, R.font.ams_ajith);
+        fonts.add(typeface);
+        typeface = ResourcesCompat.getFont(context, R.font.ams_arunalu);
+        fonts.add(typeface);
+        typeface = ResourcesCompat.getFont(context, R.font.ams_bindu);
+        fonts.add(typeface);
+        typeface = ResourcesCompat.getFont(context, R.font.ams_hiru);
+        fonts.add(typeface);
+        typeface = ResourcesCompat.getFont(context, R.font.ams_kalana);
+        fonts.add(typeface);
+        typeface = ResourcesCompat.getFont(context, R.font.ams_kavithi);
+        fonts.add(typeface);
+        typeface = ResourcesCompat.getFont(context, R.font.ams_leterpress);
+        fonts.add(typeface);
+        typeface = ResourcesCompat.getFont(context, R.font.ams_manage);
+        fonts.add(typeface);
+        typeface = ResourcesCompat.getFont(context, R.font.ams_manahara);
+        fonts.add(typeface);
+        typeface = ResourcesCompat.getFont(context, R.font.ams_mindada);
+        fonts.add(typeface);
+        typeface = ResourcesCompat.getFont(context, R.font.ams_nisansala);
+        fonts.add(typeface);
+        typeface = ResourcesCompat.getFont(context, R.font.ams_panhida);
+        fonts.add(typeface);
+        typeface = ResourcesCompat.getFont(context, R.font.ams_priyantha);
+        fonts.add(typeface);
+        typeface = ResourcesCompat.getFont(context, R.font.ams_saduni);
+        fonts.add(typeface);
+        typeface = ResourcesCompat.getFont(context, R.font.ams_sewana);
+        fonts.add(typeface);
+        typeface = ResourcesCompat.getFont(context, R.font.ams_sewana_bold);
+        fonts.add(typeface);
+        typeface = ResourcesCompat.getFont(context, R.font.ams_sewwandi);
+        fonts.add(typeface);
+        typeface = ResourcesCompat.getFont(context, R.font.ams_shilpa);
+        fonts.add(typeface);
+        typeface = ResourcesCompat.getFont(context, R.font.ams_stripe);
+        fonts.add(typeface);
+        typeface = ResourcesCompat.getFont(context, R.font.ams_supun);
+        fonts.add(typeface);
+        typeface = ResourcesCompat.getFont(context, R.font.ams_supuni);
+        fonts.add(typeface);
+        typeface = ResourcesCompat.getFont(context, R.font.ams_swarna);
+        fonts.add(typeface);
+        typeface = ResourcesCompat.getFont(context, R.font.ams_tharu);
+        fonts.add(typeface);
+        typeface = ResourcesCompat.getFont(context, R.font.ams_thushantha);
+        fonts.add(typeface);
+        typeface = ResourcesCompat.getFont(context, R.font.ams_uthmax);
+        fonts.add(typeface);
+        typeface = ResourcesCompat.getFont(context, R.font.anuradhapura);
+        fonts.add(typeface);
+        typeface = ResourcesCompat.getFont(context, R.font.astro01);
+        fonts.add(typeface);
+        typeface = ResourcesCompat.getFont(context, R.font.fm_chuti);
+        fonts.add(typeface);
+        typeface = ResourcesCompat.getFont(context, R.font.fm_gangaani);
+        fonts.add(typeface);
+        typeface = ResourcesCompat.getFont(context, R.font.fm_sandhyanee);
+        fonts.add(typeface);
+        typeface = ResourcesCompat.getFont(context, R.font.fn_kalpa);
+        fonts.add(typeface);
+        typeface = ResourcesCompat.getFont(context, R.font.kotu);
+        fonts.add(typeface);
+        typeface = ResourcesCompat.getFont(context, R.font.okdbo);
+        fonts.add(typeface);
+        typeface = ResourcesCompat.getFont(context, R.font.ranmadu);
+        fonts.add(typeface);
+        typeface = ResourcesCompat.getFont(context, R.font.sara_baron);
+        fonts.add(typeface);
+        typeface = ResourcesCompat.getFont(context, R.font.sara_ramanee);
+        fonts.add(typeface);
+        typeface = ResourcesCompat.getFont(context, R.font.somefont);
+        fonts.add(typeface);
+
+        //end of new fonts
+
+
         if(selectedTextView != null)
         {
 

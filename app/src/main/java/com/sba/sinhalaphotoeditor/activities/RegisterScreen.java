@@ -1,6 +1,8 @@
 package com.sba.sinhalaphotoeditor.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -22,6 +24,7 @@ import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -125,7 +128,6 @@ public class RegisterScreen extends AppCompatActivity{
         setContentView(R.layout.activity_register_screen);
 
 
-        Methods methods = new Methods(getApplicationContext());
         CountryCodePicker ccp = (CountryCodePicker) findViewById(R.id.ccp);
         progress_bar = findViewById(R.id.progress_bar);
 
@@ -162,6 +164,17 @@ public class RegisterScreen extends AppCompatActivity{
         next = (Button) findViewById(R.id.loginButton);
 
         changeTypeFace();
+
+
+        ConstraintLayout back_arrow_container = findViewById(R.id.back_arrow_container);
+        back_arrow_container.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)
+            {
+                finish();
+                overridePendingTransition(R.anim.activity_start_animation__for_tools,R.anim.activity_exit_animation__for_tools);
+            }
+        });
 
     }
 

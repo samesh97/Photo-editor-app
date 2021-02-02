@@ -1,7 +1,9 @@
 package com.sba.sinhalaphotoeditor.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,9 +25,13 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.airbnb.lottie.LottieAnimationView;
+import com.airbnb.lottie.LottieDrawable;
 import com.bumptech.glide.Glide;
 import com.sba.sinhalaphotoeditor.R;
 import com.sba.sinhalaphotoeditor.adapters.AlbumAdapter;
@@ -226,6 +232,13 @@ public class MyGallery extends AppCompatActivity {
         String[] projection = { MediaStore.Images.ImageColumns.DATA ,MediaStore.Images.Media.DISPLAY_NAME,
                 MediaStore.Images.Media.BUCKET_DISPLAY_NAME,MediaStore.Images.Media.BUCKET_ID};
         Cursor cursor = this.getContentResolver().query(allImagesuri, projection, null, null, orderBy);
+
+        if(cursor == null || cursor.getCount() == 0)
+        {
+            hideAllViews();
+        }
+
+
         try {
             if (cursor != null) {
                 cursor.moveToFirst();
@@ -276,6 +289,62 @@ public class MyGallery extends AppCompatActivity {
         }
 
     }
+
+    private void hideAllViews()
+    {
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run()
+            {
+                Toolbar toolbar = findViewById(R.id.toolbar);
+                TextView textView14 = findViewById(R.id.textView14);
+                TextView textView15 = findViewById(R.id.textView15);
+                ConstraintLayout lay = findViewById(R.id.lay);
+                ConstraintLayout bound1 = findViewById(R.id.bound1);
+                ConstraintLayout bound2 = findViewById(R.id.bound2);
+
+                //lay.setVisibility(View.GONE);
+                bound1.setVisibility(View.GONE);
+                bound2.setVisibility(View.GONE);
+                textView14.setVisibility(View.INVISIBLE);
+                textView15.setVisibility(View.INVISIBLE);
+
+
+                TextView tool_bar_title = toolbar.findViewById(R.id.tool_bar_title);
+                tool_bar_title.setText(R.string.no_images_found_text);
+
+                ConstraintLayout constraint_main = findViewById(R.id.constraint_main);
+
+
+                LottieAnimationView imageView = new LottieAnimationView(getApplicationContext());
+                imageView.setAnimation(R.raw.question);
+                imageView.setRepeatCount(5);
+
+                //ImageView imageView = new ImageView(getApplicationContext());
+                imageView.setId(View.generateViewId());
+                ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                imageView.setLayoutParams(params);
+
+
+                constraint_main.addView(imageView,params);
+                //Glide.with(getApplicationContext()).load(R.drawable.empty_character).into(imageView);
+
+                ConstraintSet set = new ConstraintSet();
+                set.clone(constraint_main);
+                set.connect(constraint_main.getId(),ConstraintSet.LEFT,imageView.getId(),ConstraintSet.LEFT,10);
+                set.connect(constraint_main.getId(),ConstraintSet.TOP,imageView.getId(),ConstraintSet.TOP,10);
+                set.connect(constraint_main.getId(),ConstraintSet.RIGHT,imageView.getId(),ConstraintSet.RIGHT,10);
+                set.connect(constraint_main.getId(),ConstraintSet.BOTTOM,imageView.getId(),ConstraintSet.BOTTOM,10);
+
+                set.applyTo(constraint_main);
+                imageView.playAnimation();
+            }
+        });
+
+
+    }
+
     public void getAllImagesByFolder(String path)
     {
 
